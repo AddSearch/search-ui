@@ -1,12 +1,37 @@
 {
-  "name": "search-ui",
+  "name": "addsearch-search-ui",
   "version": "0.0.1",
-  "description": "UI components to implement search with AddSearch ",
+  "description": "Library to develop framework-agnostic Search UIs for web browsers",
   "main": "index.js",
+  "jsdelivr": "./dist/addsearch-search-ui.min.js",
   "scripts": {
     "build": "./node_modules/webpack-cli/bin/cli.js"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/AddSearch/search-ui.git"
+  },
+  "keywords": [
+    "addsearch",
+    "search",
+    "search ui",
+    "autocomplete",
+    "instant search",
+    "predictive search",
+    "search suggestions"
+  ],
+  "homepage": "https://www.addsearch.com/",
+  "bugs": "https://github.com/AddSearch/search-ui/issues",
+  "author": {
+    "name": "AddSearch",
+    "url": "https://www.addsearch.com"
+  },
+  "contributors": [
+    {
+      "name": "AddSearch Developers <developers@addsearch.com>",
+      "url": "https://www.addsearch.com"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "handlebars": "^4.4.2"
