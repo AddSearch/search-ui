@@ -6,9 +6,12 @@ var handlebars = require('handlebars');
  * HTML template
  */
 var TEMPLATE = `
-  <div class="searchbar">
-    <input placeholder="{{placeholder}}" />
-  </div>
+  <form class="searchbar" action="?" role="search">
+    <input placeholder="{{placeholder}}" autofocus="{{autofocus}}" aria-label="Search field" />
+    {{#if button}}
+      <button type="button">{{button}}</button>
+    {{/if}}
+  </form>
 `;
 
 
@@ -22,8 +25,22 @@ var searchbar = function(addSearchClient, resultsCallback, conf) {
   container.innerHTML = html;
 
   // Event listeners
-  container.getElementsByTagName('input')[0].onchange = function(e) {
-    addSearchClient.search(e.target.value, resultsCallback);
+  container.getElementsByTagName('input')[0].onkeypress = function(e) {
+    // Search as you type
+    if (conf.searchAsYouType === true) {
+      addSearchClient.search(e.target.value, resultsCallback);
+    }
+
+    // Enter pressed
+    if (e.keyCode === 13) {
+      addSearchClient.search(e.target.value, resultsCallback);
+      return false;
+    }
+  };
+
+  // Event listeners
+  container.getElementsByTagName('button')[0].onclick = function(e) {
+    addSearchClient.search(container.getElementsByTagName('input')[0].value, resultsCallback);
   };
 
 };
