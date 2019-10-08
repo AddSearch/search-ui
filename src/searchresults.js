@@ -5,7 +5,7 @@ var handlebars = require('handlebars');
 /**
  * HTML template
  */
-var template = `
+var TEMPLATE = `
   <div class="searchresults">    
     {{#if resultcount}}
       <p>{{total_hits}} search results</p>
@@ -36,7 +36,7 @@ var searchresults = function(results, conf) {
   else {
     r.resultcount = true;
   }
-  var html = handlebars.compile(template)(r);
+  var html = handlebars.compile(conf.template || TEMPLATE)(r);
   document.getElementById(conf.containerId).innerHTML = html;
 };
 module.exports = searchresults;
