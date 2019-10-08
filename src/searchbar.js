@@ -6,14 +6,28 @@ var handlebars = require('handlebars');
  * HTML template
  */
 var TEMPLATE = `
-  <form class="searchbar" action="?" role="search">
-    <input placeholder="{{placeholder}}" autofocus="{{autofocus}}" aria-label="Search field" />
+  <form class="searchbar" autocomplete="off" action="?" role="search">
+    <input type="search" placeholder="{{placeholder}}" autofocus="{{autofocus}}" aria-label="Search field" />
     {{#if button}}
       <button type="button">{{button}}</button>
     {{/if}}
   </form>
 `;
 
+
+var search = function(addSearchClient, keyword, resultsCallback) {
+  addSearchClient.search(keyword, resultsCallback);
+  history.pushState(null, keyword, "?search=" + keyword);
+}
+
+var getQueryParam = function(url, param) {
+  var name = param.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+  var results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
 /**
  * Add a search bar
@@ -26,22 +40,45 @@ var searchbar = function(addSearchClient, resultsCallback, conf) {
 
   // Event listeners
   container.getElementsByTagName('input')[0].onkeypress = function(e) {
+    var keyword = e.target.value;
     // Search as you type
-    if (conf.searchAsYouType === true) {
-      addSearchClient.search(e.target.value, resultsCallback);
+    if (conf.searchAsYouType === true && keyword) {
+      search(addSearchClient, keyword, resultsCallback);
     }
 
     // Enter pressed
     if (e.keyCode === 13) {
-      addSearchClient.search(e.target.value, resultsCallback);
+      if (keyword && conf.searchAsYouType !== true) {
+        search(addSearchClient, keyword, resultsCallback);
+      }
       return false;
     }
   };
 
   // Event listeners
   container.getElementsByTagName('button')[0].onclick = function(e) {
-    addSearchClient.search(container.getElementsByTagName('input')[0].value, resultsCallback);
+    var keyword = container.getElementsByTagName('input')[0].value;
+    if (keyword) {
+      search(addSearchClient, keyword, resultsCallback);
+    }
   };
+
+
+  // Execute search onload
+  var url = window.location.href;
+  if (getQueryParam(url, 'search')) {
+    var q = getQueryParam(url, 'search');
+    container.getElementsByTagName('input')[0].value = q
+    search(addSearchClient, q, resultsCallback);
+  }
+
+  window.onpopstate = function(event) {
+    var q = getQueryParam(document.location, 'search');
+    if (q) {
+      container.getElementsByTagName('input')[0].value = q
+      search(addSearchClient, q, resultsCallback);
+    }
+  }
 
 };
 module.exports = searchbar;
