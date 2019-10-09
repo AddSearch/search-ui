@@ -38,7 +38,7 @@ var searchbar = function(addSearchClient, resultsCallback, conf) {
   var container = document.getElementById(conf.containerId);
   container.innerHTML = html;
 
-  // Event listeners
+  // Event listeners to the search field
   container.getElementsByTagName('input')[0].onkeypress = function(e) {
     var keyword = e.target.value;
     // Search as you type
@@ -55,13 +55,15 @@ var searchbar = function(addSearchClient, resultsCallback, conf) {
     }
   };
 
-  // Event listeners
-  container.getElementsByTagName('button')[0].onclick = function(e) {
-    var keyword = container.getElementsByTagName('input')[0].value;
-    if (keyword) {
-      search(addSearchClient, keyword, resultsCallback);
+  // Event listeners to the possible search button
+  if (container.getElementsByTagName('button').length > 0) {
+    container.getElementsByTagName('button')[0].onclick = function (e) {
+      var keyword = container.getElementsByTagName('input')[0].value;
+      if (keyword) {
+        search(addSearchClient, keyword, resultsCallback);
+      }
     }
-  };
+  }
 
 
   // Execute search onload
