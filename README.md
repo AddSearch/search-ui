@@ -1,5 +1,13 @@
 # AddSearch Search UI Library
 
+## Supported web browsers
+The client is tested on
+- Chrome
+- Firefox
+- Edge
+- Safari 6.1+
+- Internet Explorer 10+
+
 ## Development
 To modify the Search UI library, clone this repository and execute following commands.
 #### Install dependencies
