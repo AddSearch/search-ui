@@ -1,13 +1,13 @@
 'use strict';
 
 require('./searchresults.scss');
-var handlebars = require('handlebars');
+const handlebars = require('handlebars');
 
 /**
  * HTML template
  */
-var TEMPLATE = `
-  <div class="searchresults">    
+const TEMPLATE = `
+  <div class="addsearch-searchresults">    
     {{#if resultcount}}
       <p>{{total_hits}} search results</p>
     {{/if}}
@@ -29,15 +29,15 @@ var TEMPLATE = `
 /**
  * Add a search results list
  */
-var searchresults = function(results, conf) {
-  var r = results;
+const searchresults = function(results, conf) {
+  const r = results;
   if (conf.showNumberOfResults === false) {
     r.resultcount = false;
   }
   else {
     r.resultcount = true;
   }
-  var html = handlebars.compile(conf.template || TEMPLATE)(r);
+  const html = handlebars.compile(conf.template || TEMPLATE)(r);
   document.getElementById(conf.containerId).innerHTML = html;
 };
 module.exports = searchresults;
