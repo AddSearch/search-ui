@@ -1,5 +1,6 @@
 'use strict';
 
+require('./searchresults.scss');
 var handlebars = require('handlebars');
 
 /**
