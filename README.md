@@ -1,5 +1,31 @@
 # AddSearch Search UI Library
 
+## Example
+```html
+<div id="searchbar"></div>
+<div id="results"></div>
+
+<script>
+  // AddSearch JS client library
+  var client = new AddSearchClient('YOUR PUBLIC SITEKEY');
+
+  // Search UI library
+  var searchui = new AddSearchSearchUI(client);
+
+  // Add searchbar
+  searchui.searchBar({
+    containerId: 'searchbar',
+    placeholder: 'Keyword..',
+    button: 'Search'
+  });
+
+  // Add search results view
+  searchui.searchResults({
+    containerId: 'results'
+  });
+</script>
+```
+
 ## Supported web browsers
 The client is tested on
 - Chrome
