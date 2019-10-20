@@ -1,37 +1,9 @@
 import SearchBar from './searchbar/searchbar';
-import searchresults from './searchresults';
+import SearchResults from './searchresults';
 
-import reducers from './reducers';
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-const store = createStore(reducers, applyMiddleware(thunk));
+import { getStore, observeStoreByKey } from './store';
 
-//store.subscribe(() => console.log(store.getState()));
-
-export function getStore() {
-  return store;
-}
-
-function observeStore(store, select, onChange, key) {
-  let currentState = {};
-
-  function handleChange() {
-    let nextState = select(store.getState());
-    if (nextState !== currentState[key]) {
-      console.log('State changed for ' + key);
-      currentState[key] = nextState;
-      onChange(currentState);
-    }
-    else {
-      console.log('State unchanged for ' + key);
-    }
-  }
-
-  let unsubscribe = store.subscribe(handleChange);
-  handleChange();
-  return unsubscribe;
-}
-observeStore(getStore(), state => { return state.keyup.keyword; }, s => console.log('Keyword changed: ' + JSON.stringify(s)), 'keyword');
+observeStoreByKey(getStore(), 'keyword', s => console.log('Keyword changed: ' + JSON.stringify(s)));
 
 export default class SearchUI {
 
@@ -62,14 +34,12 @@ export default class SearchUI {
     this.searchResultsConf = conf;
 
     const self = this;
-    observeStore(getStore(), state => { return state.keyup.results; },
+    observeStoreByKey(getStore(), 'search',
       (s) => {
         console.log('Render results!');
         console.log(JSON.stringify(s));
         self.resultsCallback(s, self);
-      },
-      'results'
-
+      }
     );
 
   }
@@ -79,12 +49,11 @@ export default class SearchUI {
   /**
    * Callback function when the search returns
    */
-  resultsCallback(results, scope) {
-    if (scope.searchResultsConf) {
+  resultsCallback(search, scope) {
+    if (scope.searchResultsConf && !search.loading) {
       console.log('rendering results');
-      searchresults(results, scope.searchResultsConf);
+      const searchresults = new SearchResults();
+      searchresults.render(search.results, scope.searchResultsConf);
     }
   }
 }
-
-// module.exports = searchui;
