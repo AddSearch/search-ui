@@ -1,7 +1,9 @@
 import SearchBar from './searchbar/searchbar';
 import SearchResults from './searchresults';
-
+import oa from 'es6-object-assign';
 import { getStore, observeStoreByKey } from './store';
+oa.polyfill();
+
 
 observeStoreByKey(getStore(), 'keyword', s => console.log('Keyword changed: ' + JSON.stringify(s)));
 
