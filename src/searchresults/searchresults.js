@@ -1,11 +1,7 @@
-'use strict';
+import './searchresults.scss';
+import handlebars from 'handlebars';
 
-require('./searchresults.scss');
-const handlebars = require('handlebars');
 
-/**
- * HTML template
- */
 const TEMPLATE = `
   <div class="addsearch-searchresults">    
     {{#if resultcount}}
@@ -26,18 +22,21 @@ const TEMPLATE = `
 `;
 
 
-/**
- * Add a search results list
- */
-const searchresults = function(results, conf) {
-  const r = results.results;
-  if (conf.showNumberOfResults === false) {
-    r.resultcount = false;
+export default class SearchResults {
+
+  constructor() {
+
   }
-  else {
-    r.resultcount = true;
+
+  render(results, conf) {
+    const r = results || {};
+    if (conf.showNumberOfResults === false) {
+      r.resultcount = false;
+    }
+    else {
+      r.resultcount = true;
+    }
+    const html = handlebars.compile(conf.template || TEMPLATE)(r);
+    document.getElementById(conf.containerId).innerHTML = html;
   }
-  const html = handlebars.compile(conf.template || TEMPLATE)(r);
-  document.getElementById(conf.containerId).innerHTML = html;
-};
-module.exports = searchresults;
+}
