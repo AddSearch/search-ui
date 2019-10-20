@@ -1,33 +1,49 @@
-'use strict';
-
-var searchbar = require('./searchbar');
-var searchresults = require('./searchresults');
-
-
-var searchui = function(client) {
-
-  this.client = client;
-  this.searchResultsConf = null;
+import SearchBar from './searchbar/searchbar';
+import SearchResults from './searchresults';
+import oa from 'es6-object-assign';
+import { getStore, observeStoreByKey } from './store';
+oa.polyfill();
 
 
-  /**
-   * Add a search bar
-   */
-  this.searchBar = function(conf) {
-    var self = this;
-    var cb = function(results) {
-      self.resultsCallback(results, self)
-    }
+observeStoreByKey(getStore(), 'keyword', s => console.log('Keyword changed: ' + JSON.stringify(s)));
 
-    searchbar(this.client, cb, conf);
+export default class SearchUI {
+
+  constructor(client){
+    this.client = client;
+    this.searchResultsConf = null;
   }
 
 
   /**
    * Add a search bar
    */
-  this.searchResults = function(conf) {
+  searchBar(conf) {
+    /*const self = this;
+    const cb = function(results) {
+      self.resultsCallback(results, self)
+    }*/
+
+    const searchbar = new SearchBar();
+    searchbar.render(this.client, () => {}, conf);
+  }
+
+
+  /**
+   * Add a search bar
+   */
+  searchResults(conf) {
     this.searchResultsConf = conf;
+
+    const self = this;
+    observeStoreByKey(getStore(), 'search',
+      (s) => {
+        console.log('Render results!');
+        console.log(JSON.stringify(s));
+        self.resultsCallback(s, self);
+      }
+    );
+
   }
 
 
@@ -35,11 +51,11 @@ var searchui = function(client) {
   /**
    * Callback function when the search returns
    */
-  this.resultsCallback = function(results, scope) {
-    if (scope.searchResultsConf) {
-      searchresults(results, scope.searchResultsConf);
+  resultsCallback(search, scope) {
+    if (scope.searchResultsConf && !search.loading) {
+      console.log('rendering results');
+      const searchresults = new SearchResults();
+      searchresults.render(search.results, scope.searchResultsConf);
     }
   }
 }
-
-module.exports = searchui;

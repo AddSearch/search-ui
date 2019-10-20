@@ -34,7 +34,10 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "handlebars": "^4.4.2"
+    "es6-object-assign": "^1.1.0",
+    "handlebars": "^4.4.2",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.2",
