@@ -30,7 +30,7 @@ const TEMPLATE = `
  * Add a search results list
  */
 const searchresults = function(results, conf) {
-  const r = results;
+  const r = results.results;
   if (conf.showNumberOfResults === false) {
     r.resultcount = false;
   }
