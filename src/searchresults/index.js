@@ -1,2 +1,1 @@
-"use strict"
-module.exports = require("./searchresults.js")
+export { default } from './searchresults';
