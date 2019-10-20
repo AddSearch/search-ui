@@ -1,7 +1,8 @@
 import './searchbar.scss';
 import handlebars from 'handlebars';
-import { setKeyword, search } from '../actions';
-import { getStore } from '../index';
+import { search } from '../actions/search';
+import { setKeyword } from '../actions/keyword';
+import { getStore } from '../store';
 
 
 /**
@@ -22,11 +23,6 @@ export default class SearchBar {
 
   }
 
-  search(addSearchClient, keyword, resultsCallback) {
-    console.log('SEARCH function');
-    addSearchClient.search(keyword, resultsCallback);
-    history.pushState(null, keyword, "?search=" + keyword);
-  }
 
   getQueryParam(url, param) {
     const name = param.replace(/[\[\]]/g, "\\$&");
@@ -55,14 +51,23 @@ export default class SearchBar {
 
       // Search as you type
       if (conf.searchAsYouType === true && keyword) {
-        self.search(addSearchClient, keyword, resultsCallback);
+        getStore().dispatch(search(addSearchClient, keyword));
+      }
+      else if (conf.searchSuggestions === true && keyword) {
+        getStore().dispatch(search(addSearchClient, keyword));
       }
 
       // Enter pressed
       if (e.keyCode === 13) {
         if (keyword && conf.searchAsYouType !== true) {
-          self.search(addSearchClient, keyword, resultsCallback);
+          getStore().dispatch(search(addSearchClient, keyword));
         }
+        return false;
+      }
+    };
+    container.getElementsByTagName('input')[0].onkeypress = function(e) {
+      // Enter pressed
+      if (e.keyCode === 13) {
         return false;
       }
     };
@@ -72,7 +77,6 @@ export default class SearchBar {
       container.getElementsByTagName('button')[0].onclick = function (e) {
         const keyword = container.getElementsByTagName('input')[0].value;
         if (keyword) {
-          self.search(addSearchClient, keyword, resultsCallback);
           getStore().dispatch(search(addSearchClient, keyword));
         }
       }
@@ -83,18 +87,18 @@ export default class SearchBar {
     const url = window.location.href;
     if (this.getQueryParam(url, 'search')) {
       const q = this.getQueryParam(url, 'search');
-      container.getElementsByTagName('input')[0].value = q
-      self.search(addSearchClient, q, resultsCallback);
+      container.getElementsByTagName('input')[0].value = q;
+      getStore().dispatch(setKeyword(q));
+      getStore().dispatch(search(addSearchClient, q));
     }
 
     window.onpopstate = function(event) {
       const q = this.getQueryParam(document.location, 'search');
       if (q) {
-        container.getElementsByTagName('input')[0].value = q
-        self.search(addSearchClient, q, resultsCallback);
+        container.getElementsByTagName('input')[0].value = q;
+        getStore().dispatch(setKeyword(q));
+        getStore().dispatch(search(addSearchClient, q));
       }
     }
-
   }
 }
-//module.exports = searchbar;
