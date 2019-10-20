@@ -1,2 +1,1 @@
-"use strict"
-module.exports = require("./searchbar.js").default;
+export { default } from './searchbar';
