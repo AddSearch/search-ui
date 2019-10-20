@@ -34,7 +34,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "handlebars": "^4.4.2"
+    "handlebars": "^4.4.2",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.2",
