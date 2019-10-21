@@ -41,6 +41,12 @@ To modify the Search UI library, clone this repository and execute following com
 npm install
 ```
 
+#### Watch
+Compile automatically when source files change
+```sh
+npm run watch
+```
+
 #### Run tests
 ```sh
 npm test
