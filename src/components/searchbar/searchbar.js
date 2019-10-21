@@ -1,9 +1,10 @@
 import './searchbar.scss';
 import handlebars from 'handlebars';
-import { search } from '../actions/search';
-import { setKeyword } from '../actions/keyword';
-import { getStore } from '../store';
-import { getQueryParam } from '../util/history';
+import { search } from '../../actions/search';
+import { setKeyword } from '../../actions/keyword';
+import { getSuggestions } from '../../actions/suggestions';
+import { getStore, observeStoreByKey } from '../../store';
+import { getQueryParam } from '../../util/history';
 
 
 /**
@@ -18,6 +19,7 @@ const TEMPLATE = `
   </form>
 `;
 
+
 export default class SearchBar {
 
   constructor() {
@@ -28,7 +30,7 @@ export default class SearchBar {
   /**
    * Add a search bar
    */
-  render(addSearchClient, resultsCallback, conf) {
+  render(addSearchClient, conf) {
     // Compile template and inject to container
     const html = handlebars.compile(conf.template || TEMPLATE)(conf);
     const container = document.getElementById(conf.containerId);
@@ -41,11 +43,13 @@ export default class SearchBar {
 
       getStore().dispatch(setKeyword(keyword));
 
+      if (keyword.length > 0 && keyword !== this.previousSuggestionKeyword) {
+        getStore().dispatch(getSuggestions(addSearchClient, keyword));
+        this.previousSuggestionKeyword = keyword;
+      }
+
       // Search as you type
       if (conf.searchAsYouType === true && keyword) {
-        getStore().dispatch(search(addSearchClient, keyword));
-      }
-      else if (conf.searchSuggestions === true && keyword) {
         getStore().dispatch(search(addSearchClient, keyword));
       }
 
