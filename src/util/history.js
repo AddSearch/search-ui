@@ -2,10 +2,13 @@
 
 export function setUrl(keyword) {
   const url = window.location.href;
-  let stateUrl = '?search=' + keyword;
-  if (url && url.indexOf('?') !== -1) {
-    stateUrl = url.substring(url.indexOf('?')) + '&search=' + keyword;
+  const params = queryParamsToObject(url);
+  params['search'] = keyword;
+  let stateUrl = url;
+  if (url.indexOf('?') !== -1) {
+    stateUrl = url.substring(0, url.indexOf('?'));
   }
+  stateUrl = stateUrl + '?' + objectToQueryParams(params);
   history.pushState(null, 'Search: ' + keyword, stateUrl);
 }
 
