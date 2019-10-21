@@ -32,9 +32,12 @@ export function queryParamsToObject(url) {
     return {};
   }
 
-  const qs = url.substring(url.indexOf('?') + 1);
+  let qs = url.substring(url.indexOf('?') + 1);
   if (qs === '') {
     return {};
+  }
+  if (qs.indexOf('#') !== -1) {
+    qs = qs.substring(0, qs.indexOf('#'));
   }
 
   let obj = {};
