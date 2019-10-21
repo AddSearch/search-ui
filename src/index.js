@@ -1,11 +1,12 @@
-import SearchBar from './searchbar/searchbar';
-import SearchResults from './searchresults';
+import SearchBar from './components/searchbar';
+import SearchResults from './components/searchresults';
 import oa from 'es6-object-assign';
 import { getStore, observeStoreByKey } from './store';
 oa.polyfill();
 
 
 observeStoreByKey(getStore(), 'keyword', s => console.log('Keyword changed: ' + JSON.stringify(s)));
+observeStoreByKey(getStore(), 'suggestions', s => console.log('Suggestions received: ' + JSON.stringify(s)));
 
 export default class SearchUI {
 
@@ -19,13 +20,8 @@ export default class SearchUI {
    * Add a search bar
    */
   searchBar(conf) {
-    /*const self = this;
-    const cb = function(results) {
-      self.resultsCallback(results, self)
-    }*/
-
     const searchbar = new SearchBar();
-    searchbar.render(this.client, () => {}, conf);
+    searchbar.render(this.client, conf);
   }
 
 
@@ -38,8 +34,6 @@ export default class SearchUI {
     const self = this;
     observeStoreByKey(getStore(), 'search',
       (s) => {
-        console.log('Render results!');
-        console.log(JSON.stringify(s));
         self.resultsCallback(s, self);
       }
     );
