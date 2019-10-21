@@ -3,6 +3,7 @@ import handlebars from 'handlebars';
 import { search } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { getStore } from '../store';
+import { getQueryParam } from '../util/history';
 
 
 /**
@@ -23,15 +24,6 @@ export default class SearchBar {
 
   }
 
-
-  getQueryParam(url, param) {
-    const name = param.replace(/[\[\]]/g, "\\$&");
-    const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
-    const results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
-  }
 
   /**
    * Add a search bar
@@ -85,15 +77,15 @@ export default class SearchBar {
 
     // Execute search onload
     const url = window.location.href;
-    if (this.getQueryParam(url, 'search')) {
-      const q = this.getQueryParam(url, 'search');
+    if (getQueryParam(url, 'search')) {
+      const q = getQueryParam(url, 'search');
       container.getElementsByTagName('input')[0].value = q;
       getStore().dispatch(setKeyword(q));
       getStore().dispatch(search(addSearchClient, q));
     }
 
     window.onpopstate = function(event) {
-      const q = this.getQueryParam(document.location, 'search');
+      const q = getQueryParam(document.location, 'search');
       if (q) {
         container.getElementsByTagName('input')[0].value = q;
         getStore().dispatch(setKeyword(q));
