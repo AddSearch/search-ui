@@ -4,7 +4,7 @@ import { WARMUP_QUERY_PREFIX } from '../index';
 
 export function setHistory(keyword) {
   // ignore warmup query
-  if (keyword.indexOf(WARMUP_QUERY_PREFIX) === 0) {
+  if (keyword && keyword.indexOf(WARMUP_QUERY_PREFIX) === 0) {
     return;
   }
 
