@@ -1,4 +1,4 @@
-import { setUrl } from '../util/history';
+import { setHistory } from '../util/history';
 
 export const SEARCH_FETCH_START = 'SEARCH_FETCH_START';
 export const SEARCH_RESULTS = 'SEARCH_RESULTS';
@@ -6,7 +6,7 @@ export const SEARCH_RESULTS = 'SEARCH_RESULTS';
 
 export function search(client, keyword) {
   return dispatch => {
-    setUrl(keyword);
+    setHistory(keyword);
     dispatch(searchFetchStart());
     client.search(keyword, (res) => dispatch(searchResults(keyword, res)));
   }
