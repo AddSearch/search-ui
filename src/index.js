@@ -1,9 +1,12 @@
 import SearchBar from './components/searchbar';
 import SearchResults from './components/searchresults';
+import FilterGroup from './components/filtergroup';
 import oa from 'es6-object-assign';
 import { getStore, observeStoreByKey } from './store';
+import { initFromURL } from './util/history';
 oa.polyfill();
 
+export const WARMUP_QUERY_PREFIX = '_addsearch_';
 
 observeStoreByKey(getStore(), 'keyword', s => console.log('Keyword changed: ' + JSON.stringify(s)));
 observeStoreByKey(getStore(), 'suggestions', s => console.log('Suggestions received: ' + JSON.stringify(s)));
@@ -12,7 +15,9 @@ export default class SearchUI {
 
   constructor(client, settings){
     this.client = client;
-    this.settings = settings;
+    this.settings = settings || {};
+
+    initFromURL(this.client);
   }
 
 
@@ -35,6 +40,22 @@ export default class SearchUI {
     observeStoreByKey(getStore(), 'search',
       (s) => {
         self.resultsCallback(s, self);
+      }
+    );
+  }
+
+
+  filterGroup(filterGroupConf) {
+    const filterGroup = new FilterGroup(this.client, filterGroupConf);
+    const activeFilters = getStore().getState().filters.filters; // Might be filled from URL in constructor
+    filterGroup.render(activeFilters);
+
+    observeStoreByKey(getStore(), 'filters',
+      (s) => {
+      console.log(s);
+        const active = s.filters ? s.filters.split(',') : [];
+        this.log('Filters: Active filters changed. Re-rendering')
+        filterGroup.render(active);
       }
     );
   }
