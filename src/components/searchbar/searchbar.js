@@ -75,6 +75,12 @@ export default class SearchBar {
         return false;
       }
     };
+    container.getElementsByTagName('input')[0].onfocus = function(e) {
+      // Warmup query if search-as-you-type
+      if (e.target.value === '' && self.searchBarConf.searchAsYouType === true) {
+        getStore().dispatch(search(self.addSearchClient, '_addsearch_' + Math.random()));
+      }
+    };
 
     // Event listeners to the possible search button
     if (container.getElementsByTagName('button').length > 0) {

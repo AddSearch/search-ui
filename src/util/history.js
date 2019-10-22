@@ -1,6 +1,13 @@
 /* global history, window */
 
-export function setUrl(keyword) {
+import { WARMUP_QUERY_PREFIX } from '../index';
+
+export function setHistory(keyword) {
+  // ignore warmup query
+  if (keyword.indexOf(WARMUP_QUERY_PREFIX) === 0) {
+    return;
+  }
+
   const url = window.location.href;
   const params = queryParamsToObject(url);
   params['search'] = keyword;
