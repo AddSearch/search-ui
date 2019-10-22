@@ -4,12 +4,12 @@ import {
 } from '../actions/search';
 
 const initialState = {
-  loading: false,
-  results: {}
+  keyword: null,
+  results: {},
+  loading: false
 };
 
 export default function search(state = initialState, action) {
-
   switch (action.type) {
     case SEARCH_FETCH_START:
       return Object.assign({}, state, {
@@ -18,11 +18,12 @@ export default function search(state = initialState, action) {
 
     case SEARCH_RESULTS:
       return Object.assign({}, state, {
-        loading: false,
-        results: action.results
+        keyword: action.keyword,
+        results: action.results,
+        loading: false
       });
 
     default:
-      return state
+      return state;
   }
 }
