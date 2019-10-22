@@ -48,13 +48,15 @@ export default class FilterGroup {
   }
 
 
-  render(activeFiltersArray) {
+  render(activeFilters) {
     const html = handlebars.compile(this.conf.template || TEMPLATE)(this.conf);
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
 
     const options = container.getElementsByTagName('li');
     const self = this;
+
+    const activeFiltersArray = activeFilters || [];
 
     // Filter options
     for (let i=0; i<options.length; i++) {
