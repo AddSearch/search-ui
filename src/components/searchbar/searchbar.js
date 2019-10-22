@@ -2,8 +2,7 @@ import './searchbar.scss';
 import handlebars from 'handlebars';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
-import { getStore, observeStoreByKey } from '../../store';
-import { getQueryParam } from '../../util/history';
+import { getStore } from '../../store';
 
 
 /**
@@ -89,25 +88,6 @@ export default class SearchBar {
         if (keyword) {
           getStore().dispatch(search(self.addSearchClient, keyword));
         }
-      }
-    }
-
-
-    // Execute search onload
-    const url = window.location.href;
-    if (getQueryParam(url, 'search')) {
-      const q = getQueryParam(url, 'search');
-      container.getElementsByTagName('input')[0].value = q;
-      getStore().dispatch(setKeyword(q));
-      getStore().dispatch(search(this.addSearchClient, q));
-    }
-
-    window.onpopstate = function(event) {
-      const q = getQueryParam(document.location, 'search');
-      if (q) {
-        container.getElementsByTagName('input')[0].value = q;
-        getStore().dispatch(setKeyword(q));
-        getStore().dispatch(search(this.addSearchClient, q));
       }
     }
   }
