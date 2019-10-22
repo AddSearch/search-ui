@@ -9,8 +9,13 @@
   // AddSearch JS client library
   var client = new AddSearchClient('YOUR PUBLIC SITEKEY');
 
+  // Configuration
+  var conf = {
+    debug: true
+  };
+
   // Search UI library
-  var searchui = new AddSearchSearchUI(client);
+  var searchui = new AddSearchSearchUI(client, conf);
 
   // Add searchbar
   searchui.searchBar({

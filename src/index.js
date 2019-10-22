@@ -10,26 +10,26 @@ observeStoreByKey(getStore(), 'suggestions', s => console.log('Suggestions recei
 
 export default class SearchUI {
 
-  constructor(client){
+  constructor(client, settings){
     this.client = client;
-    this.searchResultsConf = null;
+    this.settings = settings;
   }
 
 
   /**
    * Add a search bar
    */
-  searchBar(conf) {
-    const searchbar = new SearchBar();
-    searchbar.render(this.client, conf);
+  searchBar(searchBarConf) {
+    const searchbar = new SearchBar(this.client, this.settings, searchBarConf);
+    searchbar.render();
   }
 
 
   /**
    * Add a search bar
    */
-  searchResults(conf) {
-    this.searchResultsConf = conf;
+  searchResults(searchResultsConf) {
+    this.searchResultsConf = searchResultsConf;
 
     const self = this;
     observeStoreByKey(getStore(), 'search',
@@ -37,19 +37,27 @@ export default class SearchUI {
         self.resultsCallback(s, self);
       }
     );
-
   }
-
 
 
   /**
    * Callback function when the search returns
    */
-  resultsCallback(search, scope) {
-    if (scope.searchResultsConf && !search.loading) {
-      console.log('rendering results');
+  resultsCallback(searchResults, scope) {
+    if (scope.searchResultsConf && !searchResults.loading) {
+      const t = (new Date()).getTime();
+      this.log('Search results: Received search results. Rendering..');
+      this.log(searchResults);
       const searchresults = new SearchResults();
-      searchresults.render(search.results, scope.searchResultsConf);
+      searchresults.render(searchResults.results, scope.searchResultsConf);
+      this.log('Search results: done in ' + ((new Date()).getTime() - t) + 'ms');
+    }
+  }
+
+
+  log(msg) {
+    if (this.settings.debug) {
+      console.log(msg);
     }
   }
 }
