@@ -1,9 +1,11 @@
 import SearchBar from './components/searchbar';
 import SearchResults from './components/searchresults';
+import FilterGroup from './components/filtergroup';
 import oa from 'es6-object-assign';
 import { getStore, observeStoreByKey } from './store';
 oa.polyfill();
 
+export const WARMUP_QUERY_PREFIX = '_addsearch_';
 
 observeStoreByKey(getStore(), 'keyword', s => console.log('Keyword changed: ' + JSON.stringify(s)));
 observeStoreByKey(getStore(), 'suggestions', s => console.log('Suggestions received: ' + JSON.stringify(s)));
@@ -37,6 +39,12 @@ export default class SearchUI {
         self.resultsCallback(s, self);
       }
     );
+  }
+
+
+  filterGroup(filterGroupConf) {
+    const filterGroup = new FilterGroup(filterGroupConf);
+    filterGroup.render();
   }
 
 
