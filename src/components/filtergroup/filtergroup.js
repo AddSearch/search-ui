@@ -48,7 +48,7 @@ export default class FilterGroup {
   }
 
 
-  render(activeFilters) {
+  render(activeFiltersArray) {
     const html = handlebars.compile(this.conf.template || TEMPLATE)(this.conf);
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
@@ -56,14 +56,14 @@ export default class FilterGroup {
     const options = container.getElementsByTagName('li');
     const self = this;
 
-    const activeFiltersArray = activeFilters || [];
+    this.activeFilters = activeFiltersArray || [];
 
     // Filter options
     for (let i=0; i<options.length; i++) {
       let option = options[i];
 
       // Set the current active status
-      if (activeFiltersArray.indexOf(option.getAttribute('data-filter')) !== -1) {
+      if (this.activeFilters.indexOf(option.getAttribute('data-filter')) !== -1) {
         option.setAttribute('data-active', 'true');
       }
 
