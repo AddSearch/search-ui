@@ -5,7 +5,7 @@
   "main": "index.js",
   "jsdelivr": "./dist/addsearch-search-ui.min.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --recursive --require @babel/register",
+    "test": "./node_modules/mocha/bin/mocha --recursive --require @babel/register --require ignore-styles",
     "build": "npm run test && ./node_modules/webpack-cli/bin/cli.js",
     "watch": "./node_modules/webpack-cli/bin/cli.js --watch"
   },
@@ -50,6 +50,7 @@
     "chai": "^4.2.0",
     "css-loader": "^3.2.0",
     "esm": "^3.2.22",
+    "ignore-styles": "^5.0.1",
     "mini-css-extract-plugin": "^0.8.0",
     "mocha": "^5.2.0",
     "node-sass": "^4.12.0",
