@@ -14,7 +14,7 @@ export default class SearchUI {
 
   constructor(client, settings){
     this.client = client;
-    this.settings = settings;
+    this.settings = settings || {};
   }
 
 
@@ -44,7 +44,16 @@ export default class SearchUI {
 
   filterGroup(filterGroupConf) {
     const filterGroup = new FilterGroup(this.client, filterGroupConf);
-    filterGroup.render();
+    filterGroup.render([]);
+
+    observeStoreByKey(getStore(), 'filters',
+      (s) => {
+      console.log(s);
+        const active = s.filters ? s.filters.split(',') : [];
+        this.log('Filters changed. Re-render')
+        filterGroup.render(active);
+      }
+    );
   }
 
 
