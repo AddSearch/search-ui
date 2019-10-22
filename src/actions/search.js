@@ -5,22 +5,23 @@ export const SEARCH_RESULTS = 'SEARCH_RESULTS';
 
 
 export function search(client, keyword) {
-  setUrl(keyword);
   return dispatch => {
+    setUrl(keyword);
     dispatch(searchFetchStart());
-    client.search(keyword, (res) => dispatch(searchResults(res)));
+    client.search(keyword, (res) => dispatch(searchResults(keyword, res)));
   }
 }
 
-export function searchFetchStart() {
+export function searchFetchStart(keyword) {
   return {
     type: SEARCH_FETCH_START
   }
 }
 
-export function searchResults(results) {
+export function searchResults(keyword, results) {
   return {
     type: SEARCH_RESULTS,
+    keyword,
     results
   }
 }
