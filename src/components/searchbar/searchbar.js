@@ -2,7 +2,6 @@ import './searchbar.scss';
 import handlebars from 'handlebars';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
-import { getSuggestions } from '../../actions/suggestions';
 import { getStore, observeStoreByKey } from '../../store';
 import { getQueryParam } from '../../util/history';
 
@@ -22,41 +21,50 @@ const TEMPLATE = `
 
 export default class SearchBar {
 
-  constructor() {
+  constructor(addSearchClient, settings, searchBarConf) {
+    this.addSearchClient = addSearchClient;
+    this.settings = settings;
+    this.searchBarConf = searchBarConf;
 
+    this.keyword = '';
   }
 
 
   /**
    * Add a search bar
    */
-  render(addSearchClient, conf) {
+  render() {
     // Compile template and inject to container
-    const html = handlebars.compile(conf.template || TEMPLATE)(conf);
-    const container = document.getElementById(conf.containerId);
+    const html = handlebars.compile(this.searchBarConf.template || TEMPLATE)(this.searchBarConf);
+    const container = document.getElementById(this.searchBarConf.containerId);
     container.innerHTML = html;
 
     // Event listeners to the search field
     const self = this;
     container.getElementsByTagName('input')[0].onkeyup = function(e) {
       const keyword = e.target.value;
+      if (keyword === this.keyword) {
+        return;
+      }
+      this.keyword = keyword;
 
       getStore().dispatch(setKeyword(keyword));
 
       if (keyword.length > 0 && keyword !== this.previousSuggestionKeyword) {
-        getStore().dispatch(getSuggestions(addSearchClient, keyword));
+        // getStore().dispatch(getSuggestions(addSearchClient, keyword));
         this.previousSuggestionKeyword = keyword;
       }
 
       // Search as you type
-      if (conf.searchAsYouType === true && keyword) {
-        getStore().dispatch(search(addSearchClient, keyword));
+      if (self.searchBarConf.searchAsYouType === true && keyword) {
+        console.log('search ' + keyword);
+        getStore().dispatch(search(self.addSearchClient, keyword));
       }
 
       // Enter pressed
       if (e.keyCode === 13) {
-        if (keyword && conf.searchAsYouType !== true) {
-          getStore().dispatch(search(addSearchClient, keyword));
+        if (keyword && self.searchBarConf.searchAsYouType !== true) {
+          getStore().dispatch(search(self.addSearchClient, keyword));
         }
         return false;
       }
@@ -73,7 +81,7 @@ export default class SearchBar {
       container.getElementsByTagName('button')[0].onclick = function (e) {
         const keyword = container.getElementsByTagName('input')[0].value;
         if (keyword) {
-          getStore().dispatch(search(addSearchClient, keyword));
+          getStore().dispatch(search(self.addSearchClient, keyword));
         }
       }
     }
@@ -85,7 +93,7 @@ export default class SearchBar {
       const q = getQueryParam(url, 'search');
       container.getElementsByTagName('input')[0].value = q;
       getStore().dispatch(setKeyword(q));
-      getStore().dispatch(search(addSearchClient, q));
+      getStore().dispatch(search(this.addSearchClient, q));
     }
 
     window.onpopstate = function(event) {
@@ -93,7 +101,7 @@ export default class SearchBar {
       if (q) {
         container.getElementsByTagName('input')[0].value = q;
         getStore().dispatch(setKeyword(q));
-        getStore().dispatch(search(addSearchClient, q));
+        getStore().dispatch(search(this.addSearchClient, q));
       }
     }
   }
