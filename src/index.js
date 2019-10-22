@@ -3,6 +3,7 @@ import SearchResults from './components/searchresults';
 import FilterGroup from './components/filtergroup';
 import oa from 'es6-object-assign';
 import { getStore, observeStoreByKey } from './store';
+import { initFromURL } from './util/history';
 oa.polyfill();
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
@@ -15,6 +16,8 @@ export default class SearchUI {
   constructor(client, settings){
     this.client = client;
     this.settings = settings || {};
+
+    initFromURL(this.client);
   }
 
 
@@ -44,13 +47,14 @@ export default class SearchUI {
 
   filterGroup(filterGroupConf) {
     const filterGroup = new FilterGroup(this.client, filterGroupConf);
-    filterGroup.render([]);
+    const activeFilters = getStore().getState().filters.filters; // Might be filled from URL in constructor
+    filterGroup.render(activeFilters);
 
     observeStoreByKey(getStore(), 'filters',
       (s) => {
       console.log(s);
         const active = s.filters ? s.filters.split(',') : [];
-        this.log('Filters changed. Re-render')
+        this.log('Filters: Active filters changed. Re-rendering')
         filterGroup.render(active);
       }
     );
