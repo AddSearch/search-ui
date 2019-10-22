@@ -1,23 +1,40 @@
 /* global history, window */
 
 import { WARMUP_QUERY_PREFIX } from '../index';
+import { search } from '../actions/search';
+import { setKeyword } from '../actions/keyword';
+import { setFilters } from '../actions/filters';
+import { getStore } from '../store';
 
-export function setHistory(keyword) {
-  // ignore warmup query
-  if (keyword && keyword.indexOf(WARMUP_QUERY_PREFIX) === 0) {
+export const HISTORY_PARAMETERS = {
+  SEARCH: 'search',
+  FILTERS: 'filters'
+}
+
+
+export function setHistory(parameter, value) {
+  // ignore warmup search query
+  if (parameter === HISTORY_PARAMETERS.SEARCH &&
+      value && value.indexOf(WARMUP_QUERY_PREFIX) === 0) {
     return;
   }
 
   const url = window.location.href;
   const params = queryParamsToObject(url);
-  params['search'] = keyword;
+  if (value !== null && value !== '') {
+    params[parameter] = value;
+  }
+  else {
+    delete params[parameter];
+  }
   let stateUrl = url;
   if (url.indexOf('?') !== -1) {
     stateUrl = url.substring(0, url.indexOf('?'));
   }
   stateUrl = stateUrl + '?' + objectToQueryParams(params);
-  history.pushState(null, 'Search: ' + keyword, stateUrl);
+  history.pushState(null, '', stateUrl);
 }
+
 
 export function getQueryParam(url, param) {
   const name = param.replace(/[\[\]]/g, "\\$&");
@@ -27,6 +44,33 @@ export function getQueryParam(url, param) {
   if (!results[2]) return '';
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+
+
+export function initFromURL(client) {
+  const url = window.location.href;
+  const qs = queryParamsToObject(url);
+  const store = getStore();
+
+  if (qs[HISTORY_PARAMETERS.FILTERS]) {
+    store.dispatch(setFilters(client, qs[HISTORY_PARAMETERS.FILTERS]));
+  }
+
+  if (qs[HISTORY_PARAMETERS.SEARCH]) {
+    store.dispatch(setKeyword(qs[HISTORY_PARAMETERS.SEARCH]));
+    store.dispatch(search(client, qs[HISTORY_PARAMETERS.SEARCH]));
+  }
+
+  /*window.onpopstate = function(event) {
+    const q = getQueryParam(document.location, 'search');
+    if (q) {
+      container.getElementsByTagName('input')[0].value = q;
+      getStore().dispatch(setKeyword(q));
+      getStore().dispatch(search(this.addSearchClient, q));
+    }
+  }*/
+}
+
+
 
 /**
  * Pick up query parameters from an URL and return them as a JSON object
