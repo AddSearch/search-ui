@@ -47,14 +47,13 @@ export default class SearchUI {
 
   filterGroup(filterGroupConf) {
     const filterGroup = new FilterGroup(this.client, filterGroupConf);
-    const activeFilters = getStore().getState().filters.filters; // Might be filled from URL in constructor
-    filterGroup.render(activeFilters);
+    filterGroup.render([]);
 
     observeStoreByKey(getStore(), 'filters',
       (s) => {
       console.log(s);
-        const active = s.filters ? s.filters.split(',') : [];
-        this.log('Filters: Active filters changed. Re-rendering')
+        const active = s.filters ? s.filters.split(',') : null;
+        this.log('Filters: Active filters changed to ' + active + '. Re-rendering')
         filterGroup.render(active);
       }
     );
