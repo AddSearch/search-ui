@@ -43,7 +43,7 @@ export default class SearchUI {
 
 
   filterGroup(filterGroupConf) {
-    const filterGroup = new FilterGroup(filterGroupConf);
+    const filterGroup = new FilterGroup(this.client, filterGroupConf);
     filterGroup.render();
   }
 
