@@ -1,4 +1,11 @@
 .addsearch-filtergroup {
 
+  li {
+    cursor: pointer;
+  }
+  li[data-active="true"] {
+    font-weight: bold;
+  }
+
 }
 
