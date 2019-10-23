@@ -8,9 +8,6 @@ oa.polyfill();
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 
-observeStoreByKey(getStore(), 'keyword', s => console.log('Keyword changed: ' + JSON.stringify(s)));
-observeStoreByKey(getStore(), 'suggestions', s => console.log('Suggestions received: ' + JSON.stringify(s)));
-
 export default class SearchUI {
 
   constructor(client, settings){
@@ -51,7 +48,6 @@ export default class SearchUI {
 
     observeStoreByKey(getStore(), 'filters',
       (s) => {
-      console.log(s);
         const active = s.filters ? s.filters.split(',') : null;
         this.log('Filters: Active filters changed to ' + active + '. Re-rendering')
         filterGroup.render(active);
