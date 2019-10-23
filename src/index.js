@@ -12,6 +12,12 @@ oa.polyfill();
 handlebars.registerHelper('equals', function(arg1, arg2, options) {
   return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
 });
+handlebars.registerHelper('gt', function(arg1, arg2, options) {
+  return arg1 > arg2 ? options.fn(this) : options.inverse(this);
+});
+handlebars.registerHelper('lt', function(arg1, arg2, options) {
+  return arg1 < arg2 ? options.fn(this) : options.inverse(this);
+});
 
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
