@@ -4,10 +4,6 @@ import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { getStore } from '../../store';
 
-handlebars.registerHelper('equals', function(arg1, arg2, options) {
-  return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
-});
-
 /**
  * HTML template
  */
