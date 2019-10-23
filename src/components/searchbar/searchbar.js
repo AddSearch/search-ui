@@ -4,13 +4,16 @@ import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { getStore } from '../../store';
 
+handlebars.registerHelper('equals', function(arg1, arg2, options) {
+  return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
+});
 
 /**
  * HTML template
  */
 const TEMPLATE = `
   <form class="addsearch-searchbar" autocomplete="off" action="?" role="search">
-    <input type="search" placeholder="{{placeholder}}" autofocus="{{autofocus}}" aria-label="Search field" />
+    <input type="search" placeholder="{{placeholder}}" aria-label="Search field" {{#equals autofocus "true"}}autofocus{{/equals}} />
     {{#if button}}
       <button type="button" aria-label="Search button" >{{button}}</button>
     {{/if}}
@@ -37,56 +40,61 @@ export default class SearchBar {
     const html = handlebars.compile(this.searchBarConf.template || TEMPLATE)(this.searchBarConf);
     const container = document.getElementById(this.searchBarConf.containerId);
     container.innerHTML = html;
+    const field = container.getElementsByTagName('input')[0];
+    const store = getStore();
+
+    // Keyword already stored in redux
+    const preDefinedSearchTerm = store.getState().keyword.value;
+    if (preDefinedSearchTerm) {
+      this.keyword = preDefinedSearchTerm;
+      field.value = preDefinedSearchTerm;
+    }
 
     // Event listeners to the search field
     const self = this;
-    container.getElementsByTagName('input')[0].onkeyup = function(e) {
+    field.onkeyup = function(e) {
       const keyword = e.target.value;
       if (keyword === this.keyword) {
         return;
       }
+
+      // Store keyword
       this.keyword = keyword;
-
-      getStore().dispatch(setKeyword(keyword));
-
-      if (keyword.length > 0 && keyword !== this.previousSuggestionKeyword) {
-        // getStore().dispatch(getSuggestions(addSearchClient, keyword));
-        this.previousSuggestionKeyword = keyword;
-      }
+      store.dispatch(setKeyword(keyword));
 
       // Search as you type
       if (self.searchBarConf.searchAsYouType === true && keyword) {
         console.log('search ' + keyword);
-        getStore().dispatch(search(self.addSearchClient, keyword));
+        store.dispatch(search(self.addSearchClient, keyword));
       }
 
       // Enter pressed
       if (e.keyCode === 13) {
         if (keyword && self.searchBarConf.searchAsYouType !== true) {
-          getStore().dispatch(search(self.addSearchClient, keyword));
+          store.dispatch(search(self.addSearchClient, keyword));
         }
         return false;
       }
     };
-    container.getElementsByTagName('input')[0].onkeypress = function(e) {
+    field.onkeypress = function(e) {
       // Enter pressed
       if (e.keyCode === 13) {
         return false;
       }
     };
-    container.getElementsByTagName('input')[0].onfocus = function(e) {
+    field.onfocus = function(e) {
       // Warmup query if search-as-you-type
       if (e.target.value === '' && self.searchBarConf.searchAsYouType === true) {
-        getStore().dispatch(search(self.addSearchClient, '_addsearch_' + Math.random()));
+        store.dispatch(search(self.addSearchClient, '_addsearch_' + Math.random()));
       }
     };
 
     // Event listeners to the possible search button
     if (container.getElementsByTagName('button').length > 0) {
       container.getElementsByTagName('button')[0].onclick = function (e) {
-        const keyword = container.getElementsByTagName('input')[0].value;
+        const keyword = store.getState().keyword.value;
         if (keyword) {
-          getStore().dispatch(search(self.addSearchClient, keyword));
+          store.dispatch(search(self.addSearchClient, keyword));
         }
       }
     }
