@@ -4,6 +4,7 @@
 ```html
 <div id="searchbar"></div>
 <div id="results"></div>
+<div id="pagination"></div>
 
 <script>
   // AddSearch JS client library
@@ -24,9 +25,14 @@
     button: 'Search'
   });
 
-  // Add search results view
+  // Search results view
   searchui.searchResults({
     containerId: 'results'
+  });
+  
+  // Pagination
+  searchui.pagination({
+    containerId: 'pagination'
   });
 </script>
 ```
