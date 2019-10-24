@@ -68,13 +68,14 @@ export default class SearchUI {
 
 
   pagination(conf) {
-    const pagination = new Pagination(conf);
+    const pagination = new Pagination(this.client, conf);
     pagination.render(1, 0, 10);
 
     observeStoreByKey(getStore(), 'search',
       (s) => {
-        const results = s.results.total_hits || 0;
-        pagination.render(1, results, 10);
+        const currentPage = getStore().getState().pagination.page || 1;
+        const resultCount = s.results.total_hits || 0;
+        pagination.render(currentPage, resultCount, 10);
       }
     );
   }
