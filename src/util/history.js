@@ -8,7 +8,8 @@ import { getStore } from '../store';
 
 export const HISTORY_PARAMETERS = {
   SEARCH: 'search',
-  FILTERS: 'filters'
+  FILTERS: 'filters',
+  PAGE: 'page'
 }
 
 
