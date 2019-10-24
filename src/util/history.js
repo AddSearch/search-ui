@@ -3,13 +3,14 @@
 import { WARMUP_QUERY_PREFIX } from '../index';
 import { search } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
+import { setPage } from '../actions/pagination';
 import { setFilters } from '../actions/filters';
 import { getStore } from '../store';
 
 export const HISTORY_PARAMETERS = {
   SEARCH: 'search',
-  FILTERS: 'filters',
-  PAGE: 'page'
+  FILTERS: 'search_filters',
+  PAGE: 'search_page'
 }
 
 
@@ -22,12 +23,20 @@ export function setHistory(parameter, value) {
 
   const url = window.location.href;
   const params = queryParamsToObject(url);
-  if (value !== null && value !== '') {
+
+  // If pagination parameter and page=1, don't add to URL
+  if (parameter === HISTORY_PARAMETERS.PAGE && value == 1) {
+    delete params[parameter];
+  }
+  // Add value to URL
+  else if (value !== null && value !== '') {
     params[parameter] = value;
   }
+  // No value. Delete query parameter
   else {
     delete params[parameter];
   }
+
   let stateUrl = url;
   if (url.indexOf('?') !== -1) {
     stateUrl = url.substring(0, url.indexOf('?'));
@@ -54,6 +63,10 @@ export function initFromURL(client) {
 
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
     store.dispatch(setFilters(client, qs[HISTORY_PARAMETERS.FILTERS]));
+  }
+
+  if (qs[HISTORY_PARAMETERS.PAGE]) {
+    store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10)));
   }
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
