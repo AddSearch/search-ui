@@ -3,7 +3,7 @@ import {
 } from '../actions/pagination';
 
 const initialState = {
-  filters: null
+  page: null
 };
 
 export default function pagination(state = initialState, action) {
