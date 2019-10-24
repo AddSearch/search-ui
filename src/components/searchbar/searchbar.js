@@ -59,14 +59,14 @@ export default class SearchBar {
       store.dispatch(setKeyword(keyword));
 
       // Search as you type
-      if (self.searchBarConf.searchAsYouType === true && keyword) {
+      if (self.searchBarConf.searchAsYouType === true) {
         console.log('search ' + keyword);
         store.dispatch(search(self.addSearchClient, keyword));
       }
 
       // Enter pressed
       if (e.keyCode === 13) {
-        if (keyword && self.searchBarConf.searchAsYouType !== true) {
+        if (self.searchBarConf.searchAsYouType !== true) {
           store.dispatch(search(self.addSearchClient, keyword));
         }
         return false;
