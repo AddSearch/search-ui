@@ -8,20 +8,21 @@ import { getStore } from '../../store';
 
 const TEMPLATE = `
   <div class="addsearch-pagination">    
-    {{#gt currentPage 1}}Previous{{/gt}}
+    {{#gt currentPage 1}}<button>Previous</button>{{/gt}}
     {{#each pages}}
-      <div class="addsearch-pagination-page" {{#equals ../currentPage this}}data-active="true"{{/equals}}>
+      <button {{#equals ../currentPage this}}data-active="true"{{/equals}}>
         {{this}}
-      </div>
+      </button>
     {{/each}}
-    {{#lt currentPage lastPage}}Next{{/lt}}
+    {{#lt currentPage lastPage}}<button>Next</button>{{/lt}}
   </div>
 `;
 
 
 export default class Pagination {
 
-  constructor(conf) {
+  constructor(client, conf) {
+    this.client = client;
     this.conf = conf;
   }
 
@@ -38,5 +39,17 @@ export default class Pagination {
 
     const html = handlebars.compile(this.conf.template || TEMPLATE)(data);
     document.getElementById(this.conf.containerId).innerHTML = html;
+
+    // Attach events
+    const buttons = document.getElementById(this.conf.containerId).getElementsByTagName('button');
+    for (let i=0; i<buttons.length; i++) {
+      const button = buttons[i];
+      button.onclick = (e) => {
+        const page = parseInt(e.target.textContent, 10);
+        getStore().dispatch(setPage(this.client, page));
+        const keyword = getStore().getState().keyword.value;
+        getStore().dispatch(search(this.client, keyword, 'top'));
+      };
+    }
   }
 }
