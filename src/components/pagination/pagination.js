@@ -1,6 +1,9 @@
 import './pagination.scss';
 import handlebars from 'handlebars';
 import { getPageNumbers } from '../../util/pagination';
+import { setPage } from '../../actions/pagination';
+import { search } from '../../actions/search';
+import { getStore } from '../../store';
 
 
 const TEMPLATE = `
