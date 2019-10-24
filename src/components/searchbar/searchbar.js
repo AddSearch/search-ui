@@ -1,6 +1,7 @@
 import './searchbar.scss';
 import handlebars from 'handlebars';
 import { search } from '../../actions/search';
+import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
 import { getStore } from '../../store';
 
@@ -19,8 +20,8 @@ const TEMPLATE = `
 
 export default class SearchBar {
 
-  constructor(addSearchClient, settings, searchBarConf) {
-    this.addSearchClient = addSearchClient;
+  constructor(client, settings, searchBarConf) {
+    this.client = client;
     this.settings = settings;
     this.searchBarConf = searchBarConf;
 
@@ -60,14 +61,17 @@ export default class SearchBar {
 
       // Search as you type
       if (self.searchBarConf.searchAsYouType === true) {
-        console.log('search ' + keyword);
-        store.dispatch(search(self.addSearchClient, keyword));
+        // Reset paging
+        getStore().dispatch(setPage(self.client, 1));
+        store.dispatch(search(self.client, keyword));
       }
 
       // Enter pressed
       if (e.keyCode === 13) {
         if (self.searchBarConf.searchAsYouType !== true) {
-          store.dispatch(search(self.addSearchClient, keyword));
+          // Reset paging
+          getStore().dispatch(setPage(self.client, 1));
+          store.dispatch(search(self.client, keyword));
         }
         return false;
       }
@@ -81,7 +85,7 @@ export default class SearchBar {
     field.onfocus = function(e) {
       // Warmup query if search-as-you-type
       if (e.target.value === '' && self.searchBarConf.searchAsYouType === true) {
-        store.dispatch(search(self.addSearchClient, '_addsearch_' + Math.random()));
+        store.dispatch(search(self.client, '_addsearch_' + Math.random()));
       }
     };
 
@@ -89,9 +93,9 @@ export default class SearchBar {
     if (container.getElementsByTagName('button').length > 0) {
       container.getElementsByTagName('button')[0].onclick = function (e) {
         const keyword = store.getState().keyword.value;
-        if (keyword) {
-          store.dispatch(search(self.addSearchClient, keyword));
-        }
+        // Reset paging
+        getStore().dispatch(setPage(self.client, 1));
+        store.dispatch(search(self.client, keyword));
       }
     }
   }
