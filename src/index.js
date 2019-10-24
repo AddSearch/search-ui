@@ -73,9 +73,11 @@ export default class SearchUI {
 
     observeStoreByKey(getStore(), 'search',
       (s) => {
-        const currentPage = getStore().getState().pagination.page || 1;
-        const resultCount = s.results.total_hits || 0;
-        pagination.render(currentPage, resultCount, 10);
+        if (s.loading !== true) {
+          const currentPage = getStore().getState().pagination.page || 1;
+          const resultCount = s.results.total_hits || 0;
+          pagination.render(currentPage, resultCount, 10);
+        }
       }
     );
   }
