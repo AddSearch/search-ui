@@ -1,10 +1,24 @@
+import handlebars from 'handlebars';
 import SearchBar from './components/searchbar';
 import SearchResults from './components/searchresults';
 import FilterGroup from './components/filtergroup';
+import Pagination from './components/pagination';
 import oa from 'es6-object-assign';
 import { getStore, observeStoreByKey } from './store';
 import { initFromURL } from './util/history';
+
+// Static polyfills and helpers
 oa.polyfill();
+handlebars.registerHelper('equals', function(arg1, arg2, options) {
+  return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
+});
+handlebars.registerHelper('gt', function(arg1, arg2, options) {
+  return arg1 > arg2 ? options.fn(this) : options.inverse(this);
+});
+handlebars.registerHelper('lt', function(arg1, arg2, options) {
+  return arg1 < arg2 ? options.fn(this) : options.inverse(this);
+});
+
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 
@@ -21,17 +35,14 @@ export default class SearchUI {
   /**
    * Add a search bar
    */
-  searchBar(searchBarConf) {
-    const searchbar = new SearchBar(this.client, this.settings, searchBarConf);
+  searchBar(conf) {
+    const searchbar = new SearchBar(this.client, this.settings, conf);
     searchbar.render();
   }
 
 
-  /**
-   * Add a search bar
-   */
-  searchResults(searchResultsConf) {
-    this.searchResultsConf = searchResultsConf;
+  searchResults(conf) {
+    this.searchResultsConf = conf;
 
     const self = this;
     observeStoreByKey(getStore(), 'search',
@@ -42,8 +53,8 @@ export default class SearchUI {
   }
 
 
-  filterGroup(filterGroupConf) {
-    const filterGroup = new FilterGroup(this.client, filterGroupConf);
+  filterGroup(conf) {
+    const filterGroup = new FilterGroup(this.client, conf);
     filterGroup.render([]);
 
     observeStoreByKey(getStore(), 'filters',
@@ -51,6 +62,22 @@ export default class SearchUI {
         const active = s.filters ? s.filters.split(',') : null;
         this.log('Filters: Active filters changed to ' + active + '. Re-rendering')
         filterGroup.render(active);
+      }
+    );
+  }
+
+
+  pagination(conf) {
+    const pagination = new Pagination(this.client, conf);
+    pagination.render(1, 0, 10);
+
+    observeStoreByKey(getStore(), 'search',
+      (s) => {
+        if (s.loading !== true) {
+          const currentPage = getStore().getState().pagination.page || 1;
+          const resultCount = s.results.total_hits || 0;
+          pagination.render(currentPage, resultCount, 10);
+        }
       }
     );
   }
