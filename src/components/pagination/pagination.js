@@ -8,13 +8,17 @@ import { getStore } from '../../store';
 
 const TEMPLATE = `
   <div class="addsearch-pagination">    
-    {{#gt currentPage 1}}<button>Previous</button>{{/gt}}
+    {{#gt currentPage 1}}
+      <button data-page="previous">Previous</button>
+    {{/gt}}
     {{#each pages}}
-      <button {{#equals ../currentPage this}}data-active="true"{{/equals}}>
+      <button data-page="{{this}}" {{#equals ../currentPage this}}data-active="true"{{/equals}}>
         {{this}}
       </button>
     {{/each}}
-    {{#lt currentPage lastPage}}<button>Next</button>{{/lt}}
+    {{#lt currentPage lastPage}}
+      <button data-page="next">Next</button>
+    {{/lt}}
   </div>
 `;
 
@@ -45,8 +49,24 @@ export default class Pagination {
     for (let i=0; i<buttons.length; i++) {
       const button = buttons[i];
       button.onclick = (e) => {
-        const page = parseInt(e.target.textContent, 10);
-        getStore().dispatch(setPage(this.client, page));
+
+        // Previous
+        if (button.getAttribute('data-page') === 'previous') {
+          const currentPage = getStore().getState().pagination.page;
+          getStore().dispatch(setPage(this.client, currentPage - 1));
+        }
+        // Next
+        else if (button.getAttribute('data-page') === 'next') {
+          const currentPage = getStore().getState().pagination.page || 1;
+          getStore().dispatch(setPage(this.client, currentPage + 1));
+        }
+        // Page number
+        else {
+          const page = parseInt(button.getAttribute('data-page'), 10);
+          getStore().dispatch(setPage(this.client, page));
+        }
+
+        // Refresh keyword
         const keyword = getStore().getState().keyword.value;
         getStore().dispatch(search(this.client, keyword, 'top'));
       };
