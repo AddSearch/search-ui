@@ -1,6 +1,7 @@
 import './filtergroup.scss';
 import handlebars from 'handlebars';
 import { setFilters } from '../../actions/filters';
+import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { getStore } from '../../store';
 
@@ -40,11 +41,12 @@ export default class FilterGroup {
     // Dispatch filter string
     getStore().dispatch(setFilters(this.client, this.activeFilters.join()));
 
+    // Reset paging
+    getStore().dispatch(setPage(this.client, 1));
+
     // Refresh search
     const keyword = getStore().getState().keyword.value;
-    if (keyword && keyword !== '') {
-      getStore().dispatch(search(this.client, keyword));
-    }
+    getStore().dispatch(search(this.client, keyword));
   }
 
 

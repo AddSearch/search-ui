@@ -4,10 +4,6 @@ import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { getStore } from '../../store';
 
-handlebars.registerHelper('equals', function(arg1, arg2, options) {
-  return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
-});
-
 /**
  * HTML template
  */
@@ -63,14 +59,14 @@ export default class SearchBar {
       store.dispatch(setKeyword(keyword));
 
       // Search as you type
-      if (self.searchBarConf.searchAsYouType === true && keyword) {
+      if (self.searchBarConf.searchAsYouType === true) {
         console.log('search ' + keyword);
         store.dispatch(search(self.addSearchClient, keyword));
       }
 
       // Enter pressed
       if (e.keyCode === 13) {
-        if (keyword && self.searchBarConf.searchAsYouType !== true) {
+        if (self.searchBarConf.searchAsYouType !== true) {
           store.dispatch(search(self.addSearchClient, keyword));
         }
         return false;
