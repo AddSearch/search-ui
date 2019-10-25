@@ -29,6 +29,13 @@ export default class SearchBar {
   }
 
 
+  search(client, keyword) {
+    const store = getStore();
+    store.dispatch(setPage(client, 1));
+    store.dispatch(search(client, keyword));
+  }
+
+
   /**
    * Add a search bar
    */
@@ -61,27 +68,19 @@ export default class SearchBar {
 
       // Search as you type
       if (self.searchBarConf.searchAsYouType === true) {
-        // Reset paging
-        getStore().dispatch(setPage(self.client, 1));
-        store.dispatch(search(self.client, keyword));
-      }
-
-      // Enter pressed
-      if (e.keyCode === 13) {
-        if (self.searchBarConf.searchAsYouType !== true) {
-          // Reset paging
-          getStore().dispatch(setPage(self.client, 1));
-          store.dispatch(search(self.client, keyword));
-        }
-        return false;
+        self.search(self.client, keyword);
       }
     };
+
     field.onkeypress = function(e) {
       // Enter pressed
       if (e.keyCode === 13) {
+        const keyword = e.target.value;
+        self.search(self.client, keyword);
         return false;
       }
     };
+
     field.onfocus = function(e) {
       // Warmup query if search-as-you-type
       if (e.target.value === '' && self.searchBarConf.searchAsYouType === true) {
@@ -93,9 +92,7 @@ export default class SearchBar {
     if (container.getElementsByTagName('button').length > 0) {
       container.getElementsByTagName('button')[0].onclick = function (e) {
         const keyword = store.getState().keyword.value;
-        // Reset paging
-        getStore().dispatch(setPage(self.client, 1));
-        store.dispatch(search(self.client, keyword));
+        self.search(self.client, keyword);
       }
     }
 
