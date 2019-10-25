@@ -10,11 +10,11 @@ const TEMPLATE = `
     
     {{#each hits}}
       <div class="hit">
-        <h3>{{title}}</h3>
+        <h3>{{title}}</h3>      
         <p>
           <img src="{{images.main}}" alt="{{title}}" width="100" height="100" />
           {{{highlight}}}..
-        </p>
+        </p>        
         
       </div>
     {{/each}}
@@ -30,7 +30,7 @@ export default class SearchResults {
 
   render(results, conf) {
     const r = results || {};
-    if (conf.showNumberOfResults === false) {
+    if (conf.showNumberOfResults === false || !r.hits) {
       r.resultcount = false;
     }
     else {
