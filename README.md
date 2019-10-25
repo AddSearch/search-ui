@@ -76,9 +76,10 @@ Settings that can be passed to the ```searchBar``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for this search bar |
-| button | String | n/a | If a value is given, a button to execute the search is added next to the search field. Button's label is the value of this setting parameter. |
-| placeholder | String | n/a | If a value is given, the value of this setting parameter is added as a placeholder text to the input field |
 | autofocus | true, false | true | Should the input field be focused automatically when the page is loaded |
+| button | String | n/a | Add a button to execute the search next to the search field. Button's text is the value of this setting |
+| placeholder | String | n/a | Input field's placeholder text |
+| searchAsYouType| true, false | false | Execute search after every keystroke |
 
 ## Supported web browsers
 The client is tested on
