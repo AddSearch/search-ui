@@ -1,8 +1,9 @@
 # AddSearch Search UI Library
 
-With this library you can create beautiful, lightning fast, and cross-browser compatible search solutions.
+With the AddSearch Search UI library you can create beautiful, lightning fast, and cross-browser compatible 
+search solutions quickly and effortlessly.
 
-## Quick start
+## Quick example
 ```html
 <!-- Containers -->
 <div id="searchbar"></div>
@@ -13,13 +14,8 @@ With this library you can create beautiful, lightning fast, and cross-browser co
   // AddSearch JS client instance
   var client = new AddSearchClient('YOUR PUBLIC SITEKEY');
 
-  // Configuration
-  var conf = {
-    debug: true
-  };
-
   // Search UI instance
-  var searchui = new AddSearchSearchUI(client, conf);
+  var searchui = new AddSearchSearchUI(client);
 
   // Add Search UI components
   searchui.searchBar({
