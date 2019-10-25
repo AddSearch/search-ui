@@ -35,9 +35,9 @@ search solutions quickly and effortlessly.
 ```
 
 ## Search UI instance and configuration
-To create a Search UI instance, call the constructor ```new AddSearchSearchUI(client, conf);``` 
+To create a Search UI instance, call the constructor ```new AddSearchSearchUI(client, conf)``` 
 with the mandatory [AddSearchClient](https://github.com/AddSearch/js-client-library) parameter and 
-with an optional configuration parameter.
+with an optional configuration parameter:
 
 ```js
 var client = new AddSearchClient('YOUR PUBLIC SITEKEY');
@@ -50,7 +50,7 @@ var conf = {
 var searchui = new AddSearchSearchUI(client, conf);
 ```
 
-The configuration object can contain following fields and values:   
+The configuration object can contain following values:   
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
@@ -74,7 +74,7 @@ Settings that can be passed to the ```searchBar``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for this search bar |
+| containerId | String | n/a | ID of the HTML component that will act as a container for the search bar |
 | autofocus | true<br>false | true | Should the input field be focused automatically when the page is loaded |
 | button | String | n/a | Add a button to execute the search next to the search field. Button's text is the value of this setting |
 | placeholder | String | n/a | Input field's placeholder text |
