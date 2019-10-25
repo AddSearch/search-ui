@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Search-ui: Basic exmaple</title>
+    <link rel="stylesheet" href="../dist/addsearch-search-ui.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.1/dist/addsearch-js-client.min.js"></script>
+    <script src="../dist/addsearch-search-ui.min.js"></script>
+  </head>
+  <body>
+
+    <div id="searchbar"></div>
+    <div id="results"></div>
+    <div id="pagination"></div>
+
+
+    <script>
+      // AddSearch JS client
+      var client = new AddSearchClient('YOUR SITE KEY');
+
+      // Search UI
+      var searchui = new AddSearchSearchUI(client);
+
+      // Search UI components
+      searchui.searchBar({
+        containerId: 'searchbar',
+        placeholder: 'Keyword..',
+        button: 'Search'
+      });
+      searchui.searchResults({
+        containerId: 'results'
+      });
+      searchui.pagination({
+        containerId: 'pagination'
+      });
+    </script>
+
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+<!--
+
+
+
+
+
+
+/*
+
+  // Search UI
+  var searchui = new AddSearchSearchUI(client);
+
+  // Add searchbar
+  searchui.searchBar({
+    containerId: 'searchbar',
+    placeholder: 'Keyword..',
+    button: 'Search',
+    searchAsYouType: false /* Execute search only after pressing enter or Search button */
+  });
+
+  // Add search results view
+  searchui.searchResults({
+    containerId: 'results'
+  });
+
+
+  searchui.addResultsList({
+    container: '#results'
+  });
+
+  searchui.addSorting({
+    container: '#results',
+    type: 'list',
+    options: []
+  });
+
+  searchui.addNumberOfResults({
+    container: '#results'
+  });
+
+  searchui.addNumberOfResults({
+    container: '#results'
+  });*/
+
+-->
