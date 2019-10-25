@@ -18,19 +18,17 @@
   // Search UI instance
   var searchui = new AddSearchSearchUI(client, conf);
 
-  // Add searchbar
+  // Add Search UI components
   searchui.searchBar({
     containerId: 'searchbar',
     placeholder: 'Keyword..',
     button: 'Search'
   });
 
-  // Search results view
   searchui.searchResults({
     containerId: 'results'
   });
   
-  // Pagination
   searchui.pagination({
     containerId: 'pagination'
   });
@@ -57,7 +55,7 @@ The configuration object can contain following fields and values:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| debug | true, false | false | If true, log events to console |
+| debug | true, false | false | Log events to console |
 
 ## Components
 
@@ -77,7 +75,7 @@ Settings that can be passed to the ```searchBar``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | HTML element's ID | n/a | HTML component that will act as a container for the search bar |
+| containerId | String | n/a | ID of the HTML component that will act as a container for this search bar |
 | button | String | n/a | If a value is given, a button to execute the search is added next to the search field. Button's label is the value of this setting parameter. |
 | placeholder | String | n/a | If a value is given, the value of this setting parameter is added as a placeholder text to the input field |
 | autofocus | true, false | true | Should the input field be focused automatically when the page is loaded |
