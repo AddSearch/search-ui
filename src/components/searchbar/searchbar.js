@@ -98,5 +98,10 @@ export default class SearchBar {
         store.dispatch(search(self.client, keyword));
       }
     }
+
+    // Autofocus
+    if (this.searchBarConf.autofocus !== false) {
+      field.focus();
+    }
   }
 }
