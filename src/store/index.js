@@ -14,7 +14,7 @@ export function observeStoreByKey(store, jsonKey, onChange) {
 
   function handleChange() {
     const nextState = store.getState()[jsonKey];
-    if (nextState !== currentState[jsonKey]) {
+    if (JSON.stringify(nextState) !== JSON.stringify(currentState[jsonKey])) {
       currentState[jsonKey] = nextState;
       onChange(currentState[jsonKey]);
     }
