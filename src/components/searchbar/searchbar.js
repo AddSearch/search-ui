@@ -39,7 +39,7 @@ export default class SearchBar {
   /**
    * Add a search bar
    */
-  render() {
+  render(preDefinedSearchTerm) {
     // Compile template and inject to container
     const html = handlebars.compile(this.searchBarConf.template || TEMPLATE)(this.searchBarConf);
     const container = document.getElementById(this.searchBarConf.containerId);
@@ -48,7 +48,7 @@ export default class SearchBar {
     const store = getStore();
 
     // Keyword already stored in redux
-    const preDefinedSearchTerm = store.getState().keyword.value;
+    //const preDefinedSearchTerm = store.getState().keyword.value;
     if (preDefinedSearchTerm) {
       this.keyword = preDefinedSearchTerm;
       field.value = preDefinedSearchTerm;

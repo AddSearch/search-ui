@@ -38,6 +38,13 @@ export default class SearchUI {
   searchBar(conf) {
     const searchbar = new SearchBar(this.client, this.settings, conf);
     searchbar.render();
+
+    observeStoreByKey(getStore(), 'keyword',
+      (s) => {
+        this.log('Search bar: Keyword changed to ' + s.value + '. Re-rendering')
+        searchbar.render(s.value);
+      }
+    );
   }
 
 
