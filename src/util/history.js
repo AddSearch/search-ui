@@ -1,4 +1,4 @@
-/* global history, window */
+/* global window, history */
 
 import { WARMUP_QUERY_PREFIX } from '../index';
 import { search } from '../actions/search';
@@ -29,11 +29,11 @@ export function setHistory(parameter, value) {
     delete params[parameter];
   }
   // Add value to URL
-  else if (value !== null && value !== '') {
+  else if (parameter && value !== null && value !== '') {
     params[parameter] = value;
   }
   // No value. Delete query parameter
-  else {
+  else if (parameter) {
     delete params[parameter];
   }
 
@@ -42,7 +42,11 @@ export function setHistory(parameter, value) {
     stateUrl = url.substring(0, url.indexOf('?'));
   }
   stateUrl = stateUrl + '?' + objectToQueryParams(params);
-  history.pushState(null, '', stateUrl);
+
+  // Update history if it has changed
+  if (JSON.stringify(history.state) !== JSON.stringify(params)) {
+    history.pushState(params, null, stateUrl);
+  }
 }
 
 
@@ -60,7 +64,16 @@ export function initFromURL(client) {
   const url = window.location.href;
   const qs = queryParamsToObject(url);
   const store = getStore();
+  handleURLParams(store, client, qs);
 
+  // Re-handle URL on every pop
+  window.onpopstate = (e) => {
+    const q = queryParamsToObject(window.location.href);
+    handleURLParams(store, client, q);
+  }
+}
+
+function handleURLParams(store, client, qs) {
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
     store.dispatch(setFilters(client, qs[HISTORY_PARAMETERS.FILTERS]));
   }
@@ -68,20 +81,14 @@ export function initFromURL(client) {
   if (qs[HISTORY_PARAMETERS.PAGE]) {
     store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10)));
   }
+  else {
+    store.dispatch(setPage(client, 1, 10));
+  }
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
     store.dispatch(setKeyword(qs[HISTORY_PARAMETERS.SEARCH]));
-    store.dispatch(search(client, qs[HISTORY_PARAMETERS.SEARCH]));
+    store.dispatch(search(client, qs[HISTORY_PARAMETERS.SEARCH], 'top'));
   }
-
-  /*window.onpopstate = function(event) {
-    const q = getQueryParam(document.location, 'search');
-    if (q) {
-      container.getElementsByTagName('input')[0].value = q;
-      getStore().dispatch(setKeyword(q));
-      getStore().dispatch(search(this.addSearchClient, q));
-    }
-  }*/
 }
 
 
