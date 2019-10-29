@@ -35,11 +35,6 @@ export default class SearchBar {
   }
 
 
-  getKeyword() {
-    return this.keyword;
-  }
-
-
   /**
    * Add a search bar
    */
