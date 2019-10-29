@@ -24,7 +24,6 @@ export default class SearchBar {
     this.client = client;
     this.settings = settings;
     this.searchBarConf = searchBarConf;
-
     this.keyword = '';
   }
 
@@ -33,6 +32,11 @@ export default class SearchBar {
     const store = getStore();
     store.dispatch(setPage(client, 1));
     store.dispatch(search(client, keyword));
+  }
+
+
+  getKeyword() {
+    return this.keyword;
   }
 
 
@@ -63,7 +67,7 @@ export default class SearchBar {
       }
 
       // Store keyword
-      this.keyword = keyword;
+      self.keyword = keyword;
       store.dispatch(setKeyword(keyword));
 
       // Search as you type
