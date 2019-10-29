@@ -41,7 +41,9 @@ export function setHistory(parameter, value) {
   if (url.indexOf('?') !== -1) {
     stateUrl = url.substring(0, url.indexOf('?'));
   }
-  stateUrl = stateUrl + '?' + objectToQueryParams(params);
+  if (JSON.stringify(params) !== JSON.stringify({})) {
+    stateUrl = stateUrl + '?' + objectToQueryParams(params);
+  }
 
   // Update history if it has changed
   if (JSON.stringify(history.state) !== JSON.stringify(params)) {
