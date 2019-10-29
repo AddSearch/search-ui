@@ -93,11 +93,11 @@ function handleURLParams(store, client, qs, clearIfNoKeyword) {
   }
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
-    store.dispatch(setKeyword(qs[HISTORY_PARAMETERS.SEARCH]));
+    store.dispatch(setKeyword(qs[HISTORY_PARAMETERS.SEARCH], true));
     store.dispatch(search(client, qs[HISTORY_PARAMETERS.SEARCH], 'top'));
   }
   else if (clearIfNoKeyword) {
-    store.dispatch(setKeyword(''));
+    store.dispatch(setKeyword('', true));
     store.dispatch(clearSearchResults('top'));
   }
 }

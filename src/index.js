@@ -41,8 +41,10 @@ export default class SearchUI {
 
     observeStoreByKey(getStore(), 'keyword',
       (s) => {
-        this.log('Search bar: Keyword changed to ' + s.value + '. Re-rendering');
-        searchbar.render(s.value);
+        if (s.externallySet === true) {
+          this.log('Search bar: Keyword changed to ' + s.value + '. Re-rendering');
+          searchbar.render(s.value);
+        }
       }
     );
   }
