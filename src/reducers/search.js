@@ -1,7 +1,8 @@
 import { WARMUP_QUERY_PREFIX } from '../index';
 import {
   SEARCH_FETCH_START,
-  SEARCH_RESULTS
+  SEARCH_RESULTS,
+  CLEAR_SEARCH_RESULTS
 } from '../actions/search';
 
 const initialState = {
@@ -12,6 +13,9 @@ const initialState = {
 
 export default function search(state = initialState, action) {
   switch (action.type) {
+    case CLEAR_SEARCH_RESULTS:
+      return Object.assign({}, initialState);
+
     case SEARCH_FETCH_START:
       return Object.assign({}, state, {
         loading: true
