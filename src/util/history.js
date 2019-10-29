@@ -1,7 +1,7 @@
 /* global window, history */
 
 import { WARMUP_QUERY_PREFIX } from '../index';
-import { search } from '../actions/search';
+import { search, clearSearchResults } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
 import { setFilters } from '../actions/filters';
@@ -61,21 +61,26 @@ export function getQueryParam(url, param) {
 
 
 export function initFromURL(client) {
+  // Initial load
   const url = window.location.href;
   const qs = queryParamsToObject(url);
   const store = getStore();
-  handleURLParams(store, client, qs);
+  handleURLParams(store, client, qs, false);
 
-  // Re-handle URL on every pop
+  // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
     const q = queryParamsToObject(window.location.href);
-    handleURLParams(store, client, q);
+    handleURLParams(store, client, q, true);
   }
 }
 
-function handleURLParams(store, client, qs) {
+
+function handleURLParams(store, client, qs, clearIfNoKeyword) {
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
     store.dispatch(setFilters(client, qs[HISTORY_PARAMETERS.FILTERS]));
+  }
+  else {
+    store.dispatch(setFilters(client, null));
   }
 
   if (qs[HISTORY_PARAMETERS.PAGE]) {
@@ -88,6 +93,10 @@ function handleURLParams(store, client, qs) {
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
     store.dispatch(setKeyword(qs[HISTORY_PARAMETERS.SEARCH]));
     store.dispatch(search(client, qs[HISTORY_PARAMETERS.SEARCH], 'top'));
+  }
+  else if (clearIfNoKeyword) {
+    store.dispatch(setKeyword(''));
+    store.dispatch(clearSearchResults('top'));
   }
 }
 
