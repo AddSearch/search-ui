@@ -1,7 +1,7 @@
 {
   "name": "addsearch-search-ui",
-  "version": "0.0.1",
-  "description": "Library to develop framework-agnostic Search UIs for web browsers",
+  "version": "0.1.1",
+  "description": "Library to develop JS framework-agnostic Search UIs for web browsers",
   "main": "index.js",
   "jsdelivr": "./dist/addsearch-search-ui.min.js",
   "scripts": {
