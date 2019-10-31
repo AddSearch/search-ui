@@ -1,5 +1,10 @@
 .addsearch-pagination {
   clear: both;
+  padding: 1em 0;
+
+  button {
+    background: #fff;
+  }
 
   button[data-active="true"] {
     font-weight: bold;
