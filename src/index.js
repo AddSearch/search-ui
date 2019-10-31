@@ -1,3 +1,4 @@
+import './index.scss';
 import handlebars from 'handlebars';
 import SearchBar from './components/searchbar';
 import SearchResults from './components/searchresults';
