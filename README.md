@@ -57,9 +57,7 @@ The configuration object can contain following values:
 | debug | true<br>false | false | Log events to console |
 
 ## Components
-
 ### Search bar
-
 Input field where keyword can be typed. Can include a button to execute the search.
 
 ```js
@@ -75,10 +73,44 @@ Settings that can be passed to the ```searchBar``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for the search bar |
-| autofocus | true<br>false | true | Should the input field be focused automatically when the page is loaded |
-| button | String | n/a | Add a button to execute the search next to the search field. Button's text is the value of this setting |
+| autofocus | true<br>false | true | Focus the input field automatically when the page is loaded |
+| button | String | n/a | Add a button to execute the search. Button's label is the value of this setting |
 | placeholder | String | n/a | Input field's placeholder text |
 | searchAsYouType| true<br>false | false | Execute search after every keystroke |
+| template | String | [Default](https://github.com/AddSearch/search-ui/blob/master/src/components/searchbar/searchbar.js#L11) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
+
+### Search results
+The list of search results.
+
+```js
+  searchui.searchResults({
+    containerId: 'searchresults'
+  });
+```
+
+Settings that can be passed to the ```searchResults``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML component that will act as a container for search results |
+| template | String | [Default](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js#L5) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
+
+### Pagination
+Pagination. Typically below search results.
+
+```js
+  searchui.pagination({
+    containerId: 'pagination'
+  });
+```
+
+Settings that can be passed to the ```pagination``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
+| template | String | [Default](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/pagination.js#L9) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
+
 
 ## Supported web browsers
 This library is tested on
