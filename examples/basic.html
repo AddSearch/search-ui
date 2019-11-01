@@ -14,8 +14,8 @@
     <div id="pagination"></div>
 
     <script>
-      // AddSearch JS client
-      var client = new AddSearchClient('YOUR SITE KEY');
+      // AddSearch JS client. Replace the demo SITEKEY with your own (sign up for free at www.addsearch.com)
+      var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
 
       // Search UI
       var searchui = new AddSearchSearchUI(client);
@@ -24,7 +24,8 @@
       searchui.searchBar({
         containerId: 'searchbar',
         placeholder: 'Keyword..',
-        button: 'Search'
+        button: 'Search',
+        searchAsYouType: true
       });
       searchui.searchResults({
         containerId: 'results'
