@@ -32,7 +32,7 @@ export default class SearchBar {
     const store = getStore();
     store.dispatch(setPage(client, 1));
     store.dispatch(search(client, keyword));
-  }
+    }
 
 
   /**
