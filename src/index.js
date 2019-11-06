@@ -52,12 +52,16 @@ export default class SearchUI {
 
 
   searchResults(conf) {
-    this.searchResultsConf = conf;
+    const searchresults = new SearchResults(conf);
 
-    const self = this;
     observeStoreByKey(getStore(), 'search',
       (s) => {
-        self.resultsCallback(s, self);
+        if (!s.loading) {
+          const t = (new Date()).getTime();
+          this.log('Search results: Received search results. Rendering..');
+          searchresults.render(s);
+          this.log('Search results: done in ' + ((new Date()).getTime() - t) + 'ms');
+        }
       }
     );
   }
@@ -90,21 +94,6 @@ export default class SearchUI {
         }
       }
     );
-  }
-
-
-  /**
-   * Callback function when the search returns
-   */
-  resultsCallback(searchResults, scope) {
-    if (scope.searchResultsConf && !searchResults.loading) {
-      const t = (new Date()).getTime();
-      this.log('Search results: Received search results. Rendering..');
-      this.log(searchResults);
-      const searchresults = new SearchResults();
-      searchresults.render(searchResults.results, scope.searchResultsConf);
-      this.log('Search results: done in ' + ((new Date()).getTime() - t) + 'ms');
-    }
   }
 
 
