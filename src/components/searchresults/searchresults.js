@@ -12,7 +12,9 @@ const TEMPLATE = `
       <div class="hit">
         <h3>{{title}}</h3>      
         <p>
-          <img src="{{images.main}}" alt="{{title}}" width="100" height="100" />
+          <span class="main-image" style="background-image: url(data:image/jpeg;base64,{{images.main_b64}})">
+            <img src="{{images.main}}" alt="{{title}}" />
+          </span>
           {{{highlight}}}..
         </p>        
         
@@ -22,21 +24,31 @@ const TEMPLATE = `
 `;
 
 
+const TEMPLATE_NO_RESULTS = `
+  <div class="addsearch-searchresults addsearch-searchresults-no-results">    
+    <h2>No search results with keyword <em>{{keyword}}</em></h2>
+  </div>
+`;
+
+
 export default class SearchResults {
 
-  constructor() {
-
+  constructor(conf) {
+    this.conf = conf;
   }
 
-  render(results, conf) {
-    const r = results || {};
-    if (conf.showNumberOfResults === false || !r.hits) {
-      r.resultcount = false;
+
+  render(results) {
+    const r = results.results || {};
+    r.resultcount = r.hits && this.conf.showNumberOfResults !== false;
+    r.keyword = results.keyword;
+
+    let template = this.conf.template || TEMPLATE;
+    if (r.hits && r.hits.length === 0) {
+      template = this.conf.template_no_results || TEMPLATE_NO_RESULTS;
     }
-    else {
-      r.resultcount = true;
-    }
-    const html = handlebars.compile(conf.template || TEMPLATE)(r);
-    document.getElementById(conf.containerId).innerHTML = html;
+
+    const html = handlebars.compile(template)(r);
+    document.getElementById(this.conf.containerId).innerHTML = html;
   }
 }
