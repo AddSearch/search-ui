@@ -3,24 +3,25 @@
   <head>
     <meta charset="UTF-8">
     <title>Search-ui: Basic example</title>
-    <link rel="stylesheet" href="../dist/addsearch-search-ui.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.1/dist/addsearch-js-client.min.js"></script>
-    <script src="../dist/addsearch-search-ui.min.js"></script>
+    <script src="../../dist/addsearch-search-ui.min.js"></script>
+    <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
   </head>
   <body>
 
+    <!-- Containers. Search UI components will be added inside these divs -->
     <div id="searchbar"></div>
     <div id="results"></div>
     <div id="pagination"></div>
 
     <script>
-      // AddSearch JS client. This SITEKEY is an example. Get your own by signing up at www.addsearch.com
+      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
       var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
 
-      // Search UI
+      // Search UI instance
       var searchui = new AddSearchSearchUI(client);
 
-      // Search UI components
+      // Add components
       searchui.searchBar({
         containerId: 'searchbar',
         placeholder: 'Keyword..',
