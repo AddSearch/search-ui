@@ -1,20 +1,38 @@
 .addsearch-searchresults {
-  max-width: 660px;
 
   h3 {
     padding-top: 20px;
+    font-size: 110%;
+    font-weight: bold;
+  }
+
+  p {
+    overflow-wrap: break-word;
   }
 
   .hit {
     clear: both;
+    margin-left: -20px;
+    padding-left: 20px;
+  }
+  .hit:after {
+    content: " ";
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+  }
+  .hit:hover {
+    background-color: rgba(0, 0, 0, 0.02);
   }
 
   .main-image {
     display: inline-block;
+    float: left;
     height: 100px;
     width: 100px;
     background-size: 100% 100%;
-    margin-right: 20px;
+    margin: 0 20px 20px 0;
   }
 
   img {
@@ -22,4 +40,3 @@
     height: 100%;
   }
 }
-
