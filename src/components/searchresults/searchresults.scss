@@ -5,13 +5,21 @@
     padding-top: 20px;
   }
 
-  img {
-    float: left;
+  .hit {
+    clear: both;
+  }
+
+  .main-image {
+    display: inline-block;
+    height: 100px;
+    width: 100px;
+    background-size: 100% 100%;
     margin-right: 20px;
   }
 
-  .hit {
-    clear: both;
+  img {
+    width: 100%;
+    height: 100%;
   }
 }
 
