@@ -2,6 +2,7 @@ import './index.scss';
 import handlebars from 'handlebars';
 import SearchBar from './components/searchbar';
 import SearchResults from './components/searchresults';
+import FacetGroup from './components/facetgroup';
 import FilterGroup from './components/filtergroup';
 import Pagination from './components/pagination';
 import oa from 'es6-object-assign';
@@ -66,6 +67,26 @@ export default class SearchUI {
     );
   }
 
+
+  facetGroup(conf) {
+    if (!this.facetGroups) {
+      this.facetGroups = [];
+    }
+
+    const facetGroup = new FacetGroup(this.client, conf);
+    this.facetGroups.push(facetGroup);
+    facetGroup.render();
+
+    observeStoreByKey(getStore(), 'search',
+      (s) => {
+        if (s && s.results && s.results.facets) {
+          this.facetGroups.forEach(fg => {
+            fg.render(s.results.facets[fg.getFieldName()]);
+          });
+        }
+      }
+    );
+  }
 
   filterGroup(conf) {
     const filterGroup = new FilterGroup(this.client, conf);
