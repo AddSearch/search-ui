@@ -13,7 +13,7 @@ const TEMPLATE = `
       <li data-facet="{{value}}">
         <label>
           <input type="checkbox" value="{{value}}" />
-          {{value}} ({{count}})
+          {{value}} <em>({{count}})</em>
         </label>
       </li>
     {{/each}}
@@ -38,7 +38,6 @@ export default class FacetGroup {
   }
 
 
-
   setFilter(filter, active) {
     const idx = this.activeFilters.indexOf(filter);
     if (active && idx === -1) {
@@ -48,7 +47,7 @@ export default class FacetGroup {
       this.activeFilters.splice(idx, 1);
     }
 
-    // Dispatch filter string
+    // Dispatch filter
     const field = this.conf.field.replace('custom_fields.', '');
     if (active) {
       getStore().dispatch(addCustomFieldFilter(this.client, field, filter));
