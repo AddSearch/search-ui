@@ -4,7 +4,7 @@ import { WARMUP_QUERY_PREFIX } from '../index';
 import { search, clearSearchResults } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
-import { setFilters } from '../actions/filters';
+import { setCategoryFilters } from '../actions/filters';
 import { getStore } from '../store';
 
 export const HISTORY_PARAMETERS = {
@@ -79,10 +79,10 @@ export function initFromURL(client) {
 
 function handleURLParams(store, client, qs, clearIfNoKeyword) {
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
-    store.dispatch(setFilters(client, qs[HISTORY_PARAMETERS.FILTERS]));
+    store.dispatch(setCategoryFilters(client, qs[HISTORY_PARAMETERS.FILTERS]));
   }
   else {
-    store.dispatch(setFilters(client, null));
+    store.dispatch(setCategoryFilters(client, null));
   }
 
   if (qs[HISTORY_PARAMETERS.PAGE]) {
