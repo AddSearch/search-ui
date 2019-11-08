@@ -4,6 +4,7 @@ import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
 import { getStore } from '../../store';
+import { MATCH_ALL_QUERY } from '../../index';
 
 /**
  * HTML template
@@ -29,10 +30,15 @@ export default class SearchBar {
 
 
   search(client, keyword) {
+    let kw = keyword;
+    if (kw === '' && this.settings.matchAllQueryOnLoad) {
+      kw = MATCH_ALL_QUERY;
+    }
+
     const store = getStore();
     store.dispatch(setPage(client, 1));
-    store.dispatch(search(client, keyword));
-    }
+    store.dispatch(search(client, kw));
+  }
 
 
   /**

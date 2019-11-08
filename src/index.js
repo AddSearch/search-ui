@@ -8,29 +8,45 @@ import Pagination from './components/pagination';
 import oa from 'es6-object-assign';
 import { getStore, observeStoreByKey } from './store';
 import { initFromURL } from './util/history';
+import { search } from './actions/search';
+import { setKeyword } from './actions/keyword';
 
 // Static polyfills and helpers
 oa.polyfill();
-handlebars.registerHelper('equals', function(arg1, arg2, options) {
+handlebars.registerHelper('equals', (arg1, arg2, options) => {
   return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
 });
-handlebars.registerHelper('gt', function(arg1, arg2, options) {
+handlebars.registerHelper('gt', (arg1, arg2, options) => {
   return arg1 > arg2 ? options.fn(this) : options.inverse(this);
 });
-handlebars.registerHelper('lt', function(arg1, arg2, options) {
+handlebars.registerHelper('lt', (arg1, arg2, options) => {
   return arg1 < arg2 ? options.fn(this) : options.inverse(this);
 });
 
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
+export const MATCH_ALL_QUERY = '*';
 
 export default class SearchUI {
 
-  constructor(client, settings){
+  constructor(client, settings) {
     this.client = client;
     this.settings = settings || {};
-
     initFromURL(this.client);
+
+    // Possible match all query on load
+    if (this.settings.matchAllQuery === true) {
+      this.matchAllQuery();
+    }
+  }
+
+
+  matchAllQuery() {
+    const store = getStore();
+    if (store.getState().keyword.value === '') {
+      store.dispatch(setKeyword(MATCH_ALL_QUERY, false));
+      store.dispatch(search(this.client, MATCH_ALL_QUERY));
+    }
   }
 
 
@@ -45,7 +61,7 @@ export default class SearchUI {
       (s) => {
         if (s.externallySet === true) {
           this.log('Search bar: Keyword changed to ' + s.value + '. Re-rendering');
-          searchbar.render(s.value);
+          searchbar.render(s.value === MATCH_ALL_QUERY ? '' : s.value);
         }
       }
     );
