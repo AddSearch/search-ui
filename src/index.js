@@ -95,11 +95,10 @@ export default class SearchUI {
 
     observeStoreByKey(getStore(), 'search',
       (s) => {
-        if (s && s.results && s.results.facets) {
-          this.facetGroups.forEach(fg => {
-            fg.render(s.results.facets[fg.getFieldName()]);
-          });
-        }
+        const facets = s.results && s.results.facets ? s.results.facets : {};
+        this.facetGroups.forEach(fg => {
+          fg.render(facets[fg.getFieldName()]);
+        });
       }
     );
   }
