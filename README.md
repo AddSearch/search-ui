@@ -55,6 +55,7 @@ The configuration object can contain following values:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | debug | true<br>false | false | Log events to console |
+| matchAllQuery | true<br>false | false | Execute "match all" query when the Search UI is loaded |
 
 ## Components
 ### Search bar
