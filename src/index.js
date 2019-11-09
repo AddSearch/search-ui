@@ -12,6 +12,7 @@ import { getStore, observeStoreByKey } from './store';
 import { initFromURL } from './util/history';
 import { search } from './actions/search';
 import { setKeyword } from './actions/keyword';
+import { sortBy } from './actions/sortby';
 
 // Static polyfills and helpers
 oa.polyfill();
@@ -119,10 +120,31 @@ export default class SearchUI {
 
 
   sortBy(conf) {
-    const sortby = new SortBy(this.client, conf);
-    sortby.render();
-  }
+    // Set default values
+    const clientPaging = this.client.getSettings().paging;
+    console.log('**** clientSettings');
+    console.log(clientPaging);
+    getStore().dispatch(sortBy(this.client, clientPaging.sortBy, clientPaging.sortOrder));
 
+    // Create component and push to the component array
+    const sortby = new SortBy(this.client, conf);
+    this.sortByComponents ? this.sortByComponents.push(sortby) : this.sortByComponents = [sortby];
+    sortby.render(getStore().getState().sortby);
+
+    // Add observer when the first component of this type is added
+    if (this.sortByComponents.length === 1) {
+      observeStoreByKey(getStore(), 'sortby',
+        (s) => {
+          if (s) {
+            this.sortByComponents.forEach(component => {
+              component.render(s);
+            });
+          }
+        }
+      );
+    }
+
+  }
 
 
   pagination(conf) {
