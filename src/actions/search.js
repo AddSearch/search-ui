@@ -7,6 +7,9 @@ export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
 
 
 export function search(client, keyword, onResultsScrollTo) {
+  // Update browser history
+  setHistory(HISTORY_PARAMETERS.SEARCH, keyword);
+
   // Clear search results if there is no keyword
   if (!keyword || keyword === '') {
     return {
@@ -14,7 +17,6 @@ export function search(client, keyword, onResultsScrollTo) {
     }
   }
   return dispatch => {
-    setHistory(HISTORY_PARAMETERS.SEARCH, keyword);
     dispatch(searchFetchStart());
     client.search(keyword, (res) => dispatch(searchResults(keyword, res, onResultsScrollTo)));
   }

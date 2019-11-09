@@ -3,7 +3,9 @@
   padding: 1em 0;
 
   button {
-    background: #fff;
+    background-color: #fff;
+    border: 1px solid #dedede;
+    cursor: pointer;
   }
 
   button[data-active="true"] {
