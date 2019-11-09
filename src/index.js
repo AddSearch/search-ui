@@ -35,12 +35,21 @@ export default class SearchUI {
   constructor(client, settings) {
     this.client = client;
     this.settings = settings || {};
+
+    this.initFromClientSettings();
     initFromURL(this.client);
+
 
     // Possible match all query on load
     if (this.settings.matchAllQuery === true) {
       this.matchAllQuery();
     }
+  }
+
+
+  initFromClientSettings() {
+    const paging = this.client.getSettings().paging;
+    getStore().dispatch(sortBy(this.client, paging.sortBy, paging.sortOrder));
   }
 
 
@@ -120,46 +129,14 @@ export default class SearchUI {
 
 
   sortBy(conf) {
-    // Set default values
-    const clientPaging = this.client.getSettings().paging;
-    console.log('**** clientSettings');
-    console.log(clientPaging);
-    getStore().dispatch(sortBy(this.client, clientPaging.sortBy, clientPaging.sortOrder));
-
-    // Create component and push to the component array
     const sortby = new SortBy(this.client, conf);
-    this.sortByComponents ? this.sortByComponents.push(sortby) : this.sortByComponents = [sortby];
-    sortby.render(getStore().getState().sortby);
-
-    // Add observer when the first component of this type is added
-    if (this.sortByComponents.length === 1) {
-      observeStoreByKey(getStore(), 'sortby',
-        (s) => {
-          if (s) {
-            this.sortByComponents.forEach(component => {
-              component.render(s);
-            });
-          }
-        }
-      );
-    }
-
+    sortby.render();
   }
 
 
   pagination(conf) {
     const pagination = new Pagination(this.client, conf);
-    pagination.render(1, 0, 10);
-
-    observeStoreByKey(getStore(), 'search',
-      (s) => {
-        if (s.loading !== true) {
-          const currentPage = getStore().getState().pagination.page || 1;
-          const resultCount = s.results.total_hits || 0;
-          pagination.render(currentPage, resultCount, 10);
-        }
-      }
-    );
+    pagination.render();
   }
 
 
