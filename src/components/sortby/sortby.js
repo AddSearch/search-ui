@@ -3,7 +3,8 @@ import handlebars from 'handlebars';
 
 import { sortBy } from '../../actions/sortby';
 import { search } from '../../actions/search';
-import { getStore } from '../../store';
+import { setPage } from '../../actions/pagination';
+import { getStore, observeStoreByKey } from '../../store';
 
 const TEMPLATE = `
   <div class="addsearch-sortby">        
@@ -21,6 +22,8 @@ export default class SortBy {
   constructor(client, conf) {
     this.client = client;
     this.conf = conf;
+
+    observeStoreByKey(getStore(), 'sortby', () => this.render());
   }
 
 
@@ -29,8 +32,11 @@ export default class SortBy {
     const field = selectedOption.getAttribute('data-field');
     const order = selectedOption.getAttribute('data-order');
 
-    // Dispatch filter string
+    // Dispatch sortby
     getStore().dispatch(sortBy(this.client, field, order));
+
+    // Reset paging
+    getStore().dispatch(setPage(this.client, 1));
 
     // Refresh search
     const keyword = getStore().getState().keyword.value;
@@ -38,7 +44,9 @@ export default class SortBy {
   }
 
 
-  render(props) {
+  render() {
+    const data = getStore().getState().sortby;
+
     const html = handlebars.compile(this.conf.template || TEMPLATE)(this.conf);
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
@@ -47,8 +55,8 @@ export default class SortBy {
     container.querySelector('select').onchange = (e) => { this.onChange(e.target) };
 
     // Pre-selected option
-    if (props) {
-      const { field, order } = props;
+    if (data) {
+      const { field, order } = data;
       const options = container.getElementsByTagName('option');
 
       for (let i=0; i<options.length; i++) {

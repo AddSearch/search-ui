@@ -3,7 +3,7 @@ import handlebars from 'handlebars';
 import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
-import { getStore } from '../../store';
+import { getStore, observeStoreByKey } from '../../store';
 
 
 const TEMPLATE = `
@@ -28,12 +28,25 @@ export default class Pagination {
   constructor(client, conf) {
     this.client = client;
     this.conf = conf;
+
+    observeStoreByKey(getStore(), 'search', () => this.render());
   }
 
 
-  render(currentPage, totalHits, pageSize) {
+  render() { // currentPage, totalHits, pageSize) {
+    const state = getStore().getState();
+
+    const currentPage = state.pagination.page;
+    const pageSize = this.client.getSettings().paging.pageSize;
+    const totalHits = state.search.results.total_hits || 0;
     const totalPages = Math.ceil(totalHits / pageSize);
     const pageArr = getPageNumbers(currentPage, totalPages);
+
+    // No pagination if zero results
+    if (totalHits === 0) {
+      return;
+    }
+
 
     const data = {
       currentPage,
@@ -42,10 +55,11 @@ export default class Pagination {
     };
 
     const html = handlebars.compile(this.conf.template || TEMPLATE)(data);
-    document.getElementById(this.conf.containerId).innerHTML = html;
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
 
     // Attach events
-    const buttons = document.getElementById(this.conf.containerId).getElementsByTagName('button');
+    const buttons = container.getElementsByTagName('button');
     for (let i=0; i<buttons.length; i++) {
       const button = buttons[i];
       button.onclick = (e) => {
@@ -66,7 +80,7 @@ export default class Pagination {
           getStore().dispatch(setPage(this.client, page));
         }
 
-        // Refresh keyword
+        // Refresh search
         const keyword = getStore().getState().keyword.value;
         getStore().dispatch(search(this.client, keyword, 'top'));
       };
