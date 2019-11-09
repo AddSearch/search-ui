@@ -3,7 +3,7 @@ import {
 } from '../actions/pagination';
 
 const initialState = {
-  page: null
+  page: 1
 };
 
 export default function pagination(state = initialState, action) {
