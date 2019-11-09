@@ -7,6 +7,7 @@ import FilterGroup from './components/filtergroup';
 import Pagination from './components/pagination';
 import SearchBar from './components/searchbar';
 import SearchResults from './components/searchresults';
+import SortBy from './components/sortby';
 import { getStore, observeStoreByKey } from './store';
 import { initFromURL } from './util/history';
 import { search } from './actions/search';
@@ -51,9 +52,6 @@ export default class SearchUI {
   }
 
 
-  /**
-   * Add a search bar
-   */
   searchBar(conf) {
     const searchbar = new SearchBar(this.client, this.settings, conf);
     searchbar.render();
@@ -104,6 +102,7 @@ export default class SearchUI {
     );
   }
 
+
   filterGroup(conf) {
     const filterGroup = new FilterGroup(this.client, conf);
     filterGroup.render([]);
@@ -116,6 +115,14 @@ export default class SearchUI {
       }
     );
   }
+
+
+
+  sortBy(conf) {
+    const sortby = new SortBy(this.client, conf);
+    sortby.render();
+  }
+
 
 
   pagination(conf) {
