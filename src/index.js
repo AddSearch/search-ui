@@ -1,11 +1,12 @@
 import './index.scss';
 import handlebars from 'handlebars';
-import SearchBar from './components/searchbar';
-import SearchResults from './components/searchresults';
+import oa from 'es6-object-assign';
+
 import FacetGroup from './components/facetgroup';
 import FilterGroup from './components/filtergroup';
 import Pagination from './components/pagination';
-import oa from 'es6-object-assign';
+import SearchBar from './components/searchbar';
+import SearchResults from './components/searchresults';
 import { getStore, observeStoreByKey } from './store';
 import { initFromURL } from './util/history';
 import { search } from './actions/search';
