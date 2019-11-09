@@ -94,22 +94,8 @@ export default class SearchUI {
 
 
   facetGroup(conf) {
-    if (!this.facetGroups) {
-      this.facetGroups = [];
-    }
-
     const facetGroup = new FacetGroup(this.client, conf);
-    this.facetGroups.push(facetGroup);
     facetGroup.render();
-
-    observeStoreByKey(getStore(), 'search',
-      (s) => {
-        const facets = s.results && s.results.facets ? s.results.facets : {};
-        this.facetGroups.forEach(fg => {
-          fg.render(facets[fg.getFieldName()]);
-        });
-      }
-    );
   }
 
 
