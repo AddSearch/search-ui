@@ -1,5 +1,6 @@
 import './searchresults.scss';
 import handlebars from 'handlebars';
+import { getStore, observeStoreByKey } from '../../store';
 
 
 const TEMPLATE = `
@@ -10,14 +11,13 @@ const TEMPLATE = `
     
     {{#each hits}}
       <div class="hit">
-        <h3>{{title}}</h3>      
+        <h3>{{title}}</h3>
         <p>
           <span class="main-image" style="background-image: url(data:image/jpeg;base64,{{images.main_b64}})">
             <img src="{{images.main}}" alt="{{title}}" />
           </span>
           {{{highlight}}}..
-        </p>        
-        
+        </p>
       </div>
     {{/each}}
   </div>
@@ -35,20 +35,22 @@ export default class SearchResults {
 
   constructor(conf) {
     this.conf = conf;
+    observeStoreByKey(getStore(), 'search', () => this.render());
   }
 
 
-  render(results) {
-    const r = results.results || {};
-    r.resultcount = r.hits && this.conf.showNumberOfResults !== false;
-    r.keyword = results.keyword;
+  render() {
+    const search = getStore().getState().search;
+    const data = search.results || {};
+    data.resultcount = data.hits && this.conf.showNumberOfResults !== false;
+    data.keyword = search.keyword;
 
     let template = this.conf.template || TEMPLATE;
-    if (r.hits && r.hits.length === 0) {
+    if (data.hits && data.hits.length === 0) {
       template = this.conf.template_no_results || TEMPLATE_NO_RESULTS;
     }
 
-    const html = handlebars.compile(template)(r);
+    const html = handlebars.compile(template)(data);
     document.getElementById(this.conf.containerId).innerHTML = html;
   }
 }

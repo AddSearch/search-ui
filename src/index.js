@@ -82,17 +82,7 @@ export default class SearchUI {
 
   searchResults(conf) {
     const searchresults = new SearchResults(conf);
-
-    observeStoreByKey(getStore(), 'search',
-      (s) => {
-        if (!s.loading) {
-          const t = (new Date()).getTime();
-          this.log('Search results: Received search results. Rendering..');
-          searchresults.render(s);
-          this.log('Search results: done in ' + ((new Date()).getTime() - t) + 'ms');
-        }
-      }
-    );
+    searchresults.render();
   }
 
   facetGroup(conf) {
