@@ -63,17 +63,8 @@ export default class SearchUI {
 
 
   searchBar(conf) {
-    const searchbar = new SearchBar(this.client, this.settings, conf);
+    const searchbar = new SearchBar(this.client, conf, this.settings.matchAllQuery === true);
     searchbar.render();
-
-    observeStoreByKey(getStore(), 'keyword',
-      (s) => {
-        if (s.externallySet === true) {
-          this.log('Search bar: Keyword changed to ' + s.value + '. Re-rendering');
-          searchbar.render(s.value === MATCH_ALL_QUERY ? '' : s.value);
-        }
-      }
-    );
   }
 
 
@@ -111,7 +102,6 @@ export default class SearchUI {
       }
     );
   }
-
 
 
   sortBy(conf) {
