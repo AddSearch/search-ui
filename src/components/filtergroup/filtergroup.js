@@ -3,7 +3,7 @@ import handlebars from 'handlebars';
 import { setCategoryFilters } from '../../actions/filters';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
-import { getStore } from '../../store';
+import { getStore, observeStoreByKey } from '../../store';
 
 const TEMPLATE = `
   <div class="addsearch-filtergroup">        
@@ -26,6 +26,8 @@ export default class FilterGroup {
     this.conf = conf;
 
     this.activeFilters = [];
+
+    observeStoreByKey(getStore(), 'filters', () => this.render());
   }
 
 
@@ -50,17 +52,16 @@ export default class FilterGroup {
   }
 
 
-  render(activeFiltersArray) {
+  render() {
+    const filterState = getStore().getState().filters;
+    const activeFiltersArray = filterState.filters ? filterState.filters.split(',') : null;
+    this.activeFilters = activeFiltersArray || [];
+
     const html = handlebars.compile(this.conf.template || TEMPLATE)(this.conf);
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
 
     const options = container.getElementsByTagName('li');
-    const self = this;
-
-    this.activeFilters = activeFiltersArray || [];
-
-    // Filter options
     for (let i=0; i<options.length; i++) {
       let option = options[i];
 
@@ -73,7 +74,7 @@ export default class FilterGroup {
       option.onclick = (e) => {
         const wasActive = e.target.getAttribute('data-active') === 'true';
         e.target.setAttribute('data-active', !wasActive + '');
-        self.setFilter(option.getAttribute('data-filter'), !wasActive);
+        this.setFilter(option.getAttribute('data-filter'), !wasActive);
       };
     }
   }

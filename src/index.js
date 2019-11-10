@@ -47,11 +47,14 @@ export default class SearchUI {
   }
 
 
+  /*
+   * Utils
+   */
+
   initFromClientSettings() {
     const paging = this.client.getSettings().paging;
     getStore().dispatch(sortBy(this.client, paging.sortBy, paging.sortOrder));
   }
-
 
   matchAllQuery() {
     const store = getStore();
@@ -61,12 +64,21 @@ export default class SearchUI {
     }
   }
 
+  log(msg) {
+    if (this.settings.debug) {
+      console.log(msg);
+    }
+  }
+
+
+  /*
+   * Components
+   */
 
   searchBar(conf) {
     const searchbar = new SearchBar(this.client, conf, this.settings.matchAllQuery === true);
     searchbar.render();
   }
-
 
   searchResults(conf) {
     const searchresults = new SearchResults(conf);
@@ -83,42 +95,23 @@ export default class SearchUI {
     );
   }
 
-
   facetGroup(conf) {
     const facetGroup = new FacetGroup(this.client, conf);
     facetGroup.render();
   }
 
-
   filterGroup(conf) {
     const filterGroup = new FilterGroup(this.client, conf);
-    filterGroup.render([]);
-
-    observeStoreByKey(getStore(), 'filters',
-      (s) => {
-        const active = s.filters ? s.filters.split(',') : null;
-        this.log('Filters: Active filters changed to ' + active + '. Re-rendering')
-        filterGroup.render(active);
-      }
-    );
+    filterGroup.render();
   }
-
 
   sortBy(conf) {
     const sortby = new SortBy(this.client, conf);
     sortby.render();
   }
 
-
   pagination(conf) {
     const pagination = new Pagination(this.client, conf);
     pagination.render();
-  }
-
-
-  log(msg) {
-    if (this.settings.debug) {
-      console.log(msg);
-    }
   }
 }
