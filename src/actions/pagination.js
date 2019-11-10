@@ -4,7 +4,8 @@ export const SET_PAGE = 'SET_PAGE';
 
 export function setPage(client, page) {
   setHistory(HISTORY_PARAMETERS.PAGE, page + '');
-  client.setPaging(page, 10, 'relevance', 'desc');
+  const paging = client.getSettings().paging;
+  client.setPaging(page, paging.pageSize, paging.sortBy, paging.sortOrder);
 
   return {
     type: SET_PAGE,

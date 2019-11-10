@@ -3,15 +3,15 @@ import handlebars from 'handlebars';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
-import { getStore } from '../../store';
-import { MATCH_ALL_QUERY } from '../../index';
+import { getStore, observeStoreByKey } from '../../store';
+import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
 
 /**
  * HTML template
  */
 const TEMPLATE = `
   <form class="addsearch-searchbar" autocomplete="off" action="?" role="search">
-    <input type="search" placeholder="{{placeholder}}" aria-label="Search field" {{#equals autofocus "true"}}autofocus{{/equals}} />
+    <input type="search" placeholder="{{placeholder}}" aria-label="Search field" />
     {{#if button}}
       <button type="button" aria-label="Search button" >{{button}}</button>
     {{/if}}
@@ -21,17 +21,19 @@ const TEMPLATE = `
 
 export default class SearchBar {
 
-  constructor(client, settings, searchBarConf) {
+  constructor(client, conf, matchAllQueryWhenSearchBarEmpty) {
     this.client = client;
-    this.settings = settings;
-    this.searchBarConf = searchBarConf;
-    this.keyword = '';
+    this.conf = conf;
+    this.matchAllQuery = matchAllQueryWhenSearchBarEmpty;
+    this.firstRenderDone = false;
+
+    observeStoreByKey(getStore(), 'keyword', () => this.render());
   }
 
 
   search(client, keyword) {
     let kw = keyword;
-    if (kw === '' && this.settings.matchAllQueryOnLoad) {
+    if (kw === '' && this.matchAllQuery) {
       kw = MATCH_ALL_QUERY;
     }
 
@@ -41,69 +43,70 @@ export default class SearchBar {
   }
 
 
-  /**
-   * Add a search bar
-   */
-  render(preDefinedSearchTerm) {
-    // Compile template and inject to container
-    const html = handlebars.compile(this.searchBarConf.template || TEMPLATE)(this.searchBarConf);
-    const container = document.getElementById(this.searchBarConf.containerId);
-    container.innerHTML = html;
-    const field = container.getElementsByTagName('input')[0];
+  render() {
     const store = getStore();
+    const preDefinedKeyword = store.getState().keyword.value;
 
-    // Keyword already stored in redux
-    //const preDefinedSearchTerm = store.getState().keyword.value;
-    if (preDefinedSearchTerm) {
-      this.keyword = preDefinedSearchTerm;
-      field.value = preDefinedSearchTerm;
+    const container = document.getElementById(this.conf.containerId);
+
+    // Field already exists. Don't re-render
+    if (container.querySelector('input') &&
+        container.querySelector('input').value === preDefinedKeyword) {
+      return;
     }
 
-    // Event listeners to the search field
-    const self = this;
-    field.onkeyup = function(e) {
+    // New field. Render
+    container.innerHTML = handlebars.compile(this.conf.template || TEMPLATE)(this.conf);
+    const field = container.querySelector('input');
+
+    // Set value. Don't pass to template to get the keyboard caret position right
+    if (preDefinedKeyword !== MATCH_ALL_QUERY) {
+      field.value = preDefinedKeyword;
+    }
+
+    // Event listeners to the field
+    field.onkeyup = (e) => {
       const keyword = e.target.value;
-      if (keyword === this.keyword) {
-        return;
-      }
 
       // Store keyword
-      self.keyword = keyword;
       store.dispatch(setKeyword(keyword));
 
       // Search as you type
-      if (self.searchBarConf.searchAsYouType === true) {
-        self.search(self.client, keyword);
+      if (this.conf.searchAsYouType === true) {
+        this.search(this.client, keyword);
       }
     };
 
-    field.onkeypress = function(e) {
+    field.onkeypress = (e) => {
       // Enter pressed
       if (e.keyCode === 13) {
         const keyword = e.target.value;
-        self.search(self.client, keyword);
+        this.search(this.client, keyword);
         return false;
       }
     };
 
-    field.onfocus = function(e) {
+    field.onfocus = (e) => {
       // Warmup query if search-as-you-type
-      if (e.target.value === '' && self.searchBarConf.searchAsYouType === true) {
-        store.dispatch(search(self.client, '_addsearch_' + Math.random()));
+      if (e.target.value === '' && this.conf.searchAsYouType === true) {
+        this.search(this.client, WARMUP_QUERY_PREFIX + Math.random());
+        //store.dispatch(search(this.client, WARMUP_QUERY_PREFIX + Math.random()));
       }
     };
 
     // Event listeners to the possible search button
     if (container.getElementsByTagName('button').length > 0) {
-      container.getElementsByTagName('button')[0].onclick = function (e) {
+      container.getElementsByTagName('button')[0].onclick = (e) => {
         const keyword = store.getState().keyword.value;
-        self.search(self.client, keyword);
+        this.search(this.client, keyword);
       }
     }
 
-    // Autofocus
-    if (this.searchBarConf.autofocus !== false) {
+    // Autofocus when loaded first time
+    if (this.conf.autofocus !== false &&
+        this.firstRenderDone === false) {
       field.focus();
+      this.firstRenderDone = true;
     }
   }
 }
