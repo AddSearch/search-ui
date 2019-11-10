@@ -3,7 +3,7 @@ import handlebars from 'handlebars';
 import { addCustomFieldFilter, removeCustomFieldFilter } from '../../actions/filters';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
-import { getStore } from '../../store';
+import { getStore, observeStoreByKey } from '../../store';
 
 const TEMPLATE = `
   <div class="addsearch-facetgroup">        
@@ -30,6 +30,8 @@ export default class FacetGroup {
 
     this.fieldName = conf.field;
     this.activeFilters = [];
+
+    observeStoreByKey(getStore(), 'search', () => this.render());
   }
 
 
@@ -65,7 +67,14 @@ export default class FacetGroup {
   }
 
 
-  render(facets) {
+  render() {
+    const results = getStore().getState().search.results;
+
+    let facets = [];
+    if (results && results.facets && results.facets[this.fieldName]) {
+      facets = results.facets[this.fieldName];
+    }
+
     const data = {
       conf: this.conf,
       facets: facets
@@ -76,15 +85,14 @@ export default class FacetGroup {
 
     // Attach events
     const options = container.getElementsByTagName('input');
-    const self = this;
 
     // Filter options
     for (let i=0; i<options.length; i++) {
       let checkbox = options[i];
-      checkbox.checked = self.activeFilters.indexOf(checkbox.value) !== -1;
+      checkbox.checked = this.activeFilters.indexOf(checkbox.value) !== -1;
 
       checkbox.onchange = (e) => {
-        self.setFilter(e.target.value, e.target.checked);
+        this.setFilter(e.target.value, e.target.checked);
       };
     }
   }
