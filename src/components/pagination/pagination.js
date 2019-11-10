@@ -33,7 +33,7 @@ export default class Pagination {
   }
 
 
-  render() { // currentPage, totalHits, pageSize) {
+  render() {
     const state = getStore().getState();
 
     const currentPage = state.pagination.page;
@@ -41,12 +41,6 @@ export default class Pagination {
     const totalHits = state.search.results.total_hits || 0;
     const totalPages = Math.ceil(totalHits / pageSize);
     const pageArr = getPageNumbers(currentPage, totalPages);
-
-    // No pagination if zero results
-    if (totalHits === 0) {
-      return;
-    }
-
 
     const data = {
       currentPage,
