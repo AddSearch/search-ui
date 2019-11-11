@@ -37,9 +37,9 @@ export default class SearchUI {
     this.client = client;
     this.settings = settings || {};
 
+    // Init state
     this.initFromClientSettings();
     initFromURL(this.client);
-
 
     // Possible match all query on load
     if (this.settings.matchAllQuery === true) {
