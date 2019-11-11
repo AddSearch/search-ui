@@ -2,6 +2,7 @@ import './index.scss';
 import handlebars from 'handlebars';
 import oa from 'es6-object-assign';
 
+import Autocomplete from './components/autocomplete';
 import FacetGroup from './components/facetgroup';
 import FilterGroup from './components/filtergroup';
 import Pagination from './components/pagination';
@@ -78,6 +79,11 @@ export default class SearchUI {
   searchBar(conf) {
     const searchbar = new SearchBar(this.client, conf, this.settings.matchAllQuery === true);
     searchbar.render();
+  }
+
+  autocomplete(conf) {
+    const autocomplete = new Autocomplete(this.client, conf);
+    autocomplete.render();
   }
 
   searchResults(conf) {
