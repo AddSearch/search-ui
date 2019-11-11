@@ -45,9 +45,6 @@ export default class Autocomplete {
   render() {
     const suggestions = getStore().getState().searchsuggestions.suggestions;
 
-    console.log('new suggestions ');
-    console.log(suggestions);
-
     const data = {
       items: suggestions.length,
       suggestions
