@@ -10,7 +10,7 @@ const TEMPLATE = `
       <div class="items">
         {{#gt ../suggestions.length 0}}
           <div class="suggestions">
-          {{#each ../../suggestions}}
+          {{#each ../suggestions}}
             <div>
              {{value}}
             </div>
@@ -18,9 +18,9 @@ const TEMPLATE = `
           </div>
         {{/gt}}
         
-        {{#gt ../searchResults.length 0}}
+        {{#gt ../searchResults/foo.length 0}}
           <div class="searchresults">
-          {{#each ../../searchResults}}
+          {{#each ../searchResults/foo}}
             <div>
              {{title}}
             </div>
@@ -53,19 +53,23 @@ export default class Autocomplete {
         getStore().dispatch(autocompleteSuggestions(v.client, kw.value));
       }
       else if (v.type === 'search') {
-        getStore().dispatch(autocompleteSearch(v.client, kw.value));
+        getStore().dispatch(autocompleteSearch(v.client, v.jsonKey, kw.value));
       }
     });
   }
 
 
   render() {
-    const suggestions = getStore().getState().autocomplete.suggestions;
-    const searchResults = getStore().getState().autocomplete.searchResults;
-    console.log(searchResults);
+    const autocompleteState = getStore().getState().autocomplete;
 
+    // Don't re-render while requests are pending
+    if (autocompleteState.pendingRequests !== 0) {
+      return;
+    }
+
+    const { suggestions, searchResults } = autocompleteState;
     const data = {
-      itemCount: suggestions.length + searchResults.length,
+      itemCount: suggestions.length,
       suggestions,
       searchResults
     };
