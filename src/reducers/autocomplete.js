@@ -3,13 +3,15 @@ import {
   AUTOCOMPLETE_SUGGESTIONS_RESULTS,
   AUTOCOMPLETE_SUGGESTIONS_CLEAR,
   AUTOCOMPLETE_SEARCH_RESULTS,
-  AUTOCOMPLETE_SEARCH_CLEAR
+  AUTOCOMPLETE_SEARCH_CLEAR,
+  AUTOCOMPLETE_HIDE
 } from '../actions/autocomplete';
 
 const initialState = {
   pendingRequests: 0,
   suggestions: [],
-  searchResults: {}
+  searchResults: {},
+  hide: false
 };
 
 export default function searchsuggestions(state = initialState, action) {
@@ -27,7 +29,8 @@ export default function searchsuggestions(state = initialState, action) {
     case AUTOCOMPLETE_SUGGESTIONS_RESULTS:
       return Object.assign({}, state, {
         pendingRequests: state.pendingRequests - 1,
-        suggestions: action.results.suggestions
+        suggestions: action.results.suggestions,
+        hide: false
       });
 
     case AUTOCOMPLETE_SEARCH_CLEAR:
@@ -40,7 +43,13 @@ export default function searchsuggestions(state = initialState, action) {
       nextSearchResults[action.jsonKey] = action.results.hits;
       return Object.assign({}, state, {
         pendingRequests: state.pendingRequests - 1,
-        searchResults: nextSearchResults
+        searchResults: nextSearchResults,
+        hide: false
+      });
+
+    case AUTOCOMPLETE_HIDE:
+      return Object.assign({}, state, {
+        hide: true
       });
 
     default:

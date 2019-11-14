@@ -3,7 +3,7 @@ export const AUTOCOMPLETE_SUGGESTIONS_RESULTS = 'AUTOCOMPLETE_SUGGESTIONS_RESULT
 export const AUTOCOMPLETE_SUGGESTIONS_CLEAR = 'AUTOCOMPLETE_SUGGESTIONS_CLEAR';
 export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
 export const AUTOCOMPLETE_SEARCH_CLEAR = 'AUTOCOMPLETE_SEARCH_CLEAR';
-
+export const AUTOCOMPLETE_HIDE = 'AUTOCOMPLETE_HIDE';
 
 export function autocompleteSuggestions(client, keyword) {
   if (!keyword || keyword === '') {
@@ -47,5 +47,11 @@ export function autocompleteSearchResults(results, jsonKey) {
 export function autocompleteFetchStart() {
   return {
     type: AUTOCOMPLETE_FETCH
+  }
+}
+
+export function autocompleteHide() {
+  return {
+    type: AUTOCOMPLETE_HIDE
   }
 }
