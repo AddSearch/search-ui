@@ -1,6 +1,7 @@
 import './searchbar.scss';
 import handlebars from 'handlebars';
 import { search } from '../../actions/search';
+import { autocompleteHide } from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
@@ -90,8 +91,11 @@ export default class SearchBar {
       // Warmup query if search-as-you-type
       if (e.target.value === '' && this.conf.searchAsYouType === true) {
         this.search(this.client, WARMUP_QUERY_PREFIX + Math.random());
-        //store.dispatch(search(this.client, WARMUP_QUERY_PREFIX + Math.random()));
       }
+    };
+
+    field.onblur = (e) => {
+      store.dispatch(autocompleteHide());
     };
 
     // Event listeners to the possible search button

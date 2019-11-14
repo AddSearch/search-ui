@@ -35,11 +35,6 @@ export default class FacetGroup {
   }
 
 
-  getFieldName() {
-    return this.fieldName;
-  }
-
-
   setFilter(filter, active) {
     const idx = this.activeFilters.indexOf(filter);
     if (active && idx === -1) {
