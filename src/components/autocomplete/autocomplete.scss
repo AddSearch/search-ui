@@ -1,13 +1,20 @@
 .addsearch-autocomplete {
   position: absolute;
+  background-color: #fff;
+  min-width: 300px;
 
-  .items {
-    background-color: #fff;
+  ul {
     border: 1px solid #666;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
-
-  .searchresults {
-    border-top: 1px solid #ccc;
+  li {
+    cursor: pointer;
+    padding: 3px 4px;
+  }
+  li:hover {
+    background-color: #dedede;
   }
 }
 
