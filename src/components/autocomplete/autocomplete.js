@@ -2,32 +2,20 @@ import './autocomplete.scss';
 import handlebars from 'handlebars';
 
 import { autocompleteSuggestions, autocompleteSearch } from '../../actions/autocomplete';
+import { search } from '../../actions/search';
+import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
 
 const TEMPLATE = `
   <div class="addsearch-autocomplete">
-    {{#gt itemCount 0}}
-      <div class="items">
-        {{#gt ../suggestions.length 0}}
-          <div class="suggestions">
-          {{#each ../suggestions}}
-            <div>
-             {{value}}
-            </div>
-          {{/each}}
-          </div>
-        {{/gt}}
-        
-        {{#gt ../searchResults/foo.length 0}}
-          <div class="searchresults">
-          {{#each ../searchResults/foo}}
-            <div>
-             {{title}}
-            </div>
-          {{/each}}
-          </div>
-        {{/gt}}
-      </div>
+    {{#gt suggestions.length 0}}
+      <ul class="suggestions">
+        {{#each ../suggestions}}
+          <li data-keyword="{{value}}">
+            {{value}}
+          </li>
+        {{/each}}
+      </ul>
     {{/gt}}
   </div>
 `;
@@ -49,11 +37,12 @@ export default class Autocomplete {
     const keyword = kw.externallySet === false ? kw.value : null;
 
     this.conf.sources.forEach(v => {
+      const client = v.client || this.client;
       if (v.type === 'suggestions') {
-        getStore().dispatch(autocompleteSuggestions(v.client, kw.value));
+        getStore().dispatch(autocompleteSuggestions(client, keyword));
       }
       else if (v.type === 'search') {
-        getStore().dispatch(autocompleteSearch(v.client, v.jsonKey, kw.value));
+        getStore().dispatch(autocompleteSearch(client, v.jsonKey, keyword));
       }
     });
   }
@@ -67,6 +56,13 @@ export default class Autocomplete {
       return;
     }
 
+    // Hide autocomplete
+    if (autocompleteState.hide === true) {
+      document.getElementById(this.conf.containerId).innerHTML = '';
+      return;
+    }
+
+    // Show autocomplete results (search suggestions, search results, or both)
     const { suggestions, searchResults } = autocompleteState;
     const data = {
       itemCount: suggestions.length,
@@ -79,14 +75,13 @@ export default class Autocomplete {
     container.innerHTML = html;
 
     // Attach events
-    /*const options = container.getElementsByTagName('input');
-    for (let i=0; i<options.length; i++) {
-      let checkbox = options[i];
-      checkbox.checked = this.activeFilters.indexOf(checkbox.value) !== -1;
-
-      checkbox.onchange = (e) => {
-        this.setFilter(e.target.value, e.target.checked);
+    const lis = container.getElementsByTagName('li');
+    for (let i=0; i<lis.length; i++) {
+      lis[i].onmousedown = (e) => {
+        const keyword = e.target.getAttribute('data-keyword');
+        getStore().dispatch(setKeyword(keyword, true));
+        getStore().dispatch(search(this.client, keyword));
       };
-    } */
+    }
   }
 }
