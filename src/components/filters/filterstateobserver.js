@@ -15,13 +15,15 @@ export function createFilterObject(state) {
   };
 
   // Iterate available filters. Create OR filter group of active filters.
-  state.availableFilters.forEach(filter => {
+  // Use one filter per unique filter key (so multiple filters with the same key is possible in UI)
+  let consumedFilterKeys = {};
+  state.allAvailableFilters.forEach(filterGroup => {
     let filterGroupOR = {or: []};
 
-    for (let key in filter.options) {
-      if (state.activeFilters[key]) {
-        const f = filter.options[key].filter;
-        filterGroupOR.or.push(f);
+    for (let key in filterGroup) {
+      if (state.activeFilters[key] && !consumedFilterKeys[key]) {
+        filterGroupOR.or.push(filterGroup[key].filter);
+        consumedFilterKeys[key] = true;
       }
     }
 
@@ -30,26 +32,20 @@ export function createFilterObject(state) {
     }
   });
 
-  // Iterate available facets. Create OR filter group of active filters.
+  // Iterate active facets. Create OR filter group of active filters.
   for (let facetField in state.activeFacets) {
     let facetGroupOR = {or: []};
 
     for (let facetValue in state.activeFacets[facetField]) {
       const f = {};
       f['doc.' + facetField] = facetValue;
-      console.log('---- ' + JSON.stringify(f));
       facetGroupOR.or.push(f);
     }
 
-    console.log('facetGroupOR');
-    console.log(facetGroupOR);
     if (facetGroupOR.or.length > 0) {
       filterObject.and.push(facetGroupOR);
     }
   }
-
-  console.log('filterObject');
-  console.log(JSON.stringify(filterObject));
 
   // Filter object ready
   if (filterObject.and.length > 0) {
