@@ -6,7 +6,7 @@ import {
 } from '../actions/filters';
 
 const initialState = {
-  availableFilters: [],
+  allAvailableFilters: [],
   activeFilters: {},
   activeFacets: {},
   refreshSearch: true
@@ -16,11 +16,11 @@ export default function filters(state = initialState, action) {
 
   switch (action.type) {
     case REGISTER_FILTER:
-      let nextAvailable = state.availableFilters.slice();
-      nextAvailable.push(action.filterObj);
-
+      let nextAllAvailableFilters = state.allAvailableFilters.slice();
+      const options = Object.assign({}, action.filterObj.options);
+      nextAllAvailableFilters.push(options);
       return Object.assign({}, state, {
-        availableFilters: nextAvailable
+        allAvailableFilters: nextAllAvailableFilters
       });
 
 
@@ -38,7 +38,7 @@ export default function filters(state = initialState, action) {
 
       return Object.assign({}, state, {
         activeFilters: nextActive,
-        refreshSearch: true
+        refreshSearch: action.refreshSearch === false ? false : true
       });
 
 
