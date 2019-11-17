@@ -1,38 +1,46 @@
-import {
-  SET_CATEGORY_FILTERS,
-  ADD_CUSTOM_FIELD_FILTER,
-  REMOVE_CUSTOM_FIELD_FILTER
-} from '../actions/filters';
+import { TOGGLE_FILTER, REGISTER_FILTER, SET_ACTIVE_FILTERS} from '../actions/filters';
 
 const initialState = {
-  filters: null,
-  customFieldFilters: {}
+  availableFilters: [],
+  activeFilters: {},
+  refreshSearch: true
 };
 
 export default function filters(state = initialState, action) {
 
   switch (action.type) {
-    case SET_CATEGORY_FILTERS:
-      return Object.assign({}, state, {
-        filters: action.filters
-      });
-
-    case ADD_CUSTOM_FIELD_FILTER:
-      let nexta = Object.assign({}, state.customFieldFilters);
-      nexta[action.field] = action.value;
+    case REGISTER_FILTER:
+      let nextAvailable = state.availableFilters.slice();
+      nextAvailable.push(action.filterObj);
 
       return Object.assign({}, state, {
-        customFieldFilters: nexta
+        availableFilters: nextAvailable
       });
 
-    case REMOVE_CUSTOM_FIELD_FILTER:
-      let nextd = Object.assign({}, state.customFieldFilters);
-      delete nextd[action.field];
+
+    case TOGGLE_FILTER:
+      let nextActive = Object.assign({}, state.activeFilters);
+
+      // Remove filter
+      if (nextActive[action.filterName]) {
+        delete nextActive[action.filterName];
+      }
+      // Add filter
+      else {
+        nextActive[action.filterName] = action.value;
+      }
 
       return Object.assign({}, state, {
-        customFieldFilters: nextd
+        activeFilters: nextActive,
+        refreshSearch: true
       });
 
+
+    case SET_ACTIVE_FILTERS:
+      return Object.assign({}, state, {
+        activeFilters: action.json || {},
+        refreshSearch: false
+      });
 
 
     default:

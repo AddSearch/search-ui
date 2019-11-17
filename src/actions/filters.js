@@ -1,40 +1,25 @@
-import { setHistory, HISTORY_PARAMETERS } from '../util/history';
+export const TOGGLE_FILTER = 'TOGGLE_FILTER';
+export const REGISTER_FILTER = 'REGISTER_FILTER';
+export const SET_ACTIVE_FILTERS = 'SET_ACTIVE_FILTERS';
 
-export const SET_CATEGORY_FILTERS = 'SET_CATEGORY_FILTERS';
-export const ADD_CUSTOM_FIELD_FILTER = 'ADD_CUSTOM_FIELD_FILTER';
-export const REMOVE_CUSTOM_FIELD_FILTER = 'REMOVE_CUSTOM_FIELD_FILTER';
-
-export function setCategoryFilters(client, filters) {
-  setHistory(HISTORY_PARAMETERS.FILTERS, filters);
-  client.setCategoryFilters(filters);
-
+export function registerFilter(filterObj) {
   return {
-    type: SET_CATEGORY_FILTERS,
-    filters
+    type: REGISTER_FILTER,
+    filterObj
   }
 }
 
-export function addCustomFieldFilter(client, field, value) {
-  client.addCustomFieldFilter(field, value);
-
+export function toggleFilter(filterName, value) {
   return {
-    type: ADD_CUSTOM_FIELD_FILTER,
-    field,
+    type: TOGGLE_FILTER,
+    filterName,
     value
   }
 }
 
-export function removeCustomFieldFilter(client, field, value) {
-  if (value) {
-    client.addCustomFieldFilter(field, value);
-  }
-  else {
-    client.removeCustomFieldFilter(field);
-  }
-
+export function setActiveFilters(json) {
   return {
-    type: REMOVE_CUSTOM_FIELD_FILTER,
-    field,
-    value: value || null
+    type: SET_ACTIVE_FILTERS,
+    json
   }
 }
