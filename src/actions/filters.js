@@ -11,11 +11,12 @@ export function registerFilter(filterObj) {
   }
 }
 
-export function toggleFilter(filterName, value) {
+export function toggleFilter(filterName, value, refreshSearch) {
   return {
     type: TOGGLE_FILTER,
     filterName,
-    value
+    value,
+    refreshSearch
   }
 }
 

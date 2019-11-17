@@ -86,10 +86,10 @@ function handleURLParams(store, client, qs, clearIfNoKeyword, createFilterObject
     const filterState = store.getState().filters;
     const filterObject = createFilterObjectFunction(filterState);
     client.setFilterObject(filterObject);
-
   }
   else {
     store.dispatch(setActiveFilters(null));
+    client.setFilterObject(null);
   }
 
   if (qs[HISTORY_PARAMETERS.PAGE]) {
@@ -135,7 +135,9 @@ export function queryParamsToObject(url) {
 
   qsArr.forEach(v => {
     const kv = v.split('=');
-    obj[kv[0]] = kv[1];
+    if (kv[0] && kv[0].length > 0) {
+      obj[kv[0]] = kv[1];
+    }
   });
 
   return obj;
