@@ -112,6 +112,14 @@ Settings that can be passed to the ```pagination``` function:
 | containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/pagination.js#L9) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
 
+## General functions
+### Execute search
+Execute a search query. Common use cases include links of most popular keywords.
+Clicking the keyword executes the search.
+```js
+  searchui.search(keyword);
+```
+
 
 ## Supported web browsers
 This library is tested on
