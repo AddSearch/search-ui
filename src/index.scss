@@ -1,7 +1,10 @@
+@import "variables";
+
 .addsearch-filtergroup *,
 .addsearch-pagination *,
 .addsearch-searchbar *,
 .addsearch-searchresults * {
+  color: $font-color;
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
