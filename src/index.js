@@ -95,12 +95,11 @@ export default class SearchUI {
   }
 
   facetGroup(conf) {
-    const facetGroup = new FacetGroup(this.client, conf);
-    facetGroup.render();
+    new FacetGroup(this.client, conf);
   }
 
   filters(conf) {
-    const filters = new Filters(this.client, conf);
+    new Filters(this.client, conf);
   }
 
   sortBy(conf) {
