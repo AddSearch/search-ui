@@ -1,6 +1,6 @@
 import './facetgroup.scss';
 import handlebars from 'handlebars';
-import { addCustomFieldFilter, removeCustomFieldFilter } from '../../actions/filters';
+import { toggleFacetFilter } from '../../actions/filters';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { getStore, observeStoreByKey } from '../../store';
@@ -31,27 +31,21 @@ export default class FacetGroup {
     this.fieldName = conf.field;
     this.activeFilters = [];
 
-    observeStoreByKey(getStore(), 'search', () => this.render());
+    observeStoreByKey(getStore(), 'search', (search) => this.render(search));
   }
 
 
-  setFilter(filter, active) {
-    const idx = this.activeFilters.indexOf(filter);
+  setFilter(value, active) {
+    const idx = this.activeFilters.indexOf(value);
     if (active && idx === -1) {
-      this.activeFilters.push(filter);
+      this.activeFilters.push(value);
     }
     else if (idx !== -1) {
       this.activeFilters.splice(idx, 1);
     }
 
     // Dispatch filter
-    const field = this.conf.field.replace('custom_fields.', '');
-    if (active) {
-      getStore().dispatch(addCustomFieldFilter(this.client, field, filter));
-    }
-    else {
-      getStore().dispatch(removeCustomFieldFilter(this.client, field));
-    }
+    getStore().dispatch(toggleFacetFilter(this.conf.field, value));
 
     // Reset paging
     getStore().dispatch(setPage(this.client, 1));
@@ -62,8 +56,8 @@ export default class FacetGroup {
   }
 
 
-  render() {
-    const results = getStore().getState().search.results;
+  render(search) {
+    const results = search.results;
 
     let facets = [];
     if (results && results.facets && results.facets[this.fieldName]) {
