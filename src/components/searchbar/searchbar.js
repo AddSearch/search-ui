@@ -39,7 +39,9 @@ export default class SearchBar {
     }
 
     const store = getStore();
-    store.dispatch(setPage(client, 1));
+    if (kw.indexOf(WARMUP_QUERY_PREFIX) !== 0) {
+      store.dispatch(setPage(client, 1));
+    }
     store.dispatch(search(client, kw));
   }
 

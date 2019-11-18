@@ -1,15 +1,15 @@
 /* global window, history */
-
 import { WARMUP_QUERY_PREFIX } from '../index';
 import { search, clearSearchResults } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
-import { setCategoryFilters } from '../actions/filters';
+import { setActiveFilters, setActiveFacets } from '../actions/filters';
 import { getStore } from '../store';
 
 export const HISTORY_PARAMETERS = {
   SEARCH: 'search',
   FILTERS: 'search_filters',
+  FACETS: 'search_facets',
   PAGE: 'search_page'
 }
 
@@ -62,34 +62,58 @@ export function getQueryParam(url, param) {
 }
 
 
-export function initFromURL(client) {
+export function initFromURL(client, createFilterObjectFunction) {
   // Initial load
   const url = window.location.href;
   const qs = queryParamsToObject(url);
   const store = getStore();
-  handleURLParams(store, client, qs, false);
+  handleURLParams(store, client, qs, false, createFilterObjectFunction);
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
     const q = queryParamsToObject(window.location.href);
-    handleURLParams(store, client, q, true);
+    handleURLParams(store, client, q, true, createFilterObjectFunction);
   }
 }
 
 
-function handleURLParams(store, client, qs, clearIfNoKeyword) {
+function handleURLParams(store, client, qs, clearIfNoKeyword, createFilterObjectFunction) {
+
+  let hasFacetsOrFilters = false;
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
-    store.dispatch(setCategoryFilters(client, qs[HISTORY_PARAMETERS.FILTERS]));
-  }
-  else {
-    store.dispatch(setCategoryFilters(client, null));
+    // Take active filters from URL
+    const filtersJson = urlParamToJSON(qs[HISTORY_PARAMETERS.FILTERS]);
+    store.dispatch(setActiveFilters(filtersJson));
+    hasFacetsOrFilters = true;
   }
 
+  if (qs[HISTORY_PARAMETERS.FACETS]) {
+    // Take active facets from URL
+    const facetsJson = urlParamToJSON(qs[HISTORY_PARAMETERS.FACETS]);
+    store.dispatch(setActiveFacets(facetsJson));
+    hasFacetsOrFilters = true;
+  }
+
+  // Has facets or filters. Update client state
+  if (hasFacetsOrFilters) {
+    const filterState = store.getState().filters;
+    const filterObject = createFilterObjectFunction(filterState);
+    client.setFilterObject(filterObject);
+  }
+  // No facets or filters
+  else {
+    store.dispatch(setActiveFilters(null));
+    store.dispatch(setActiveFacets(null));
+    client.setFilterObject(null);
+  }
+
+
+
   if (qs[HISTORY_PARAMETERS.PAGE]) {
-    store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10)));
+    store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE])));
   }
   else {
-    store.dispatch(setPage(client, 1, 10));
+    store.dispatch(setPage(client, 1));
   }
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
@@ -128,7 +152,9 @@ export function queryParamsToObject(url) {
 
   qsArr.forEach(v => {
     const kv = v.split('=');
-    obj[kv[0]] = kv[1];
+    if (kv[0] && kv[0].length > 0) {
+      obj[kv[0]] = kv[1];
+    }
   });
 
   return obj;
@@ -154,3 +180,22 @@ export function objectToQueryParams(obj) {
   return qs;
 }
 
+/**
+ * Transfer a URL parameter to a JSON object
+ */
+export function urlParamToJSON(urlParameter) {
+  try {
+    return JSON.parse(decodeURIComponent(urlParameter));
+  }
+  catch(error) {}
+}
+
+/**
+ * Transfer JSON object to a string suitable for URL param
+ */
+export function jsonToUrlParam(json) {
+  if (Object.keys(json).length > 0) {
+    return encodeURIComponent(JSON.stringify(json));
+  }
+  return null;
+}

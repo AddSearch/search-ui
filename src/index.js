@@ -1,35 +1,27 @@
 import './index.scss';
-import handlebars from 'handlebars';
 import oa from 'es6-object-assign';
 
 import Autocomplete from './components/autocomplete';
 import FacetGroup from './components/facetgroup';
-import FilterGroup from './components/filtergroup';
+import Filters, { FILTER_TYPE } from './components/filters';
+import FilterStateObserver, { createFilterObject } from './components/filters/filterstateobserver';
 import Pagination from './components/pagination';
 import SearchBar from './components/searchbar';
 import SearchResults from './components/searchresults';
 import SortBy from './components/sortby';
-import { getStore, observeStoreByKey } from './store';
+import { getStore } from './store';
+import { regisiterHelpers } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { search } from './actions/search';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
 
-// Static polyfills and helpers
-oa.polyfill();
-handlebars.registerHelper('equals', (arg1, arg2, options) => {
-  return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
-});
-handlebars.registerHelper('gt', (arg1, arg2, options) => {
-  return arg1 > arg2 ? options.fn(this) : options.inverse(this);
-});
-handlebars.registerHelper('lt', (arg1, arg2, options) => {
-  return arg1 < arg2 ? options.fn(this) : options.inverse(this);
-});
-
-
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 export const MATCH_ALL_QUERY = '*';
+
+// Static
+oa.polyfill();
+regisiterHelpers();
 
 export default class SearchUI {
 
@@ -37,14 +29,25 @@ export default class SearchUI {
     this.client = client;
     this.settings = settings || {};
 
-    // Init state
+    // Expose some constants
+    this.FILTER_TYPE = FILTER_TYPE;
+  }
+
+  start() {
     this.initFromClientSettings();
-    initFromURL(this.client);
+
+    // Possible custom function to create filter group with custom and/or logic
+    const createFilterObjectFunction = this.settings && this.settings.createFilterObjectFunction ?
+      this.settings.createFilterObjectFunction : createFilterObject;
+    initFromURL(this.client, createFilterObjectFunction);
 
     // Possible match all query on load
     if (this.settings.matchAllQuery === true) {
       this.matchAllQuery();
     }
+
+    // FilterStateObserver to update client's filter object when any of the filters change
+    new FilterStateObserver(this.client, createFilterObjectFunction);
   }
 
 
@@ -92,13 +95,11 @@ export default class SearchUI {
   }
 
   facetGroup(conf) {
-    const facetGroup = new FacetGroup(this.client, conf);
-    facetGroup.render();
+    new FacetGroup(this.client, conf);
   }
 
-  filterGroup(conf) {
-    const filterGroup = new FilterGroup(this.client, conf);
-    filterGroup.render();
+  filters(conf) {
+    new Filters(this.client, conf);
   }
 
   sortBy(conf) {
@@ -110,4 +111,14 @@ export default class SearchUI {
     const pagination = new Pagination(this.client, conf);
     pagination.render();
   }
+
+
+  /*
+   * Public functions
+   */
+  search(keyword) {
+    getStore().dispatch(setKeyword(keyword, true));
+    getStore().dispatch(search(this.client, keyword));
+  }
+
 }

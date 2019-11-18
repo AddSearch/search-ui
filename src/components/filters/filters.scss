@@ -1,0 +1,64 @@
+@import "../../variables";
+
+/* Reset button styles */
+.addsearch-filters-tabs,
+.addsearch-filters-tags {
+  button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    margin: 0;
+    padding: 0.5em 1.5em;
+    display: inline-block;
+    cursor: pointer;
+  }
+}
+
+
+/* Tabs */
+.addsearch-filters-tabs {
+  .tabs {
+    button {
+      border: 1px solid $border-color;
+      border-right: 0;
+      font-size: 18px;
+      float: left;
+
+      &.active {
+        background-color: $active-color;
+      }
+      &:last-child {
+        border-right: 1px solid $border-color;
+      }
+    }
+  }
+  .tabs:after {
+    content: " ";
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+  }
+}
+
+
+/* Tags */
+.addsearch-filters-tags {
+  button {
+    border-radius: 4px;
+
+    &.active {
+      background-color: $active-color;
+    }
+  }
+}
+
+/* Checkbox group */
+.addsearch-filters-checkboxgroup {
+  label {
+    display: block;
+    padding: 4px 0;
+  }
+  input {
+    margin-right: 6px;
+  }
+}
