@@ -2,6 +2,7 @@ import {
   TOGGLE_FILTER,
   REGISTER_FILTER,
   SET_ACTIVE_FILTERS,
+  SET_ACTIVE_FACETS,
   TOGGLE_FACET_FILTER
 } from '../actions/filters';
 
@@ -45,6 +46,13 @@ export default function filters(state = initialState, action) {
     case SET_ACTIVE_FILTERS:
       return Object.assign({}, state, {
         activeFilters: action.json || {},
+        refreshSearch: false
+      });
+
+
+    case SET_ACTIVE_FACETS:
+      return Object.assign({}, state, {
+        activeFacets: action.json || {},
         refreshSearch: false
       });
 
