@@ -71,6 +71,7 @@ export default class FilterStateObserver {
   onFilterStateChange(state) {
     if (state.refreshSearch) {
       setHistory(HISTORY_PARAMETERS.FILTERS, jsonToUrlParam(state.activeFilters));
+      setHistory(HISTORY_PARAMETERS.FACETS, jsonToUrlParam(state.activeFacets));
 
       const filterObject = this.createFilterObjectFunction(state);
       this.client.setFilterObject(filterObject);

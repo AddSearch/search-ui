@@ -3,12 +3,13 @@ import { WARMUP_QUERY_PREFIX } from '../index';
 import { search, clearSearchResults } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
-import { setActiveFilters } from '../actions/filters';
+import { setActiveFilters, setActiveFacets } from '../actions/filters';
 import { getStore } from '../store';
 
 export const HISTORY_PARAMETERS = {
   SEARCH: 'search',
   FILTERS: 'search_filters',
+  FACETS: 'search_facets',
   PAGE: 'search_page'
 }
 
@@ -77,20 +78,36 @@ export function initFromURL(client, createFilterObjectFunction) {
 
 
 function handleURLParams(store, client, qs, clearIfNoKeyword, createFilterObjectFunction) {
+
+  let hasFacetsOrFilters = false;
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
     // Take active filters from URL
     const filtersJson = urlParamToJSON(qs[HISTORY_PARAMETERS.FILTERS]);
     store.dispatch(setActiveFilters(filtersJson));
+    hasFacetsOrFilters = true;
+  }
 
-    // Set the whole filter state to AddSearch Client
+  if (qs[HISTORY_PARAMETERS.FACETS]) {
+    // Take active facets from URL
+    const facetsJson = urlParamToJSON(qs[HISTORY_PARAMETERS.FACETS]);
+    store.dispatch(setActiveFacets(facetsJson));
+    hasFacetsOrFilters = true;
+  }
+
+  // Has facets or filters. Update client state
+  if (hasFacetsOrFilters) {
     const filterState = store.getState().filters;
     const filterObject = createFilterObjectFunction(filterState);
     client.setFilterObject(filterObject);
   }
+  // No facets or filters
   else {
     store.dispatch(setActiveFilters(null));
+    store.dispatch(setActiveFacets(null));
     client.setFilterObject(null);
   }
+
+
 
   if (qs[HISTORY_PARAMETERS.PAGE]) {
     store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE])));
