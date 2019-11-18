@@ -12,7 +12,7 @@ import SortBy from './components/sortby';
 import { getStore } from './store';
 import { regisiterHelpers } from './util/handlebars';
 import { initFromURL } from './util/history';
-import { search } from './actions/search';
+import { start, search } from './actions/search';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
 
@@ -48,6 +48,8 @@ export default class SearchUI {
 
     // FilterStateObserver to update client's filter object when any of the filters change
     new FilterStateObserver(this.client, createFilterObjectFunction);
+
+    getStore().dispatch(start());
   }
 
 

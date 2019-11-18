@@ -1,10 +1,16 @@
 /* global window */
 import { setHistory, HISTORY_PARAMETERS } from '../util/history';
 
+export const START = 'START';
 export const SEARCH_FETCH_START = 'SEARCH_FETCH_START';
 export const SEARCH_RESULTS = 'SEARCH_RESULTS';
 export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
 
+export function start() {
+  return {
+    type: START
+  }
+}
 
 export function search(client, keyword, onResultsScrollTo) {
   // Update browser history

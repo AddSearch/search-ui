@@ -1,11 +1,13 @@
 import { WARMUP_QUERY_PREFIX } from '../index';
 import {
+  START,
   SEARCH_FETCH_START,
   SEARCH_RESULTS,
   CLEAR_SEARCH_RESULTS
 } from '../actions/search';
 
 const initialState = {
+  started: false,
   keyword: null,
   results: {},
   loading: false
@@ -13,6 +15,11 @@ const initialState = {
 
 export default function search(state = initialState, action) {
   switch (action.type) {
+    case START:
+      return Object.assign({}, state, {
+        started: true
+      });
+
     case CLEAR_SEARCH_RESULTS:
       return Object.assign({}, initialState);
 
@@ -22,6 +29,11 @@ export default function search(state = initialState, action) {
       });
 
     case SEARCH_RESULTS:
+      if (!state.started) {
+        console.log('WARNING: AddSearch UI not started with the start() function')
+        return state;
+      }
+
       if (action.keyword.indexOf(WARMUP_QUERY_PREFIX) === 0) {
         return Object.assign({}, state, {
           loading: false
