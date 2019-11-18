@@ -4,6 +4,7 @@ import { toggleFacetFilter } from '../../actions/filters';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { getStore, observeStoreByKey } from '../../store';
+import { renderToContainer } from '../../util/dom';
 
 const TEMPLATE = `
   <div class="addsearch-facetgroup">        
@@ -28,22 +29,11 @@ export default class FacetGroup {
     this.client = client;
     this.conf = conf;
 
-    this.fieldName = conf.field;
-    this.activeFilters = [];
-
     observeStoreByKey(getStore(), 'search', (search) => this.render(search));
   }
 
 
   setFilter(value, active) {
-    const idx = this.activeFilters.indexOf(value);
-    if (active && idx === -1) {
-      this.activeFilters.push(value);
-    }
-    else if (idx !== -1) {
-      this.activeFilters.splice(idx, 1);
-    }
-
     // Dispatch filter
     getStore().dispatch(toggleFacetFilter(this.conf.field, value));
 
@@ -57,20 +47,31 @@ export default class FacetGroup {
 
 
   render(search) {
+    const facetField = this.conf.field;
     const results = search.results;
 
+    // Facets in search results
     let facets = [];
-    if (results && results.facets && results.facets[this.fieldName]) {
-      facets = results.facets[this.fieldName];
+    if (results && results.facets && results.facets[facetField]) {
+      facets = results.facets[facetField];
     }
 
+    // Read active facets from redux state
+    let activeFacets = [];
+    const activeFacetState = getStore().getState().filters.activeFacets;
+    if (activeFacetState[facetField]) {
+      for (let value in activeFacetState[facetField]) {
+        activeFacets.push(value);
+      }
+    }
+
+    // Render
     const data = {
       conf: this.conf,
       facets: facets
     };
-    const html = handlebars.compile(this.conf.template || TEMPLATE)(data);
-    const container = document.getElementById(this.conf.containerId);
-    container.innerHTML = html;
+    const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
+
 
     // Attach events
     const options = container.getElementsByTagName('input');
@@ -78,7 +79,7 @@ export default class FacetGroup {
     // Filter options
     for (let i=0; i<options.length; i++) {
       let checkbox = options[i];
-      checkbox.checked = this.activeFilters.indexOf(checkbox.value) !== -1;
+      checkbox.checked = activeFacets.indexOf(checkbox.value) !== -1;
 
       checkbox.onchange = (e) => {
         this.setFilter(e.target.value, e.target.checked);
