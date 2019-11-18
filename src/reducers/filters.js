@@ -1,38 +1,83 @@
 import {
-  SET_CATEGORY_FILTERS,
-  ADD_CUSTOM_FIELD_FILTER,
-  REMOVE_CUSTOM_FIELD_FILTER
+  TOGGLE_FILTER,
+  REGISTER_FILTER,
+  SET_ACTIVE_FILTERS,
+  SET_ACTIVE_FACETS,
+  TOGGLE_FACET_FILTER
 } from '../actions/filters';
 
 const initialState = {
-  filters: null,
-  customFieldFilters: {}
+  allAvailableFilters: [],
+  activeFilters: {},
+  activeFacets: {},
+  refreshSearch: true
 };
 
 export default function filters(state = initialState, action) {
 
   switch (action.type) {
-    case SET_CATEGORY_FILTERS:
+    case REGISTER_FILTER:
+      let nextAllAvailableFilters = state.allAvailableFilters.slice();
+      const options = Object.assign({}, action.filterObj.options);
+      nextAllAvailableFilters.push(options);
       return Object.assign({}, state, {
-        filters: action.filters
+        allAvailableFilters: nextAllAvailableFilters
       });
 
-    case ADD_CUSTOM_FIELD_FILTER:
-      let nexta = Object.assign({}, state.customFieldFilters);
-      nexta[action.field] = action.value;
+
+    case TOGGLE_FILTER:
+      let nextActive = Object.assign({}, state.activeFilters);
+
+      // Remove filter
+      if (nextActive[action.filterName]) {
+        delete nextActive[action.filterName];
+      }
+      // Add filter
+      else {
+        nextActive[action.filterName] = action.value;
+      }
 
       return Object.assign({}, state, {
-        customFieldFilters: nexta
+        activeFilters: nextActive,
+        refreshSearch: action.refreshSearch === false ? false : true
       });
 
-    case REMOVE_CUSTOM_FIELD_FILTER:
-      let nextd = Object.assign({}, state.customFieldFilters);
-      delete nextd[action.field];
+
+    case SET_ACTIVE_FILTERS:
+      return Object.assign({}, state, {
+        activeFilters: action.json || {},
+        refreshSearch: false
+      });
+
+
+    case SET_ACTIVE_FACETS:
+      return Object.assign({}, state, {
+        activeFacets: action.json || {},
+        refreshSearch: false
+      });
+
+
+    case TOGGLE_FACET_FILTER:
+      let nextActiveFacets = Object.assign({}, state.activeFacets);
+
+      if (!nextActiveFacets[action.field]) {
+        nextActiveFacets[action.field] = {};
+      }
+
+      // Remove filter
+      if (nextActiveFacets[action.field][action.value]) {
+        delete nextActiveFacets[action.field][action.value];
+      }
+      // Add filter
+      else {
+        nextActiveFacets[action.field][action.value] = 'true';
+      }
+      nextActiveFacets['v'] = !nextActiveFacets['v'] ? 1 : nextActiveFacets['v']+1;
 
       return Object.assign({}, state, {
-        customFieldFilters: nextd
+        activeFacets: nextActiveFacets,
+        refreshSearch: true
       });
-
 
 
     default:

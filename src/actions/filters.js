@@ -1,40 +1,42 @@
-import { setHistory, HISTORY_PARAMETERS } from '../util/history';
+export const TOGGLE_FILTER = 'TOGGLE_FILTER';
+export const REGISTER_FILTER = 'REGISTER_FILTER';
+export const SET_ACTIVE_FILTERS = 'SET_ACTIVE_FILTERS';
+export const SET_ACTIVE_FACETS = 'SET_ACTIVE_FACETS';
+export const TOGGLE_FACET_FILTER = 'TOGGLE_FACET_FILTER';
 
-export const SET_CATEGORY_FILTERS = 'SET_CATEGORY_FILTERS';
-export const ADD_CUSTOM_FIELD_FILTER = 'ADD_CUSTOM_FIELD_FILTER';
-export const REMOVE_CUSTOM_FIELD_FILTER = 'REMOVE_CUSTOM_FIELD_FILTER';
-
-export function setCategoryFilters(client, filters) {
-  setHistory(HISTORY_PARAMETERS.FILTERS, filters);
-  client.setCategoryFilters(filters);
-
+export function registerFilter(filterObj) {
   return {
-    type: SET_CATEGORY_FILTERS,
-    filters
+    type: REGISTER_FILTER,
+    filterObj
   }
 }
 
-export function addCustomFieldFilter(client, field, value) {
-  client.addCustomFieldFilter(field, value);
-
+export function toggleFilter(filterName, value, refreshSearch) {
   return {
-    type: ADD_CUSTOM_FIELD_FILTER,
+    type: TOGGLE_FILTER,
+    filterName,
+    value,
+    refreshSearch
+  }
+}
+
+export function setActiveFilters(json) {
+  return {
+    type: SET_ACTIVE_FILTERS,
+    json
+  }
+}
+
+export function setActiveFacets(json) {
+  return {
+    type: SET_ACTIVE_FACETS,
+    json
+  }
+}
+export function toggleFacetFilter(field, value) {
+  return {
+    type: TOGGLE_FACET_FILTER,
     field,
     value
-  }
-}
-
-export function removeCustomFieldFilter(client, field, value) {
-  if (value) {
-    client.addCustomFieldFilter(field, value);
-  }
-  else {
-    client.removeCustomFieldFilter(field);
-  }
-
-  return {
-    type: REMOVE_CUSTOM_FIELD_FILTER,
-    field,
-    value: value || null
   }
 }
