@@ -31,6 +31,8 @@ search solutions quickly and effortlessly.
   searchui.pagination({
     containerId: 'pagination'
   });
+  
+  searchui.start();
 </script>
 ```
 
@@ -56,6 +58,12 @@ The configuration object can contain following values:
 | --- | --- | --- | --- |
 | debug | true<br>false | false | Log events to console |
 | matchAllQuery | true<br>false | false | Execute "match all" query when the Search UI is loaded |
+
+After all components are added to the SearchUI object, the start function must be called:
+
+```js
+  searchui.start();
+```
 
 ## Components
 ### Search bar
