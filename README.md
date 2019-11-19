@@ -58,6 +58,7 @@ The configuration object can contain following values:
 | --- | --- | --- | --- |
 | debug | true<br>false | false | Log events to console |
 | matchAllQuery | true<br>false | false | Execute "match all" query when the Search UI is loaded |
+| searchResultsPageUrl | String | null | Instead of searching on this page, redirect the user to a separate search results page |
 
 After all components are added to the SearchUI object, the start function must be called:
 
