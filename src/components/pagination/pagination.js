@@ -36,7 +36,7 @@ export default class Pagination {
   render() {
     const state = getStore().getState();
 
-    const currentPage = state.pagination.page;
+    const currentPage = state.search.results.page || 1;
     const pageSize = this.client.getSettings().paging.pageSize;
     const totalHits = state.search.results.total_hits || 0;
     const totalPages = Math.ceil(totalHits / pageSize);
