@@ -45,9 +45,13 @@ export function setHistory(parameter, value) {
     stateUrl = stateUrl + '?' + objectToQueryParams(params);
   }
 
+  // Firt time called
+  if (history.state === null) {
+    history.replaceState(params, '', stateUrl);
+  }
   // Update history if it has changed
-  if (JSON.stringify(history.state) !== JSON.stringify(params)) {
-    history.pushState(params, null, stateUrl);
+  else if (JSON.stringify(history.state) !== JSON.stringify(params)) {
+    history.pushState(params, '', stateUrl);
   }
 }
 
@@ -71,6 +75,7 @@ export function initFromURL(client, createFilterObjectFunction) {
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
+    console.log(e);
     const q = queryParamsToObject(window.location.href);
     handleURLParams(store, client, q, true, createFilterObjectFunction);
   }
