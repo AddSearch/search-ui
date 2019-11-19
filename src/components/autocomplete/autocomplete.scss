@@ -13,8 +13,8 @@
     cursor: pointer;
     padding: 3px 4px;
   }
-  li:hover {
-    background-color: #dedede;
+  li.active {
+    background-color: #eeeeee;
   }
 }
 
