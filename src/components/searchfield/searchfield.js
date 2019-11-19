@@ -7,7 +7,7 @@ import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
 import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
-import { HISTORY_PARAMETERS } from '../../util/history';
+import { redirectToSearchResultsPage } from '../../util/history';
 
 /**
  * HTML template
@@ -54,11 +54,6 @@ export default class SearchField {
         this.render(getStore().getState().keyword.value);
       }
     }
-  }
-
-
-  redirectToResultsPage(keyword) {
-    window.location.href = this.conf.targetUrl + '?' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
   }
 
 
@@ -127,8 +122,9 @@ export default class SearchField {
         const keyword = e.target.value;
 
         // Redirect to results page
-        if (this.conf.targetUrl && keyword && keyword.length > 0) {
-          this.redirectToResultsPage(keyword);
+        const searchResultsPageUrl = store.getState().search.searchResultsPageUrl;
+        if (searchResultsPageUrl && keyword && keyword.length > 0) {
+          redirectToSearchResultsPage(searchResultsPageUrl, keyword);
         }
         // Search
         else {
