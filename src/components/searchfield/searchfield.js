@@ -21,6 +21,13 @@ const TEMPLATE = `
   </form>
 `;
 
+const KEYCODES = {
+  ARROW_DOWN: 40,
+  ARROW_UP: 38,
+  ENTER: 13,
+  BACKSPACE: 8,
+  DELETE: 46
+};
 
 export default class SearchField {
 
@@ -36,13 +43,13 @@ export default class SearchField {
 
 
   onAutocompleteUpdate(acState) {
-    if (acState.suggestions.length > 0) {
-      // Has active suggestion and suggestionToSearchField is true
-      if (acState.activeSuggestionIndex !== null && acState.suggestionToSearchField) {
+    if (acState.suggestions.length > 0 && acState.setSuggestionToSearchField) {
+      // Set field value
+      if (acState.activeSuggestionIndex !== null && acState.setSuggestionToSearchField) {
         const suggestion = acState.suggestions[acState.activeSuggestionIndex].value;
         this.render(suggestion);
       }
-      // Revert to original keyword
+      // Revert to original typed keyword
       else if (acState.activeSuggestionIndex === null) {
         this.render(getStore().getState().keyword.value);
       }
@@ -94,13 +101,19 @@ export default class SearchField {
     field.onkeyup = (e) => {
       const keyword = e.target.value;
 
-      if (e.keyCode === 40) {
+
+
+      if (e.keyCode === KEYCODES.ARROW_DOWN) {
         store.dispatch(keyboardEvent(ARROW_DOWN));
       }
-      else if (e.keyCode === 38) {
+      else if (e.keyCode === KEYCODES.ARROW_UP) {
         store.dispatch(keyboardEvent(ARROW_UP));
       }
       else {
+        if (e.keyCode === KEYCODES.BACKSPACE || e.keyCode === KEYCODES.DELETE) {
+          store.dispatch(setActiveSuggestion(null, false));
+        }
+
         store.dispatch(setKeyword(keyword));
         if (this.conf.searchAsYouType === true) {
           this.search(this.client, keyword);
@@ -110,7 +123,7 @@ export default class SearchField {
 
     field.onkeypress = (e) => {
       // Enter pressed
-      if (e.keyCode === 13) {
+      if (e.keyCode === KEYCODES.ENTER) {
         const keyword = e.target.value;
 
         // Redirect to results page
@@ -120,6 +133,7 @@ export default class SearchField {
         // Search
         else {
           this.search(this.client, keyword);
+          store.dispatch(autocompleteHide());
         }
         return false;
       }
@@ -135,10 +149,6 @@ export default class SearchField {
     field.onblur = (e) => {
       store.dispatch(autocompleteHide());
     };
-
-    field.onmouseover = (e) => {
-      store.dispatch(setActiveSuggestion(null));
-    }
 
     // Event listeners to the possible search button
     if (container.getElementsByTagName('button').length > 0) {
