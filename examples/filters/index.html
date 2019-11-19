@@ -15,7 +15,7 @@
       <aside id="filters"></aside>
 
       <main>
-        <div id="searchbar"></div>
+        <div id="searchfield"></div>
         <div id="results"></div>
         <div id="pagination"></div>
       </main>
@@ -27,11 +27,11 @@
       var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
 
       // Search UI instance
-      var searchui = new AddSearchSearchUI(client);
+      var searchui = new AddSearchUI(client);
 
       // Add components
-      searchui.searchBar({
-        containerId: 'searchbar',
+      searchui.searchField({
+        containerId: 'searchfield',
         placeholder: 'Keyword..',
         button: 'Search',
         searchAsYouType: true

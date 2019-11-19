@@ -5,6 +5,12 @@ export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
 export const AUTOCOMPLETE_SEARCH_CLEAR = 'AUTOCOMPLETE_SEARCH_CLEAR';
 export const AUTOCOMPLETE_HIDE = 'AUTOCOMPLETE_HIDE';
 
+export const KEYBOARD_EVENT = 'KEYBOARD_EVENT';
+export const ARROW_UP = 'ARROW_UP';
+export const ARROW_DOWN = 'ARROW_DOWN';
+export const SET_ACTIVE_SUGGESTION = 'SET_ACTIVE_SUGGESTION';
+
+
 export function autocompleteSuggestions(client, keyword) {
   if (!keyword || keyword === '') {
     return {
@@ -53,5 +59,20 @@ export function autocompleteFetchStart() {
 export function autocompleteHide() {
   return {
     type: AUTOCOMPLETE_HIDE
+  }
+}
+
+export function keyboardEvent(direction) {
+  return {
+    type: KEYBOARD_EVENT,
+    direction
+  }
+}
+
+export function setActiveSuggestion(index, setSuggestionToSearchField) {
+  return {
+    type: SET_ACTIVE_SUGGESTION,
+    index,
+    setSuggestionToSearchField
   }
 }
