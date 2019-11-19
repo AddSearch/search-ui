@@ -6,13 +6,13 @@ import FacetGroup from './components/facetgroup';
 import Filters, { FILTER_TYPE } from './components/filters';
 import FilterStateObserver, { createFilterObject } from './components/filters/filterstateobserver';
 import Pagination from './components/pagination';
-import SearchBar from './components/searchbar';
+import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
 import SortBy from './components/sortby';
 import { getStore } from './store';
 import { regisiterHelpers } from './util/handlebars';
 import { initFromURL } from './util/history';
-import { start, search } from './actions/search';
+import { start, search, setSearchResultsPageUrl } from './actions/search';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
 
@@ -35,6 +35,8 @@ export default class SearchUI {
 
   start() {
     this.initFromClientSettings();
+
+    getStore().dispatch(setSearchResultsPageUrl(this.settings.searchResultsPageUrl));
 
     // Possible custom function to create filter group with custom and/or logic
     const createFilterObjectFunction = this.settings && this.settings.createFilterObjectFunction ?
@@ -81,14 +83,12 @@ export default class SearchUI {
    * Components
    */
 
-  searchBar(conf) {
-    const searchbar = new SearchBar(this.client, conf, this.settings.matchAllQuery === true);
-    searchbar.render();
+  searchField(conf) {
+    new SearchField(this.client, conf, this.settings.matchAllQuery === true);
   }
 
   autocomplete(conf) {
-    const autocomplete = new Autocomplete(this.client, conf);
-    autocomplete.render();
+    new Autocomplete(this.client, conf);
   }
 
   searchResults(conf) {
@@ -118,6 +118,7 @@ export default class SearchUI {
   /*
    * Public functions
    */
+
   search(keyword) {
     getStore().dispatch(setKeyword(keyword, true));
     getStore().dispatch(search(this.client, keyword));

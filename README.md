@@ -6,7 +6,7 @@ search solutions quickly and effortlessly.
 ## Quick example
 ```html
 <!-- Containers -->
-<div id="searchbar"></div>
+<div id="searchfield"></div>
 <div id="results"></div>
 <div id="pagination"></div>
 
@@ -15,11 +15,11 @@ search solutions quickly and effortlessly.
   var client = new AddSearchClient('YOUR PUBLIC SITEKEY');
 
   // Search UI instance
-  var searchui = new AddSearchSearchUI(client);
+  var searchui = new AddSearchUI(client);
 
   // Add Search UI components
-  searchui.searchBar({
-    containerId: 'searchbar',
+  searchui.searchField({
+    containerId: 'searchfield',
     placeholder: 'Keyword..',
     button: 'Search'
   });
@@ -37,7 +37,7 @@ search solutions quickly and effortlessly.
 ```
 
 ## Search UI instance and configuration
-To create a Search UI instance, call the constructor ```new AddSearchSearchUI(client, conf)``` 
+To create a Search UI instance, call the constructor ```new AddSearchUI(client, conf)``` 
 with the mandatory [AddSearchClient](https://github.com/AddSearch/js-client-library) parameter and 
 with an optional configuration parameter:
 
@@ -49,7 +49,7 @@ var conf = {
 };
 
 // Search UI instance
-var searchui = new AddSearchSearchUI(client, conf);
+var searchui = new AddSearchUI(client, conf);
 ```
 
 The configuration object can contain following values:   
@@ -58,6 +58,7 @@ The configuration object can contain following values:
 | --- | --- | --- | --- |
 | debug | true<br>false | false | Log events to console |
 | matchAllQuery | true<br>false | false | Execute "match all" query when the Search UI is loaded |
+| searchResultsPageUrl | String | null | Instead of searching on this page, redirect the user to a separate search results page |
 
 After all components are added to the SearchUI object, the start function must be called:
 
@@ -66,18 +67,18 @@ After all components are added to the SearchUI object, the start function must b
 ```
 
 ## Components
-### Search bar
+### Search field
 Input field where keyword can be typed. Can include a button to execute the search.
 
 ```js
-  searchui.searchBar({
-    containerId: 'searchbar',
+  searchui.searchField({
+    containerId: 'searchfield',
     placeholder: 'Keyword..',
     button: 'Search'
   });
 ```
 
-Settings that can be passed to the ```searchBar``` function:
+Settings that can be passed to the ```searchField``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
@@ -86,7 +87,7 @@ Settings that can be passed to the ```searchBar``` function:
 | button | String | n/a | Add a button to execute the search. Button's label is the value of this setting |
 | placeholder | String | n/a | Input field's placeholder text |
 | searchAsYouType| true<br>false | false | Execute search after every keystroke |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchbar/searchbar.js#L11) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/searchfield.js) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
 
 ### Search results
 The list of search results.

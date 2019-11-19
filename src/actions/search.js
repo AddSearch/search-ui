@@ -2,6 +2,7 @@
 import { setHistory, HISTORY_PARAMETERS } from '../util/history';
 
 export const START = 'START';
+export const SET_SEARCH_RESULTS_PAGE_URL = 'SET_SEARCH_RESULTS_PAGE_URL';
 export const SEARCH_FETCH_START = 'SEARCH_FETCH_START';
 export const SEARCH_RESULTS = 'SEARCH_RESULTS';
 export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
@@ -53,5 +54,12 @@ export function clearSearchResults(scrollTo) {
 
   return {
     type: CLEAR_SEARCH_RESULTS
+  }
+}
+
+export function setSearchResultsPageUrl(url) {
+  return {
+    type: SET_SEARCH_RESULTS_PAGE_URL,
+    url
   }
 }
