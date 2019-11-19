@@ -6,7 +6,7 @@ search solutions quickly and effortlessly.
 ## Quick example
 ```html
 <!-- Containers -->
-<div id="searchbar"></div>
+<div id="searchfield"></div>
 <div id="results"></div>
 <div id="pagination"></div>
 
@@ -18,8 +18,8 @@ search solutions quickly and effortlessly.
   var searchui = new AddSearchSearchUI(client);
 
   // Add Search UI components
-  searchui.searchBar({
-    containerId: 'searchbar',
+  searchui.searchField({
+    containerId: 'searchfield',
     placeholder: 'Keyword..',
     button: 'Search'
   });
@@ -66,18 +66,18 @@ After all components are added to the SearchUI object, the start function must b
 ```
 
 ## Components
-### Search bar
+### Search field
 Input field where keyword can be typed. Can include a button to execute the search.
 
 ```js
-  searchui.searchBar({
-    containerId: 'searchbar',
+  searchui.searchField({
+    containerId: 'searchfield',
     placeholder: 'Keyword..',
     button: 'Search'
   });
 ```
 
-Settings that can be passed to the ```searchBar``` function:
+Settings that can be passed to the ```searchField``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
@@ -86,7 +86,7 @@ Settings that can be passed to the ```searchBar``` function:
 | button | String | n/a | Add a button to execute the search. Button's label is the value of this setting |
 | placeholder | String | n/a | Input field's placeholder text |
 | searchAsYouType| true<br>false | false | Execute search after every keystroke |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchbar/searchbar.js#L11) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/searchfield.js) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
 
 ### Search results
 The list of search results.
