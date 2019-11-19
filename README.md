@@ -15,7 +15,7 @@ search solutions quickly and effortlessly.
   var client = new AddSearchClient('YOUR PUBLIC SITEKEY');
 
   // Search UI instance
-  var searchui = new AddSearchSearchUI(client);
+  var searchui = new AddSearchUI(client);
 
   // Add Search UI components
   searchui.searchField({
@@ -37,7 +37,7 @@ search solutions quickly and effortlessly.
 ```
 
 ## Search UI instance and configuration
-To create a Search UI instance, call the constructor ```new AddSearchSearchUI(client, conf)``` 
+To create a Search UI instance, call the constructor ```new AddSearchUI(client, conf)``` 
 with the mandatory [AddSearchClient](https://github.com/AddSearch/js-client-library) parameter and 
 with an optional configuration parameter:
 
@@ -49,7 +49,7 @@ var conf = {
 };
 
 // Search UI instance
-var searchui = new AddSearchSearchUI(client, conf);
+var searchui = new AddSearchUI(client, conf);
 ```
 
 The configuration object can contain following values:   
