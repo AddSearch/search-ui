@@ -69,9 +69,10 @@ export function keyboardEvent(direction) {
   }
 }
 
-export function setActiveSuggestion(index) {
+export function setActiveSuggestion(index, suggestionToSearchField) {
   return {
     type: SET_ACTIVE_SUGGESTION,
-    index
+    index,
+    suggestionToSearchField
   }
 }

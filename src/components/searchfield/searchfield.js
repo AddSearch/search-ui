@@ -1,3 +1,4 @@
+/* global window */
 import './searchfield.scss';
 import handlebars from 'handlebars';
 import { search } from '../../actions/search';
@@ -6,6 +7,7 @@ import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
 import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
+import { HISTORY_PARAMETERS } from '../../util/history';
 
 /**
  * HTML template
@@ -34,17 +36,22 @@ export default class SearchField {
 
 
   onAutocompleteUpdate(acState) {
-    // Set suggested keyword to field
     if (acState.suggestions.length > 0) {
-      // Set suggestion to the search field
-      if (acState.activeSuggestionIndex !== null) {
-        this.render(acState.suggestions[acState.activeSuggestionIndex].value);
+      // Has active suggestion and suggestionToSearchField is true
+      if (acState.activeSuggestionIndex !== null && acState.suggestionToSearchField) {
+        const suggestion = acState.suggestions[acState.activeSuggestionIndex].value;
+        this.render(suggestion);
       }
       // Revert to original keyword
       else if (acState.activeSuggestionIndex === null) {
         this.render(getStore().getState().keyword.value);
       }
     }
+  }
+
+
+  redirectToResultsPage(keyword) {
+    window.location.href = this.conf.targetUrl + '?' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
   }
 
 
@@ -105,7 +112,15 @@ export default class SearchField {
       // Enter pressed
       if (e.keyCode === 13) {
         const keyword = e.target.value;
-        this.search(this.client, keyword);
+
+        // Redirect to results page
+        if (this.conf.targetUrl && keyword && keyword.length > 0) {
+          this.redirectToResultsPage(keyword);
+        }
+        // Search
+        else {
+          this.search(this.client, keyword);
+        }
         return false;
       }
     };
