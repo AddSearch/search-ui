@@ -87,7 +87,7 @@ export default function searchsuggestions(state = initialState, action) {
           nextActiveSuggestion = nextActiveSuggestion - 1;
         }
       }
-console.log('Setting activeSuggestionIndex from ' + state.activeSuggestionIndex + ' to ' + nextActiveSuggestion);
+
       return Object.assign({}, state, {
         hide: false,
         activeSuggestionIndex: nextActiveSuggestion
