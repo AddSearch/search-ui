@@ -75,7 +75,6 @@ export function initFromURL(client, createFilterObjectFunction) {
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
-    console.log(e);
     const q = queryParamsToObject(window.location.href);
     handleURLParams(store, client, q, true, createFilterObjectFunction);
   }
