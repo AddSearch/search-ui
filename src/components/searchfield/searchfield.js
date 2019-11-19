@@ -1,7 +1,7 @@
-import './searchbar.scss';
+import './searchfield.scss';
 import handlebars from 'handlebars';
 import { search } from '../../actions/search';
-import { autocompleteHide } from '../../actions/autocomplete';
+import { autocompleteHide, keyboardEvent, setActiveSuggestion, ARROW_DOWN, ARROW_UP } from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
@@ -11,7 +11,7 @@ import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
  * HTML template
  */
 const TEMPLATE = `
-  <form class="addsearch-searchbar" autocomplete="off" action="?" role="search">
+  <form class="addsearch-searchfield" autocomplete="off" action="?" role="search">
     <input type="search" placeholder="{{placeholder}}" aria-label="Search field" />
     {{#if button}}
       <button type="button" aria-label="Search button" >{{button}}</button>
@@ -20,15 +20,31 @@ const TEMPLATE = `
 `;
 
 
-export default class SearchBar {
+export default class SearchField {
 
-  constructor(client, conf, matchAllQueryWhenSearchBarEmpty) {
+  constructor(client, conf, matchAllQueryWhenSearchFieldEmpty) {
     this.client = client;
     this.conf = conf;
-    this.matchAllQuery = matchAllQueryWhenSearchBarEmpty;
+    this.matchAllQuery = matchAllQueryWhenSearchFieldEmpty;
     this.firstRenderDone = false;
 
-    observeStoreByKey(getStore(), 'keyword', () => this.render());
+    observeStoreByKey(getStore(), 'keyword', (kw) => this.render(kw.value));
+    observeStoreByKey(getStore(), 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
+  }
+
+
+  onAutocompleteUpdate(acState) {
+    // Set suggested keyword to field
+    if (acState.suggestions.length > 0) {
+      // Set suggestion to the search field
+      if (acState.activeSuggestionIndex !== null) {
+        this.render(acState.suggestions[acState.activeSuggestionIndex].value);
+      }
+      // Revert to original keyword
+      else if (acState.activeSuggestionIndex === null) {
+        this.render(getStore().getState().keyword.value);
+      }
+    }
   }
 
 
@@ -46,15 +62,16 @@ export default class SearchBar {
   }
 
 
-  render() {
+  render(preDefinedKeyword) {
     const store = getStore();
-    const preDefinedKeyword = store.getState().keyword.value;
-
     const container = document.getElementById(this.conf.containerId);
 
     // Field already exists. Don't re-render
-    if (container.querySelector('input') &&
-        container.querySelector('input').value === preDefinedKeyword) {
+    if (container.querySelector('input')) {
+      if (preDefinedKeyword && container.querySelector('input').value !== preDefinedKeyword) {
+        container.querySelector('input').value = preDefinedKeyword;
+        console.log('just updated value to ' + preDefinedKeyword);
+      }
       return;
     }
 
@@ -71,12 +88,17 @@ export default class SearchBar {
     field.onkeyup = (e) => {
       const keyword = e.target.value;
 
-      // Store keyword
-      store.dispatch(setKeyword(keyword));
-
-      // Search as you type
-      if (this.conf.searchAsYouType === true) {
-        this.search(this.client, keyword);
+      if (e.keyCode === 40) {
+        store.dispatch(keyboardEvent(ARROW_DOWN));
+      }
+      else if (e.keyCode === 38) {
+        store.dispatch(keyboardEvent(ARROW_UP));
+      }
+      else {
+        store.dispatch(setKeyword(keyword));
+        if (this.conf.searchAsYouType === true) {
+          this.search(this.client, keyword);
+        }
       }
     };
 
@@ -99,6 +121,10 @@ export default class SearchBar {
     field.onblur = (e) => {
       store.dispatch(autocompleteHide());
     };
+
+    field.onmouseover = (e) => {
+      store.dispatch(setActiveSuggestion(null));
+    }
 
     // Event listeners to the possible search button
     if (container.getElementsByTagName('button').length > 0) {
