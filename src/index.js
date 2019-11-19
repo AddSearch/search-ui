@@ -6,7 +6,7 @@ import FacetGroup from './components/facetgroup';
 import Filters, { FILTER_TYPE } from './components/filters';
 import FilterStateObserver, { createFilterObject } from './components/filters/filterstateobserver';
 import Pagination from './components/pagination';
-import SearchBar from './components/searchbar';
+import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
 import SortBy from './components/sortby';
 import { getStore } from './store';
@@ -81,9 +81,8 @@ export default class SearchUI {
    * Components
    */
 
-  searchBar(conf) {
-    const searchbar = new SearchBar(this.client, conf, this.settings.matchAllQuery === true);
-    searchbar.render();
+  searchField(conf) {
+    new SearchField(this.client, conf, this.settings.matchAllQuery === true);
   }
 
   autocomplete(conf) {
