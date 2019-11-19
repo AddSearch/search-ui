@@ -1,17 +1,18 @@
 import './autocomplete.scss';
 import handlebars from 'handlebars';
 
-import { autocompleteSuggestions, autocompleteSearch } from '../../actions/autocomplete';
+import { autocompleteSuggestions, autocompleteSearch, setActiveSuggestion } from '../../actions/autocomplete';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
+import { renderToContainer } from '../../util/dom';
 
 const TEMPLATE = `
   <div class="addsearch-autocomplete">
     {{#gt suggestions.length 0}}
       <ul class="suggestions">
         {{#each ../suggestions}}
-          <li data-keyword="{{value}}">
+          <li data-keyword="{{value}}" data-index="{{@index}}" {{#equals ../../activeSuggestionIndex @index}}class="active"{{/equals}}>
             {{value}}
           </li>
         {{/each}}
@@ -26,6 +27,7 @@ export default class Autocomplete {
   constructor(client, conf) {
     this.client = client;
     this.conf = conf;
+    this.lastOnmouseOver = null;
 
     observeStoreByKey(getStore(), 'autocomplete', () => this.render());
     observeStoreByKey(getStore(), 'keyword', (v) => this.keywordChanged(v));
@@ -35,6 +37,7 @@ export default class Autocomplete {
   keywordChanged(kw) {
     // Fetch suggestions if keyword was typed, not externally set (by browser's back button)
     const keyword = kw.externallySet === false ? kw.value : null;
+    console.log('Fetching new suggestions with keyword ' + kw.value);
 
     this.conf.sources.forEach(v => {
       const client = v.client || this.client;
@@ -63,16 +66,14 @@ export default class Autocomplete {
     }
 
     // Show autocomplete results (search suggestions, search results, or both)
-    const { suggestions, searchResults } = autocompleteState;
+    const { suggestions, searchResults, activeSuggestionIndex } = autocompleteState;
     const data = {
-      itemCount: suggestions.length,
+      activeSuggestionIndex,
       suggestions,
       searchResults
     };
 
-    const html = handlebars.compile(this.conf.template || TEMPLATE)(data);
-    const container = document.getElementById(this.conf.containerId);
-    container.innerHTML = html;
+    const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
 
     // Attach events
     const lis = container.getElementsByTagName('li');
@@ -81,6 +82,14 @@ export default class Autocomplete {
         const keyword = e.target.getAttribute('data-keyword');
         getStore().dispatch(setKeyword(keyword, true));
         getStore().dispatch(search(this.client, keyword));
+      };
+      lis[i].onmouseover = (e) => {
+        const index = parseInt(e.target.getAttribute('data-index'), 10);
+        // Fire once
+        if (index !== null && index !== this.lastOnmouseOver) {
+          this.lastOnmouseOver = index;
+          getStore().dispatch(setActiveSuggestion(index));
+        }
       };
     }
   }
