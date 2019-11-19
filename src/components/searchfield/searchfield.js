@@ -70,7 +70,6 @@ export default class SearchField {
     if (container.querySelector('input')) {
       if (preDefinedKeyword && container.querySelector('input').value !== preDefinedKeyword) {
         container.querySelector('input').value = preDefinedKeyword;
-        console.log('just updated value to ' + preDefinedKeyword);
       }
       return;
     }
