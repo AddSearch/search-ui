@@ -11,9 +11,11 @@ import {
 
 const initialState = {
   pendingRequests: 0,
+
   suggestions: [],
   activeSuggestionIndex: null,
-  suggestionToSearchField: false,
+  setSuggestionToSearchField: false,
+
   searchResults: {},
   hide: false
 };
@@ -62,7 +64,7 @@ export default function searchsuggestions(state = initialState, action) {
     case SET_ACTIVE_SUGGESTION:
       return Object.assign({}, state, {
         activeSuggestionIndex: action.index,
-        suggestionToSearchField: false
+        setSuggestionToSearchField: false
       });
 
     case KEYBOARD_EVENT:
@@ -92,8 +94,8 @@ export default function searchsuggestions(state = initialState, action) {
 
       return Object.assign({}, state, {
         hide: false,
-        suggestionToSearchField: true,
-        activeSuggestionIndex: nextActiveSuggestion
+        activeSuggestionIndex: nextActiveSuggestion,
+        setSuggestionToSearchField: true
       });
 
     default:
