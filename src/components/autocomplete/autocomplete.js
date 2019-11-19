@@ -74,15 +74,15 @@ export default class Autocomplete {
 
     const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
 
-    // Attach events
-    const lis = container.getElementsByTagName('li');
+    // Attach events to suggestions
+    const lis = container.querySelector('.suggestions') ? container.querySelectorAll('.suggestions > li') : [];
     for (let i=0; i<lis.length; i++) {
       lis[i].onmousedown = (e) => {
         const keyword = e.target.getAttribute('data-keyword');
         getStore().dispatch(setKeyword(keyword, true));
         getStore().dispatch(search(this.client, keyword));
       };
-      lis[i].onmouseover = (e) => {
+      lis[i].onmouseenter = (e) => {
         const index = parseInt(e.target.getAttribute('data-index'), 10);
         // Fire once
         if (index !== null && index !== this.lastOnmouseOver) {
