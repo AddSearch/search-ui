@@ -6,7 +6,7 @@ module.exports = {
   entry: './index.js',
   output: {
     filename: 'addsearch-search-ui.min.js',
-    library: 'AddSearchSearchUI',
+    library: 'AddSearchUI',
     libraryTarget: 'global'
   },
   mode: 'production',
