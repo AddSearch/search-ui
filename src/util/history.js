@@ -115,15 +115,16 @@ function handleURLParams(store, client, qs, clearIfNoKeyword, createFilterObject
 
 
   if (qs[HISTORY_PARAMETERS.PAGE]) {
-    store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE])));
+    store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10)));
   }
   else {
     store.dispatch(setPage(client, 1));
   }
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
-    store.dispatch(setKeyword(qs[HISTORY_PARAMETERS.SEARCH], true));
-    store.dispatch(search(client, qs[HISTORY_PARAMETERS.SEARCH], 'top'));
+    const keyword = decodeURIComponent(qs[HISTORY_PARAMETERS.SEARCH]);
+    store.dispatch(setKeyword(keyword, true));
+    store.dispatch(search(client, keyword, 'top'));
   }
   else if (clearIfNoKeyword) {
     store.dispatch(setKeyword('', true));
@@ -193,6 +194,7 @@ export function urlParamToJSON(urlParameter) {
     return JSON.parse(decodeURIComponent(urlParameter));
   }
   catch(error) {}
+  return null;
 }
 
 /**
@@ -203,4 +205,11 @@ export function jsonToUrlParam(json) {
     return encodeURIComponent(JSON.stringify(json));
   }
   return null;
+}
+
+/**
+ * Redirect to search results page
+ */
+export function redirectToSearchResultsPage(url, keyword) {
+  window.location.href = url + '?' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
 }
