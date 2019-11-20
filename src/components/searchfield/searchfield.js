@@ -87,11 +87,10 @@ export default class SearchField {
 
 
   render(preDefinedKeyword) {
-    const store = getStore();
     const container = document.getElementById(this.conf.containerId);
 
     // Field already exists. Don't re-render
-    if (container.querySelector('input')) {
+    if (container.querySelector('input')) {
       if (preDefinedKeyword && container.querySelector('input').value !== preDefinedKeyword) {
         container.querySelector('input').value = preDefinedKeyword;
       }
@@ -111,12 +110,11 @@ export default class SearchField {
     this.field.onkeyup = (e) => this.onkeyup(e);
     this.field.onkeypress = (e) => this.onkeypress(e);
     this.field.onfocus = (e) => this.onfocus(e)
-    this.field.onblur = (e) => setTimeout(() => this.onblur(), 200); // Handle possible search button onclick first
+    this.field.onblur = (e) => setTimeout(() => this.onblur(), 200); // Possible search button onclick event first
 
     // Event listeners to the possible search button
     if (container.querySelector('button')) {
       container.querySelector('button').onclick = (e) => {
-        console.log('button onclick');
         const keyword = this.field.value;
         this.redirectOrSearch(keyword);
       }
@@ -124,7 +122,7 @@ export default class SearchField {
 
     // Autofocus when loaded first time
     if (this.conf.autofocus !== false &&
-        this.firstRenderDone === false) {
+      this.firstRenderDone === false) {
       this.field.focus();
       this.firstRenderDone = true;
     }
@@ -188,8 +186,6 @@ export default class SearchField {
 
 
   onblur() {
-    console.log('onblur');
     getStore().dispatch(autocompleteHide());
   }
-
 }
