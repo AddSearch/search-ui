@@ -6,6 +6,7 @@ import { toggleFilter, registerFilter } from '../../actions/filters';
 import { TABS_TEMPLATE } from './tabs';
 import { TAGS_TEMPLATE } from './tags';
 import { CHECKBOXGROUP_TEMPLATE } from './checkboxgroup';
+import { RADIOGROUP_TEMPLATE } from './radiogroup';
 import { SELECTLIST_TEMPLATE } from './selectlist';
 import { renderToContainer, attachEventListeners } from '../../util/dom';
 
@@ -40,21 +41,25 @@ export default class Filters {
       }
     }
 
+    // If not active filters, set the "nofilter" active
+    if (!hasActiveFilter && data.options[NO_FILTER_NAME]) {
+      data.options[NO_FILTER_NAME].active = true;
+    }
+
 
     // Template
     let template = null;
     if (this.conf.type === FILTER_TYPE.TABS) {
       template = TABS_TEMPLATE;
-      // If not active filters, set the "nofilter" active
-      if (!hasActiveFilter) {
-        data.options[NO_FILTER_NAME].active = true;
-      }
     }
     else if (this.conf.type === FILTER_TYPE.TAGS) {
       template = TAGS_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.CHECKBOX_GROUP) {
       template = CHECKBOXGROUP_TEMPLATE;
+    }
+    else if (this.conf.type === FILTER_TYPE.RADIO_GROUP) {
+      template = RADIOGROUP_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.SELECT_LIST) {
       template = SELECTLIST_TEMPLATE;
@@ -67,55 +72,23 @@ export default class Filters {
 
     // Attach event listeners to select list
     if (this.conf.type === FILTER_TYPE.SELECT_LIST) {
-      container.querySelector('select').addEventListener('change', (e) => {
-        const filterKey = e.target.value;
-        const isNoFilter = filterKey === NO_FILTER_NAME;
-
-        // Remove previous filter
-        if (this.activeFilter) {
-          getStore().dispatch(toggleFilter(this.activeFilter, 1, isNoFilter));
-        }
-
-        // Don't dispatch filter if it's nofilter (i.e. "Show all")
-        if (isNoFilter) {
-          this.activeFilter = null;
-        }
-        else {
-          this.activeFilter = filterKey;
-          getStore().dispatch(toggleFilter(filterKey, 1));
-        }
-      });
+      container.querySelector('select').addEventListener('change', (e) =>  this.singleActiveChangeEvent(e.target.value));
     }
 
-
-    // Attach event listeners to select list
+    // Attach event listeners to tabs
     else if (this.conf.type === FILTER_TYPE.TABS) {
       const tabs = container.querySelectorAll('[data-filter]');
 
       for (let i=0; i<tabs.length; i++) {
-        tabs[i].addEventListener('click', (e) => {
-          const filterKey = e.target.getAttribute('data-filter');
-          const isNoFilter = filterKey === NO_FILTER_NAME;
+        tabs[i].addEventListener('click', (e) =>  this.singleActiveChangeEvent(e.target.getAttribute('data-filter')));
+      }
+    }
 
-          // Current filter re-clicked
-          if (filterKey === this.activeFilter) {
-            return;
-          }
-
-          // Remove previous filter
-          if (this.activeFilter) {
-            getStore().dispatch(toggleFilter(this.activeFilter, 1, isNoFilter));
-          }
-
-          // Don't dispatch filter if it's nofilter (i.e. "Show all")
-          if (isNoFilter) {
-            this.activeFilter = null;
-          }
-          else {
-            getStore().dispatch(toggleFilter(filterKey, 1));
-            this.activeFilter = filterKey;
-          }
-        });
+    // Radio group
+    else if (this.conf.type === FILTER_TYPE.RADIO_GROUP) {
+      const radios = container.querySelectorAll('input');
+      for (let i=0; i<radios.length; i++) {
+        radios[i].addEventListener('click', (e) => this.singleActiveChangeEvent(e.target.value));
       }
     }
 
@@ -126,4 +99,29 @@ export default class Filters {
       });
     }
   }
+
+
+  singleActiveChangeEvent(filterKey) {
+    const isNoFilter = filterKey === NO_FILTER_NAME;
+
+    // Current filter re-activated (e.g. same tab clicked again)
+    if (filterKey === this.activeFilter) {
+      return;
+    }
+
+    // Remove previous filter
+    if (this.activeFilter) {
+      getStore().dispatch(toggleFilter(this.activeFilter, 1, isNoFilter));
+    }
+
+    // Don't dispatch a new filter if it's the nofilter (i.e. "Show all")
+    if (isNoFilter) {
+      this.activeFilter = null;
+    }
+    else {
+      this.activeFilter = filterKey;
+      getStore().dispatch(toggleFilter(filterKey, 1));
+    }
+  }
+
 }
