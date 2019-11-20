@@ -190,7 +190,7 @@ export function objectToQueryParams(obj) {
  */
 export function urlParamToJSON(urlParameter) {
   try {
-    return JSON.parse(decodeURIComponent(urlParameter));
+    return JSON.parse(urlParameter);
   }
   catch(error) {}
   return null;
@@ -201,7 +201,7 @@ export function urlParamToJSON(urlParameter) {
  */
 export function jsonToUrlParam(json) {
   if (Object.keys(json).length > 0) {
-    return encodeURIComponent(JSON.stringify(json));
+    return JSON.stringify(json);
   }
   return null;
 }
