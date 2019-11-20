@@ -89,6 +89,36 @@ Settings that can be passed to the ```searchField``` function:
 | searchAsYouType| true<br>false | false | Execute search after every keystroke |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/searchfield.js) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
 
+### Autocomplete dropdown
+Show suggested keyword, direct hits, or both under the search field as the keyword is being typed.
+
+```js
+  searchui.autocomplete({
+    containerId: 'autocomplete',
+    sources: [
+      {
+        type: 'suggestions'
+      }
+    ]
+  });
+```
+
+Settings that can be passed to the ```autocomplete``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML component that will act as a container for autocomplete results |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/autocomplete.js) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
+| sources| Array | n/a | Array of data sources  |
+
+The ```sources``` array can contain objects with following fields:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| type | suggestions, search | n/a | Fetch search suggestions or search results |
+| client | AddSearch JS Client instance | Client passed to the AddSearchUI constructor | Use a custom client to use specific filters or even different search index |
+| jsonKey | String | n/a | If type is *search* results are appended to a JSON object with this key before passed to the Handlebars template |
+
 ### Search results
 The list of search results.
 
