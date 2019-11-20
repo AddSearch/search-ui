@@ -92,8 +92,7 @@ export default class SearchUI {
   }
 
   searchResults(conf) {
-    const searchresults = new SearchResults(conf);
-    searchresults.render();
+    new SearchResults(conf);
   }
 
   facetGroup(conf) {
