@@ -158,7 +158,7 @@ export function queryParamsToObject(url) {
   qsArr.forEach(v => {
     const kv = v.split('=');
     if (kv[0] && kv[0].length > 0) {
-      obj[kv[0]] = kv[1];
+      obj[kv[0]] = decodeURIComponent(kv[1]);
     }
   });
 
@@ -178,7 +178,7 @@ export function objectToQueryParams(obj) {
         qs = qs + '&';
       }
       const value = obj[key] ? obj[key] : '';
-      qs = qs + key + '=' + value;
+      qs = qs + key + '=' + encodeURIComponent(value);
     }
   }
 
