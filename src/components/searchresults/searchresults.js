@@ -1,6 +1,7 @@
 import './searchresults.scss';
 import handlebars from 'handlebars';
 import { getStore, observeStoreByKey } from '../../store';
+import { renderToContainer } from '../../util/dom';
 
 
 const TEMPLATE = `
@@ -50,7 +51,6 @@ export default class SearchResults {
       template = this.conf.template_no_results || TEMPLATE_NO_RESULTS;
     }
 
-    const html = handlebars.compile(template)(data);
-    document.getElementById(this.conf.containerId).innerHTML = html;
+    renderToContainer(this.conf.containerId, template, data);
   }
 }
