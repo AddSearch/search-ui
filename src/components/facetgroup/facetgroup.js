@@ -75,8 +75,6 @@ export default class FacetGroup {
 
     // Attach events
     const options = container.getElementsByTagName('input');
-
-    // Filter options
     for (let i=0; i<options.length; i++) {
       let checkbox = options[i];
       checkbox.checked = activeFacets.indexOf(checkbox.value) !== -1;
