@@ -4,6 +4,14 @@
     padding-top: 20px;
     font-size: 110%;
     font-weight: bold;
+    
+    a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
   p {
@@ -25,9 +33,6 @@
     display: block;
     height: 0;
     clear: both;
-  }
-  .hit:hover {
-    background-color: rgba(0, 0, 0, 0.02);
   }
 
   .main-image {
