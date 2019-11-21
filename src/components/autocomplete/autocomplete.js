@@ -1,5 +1,5 @@
 import './autocomplete.scss';
-import { autocompleteSuggestions, autocompleteSearch, setActiveSuggestion } from '../../actions/autocomplete';
+import { setHideAutomatically, autocompleteSuggestions, autocompleteSearch, setActiveSuggestion } from '../../actions/autocomplete';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
@@ -27,6 +27,10 @@ export default class Autocomplete {
     this.client = client;
     this.conf = conf;
     this.lastOnmouseOver = null;
+
+    if (this.conf.hideAutomatically === false) {
+      getStore().dispatch(setHideAutomatically(false));
+    }
 
     observeStoreByKey(getStore(), 'autocomplete', (state) => this.render(state));
     observeStoreByKey(getStore(), 'keyword', (state) => this.keywordChanged(state));

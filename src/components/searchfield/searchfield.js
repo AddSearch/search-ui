@@ -186,6 +186,8 @@ export default class SearchField {
 
 
   onblur() {
-    getStore().dispatch(autocompleteHide());
+    if (getStore().getState().autocomplete.hideAutomatically) {
+      getStore().dispatch(autocompleteHide());
+    }
   }
 }

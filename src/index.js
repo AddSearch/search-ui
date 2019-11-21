@@ -12,6 +12,7 @@ import SortBy from './components/sortby';
 import { getStore } from './store';
 import { regisiterHelpers } from './util/handlebars';
 import { initFromURL } from './util/history';
+import { autocompleteHide } from './actions/autocomplete';
 import { start, search, setSearchResultsPageUrl } from './actions/search';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
@@ -123,4 +124,7 @@ export default class SearchUI {
     getStore().dispatch(search(this.client, keyword));
   }
 
+  hideAutocomplete() {
+    getStore().dispatch(autocompleteHide());
+  }
 }

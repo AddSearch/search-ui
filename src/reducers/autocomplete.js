@@ -5,6 +5,7 @@ import {
   AUTOCOMPLETE_SEARCH_RESULTS,
   AUTOCOMPLETE_SEARCH_CLEAR,
   AUTOCOMPLETE_HIDE,
+  HIDE_AUTOMATICALLY,
   KEYBOARD_EVENT, ARROW_UP, ARROW_DOWN,
   SET_ACTIVE_SUGGESTION
 } from '../actions/autocomplete';
@@ -17,6 +18,7 @@ const initialState = {
   setSuggestionToSearchField: false,
 
   searchResults: {},
+  hideAutomatically: true,
   hide: false
 };
 
@@ -61,10 +63,16 @@ export default function searchsuggestions(state = initialState, action) {
         activeSuggestionIndex: null
       });
 
-    case SET_ACTIVE_SUGGESTION:
+    case HIDE_AUTOMATICALLY:
       return Object.assign({}, state, {
         activeSuggestionIndex: action.index,
         setSuggestionToSearchField: false
+      });
+
+
+    case SET_ACTIVE_SUGGESTION:
+      return Object.assign({}, state, {
+        hideAutomatically: action.hideAutomatically
       });
 
     case KEYBOARD_EVENT:
