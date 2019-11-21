@@ -52,8 +52,9 @@
   }
 }
 
-/* Checkbox group */
-.addsearch-filters-checkboxgroup {
+/* Checkbox and radio button groups */
+.addsearch-filters-checkboxgroup,
+.addsearch-filters-radiogroup {
   label {
     display: block;
     padding: 4px 0;
