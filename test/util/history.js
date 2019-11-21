@@ -43,10 +43,10 @@ describe('history', () => {
     });
 
     it('return a bunch of query parameter', () => {
-      const url = 'https://addsearch.com/test?foo=bar&a=b&pää=böö';
+      const url = 'https://addsearch.com/test?foo=bar&a=b&bar=b%C3%B6';
       const expectedValue = {
         foo: 'bar',
-        pää: 'böö',
+        bar: 'bö',
         a: 'b'
       };
       assert.deepEqual(queryParamsToObject(url), expectedValue);
@@ -71,11 +71,11 @@ describe('history', () => {
     it('return a bunch of query parameters', () => {
       const obj = {
         foo: 'bar',
-        a: 'föö',
+        a: 'fö',
         z: null,
         g: ''
       };
-      const url = 'foo=bar&a=föö&z=&g=';
+      const url = 'foo=bar&a=f%C3%B6&z=&g=';
       assert.deepEqual(objectToQueryParams(obj), url);
     });
   })
