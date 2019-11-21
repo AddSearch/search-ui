@@ -1,12 +1,14 @@
 import './sortby.scss';
 import handlebars from 'handlebars';
 
+  import { SORTBY_TYPE } from './index';
 import { sortBy } from '../../actions/sortby';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { getStore, observeStoreByKey } from '../../store';
+import { renderToContainer } from '../../util/dom';
 
-const TEMPLATE = `
+const TEMPLATE_SELECT = `
   <div class="addsearch-sortby">        
     <select>
       {{#each options}}
@@ -16,6 +18,17 @@ const TEMPLATE = `
   </div>
 `;
 
+export const TEMPLATE_RADIOGROUP = `
+  <div class="addsearch-sortby-radiogroup">
+    {{#each options}}
+      <label>
+        <input type="radio" name={{../containerId}} data-field={{sortBy}} data-order={{order}} value="" {{#if active}}checked{{/if}}>{{label}}
+      </label>
+    {{/each}}
+  </div>
+`;
+
+
 
 export default class SortBy {
 
@@ -23,15 +36,26 @@ export default class SortBy {
     this.client = client;
     this.conf = conf;
 
-    observeStoreByKey(getStore(), 'sortby', () => this.render());
+    observeStoreByKey(getStore(), 'sortby', (state) => this.render(state));
   }
 
 
-  onChange(select) {
+  onChangeSelect(select) {
     const selectedOption = select.options[select.selectedIndex];
     const field = selectedOption.getAttribute('data-field');
     const order = selectedOption.getAttribute('data-order');
+    this.dispatchAndRefresh(field, order);
+  }
 
+
+  onChangeRadio(e) {
+    const field = e.target.getAttribute('data-field');
+    const order = e.target.getAttribute('data-order');
+    this.dispatchAndRefresh(field, order);
+  }
+
+
+  dispatchAndRefresh(field, order) {
     // Dispatch sortby
     getStore().dispatch(sortBy(this.client, field, order));
 
@@ -44,26 +68,57 @@ export default class SortBy {
   }
 
 
-  render() {
-    const data = getStore().getState().sortby;
+  render(sortbyState) {
+    const { field, order } = sortbyState;
+    console.log('render with ' + field + ' active!!');
 
-    const html = handlebars.compile(this.conf.template || TEMPLATE)(this.conf);
-    const container = document.getElementById(this.conf.containerId);
-    container.innerHTML = html;
+    // Template
+    let template = null;
+    if (this.conf.template) {
+      template = this.conf.template;
+    }
+    else if (this.conf.type === SORTBY_TYPE.RADIO_GROUP) {
+      template = TEMPLATE_RADIOGROUP;
+    }
+    else {
+      template = TEMPLATE_SELECT;
+    }
+
+    // Data
+    let data = Object.assign({}, this.conf);
+    data.options.forEach(option => {
+      if (option.sortBy === field && option.order === order) {
+        option.active = true;
+      }
+      else {
+        option.active = false;
+      }
+    });
+
+
+    const container = renderToContainer(this.conf.containerId, template, data);
 
     // Attach listeners
-    container.querySelector('select').onchange = (e) => { this.onChange(e.target) };
+    if (this.conf.type === SORTBY_TYPE.RADIO_GROUP) {
+      const radioButtons = container.querySelectorAll('input');
+      for (let i=0; i<radioButtons.length; i++) {
+        radioButtons[i].onclick = (e) => this.onChangeRadio(e);
+      }
+    }
 
-    // Pre-selected option
-    if (data) {
-      const { field, order } = data;
-      const options = container.getElementsByTagName('option');
+    else {
+      container.querySelector('select').onchange = (e) => this.onChangeSelect(e.target);
 
-      for (let i=0; i<options.length; i++) {
-        if (options[i].getAttribute('data-field') === field &&
-            options[i].getAttribute('data-order') === order) {
-          container.querySelector('select').value = options[i].text;
-          break;
+      // Pre-selected option
+      if (sortbyState) {
+        const options = container.getElementsByTagName('option');
+
+        for (let i=0; i<options.length; i++) {
+          if (options[i].getAttribute('data-field') === field &&
+              options[i].getAttribute('data-order') === order) {
+            container.querySelector('select').value = options[i].text;
+            break;
+          }
         }
       }
     }

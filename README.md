@@ -187,7 +187,8 @@ Settings that can be passed to the ```sortBy``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/pagination.js#L9) | Custom [Handlebars](https://handlebarsjs.com/) template |
+| type | <searchui-instance>.SORTBY_TYPE.RADIO_GROUP, <searchui-instance>.SORTBY_TYPE.SELECT_LIST | Select list | "Sort by" menu in a select list or in a group of radio buttons |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/pagination.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 
 The ```options``` array can contain objects with following fields:
 
