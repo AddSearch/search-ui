@@ -105,13 +105,11 @@ export default class SearchUI {
   }
 
   sortBy(conf) {
-    const sortby = new SortBy(this.client, conf);
-    sortby.render();
+    new SortBy(this.client, conf);
   }
 
   pagination(conf) {
-    const pagination = new Pagination(this.client, conf);
-    pagination.render();
+    new Pagination(this.client, conf);
   }
 
 
