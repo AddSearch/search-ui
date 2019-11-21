@@ -56,28 +56,35 @@ export default class Pagination {
     const buttons = container.getElementsByTagName('button');
     for (let i=0; i<buttons.length; i++) {
       const button = buttons[i];
-      button.onclick = (e) => {
-
-        // Previous
-        if (button.getAttribute('data-page') === 'previous') {
-          const currentPage = getStore().getState().pagination.page;
-          getStore().dispatch(setPage(this.client, currentPage - 1));
-        }
-        // Next
-        else if (button.getAttribute('data-page') === 'next') {
-          const currentPage = getStore().getState().pagination.page || 1;
-          getStore().dispatch(setPage(this.client, currentPage + 1));
-        }
-        // Page number
-        else {
-          const page = parseInt(button.getAttribute('data-page'), 10);
-          getStore().dispatch(setPage(this.client, page));
-        }
-
-        // Refresh search
-        const keyword = getStore().getState().keyword.value;
-        getStore().dispatch(search(this.client, keyword, 'top'));
-      };
+      button.onclick = (e) => this.handleOnclick(e);
     }
+  }
+
+
+  handleOnclick(e) {
+    const button = e.target;
+    let pageToDispatch = null;
+
+    // Previous
+    if (button.getAttribute('data-page') === 'previous') {
+      const currentPage = getStore().getState().pagination.page;
+      pageToDispatch = currentPage - 1;
+    }
+    // Next
+    else if (button.getAttribute('data-page') === 'next') {
+      const currentPage = getStore().getState().pagination.page || 1;
+      pageToDispatch = currentPage + 1;
+    }
+    // Page number
+    else {
+      pageToDispatch = parseInt(button.getAttribute('data-page'), 10);
+    }
+
+    // Dispatch the new page number
+    getStore().dispatch(setPage(this.client, pageToDispatch));
+
+    // Refresh search
+    const keyword = getStore().getState().keyword.value;
+    getStore().dispatch(search(this.client, keyword, 'top'));
   }
 }
