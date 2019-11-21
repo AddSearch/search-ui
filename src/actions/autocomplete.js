@@ -4,6 +4,7 @@ export const AUTOCOMPLETE_SUGGESTIONS_CLEAR = 'AUTOCOMPLETE_SUGGESTIONS_CLEAR';
 export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
 export const AUTOCOMPLETE_SEARCH_CLEAR = 'AUTOCOMPLETE_SEARCH_CLEAR';
 export const AUTOCOMPLETE_HIDE = 'AUTOCOMPLETE_HIDE';
+export const HIDE_AUTOMATICALLY = 'HIDE_AUTOMATICALLY';
 
 export const KEYBOARD_EVENT = 'KEYBOARD_EVENT';
 export const ARROW_UP = 'ARROW_UP';
@@ -74,5 +75,12 @@ export function setActiveSuggestion(index, setSuggestionToSearchField) {
     type: SET_ACTIVE_SUGGESTION,
     index,
     setSuggestionToSearchField
+  }
+}
+
+export function setHideAutomatically(hideAutomatically) {
+  return {
+    type: HIDE_AUTOMATICALLY,
+    hideAutomatically
   }
 }

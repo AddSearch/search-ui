@@ -91,6 +91,8 @@ Settings that can be passed to the ```searchField``` function:
 
 ### Autocomplete dropdown
 Show suggested keyword, direct hits, or both under the search field as the keyword is being typed.
+The default autocomplete template supports search suggestions. Create your own template to show search results.
+Search suggestions need to be enabled from the AddSearch Dashboard before they are shown.
 
 ```js
   searchui.autocomplete({
@@ -109,6 +111,7 @@ Settings that can be passed to the ```autocomplete``` function:
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for autocomplete results |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/autocomplete.js) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
+| hideAutomatically| boolean| true | Hide the autocomplete component when the search field is blurred |
 | sources| Array | n/a | Array of data sources  |
 
 The ```sources``` array can contain objects with following fields:
@@ -117,7 +120,7 @@ The ```sources``` array can contain objects with following fields:
 | --- | --- | --- | --- |
 | type | suggestions, search | n/a | Fetch search suggestions or search results |
 | client | AddSearch JS Client instance | Client passed to the AddSearchUI constructor | Use a custom client to use specific filters or even different search index |
-| jsonKey | String | n/a | If type is *search* results are appended to a JSON object with this key before passed to the Handlebars template |
+| jsonKey | String | n/a | If type is *search* results are appended to a JSON object ```searchResults.<jsonKey>``` before passed to the Handlebars template |
 
 ### Search results
 The list of search results.
@@ -153,12 +156,18 @@ Settings that can be passed to the ```pagination``` function:
 
 ## General functions
 ### Execute search
-Execute a search query. Common use cases include links of most popular keywords.
-Clicking the keyword executes the search.
+Execute a search query with a defined keyword. Common use cases include links of most popular keywords.
+Clicking the link executes the search.
 ```js
   searchui.search(keyword);
 ```
 
+### Hide autocomplete
+Hide the autocomplete component. For example, a "close" button inside the autocomplete window would
+call this function.
+```js
+  searchui.hideAutocomplete();
+```
 
 ## Supported web browsers
 This library is tested on
