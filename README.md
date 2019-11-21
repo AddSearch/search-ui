@@ -89,7 +89,7 @@ Settings that can be passed to the ```searchField``` function:
 | searchAsYouType| true<br>false | false | Execute search after every keystroke |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/searchfield.js) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
 
-### Autocomplete dropdown
+### Autocomplete
 Show suggested keyword, direct hits, or both under the search field as the keyword is being typed.
 The default autocomplete template supports search suggestions. Create your own template to show search results.
 Search suggestions need to be enabled from the AddSearch Dashboard before they are shown.
@@ -153,6 +153,48 @@ Settings that can be passed to the ```pagination``` function:
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/pagination.js#L9) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
+
+### Sort by
+Component for the user to decide the order of search results.
+
+```js
+  searchui.sortBy({
+    containerId: 'sortby',
+    options: [
+      {
+        label: 'Sort by relevance',
+        sortBy: 'relevance',
+        order: 'desc'
+      },
+      {
+        label: 'Oldest first',
+        sortBy: 'date',
+        order: 'asc'
+      },
+      {
+        label: 'Most expensive first',
+        sortBy: 'custom_fields.price',
+        order: 'desc'
+      }
+    ]
+  });
+```
+
+Settings that can be passed to the ```sortBy``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/pagination.js#L9) | Use a custom [Handlebars](https://handlebarsjs.com/) template |
+
+The ```options``` array can contain objects with following fields:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| label | String | n/a | Text to show in the sort by menu |
+| sortBy | relevance, date, custom_field | n/a | Sort by this field |
+| order | desc, asc | desc | Ascending order (a-z or 1-9) or descending order (z-a, 9-1) |
+
 
 ## General functions
 ### Execute search
