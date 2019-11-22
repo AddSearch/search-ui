@@ -1,6 +1,6 @@
 import handlebars from 'handlebars';
 
-export function defaultCategorySelectionFunction(hit) {
+export function defaultCategorySelectionFunction(hit, categoryAliases) {
   const categories = hit.categories || [] ;
 
   let category = '';
@@ -16,7 +16,12 @@ export function defaultCategorySelectionFunction(hit) {
 
   } while (category.length < 3 && categories.length > position);
 
-  return category;
+  // Possible alias
+  if (categoryAliases && categoryAliases[category]) {
+    return categoryAliases[category];
+  }
+
+  return category.replace(/[-_]+/g, ' ');
 }
 
 

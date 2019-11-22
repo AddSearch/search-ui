@@ -81,6 +81,31 @@ describe('handlebars', () => {
       assert.equal(defaultCategorySelectionFunction(hit), expect);
     });
 
+    it('replace special characters with space', () => {
+      const hit = {
+        categories: [
+          '0xfoo',
+          '1xfoo-bar_baz--_ok'
+        ]
+      };
+      const expect = 'foo bar baz ok';
+      assert.equal(defaultCategorySelectionFunction(hit), expect);
+    });
+
+    it('return category alias', () => {
+      const hit = {
+        categories: [
+          '0xfoo',
+          '1xfoo-bar'
+        ]
+      };
+      const aliases = {
+        'foo-bar': 'baz'
+      };
+      const expect = 'baz';
+      assert.equal(defaultCategorySelectionFunction(hit, aliases), expect);
+    });
+
 
   });
 

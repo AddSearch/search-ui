@@ -112,6 +112,8 @@ Settings that can be passed to the ```autocomplete``` function:
 | containerId | String | n/a | ID of the HTML component that will act as a container for autocomplete results |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/autocomplete.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 | hideAutomatically| boolean| true | Hide the autocomplete component when the search field is blurred |
+| categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
+| categoryAliases | Object | n/a | A map of category aliases used by *categorySelectionFunction* |
 | sources| Array | n/a | Array of data sources  |
 
 The ```sources``` array can contain objects with following fields:
@@ -140,6 +142,7 @@ Settings that can be passed to the ```searchResults``` function:
 | template_resultcount | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js) | Custom [Handlebars](https://handlebarsjs.com/) template for "Number of results" |
 | template_noresults | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js) | Custom [Handlebars](https://handlebarsjs.com/) template for "No search results found" |
 | categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
+| categoryAliases | Object | n/a | A map of category aliases used by *categorySelectionFunction* |
 
 ### Pagination
 Pagination. Typically below search results.
