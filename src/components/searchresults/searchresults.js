@@ -15,12 +15,15 @@ const TEMPLATE = `
         <h3>
           <a href="{{url}}">{{title}}</a>
         </h3>
-        <p>
+        <div class="highlight">
           <span class="main-image" style="background-image: url(data:image/jpeg;base64,{{images.main_b64}})">
             <img src="{{images.main}}" alt="{{title}}" />
           </span>
           {{{highlight}}}..
-        </p>
+        </div>
+        <div class="category">
+          {{selectCategory this}}
+        </div>
       </div>
     {{/each}}
   </div>
@@ -37,6 +40,14 @@ const TEMPLATE_NUMBER_OF_RESULTS = `
 `;
 
 
+function selectCategoryHelper(hit) {
+  const categories = hit.categories;
+  let category = categories && categories.length > 1 ? categories[1] : '';
+  category = category.replace(/^[0-9]+[x]{1}/, '');
+  return category;
+}
+
+
 export default class SearchResults {
 
   constructor(conf) {
@@ -44,6 +55,9 @@ export default class SearchResults {
     observeStoreByKey(getStore(), 'search', () => this.render());
 
     handlebars.registerPartial('numberOfResultsTemplate', this.conf.template_resultcount || TEMPLATE_NUMBER_OF_RESULTS);
+
+    const categoryHelperFunction = this.conf.categorySelectionFunction || selectCategoryHelper;
+    handlebars.registerHelper('selectCategory', (categories) => categoryHelperFunction(categories));
   }
 
 

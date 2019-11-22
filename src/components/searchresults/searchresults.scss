@@ -1,10 +1,12 @@
+@import "../../variables";
+
 .addsearch-searchresults {
 
   h3 {
     padding-top: 20px;
     font-size: 110%;
     font-weight: bold;
-    
+
     a {
       text-decoration: none;
 
@@ -14,36 +16,47 @@
     }
   }
 
-  p {
-    overflow-wrap: break-word;
-  }
-
   em {
     font-weight: bold;
   }
 
   .hit {
     clear: both;
-  }
-  .hit:after {
-    content: " ";
-    visibility: hidden;
-    display: block;
-    height: 0;
-    clear: both;
-  }
 
-  .main-image {
-    display: inline-block;
-    float: left;
-    height: 100px;
-    width: 100px;
-    background-size: 100% 100%;
-    margin: 0 20px 20px 0;
-  }
+    &:after {
+      content: " ";
+      visibility: hidden;
+      display: block;
+      height: 0;
+      clear: both;
+    }
 
-  img {
-    width: 100%;
-    height: 100%;
+    div {
+      overflow-wrap: break-word;
+    }
+
+    .category {
+      margin-top: 2em;
+      font-size: 11px;
+      text-transform: uppercase;
+      background-color: $border-color;
+      border-radius: 3px;
+      padding: 3px 4px;
+      display: inline-block;
+    }
+
+    .main-image {
+      display: inline-block;
+      float: left;
+      height: 100px;
+      width: 100px;
+      background-size: 100% 100%;
+      margin: 0 20px 20px 0;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
 }
