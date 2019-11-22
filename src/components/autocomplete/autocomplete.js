@@ -106,7 +106,7 @@ export default class Autocomplete {
     // Fire once
     if (index !== null && index !== this.lastOnmouseOver) {
       this.lastOnmouseOver = index;
-      getStore().dispatch(setActiveSuggestion(index));
+      getStore().dispatch(setActiveSuggestion(index, false));
     }
   }
 }
