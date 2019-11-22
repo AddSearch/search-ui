@@ -70,7 +70,6 @@ export default class SortBy {
 
   render(sortbyState) {
     const { field, order } = sortbyState;
-    console.log('render with ' + field + ' active!!');
 
     // Template
     let template = null;
