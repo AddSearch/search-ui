@@ -36,7 +36,7 @@ export default class Autocomplete {
     }
 
     const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
-    handlebars.registerHelper('selectSearchResultCategory', (categories) => categorySelectionFunction(categories));
+    handlebars.registerHelper('selectSearchResultCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
 
     observeStoreByKey(getStore(), 'autocomplete', (state) => this.render(state));
     observeStoreByKey(getStore(), 'keyword', (state) => this.keywordChanged(state));
