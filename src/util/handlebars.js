@@ -1,5 +1,25 @@
 import handlebars from 'handlebars';
 
+export function defaultCategorySelectionFunction(hit) {
+  const categories = hit.categories || [] ;
+
+  let category = '';
+  let position = 1;
+
+  do {
+    // categories[0] is the domain
+    category = categories.length > position ? categories[position] : '';
+
+    // Remove the index prefix (e.g. 2x)
+    category = category.replace(/^[0-9]+[x]{1}/, '');
+    position++;
+
+  } while (category.length < 3 && categories.length > position);
+
+  return category;
+}
+
+
 export function regisiterHelpers() {
   handlebars.registerHelper('equals', (arg1, arg2, options) => {
     return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
