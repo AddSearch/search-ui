@@ -2,6 +2,7 @@ import './searchresults.scss';
 import handlebars from 'handlebars';
 import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer } from '../../util/dom';
+import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
 
 const TEMPLATE = `
@@ -40,12 +41,6 @@ const TEMPLATE_NUMBER_OF_RESULTS = `
 `;
 
 
-function selectCategoryHelper(hit) {
-  const categories = hit.categories;
-  let category = categories && categories.length > 1 ? categories[1] : '';
-  category = category.replace(/^[0-9]+[x]{1}/, '');
-  return category;
-}
 
 
 export default class SearchResults {
@@ -56,8 +51,8 @@ export default class SearchResults {
 
     handlebars.registerPartial('numberOfResultsTemplate', this.conf.template_resultcount || TEMPLATE_NUMBER_OF_RESULTS);
 
-    const categoryHelperFunction = this.conf.categorySelectionFunction || selectCategoryHelper;
-    handlebars.registerHelper('selectCategory', (categories) => categoryHelperFunction(categories));
+    const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
+    handlebars.registerHelper('selectCategory', (categories) => categorySelectionFunction(categories));
   }
 
 

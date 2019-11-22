@@ -139,7 +139,7 @@ Settings that can be passed to the ```searchResults``` function:
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js) | Custom [Handlebars](https://handlebarsjs.com/) template for search results |
 | template_resultcount | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js) | Custom [Handlebars](https://handlebarsjs.com/) template for "Number of results" |
 | template_noresults | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js) | Custom [Handlebars](https://handlebarsjs.com/) template for "No search results found" |
-| categorySelectionFunction | Function | [selectCategoryHelper](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js) | A function to select and format the *category* information on the bottom of each search result |
+| categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
 
 ### Pagination
 Pagination. Typically below search results.
@@ -239,6 +239,10 @@ npm run watch
 Run automated tests
 ```sh
 npm test
+```
+Run automatically when tests change
+```sh
+npm run test -- --watch
 ```
 
 #### Build for production

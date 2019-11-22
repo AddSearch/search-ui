@@ -1,10 +1,13 @@
 import './autocomplete.scss';
+import handlebars from 'handlebars';
 import { setHideAutomatically, autocompleteSuggestions, autocompleteSearch, setActiveSuggestion } from '../../actions/autocomplete';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer } from '../../util/dom';
 import { redirectToSearchResultsPage } from '../../util/history';
+import { defaultCategorySelectionFunction } from '../../util/handlebars';
+
 
 const TEMPLATE = `
   <div class="addsearch-autocomplete">
@@ -31,6 +34,9 @@ export default class Autocomplete {
     if (this.conf.hideAutomatically === false) {
       getStore().dispatch(setHideAutomatically(false));
     }
+
+    const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
+    handlebars.registerHelper('selectSearchResultCategory', (categories) => categorySelectionFunction(categories));
 
     observeStoreByKey(getStore(), 'autocomplete', (state) => this.render(state));
     observeStoreByKey(getStore(), 'keyword', (state) => this.keywordChanged(state));
