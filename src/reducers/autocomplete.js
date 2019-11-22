@@ -65,14 +65,14 @@ export default function searchsuggestions(state = initialState, action) {
 
     case HIDE_AUTOMATICALLY:
       return Object.assign({}, state, {
-        activeSuggestionIndex: action.index,
-        setSuggestionToSearchField: false
+        hideAutomatically: action.hideAutomatically
       });
 
 
     case SET_ACTIVE_SUGGESTION:
       return Object.assign({}, state, {
-        hideAutomatically: action.hideAutomatically
+        activeSuggestionIndex: action.index,
+        setSuggestionToSearchField: action.setSuggestionToSearchField
       });
 
     case KEYBOARD_EVENT:
