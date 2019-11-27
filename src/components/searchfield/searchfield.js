@@ -107,8 +107,7 @@ export default class SearchField {
     }
 
     // Event listeners to the field
-    this.field.onkeyup = (e) => this.onkeyup(e);
-    this.field.onkeypress = (e) => this.onkeypress(e);
+    this.field.onkeydown = (e) => this.onkeydown(e);
     this.field.onfocus = (e) => this.onfocus(e)
     this.field.onblur = (e) => setTimeout(() => this.onblur(), 200); // Possible search button onclick event first
 
@@ -119,6 +118,12 @@ export default class SearchField {
         this.redirectOrSearch(keyword);
       }
     }
+
+    // Event listeners to the form
+    if (container.querySelector('form')) {
+      container.querySelector('form').onsubmit = (e) => e.preventDefault();
+    }
+
 
     // Autofocus when loaded first time
     if (this.conf.autofocus !== false &&
@@ -133,7 +138,7 @@ export default class SearchField {
    * Input field events
    */
 
-  onkeyup(e) {
+  onkeydown(e) {
     const keyword = e.target.value;
     const store = getStore();
 
@@ -148,18 +153,17 @@ export default class SearchField {
     }
 
     // Keyword being erased
-    if (e.keyCode === KEYCODES.BACKSPACE || e.keyCode === KEYCODES.DELETE) {
+    else if (e.keyCode === KEYCODES.BACKSPACE || e.keyCode === KEYCODES.DELETE) {
       store.dispatch(setActiveSuggestion(null, false));
     }
 
-    // Check if initiated from search suggestions autocomplete. If yes, hide autocomplete
-    let isKeywordSetFromSuggestions = false;
-    if (e.keyCode === KEYCODES.ENTER) {
-      isKeywordSetFromSuggestions = store.getState().autocomplete.activeSuggestionIndex !== null;
-      store.dispatch(autocompleteHide());
+    // Enter
+    else if (e.keyCode === KEYCODES.ENTER) {
+      this.handleEnter(keyword);
+      return;
     }
 
-    store.dispatch(setKeyword(keyword, isKeywordSetFromSuggestions));
+    store.dispatch(setKeyword(keyword, false));
 
     if (this.conf.searchAsYouType === true) {
       this.executeSearch(this.client, keyword);
@@ -167,19 +171,17 @@ export default class SearchField {
   }
 
 
-  onkeypress(e) {
-    // Enter pressed
-    if (e.keyCode === KEYCODES.ENTER) {
-      const keyword = e.target.value;
-      this.redirectOrSearch(keyword);
-      return false;
-    }
+  handleEnter(keyword) {
+    const store = getStore();
+    store.dispatch(setKeyword(keyword, true));
+    store.dispatch(autocompleteHide());
+    this.redirectOrSearch(keyword);
   }
 
 
   onfocus(e) {
-    // Warmup query if search-as-you-type
-    if (e.target.value === '' && this.conf.searchAsYouType === true) {
+    // Warmup query
+    if (e.target.value === '') {
       this.executeSearch(this.client, WARMUP_QUERY_PREFIX + Math.random());
     }
   }
