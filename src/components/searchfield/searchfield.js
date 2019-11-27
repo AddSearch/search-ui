@@ -107,7 +107,7 @@ export default class SearchField {
     }
 
     // Event listeners to the field
-    this.field.onkeydown = (e) => this.onkeydown(e);
+    this.field.oninput = (e) => this.oninput(e);
     this.field.onfocus = (e) => this.onfocus(e)
     this.field.onblur = (e) => setTimeout(() => this.onblur(), 200); // Possible search button onclick event first
 
@@ -138,7 +138,7 @@ export default class SearchField {
    * Input field events
    */
 
-  onkeydown(e) {
+  oninput(e) {
     const keyword = e.target.value;
     const store = getStore();
 
