@@ -5,7 +5,7 @@ search solutions quickly and effortlessly.
 
 ## Quick example
 ```html
-<!-- Containers -->
+<!-- Containers for UI components-->
 <div id="searchfield"></div>
 <div id="results"></div>
 <div id="pagination"></div>
@@ -17,7 +17,7 @@ search solutions quickly and effortlessly.
   // Search UI instance
   var searchui = new AddSearchUI(client);
 
-  // Add Search UI components
+  // UI components
   searchui.searchField({
     containerId: 'searchfield',
     placeholder: 'Keyword..',
@@ -56,9 +56,10 @@ The configuration object can contain following values:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| debug | true<br>false | false | Log events to console |
-| matchAllQuery | true<br>false | false | Execute "match all" query when the Search UI is loaded |
-| searchResultsPageUrl | String | null | Instead of searching on this page, redirect the user to a separate search results page |
+| debug | true<br>false | false | Log events to console and enable Redux DevTools |
+| matchAllQuery | true<br>false | false | Execute "match all" query when the Search UI is started |
+| reduxStore | Redux store | n/a | Redux store (with redux-thunk middleware) to use instead of creating a new store |
+| searchResultsPageUrl | String | null | Redirect the user to a separate search results page with this URL instead of showing search results on this page |
 
 After all components are added to the SearchUI object, the start function must be called:
 

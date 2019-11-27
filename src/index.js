@@ -9,7 +9,7 @@ import Pagination from './components/pagination';
 import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
 import SortBy, { SORTBY_TYPE } from './components/sortby';
-import { getStore } from './store';
+import { initRedux, getStore } from './store';
 import { regisiterHelpers } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
@@ -33,7 +33,10 @@ export default class SearchUI {
     // Expose some constants
     this.FILTER_TYPE = FILTER_TYPE;
     this.SORTBY_TYPE = SORTBY_TYPE;
+
+    initRedux(this.settings);
   }
+
 
   start() {
     this.initFromClientSettings();
