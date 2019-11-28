@@ -192,8 +192,8 @@ Settings that can be passed to the ```sortBy``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/sortby/sortby.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 | type | <searchui-instance>.SORTBY_TYPE.RADIO_GROUP, <searchui-instance>.SORTBY_TYPE.SELECT_LIST | Select list | "Sort by" menu in a select list or in a group of radio buttons |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/pagination.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 
 The ```options``` array can contain objects with following fields:
 
@@ -203,6 +203,22 @@ The ```options``` array can contain objects with following fields:
 | sortBy | relevance, date, custom_field | n/a | Sort by this field |
 | order | desc, asc | desc | Ascending order (a-z or 1-9) or descending order (z-a, 9-1) |
 
+### Active filters
+Show active filters and facets. Let user remove specific filters or clear everything,
+
+```js
+  searchui.activeFilters({
+    containerId: 'activefilters'
+  });
+```
+
+Settings that can be passed to the ```pagination``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML component that will act as a container for active filters list |
+| clearAll | true, false | true | Show "clear all filters" button if more than one filter is active |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/activefilters/activefilters.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 
 ## General functions
 ### Execute search
