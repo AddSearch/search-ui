@@ -1,6 +1,7 @@
 import './index.scss';
 import oa from 'es6-object-assign';
 
+import ActiveFilters from './components/activefilters';
 import Autocomplete from './components/autocomplete';
 import FacetGroup from './components/facetgroup';
 import Filters, { FILTER_TYPE } from './components/filters';
@@ -116,6 +117,9 @@ export default class SearchUI {
     new Pagination(this.client, conf);
   }
 
+  activeFilters(conf) {
+    new ActiveFilters(this.client, conf);
+  }
 
   /*
    * Public functions
