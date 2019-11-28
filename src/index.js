@@ -3,7 +3,7 @@ import oa from 'es6-object-assign';
 
 import ActiveFilters from './components/activefilters';
 import Autocomplete from './components/autocomplete';
-import FacetGroup from './components/facetgroup';
+import Facets from './components/facets';
 import Filters, { FILTER_TYPE } from './components/filters';
 import FilterStateObserver, { createFilterObject } from './components/filters/filterstateobserver';
 import Pagination from './components/pagination';
@@ -101,8 +101,8 @@ export default class SearchUI {
     new SearchResults(conf);
   }
 
-  facetGroup(conf) {
-    new FacetGroup(this.client, conf);
+  facets(conf) {
+    new Facets(this.client, conf);
   }
 
   filters(conf) {
