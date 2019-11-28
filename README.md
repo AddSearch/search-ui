@@ -212,13 +212,36 @@ Show active filters and facets. Let user remove specific filters or clear everyt
   });
 ```
 
-Settings that can be passed to the ```pagination``` function:
+Settings that can be passed to the ```activeFilters``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for active filters list |
 | clearAll | true, false | true | Show "clear all filters" button if more than one filter is active |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/activefilters/activefilters.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
+
+### Facets
+Show facets and let the user filter results by facets.
+
+```js
+  searchui.facets({
+    containerId: 'activefilters'
+  });
+```
+Before using this component, add appropriate facet fields to your client instance:
+
+```js
+  client.addFacetField('custom_fields.brand');
+```
+
+Settings that can be passed to the ```facets``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML component that will act as a container for facets |
+| facetsFilter | function | n/a | Custom JS function that receives possible facet values in an array, removes some values, and returns a filtered array |
+| field | Facet field | n/a | Same field that you passed to the JS client. E.g. *custom_fields.brand* |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/facets.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 
 ## General functions
 ### Execute search
