@@ -1,10 +1,9 @@
 import './pagination.scss';
-import handlebars from 'handlebars';
 import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { getStore, observeStoreByKey } from '../../store';
-
+import { renderToContainer, validateContainer } from '../../util/dom';
 
 const TEMPLATE = `
   <div class="addsearch-pagination">    
@@ -29,7 +28,9 @@ export default class Pagination {
     this.client = client;
     this.conf = conf;
 
-    observeStoreByKey(getStore(), 'search', () => this.render());
+    if (validateContainer(conf.containerId)) {
+      observeStoreByKey(getStore(), 'search', () => this.render());
+    }
   }
 
 
@@ -48,9 +49,7 @@ export default class Pagination {
       pages: pageArr
     };
 
-    const html = handlebars.compile(this.conf.template || TEMPLATE)(data);
-    const container = document.getElementById(this.conf.containerId);
-    container.innerHTML = html;
+    const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
 
     // Attach events
     const buttons = container.getElementsByTagName('button');

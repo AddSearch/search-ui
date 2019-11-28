@@ -1,12 +1,11 @@
 import './sortby.scss';
-import handlebars from 'handlebars';
 
-  import { SORTBY_TYPE } from './index';
+import { SORTBY_TYPE } from './index';
 import { sortBy } from '../../actions/sortby';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { getStore, observeStoreByKey } from '../../store';
-import { renderToContainer } from '../../util/dom';
+import { renderToContainer, validateContainer } from '../../util/dom';
 
 const TEMPLATE_SELECT = `
   <div class="addsearch-sortby">        
@@ -36,7 +35,9 @@ export default class SortBy {
     this.client = client;
     this.conf = conf;
 
-    observeStoreByKey(getStore(), 'sortby', (state) => this.render(state));
+    if (validateContainer(conf.containerId)) {
+      observeStoreByKey(getStore(), 'sortby', (state) => this.render(state));
+    }
   }
 
 
