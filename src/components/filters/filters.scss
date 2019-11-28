@@ -24,7 +24,7 @@
       float: left;
 
       &.active {
-        background-color: $active-color;
+        background-color: $active-background;
       }
       &:last-child {
         border-right: 1px solid $border-color;
@@ -44,10 +44,11 @@
 /* Tags */
 .addsearch-filters-tags {
   button {
+    margin: 1em 0;
     border-radius: 4px;
 
     &.active {
-      background-color: $active-color;
+      background-color: $active-background;
     }
   }
 }
