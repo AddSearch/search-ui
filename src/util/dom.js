@@ -16,3 +16,12 @@ export function attachEventListeners(container, dataAttribute, eventType, eventF
     });
   }
 }
+
+
+export function validateContainer(containerId) {
+  if (!document.getElementById(containerId)) {
+    console.log('WARNING: Search UI container with id "' + containerId + '" not found');
+    return false;
+  }
+  return true;
+}

@@ -1,7 +1,7 @@
 import './searchresults.scss';
 import handlebars from 'handlebars';
 import { getStore, observeStoreByKey } from '../../store';
-import { renderToContainer } from '../../util/dom';
+import { renderToContainer, validateContainer } from '../../util/dom';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
 
@@ -47,12 +47,15 @@ export default class SearchResults {
 
   constructor(conf) {
     this.conf = conf;
-    observeStoreByKey(getStore(), 'search', () => this.render());
 
     handlebars.registerPartial('numberOfResultsTemplate', this.conf.template_resultcount || TEMPLATE_NUMBER_OF_RESULTS);
 
     const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
     handlebars.registerHelper('selectCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
+
+    if (validateContainer(conf.containerId)) {
+      observeStoreByKey(getStore(), 'search', () => this.render());
+    }
   }
 
 

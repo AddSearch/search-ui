@@ -4,7 +4,7 @@ import { setHideAutomatically, autocompleteSuggestions, autocompleteSearch, setA
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
-import { renderToContainer } from '../../util/dom';
+import { renderToContainer, validateContainer } from '../../util/dom';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
@@ -38,8 +38,10 @@ export default class Autocomplete {
     const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
     handlebars.registerHelper('selectSearchResultCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
 
-    observeStoreByKey(getStore(), 'autocomplete', (state) => this.render(state));
-    observeStoreByKey(getStore(), 'keyword', (state) => this.keywordChanged(state));
+    if (validateContainer(conf.containerId)) {
+      observeStoreByKey(getStore(), 'autocomplete', (state) => this.render(state));
+      observeStoreByKey(getStore(), 'keyword', (state) => this.keywordChanged(state));
+    }
   }
 
 

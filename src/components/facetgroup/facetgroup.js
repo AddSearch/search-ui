@@ -1,14 +1,12 @@
 import './facetgroup.scss';
-import handlebars from 'handlebars';
 import { toggleFacetFilter } from '../../actions/filters';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { getStore, observeStoreByKey } from '../../store';
-import { renderToContainer } from '../../util/dom';
+import { renderToContainer, validateContainer } from '../../util/dom';
 
 const TEMPLATE = `
-  <div class="addsearch-facetgroup">        
-    <h3>{{conf.title}}</h3>
+  <div class="addsearch-facetgroup">
     <ul>
     {{#each facets}}
       <li data-facet="{{value}}">
@@ -29,7 +27,9 @@ export default class FacetGroup {
     this.client = client;
     this.conf = conf;
 
-    observeStoreByKey(getStore(), 'search', (search) => this.render(search));
+    if (validateContainer(conf.containerId)) {
+      observeStoreByKey(getStore(), 'search', (search) => this.render(search));
+    }
   }
 
 
@@ -54,6 +54,11 @@ export default class FacetGroup {
     let facets = [];
     if (results && results.facets && results.facets[facetField]) {
       facets = results.facets[facetField];
+    }
+
+    // Possible filter
+    if (this.conf.facetsFilter) {
+      facets = this.conf.facetsFilter(facets);
     }
 
     // Read active facets from redux state
