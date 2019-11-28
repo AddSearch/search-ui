@@ -1,6 +1,6 @@
 import './activefilters.scss';
 
-import { toggleFacetFilter, toggleFilter } from '../../actions/filters';
+import { toggleFacetFilter, toggleFilter, clearSelected } from '../../actions/filters';
 import { renderToContainer, validateContainer } from '../../util/dom';
 import { getStore, observeStoreByKey } from '../../store';
 
@@ -9,6 +9,11 @@ const TEMPLATE = `
     {{#each active}}
       <div class="item">{{label}} <button data-type="{{type}}" data-name="{{name}}" data-value="{{value}}">&#215;</button></div>
     {{/each}}
+    {{#if clearAll}}
+      {{#gt active.length 1}}
+        <div class="item"><button data-clearall="true">Clear all</button></div>
+      {{/gt}}
+    {{/if}}
   </div>
 `;
 
@@ -40,8 +45,6 @@ export default class ActiveFilters {
 
 
   render(filterState) {
-    console.log(filterState);
-
     let active = [];
 
     // Filters
@@ -70,25 +73,34 @@ export default class ActiveFilters {
     }
 
     const data = {
-      active
+      active,
+      clearAll: this.conf.clearAll !== false
     };
 
     const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
 
-    const elems = container.querySelectorAll('button');
+    const elems = container.querySelectorAll('[data-type]');
     for (let i = 0; i < elems.length; i++) {
-      elems[i].addEventListener('click', (e) => {
-        const type = e.target.getAttribute('data-type');
-        const name = e.target.getAttribute('data-name');
-        const value = e.target.getAttribute('data-value');
+      elems[i].addEventListener('click', (e) => this.handleFilterClick(e));
+    }
 
-        if (type === TYPE.FILTER) {
-          getStore().dispatch(toggleFilter(name, value, true));
-        }
-        else if (type === TYPE.FACET) {
-          getStore().dispatch(toggleFacetFilter(name, value));
-        }
-      });
+    const clearAll = container.querySelector('[data-clearall]');
+    if (clearAll) {
+      clearAll.addEventListener('click', (e) => getStore().dispatch(clearSelected()));
+    }
+  }
+
+
+  handleFilterClick(e) {
+    const type = e.target.getAttribute('data-type');
+    const name = e.target.getAttribute('data-name');
+    const value = e.target.getAttribute('data-value');
+
+    if (type === TYPE.FILTER) {
+      getStore().dispatch(toggleFilter(name, value, true));
+    }
+    else if (type === TYPE.FACET) {
+      getStore().dispatch(toggleFacetFilter(name, value));
     }
   }
 }
