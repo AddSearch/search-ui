@@ -1,0 +1,94 @@
+import './activefilters.scss';
+
+import { toggleFacetFilter, toggleFilter } from '../../actions/filters';
+import { renderToContainer, validateContainer } from '../../util/dom';
+import { getStore, observeStoreByKey } from '../../store';
+
+const TEMPLATE = `
+  <div class="addsearch-active-filters">        
+    {{#each active}}
+      <div class="item">{{label}} <button data-type="{{type}}" data-name="{{name}}" data-value="{{value}}">&#215;</button></div>
+    {{/each}}
+  </div>
+`;
+
+const TYPE = {
+  FILTER: 'FILTER',
+  FACET: 'FACET'
+}
+
+
+export default class ActiveFilters {
+
+  constructor(client, conf) {
+    this.client = client;
+    this.conf = conf;
+
+    if (validateContainer(conf.containerId)) {
+      observeStoreByKey(getStore(), 'filters', (state) => this.render(state));
+    }
+  }
+
+
+  getFilterLabel(filterName, allAvailableFilters) {
+    for (let i=0; i<allAvailableFilters.length; i++) {
+      if (allAvailableFilters[i][filterName]) {
+        return allAvailableFilters[i][filterName].label;
+      }
+    }
+  }
+
+
+  render(filterState) {
+    console.log(filterState);
+
+    let active = [];
+
+    // Filters
+    for (var key in filterState.activeFilters) {
+      active.push({
+        type: TYPE.FILTER,
+        name: key,
+        value: filterState.activeFilters[key],
+        label: this.getFilterLabel(key, filterState.allAvailableFilters)
+      });
+    }
+
+    // Facets
+    for (var key in filterState.activeFacets) {
+      // Category and custom field facets
+      if (key === 'category' || key.indexOf('custom_fields.') === 0) {
+        for (var category in filterState.activeFacets[key]) {
+          active.push({
+            name: key,
+            type: TYPE.FACET,
+            value: category,
+            label: category.replace(/^[0-9]+[x]{1}/, '')
+          });
+        }
+      }
+    }
+
+    const data = {
+      active
+    };
+
+    const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
+
+    const elems = container.querySelectorAll('button');
+    for (let i = 0; i < elems.length; i++) {
+      elems[i].addEventListener('click', (e) => {
+        const type = e.target.getAttribute('data-type');
+        const name = e.target.getAttribute('data-name');
+        const value = e.target.getAttribute('data-value');
+
+        if (type === TYPE.FILTER) {
+          getStore().dispatch(toggleFilter(name, value, true));
+        }
+        else if (type === TYPE.FACET) {
+          getStore().dispatch(toggleFacetFilter(name, value));
+        }
+      });
+    }
+  }
+}
