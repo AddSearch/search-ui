@@ -8,7 +8,7 @@ import { TAGS_TEMPLATE } from './tags';
 import { CHECKBOXGROUP_TEMPLATE } from './checkboxgroup';
 import { RADIOGROUP_TEMPLATE } from './radiogroup';
 import { SELECTLIST_TEMPLATE } from './selectlist';
-import { renderToContainer, attachEventListeners } from '../../util/dom';
+import { renderToContainer, attachEventListeners, validateContainer } from '../../util/dom';
 
 export const NO_FILTER_NAME = 'nofilter';
 
@@ -19,8 +19,10 @@ export default class Filters {
     this.conf = conf;
     this.activeFilter = null; // For select list and tab filters with a single selectable value
 
-    getStore().dispatch(registerFilter(this.conf));
-    observeStoreByKey(getStore(), 'filters', (state) => this.render(state));
+    if (validateContainer(conf.containerId)) {
+      getStore().dispatch(registerFilter(this.conf));
+      observeStoreByKey(getStore(), 'filters', (state) => this.render(state));
+    }
   }
 
 
