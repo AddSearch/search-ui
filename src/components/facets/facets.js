@@ -1,4 +1,4 @@
-import './facetgroup.scss';
+import './facets.scss';
 import { toggleFacetFilter } from '../../actions/filters';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
@@ -6,7 +6,7 @@ import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 
 const TEMPLATE = `
-  <div class="addsearch-facetgroup">
+  <div class="addsearch-facets">
     <ul>
     {{#each facets}}
       <li data-facet="{{value}}">
@@ -21,7 +21,7 @@ const TEMPLATE = `
 `;
 
 
-export default class FacetGroup {
+export default class Facets {
 
   constructor(client, conf) {
     this.client = client;
