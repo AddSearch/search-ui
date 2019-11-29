@@ -29,7 +29,7 @@ export default class SearchField {
     this.firstRenderDone = false;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'keyword', (kw) => this.render(kw));
+      observeStoreByKey(getStore(), 'keyword', (kw) => this.render(kw.value));
       observeStoreByKey(getStore(), 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
     }
   }
@@ -79,8 +79,7 @@ export default class SearchField {
   }
 
 
-  render(keywordState) {
-    const preDefinedKeyword = keywordState.value;
+  render(preDefinedKeyword) {
     const container = document.getElementById(this.conf.containerId);
 
     // Field already exists. Don't re-render
