@@ -1,25 +1,10 @@
 import './pagination.scss';
+import { PAGINATION_TEMPLATE } from './templates';
 import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
-
-const TEMPLATE = `
-  <div class="addsearch-pagination">    
-    {{#gt currentPage 1}}
-      <button data-page="previous" aria-label="Previous page">&#171;</button>
-    {{/gt}}
-    {{#each pages}}
-      <button data-page="{{this}}" aria-label="Go to results page {{this}}" {{#equals ../currentPage this}}data-active="true"{{/equals}}>
-        {{this}}
-      </button>
-    {{/each}}
-    {{#lt currentPage lastPage}}
-      <button data-page="next" aria-label="Next page">&#187;</button>
-    {{/lt}}
-  </div>
-`;
 
 
 export default class Pagination {
@@ -49,7 +34,7 @@ export default class Pagination {
       pages: pageArr
     };
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
+    const container = renderToContainer(this.conf.containerId, this.conf.template || PAGINATION_TEMPLATE, data);
 
     // Attach events
     const buttons = container.getElementsByTagName('button');

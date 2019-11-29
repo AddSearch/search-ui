@@ -1,27 +1,13 @@
 import './activefilters.scss';
-
+import { ACTIVE_FILTERS_TEMPLATE } from './templates';
 import { toggleFacetFilter, toggleFilter, clearSelected } from '../../actions/filters';
 import { renderToContainer, validateContainer } from '../../util/dom';
 import { getStore, observeStoreByKey } from '../../store';
-
-const TEMPLATE = `
-  <div class="addsearch-active-filters">        
-    {{#each active}}
-      <div class="item">{{label}} <button data-type="{{type}}" data-name="{{name}}" data-value="{{value}}">&#215;</button></div>
-    {{/each}}
-    {{#if clearAll}}
-      {{#gt active.length 1}}
-        <div class="item"><button data-clearall="true">Clear all</button></div>
-      {{/gt}}
-    {{/if}}
-  </div>
-`;
 
 const TYPE = {
   FILTER: 'FILTER',
   FACET: 'FACET'
 }
-
 
 export default class ActiveFilters {
 
@@ -77,8 +63,9 @@ export default class ActiveFilters {
       clearAll: this.conf.clearAll !== false
     };
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
+    const container = renderToContainer(this.conf.containerId, this.conf.template || ACTIVE_FILTERS_TEMPLATE, data);
 
+    // Attach events
     const elems = container.querySelectorAll('[data-type]');
     for (let i = 0; i < elems.length; i++) {
       elems[i].addEventListener('click', (e) => this.handleFilterClick(e));

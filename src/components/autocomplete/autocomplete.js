@@ -1,4 +1,5 @@
 import './autocomplete.scss';
+import { AUTOCOMPLETE_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
 import { setHideAutomatically, autocompleteSuggestions, autocompleteSearch, setActiveSuggestion } from '../../actions/autocomplete';
 import { search } from '../../actions/search';
@@ -7,21 +8,6 @@ import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
-
-
-const TEMPLATE = `
-  <div class="addsearch-autocomplete">
-    {{#gt suggestions.length 0}}
-      <ul class="suggestions">
-        {{#each ../suggestions}}
-          <li data-keyword="{{value}}" data-index="{{@index}}" {{#equals ../../activeSuggestionIndex @index}}class="active"{{/equals}}>
-            {{value}}
-          </li>
-        {{/each}}
-      </ul>
-    {{/gt}}
-  </div>
-`;
 
 
 export default class Autocomplete {
@@ -81,7 +67,7 @@ export default class Autocomplete {
       searchResults
     };
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
+    const container = renderToContainer(this.conf.containerId, this.conf.template || AUTOCOMPLETE_TEMPLATE, data);
 
     // Attach events to suggestions only for keyboard accessibility
     const lis = container.querySelector('.suggestions') ? container.querySelectorAll('.suggestions > li') : [];

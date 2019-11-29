@@ -1,24 +1,10 @@
 import './facets.scss';
+import { FACETS_TEMPLATE } from './templates';
 import { toggleFacetFilter } from '../../actions/filters';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
-
-const TEMPLATE = `
-  <div class="addsearch-facets">
-    <ul>
-    {{#each facets}}
-      <li data-facet="{{value}}">
-        <label>
-          <input type="checkbox" value="{{value}}" />
-          {{value}} <em>({{count}})</em>
-        </label>
-      </li>
-    {{/each}}
-    </ul>
-  </div>
-`;
 
 
 export default class Facets {
@@ -75,7 +61,7 @@ export default class Facets {
       conf: this.conf,
       facets: facets
     };
-    const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
+    const container = renderToContainer(this.conf.containerId, this.conf.template || FACETS_TEMPLATE, data);
 
 
     // Attach events
