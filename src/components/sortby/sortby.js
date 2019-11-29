@@ -1,32 +1,12 @@
 import './sortby.scss';
 
 import { SORTBY_TYPE } from './index';
+import { SORTBY_RADIOGROUP_TEMPLATE, SORTBY_SELECT_TEMPLATE} from './templates';
 import { sortBy } from '../../actions/sortby';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
-
-const TEMPLATE_SELECT = `
-  <div class="addsearch-sortby">        
-    <select>
-      {{#each options}}
-        <option data-field={{sortBy}} data-order={{order}}>{{label}}</option>
-      {{/each}}
-    </select>
-  </div>
-`;
-
-export const TEMPLATE_RADIOGROUP = `
-  <div class="addsearch-sortby-radiogroup">
-    {{#each options}}
-      <label>
-        <input type="radio" name={{../containerId}} data-field={{sortBy}} data-order={{order}} value="" {{#if active}}checked{{/if}}>{{label}}
-      </label>
-    {{/each}}
-  </div>
-`;
-
 
 
 export default class SortBy {
@@ -78,10 +58,10 @@ export default class SortBy {
       template = this.conf.template;
     }
     else if (this.conf.type === SORTBY_TYPE.RADIO_GROUP) {
-      template = TEMPLATE_RADIOGROUP;
+      template = SORTBY_RADIOGROUP_TEMPLATE;
     }
     else {
-      template = TEMPLATE_SELECT;
+      template = SORTBY_SELECT_TEMPLATE;
     }
 
     // Data

@@ -1,13 +1,14 @@
 import './filters.scss';
-
+import {
+  FILTERS_CHECKBOXGROUP_TEMPLATE,
+  FILTERS_RADIOGROUP_TEMPLATE,
+  FILTERS_SELECTLIST_TEMPLATE,
+  FILTERS_TABS_TEMPLATE,
+  FILTERS_TAGS_TEMPLATE
+} from './templates';
 import { FILTER_TYPE } from './index';
 import { getStore, observeStoreByKey } from '../../store';
 import { toggleFilter, registerFilter } from '../../actions/filters';
-import { TABS_TEMPLATE } from './tabs';
-import { TAGS_TEMPLATE } from './tags';
-import { CHECKBOXGROUP_TEMPLATE } from './checkboxgroup';
-import { RADIOGROUP_TEMPLATE } from './radiogroup';
-import { SELECTLIST_TEMPLATE } from './selectlist';
 import { renderToContainer, attachEventListeners, validateContainer } from '../../util/dom';
 
 export const NO_FILTER_NAME = 'nofilter';
@@ -52,19 +53,19 @@ export default class Filters {
     // Template
     let template = null;
     if (this.conf.type === FILTER_TYPE.TABS) {
-      template = TABS_TEMPLATE;
+      template = FILTERS_TABS_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.TAGS) {
-      template = TAGS_TEMPLATE;
+      template = FILTERS_TAGS_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.CHECKBOX_GROUP) {
-      template = CHECKBOXGROUP_TEMPLATE;
+      template = FILTERS_CHECKBOXGROUP_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.RADIO_GROUP) {
-      template = RADIOGROUP_TEMPLATE;
+      template = FILTERS_RADIOGROUP_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.SELECT_LIST) {
-      template = SELECTLIST_TEMPLATE;
+      template = FILTERS_SELECTLIST_TEMPLATE;
     }
 
 
