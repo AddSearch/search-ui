@@ -1,5 +1,5 @@
 /* global window, history */
-import { WARMUP_QUERY_PREFIX } from '../index';
+import { WARMUP_QUERY_PREFIX, MATCH_ALL_QUERY } from '../index';
 import { search, clearSearchResults } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
@@ -26,6 +26,9 @@ export function setHistory(parameter, value) {
 
   // If pagination parameter and page=1, don't add to URL
   if (parameter === HISTORY_PARAMETERS.PAGE && value == 1) {
+    delete params[parameter];
+  }
+  else if (parameter === HISTORY_PARAMETERS.SEARCH && value == MATCH_ALL_QUERY) {
     delete params[parameter];
   }
   // Add value to URL
