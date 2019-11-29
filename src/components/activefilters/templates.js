@@ -1,4 +1,4 @@
-const ACTIVE_FILTERS_TEMPLATE = `
+export const ACTIVE_FILTERS_TEMPLATE = `
   <div class="addsearch-active-filters">        
     {{#each active}}
       <div class="item">{{label}} <button data-type="{{type}}" data-name="{{name}}" data-value="{{value}}">&#215;</button></div>
