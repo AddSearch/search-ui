@@ -3,7 +3,8 @@ import {
   REGISTER_FILTER,
   SET_ACTIVE_FILTERS,
   SET_ACTIVE_FACETS,
-  TOGGLE_FACET_FILTER
+  TOGGLE_FACET_FILTER,
+  CLEAR_SELECTED_FILTERS_AND_FACETS
 } from '../actions/filters';
 
 const initialState = {
@@ -40,6 +41,14 @@ export default function filters(state = initialState, action) {
       return Object.assign({}, state, {
         activeFilters: nextActive,
         refreshSearch: action.refreshSearch === false ? false : true
+      });
+
+
+    case CLEAR_SELECTED_FILTERS_AND_FACETS:
+      return Object.assign({}, state, {
+        activeFacets: {},
+        activeFilters: {},
+        refreshSearch: true
       });
 
 

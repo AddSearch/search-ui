@@ -1,35 +1,21 @@
-import './facetgroup.scss';
-import handlebars from 'handlebars';
+import './facets.scss';
+import { FACETS_TEMPLATE } from './templates';
 import { toggleFacetFilter } from '../../actions/filters';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { getStore, observeStoreByKey } from '../../store';
-import { renderToContainer } from '../../util/dom';
-
-const TEMPLATE = `
-  <div class="addsearch-facetgroup">        
-    <h3>{{conf.title}}</h3>
-    <ul>
-    {{#each facets}}
-      <li data-facet="{{value}}">
-        <label>
-          <input type="checkbox" value="{{value}}" />
-          {{value}} <em>({{count}})</em>
-        </label>
-      </li>
-    {{/each}}
-    </ul>
-  </div>
-`;
+import { renderToContainer, validateContainer } from '../../util/dom';
 
 
-export default class FacetGroup {
+export default class Facets {
 
   constructor(client, conf) {
     this.client = client;
     this.conf = conf;
 
-    observeStoreByKey(getStore(), 'search', (search) => this.render(search));
+    if (validateContainer(conf.containerId)) {
+      observeStoreByKey(getStore(), 'search', (search) => this.render(search));
+    }
   }
 
 
@@ -56,6 +42,11 @@ export default class FacetGroup {
       facets = results.facets[facetField];
     }
 
+    // Possible filter
+    if (this.conf.facetsFilter) {
+      facets = this.conf.facetsFilter(facets);
+    }
+
     // Read active facets from redux state
     let activeFacets = [];
     const activeFacetState = getStore().getState().filters.activeFacets;
@@ -70,7 +61,7 @@ export default class FacetGroup {
       conf: this.conf,
       facets: facets
     };
-    const container = renderToContainer(this.conf.containerId, this.conf.template || TEMPLATE, data);
+    const container = renderToContainer(this.conf.containerId, this.conf.template || FACETS_TEMPLATE, data);
 
 
     // Attach events

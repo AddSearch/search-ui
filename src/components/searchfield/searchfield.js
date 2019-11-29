@@ -1,5 +1,6 @@
 /* global window */
 import './searchfield.scss';
+import { SEARCHFIELD_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
 import { search } from '../../actions/search';
 import { autocompleteHide, keyboardEvent, setActiveSuggestion, ARROW_DOWN, ARROW_UP } from '../../actions/autocomplete';
@@ -8,18 +9,7 @@ import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
 import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
 import { redirectToSearchResultsPage } from '../../util/history';
-
-/**
- * HTML template
- */
-const TEMPLATE = `
-  <form class="addsearch-searchfield" autocomplete="off" action="?" role="search">
-    <input type="search" placeholder="{{placeholder}}" aria-label="Search field" />
-    {{#if button}}
-      <button type="button" aria-label="Search button" >{{button}}</button>
-    {{/if}}
-  </form>
-`;
+import { validateContainer } from '../../util/dom';
 
 const KEYCODES = {
   ARROW_DOWN: 40,
@@ -29,6 +19,7 @@ const KEYCODES = {
   DELETE: 46
 };
 
+
 export default class SearchField {
 
   constructor(client, conf, matchAllQueryWhenSearchFieldEmpty) {
@@ -37,8 +28,10 @@ export default class SearchField {
     this.matchAllQuery = matchAllQueryWhenSearchFieldEmpty;
     this.firstRenderDone = false;
 
-    observeStoreByKey(getStore(), 'keyword', (kw) => this.render(kw.value));
-    observeStoreByKey(getStore(), 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
+    if (validateContainer(conf.containerId)) {
+      observeStoreByKey(getStore(), 'keyword', (kw) => this.render(kw.value));
+      observeStoreByKey(getStore(), 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
+    }
   }
 
 
@@ -98,7 +91,7 @@ export default class SearchField {
     }
 
     // New field. Render
-    container.innerHTML = handlebars.compile(this.conf.template || TEMPLATE)(this.conf);
+    container.innerHTML = handlebars.compile(this.conf.template || SEARCHFIELD_TEMPLATE)(this.conf);
     this.field = container.querySelector('input');
 
     // Set value. Don't pass with data to handlebars to get the keyboard caret position right on all browsers
@@ -107,9 +100,10 @@ export default class SearchField {
     }
 
     // Event listeners to the field
-    this.field.onkeyup = (e) => this.onkeyup(e);
+    this.field.oninput = (e) => this.oninput(e);
     this.field.onkeypress = (e) => this.onkeypress(e);
-    this.field.onfocus = (e) => this.onfocus(e)
+    this.field.onkeyup = (e) => this.onkeyup(e);
+    this.field.onfocus = (e) => this.onfocus(e);
     this.field.onblur = (e) => setTimeout(() => this.onblur(), 200); // Possible search button onclick event first
 
     // Event listeners to the possible search button
@@ -119,6 +113,12 @@ export default class SearchField {
         this.redirectOrSearch(keyword);
       }
     }
+
+    // Event listeners to the form
+    if (container.querySelector('form')) {
+      container.querySelector('form').onsubmit = (e) => e.preventDefault();
+    }
+
 
     // Autofocus when loaded first time
     if (this.conf.autofocus !== false &&
@@ -133,53 +133,48 @@ export default class SearchField {
    * Input field events
    */
 
-  onkeyup(e) {
+  // Handle characters and backspace
+  oninput(e) {
     const keyword = e.target.value;
     const store = getStore();
-
-    // Keyboard navigation for search suggestions autocomplete
-    if (e.keyCode === KEYCODES.ARROW_DOWN) {
-      store.dispatch(keyboardEvent(ARROW_DOWN));
-      return;
-    }
-    else if (e.keyCode === KEYCODES.ARROW_UP) {
-      store.dispatch(keyboardEvent(ARROW_UP));
-      return;
-    }
 
     // Keyword being erased
     if (e.keyCode === KEYCODES.BACKSPACE || e.keyCode === KEYCODES.DELETE) {
       store.dispatch(setActiveSuggestion(null, false));
     }
 
-    // Check if initiated from search suggestions autocomplete. If yes, hide autocomplete
-    let isKeywordSetFromSuggestions = false;
-    if (e.keyCode === KEYCODES.ENTER) {
-      isKeywordSetFromSuggestions = store.getState().autocomplete.activeSuggestionIndex !== null;
-      store.dispatch(autocompleteHide());
-    }
-
-    store.dispatch(setKeyword(keyword, isKeywordSetFromSuggestions));
-
+    store.dispatch(setKeyword(keyword, false));
     if (this.conf.searchAsYouType === true) {
       this.executeSearch(this.client, keyword);
     }
   }
 
+  // Handle keyboard navi
+  onkeyup(e) {
+    const store = getStore();
+    if (e.keyCode === KEYCODES.ARROW_DOWN) {
+      store.dispatch(keyboardEvent(ARROW_DOWN));
+    }
+    else if (e.keyCode === KEYCODES.ARROW_UP) {
+      store.dispatch(keyboardEvent(ARROW_UP));
+    }
+  }
 
+  // Handle enter
   onkeypress(e) {
-    // Enter pressed
     if (e.keyCode === KEYCODES.ENTER) {
+      const store = getStore();
       const keyword = e.target.value;
+      store.dispatch(setKeyword(keyword, true));
+      store.dispatch(autocompleteHide());
       this.redirectOrSearch(keyword);
-      return false;
     }
   }
 
 
   onfocus(e) {
-    // Warmup query if search-as-you-type
-    if (e.target.value === '' && this.conf.searchAsYouType === true) {
+    // Warmup query
+    if (e.target.value === '') {
       this.executeSearch(this.client, WARMUP_QUERY_PREFIX + Math.random());
     }
   }

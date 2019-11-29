@@ -1,9 +1,24 @@
+@import "../../variables";
+
 .addsearch-searchfield {
+  min-width: 320px;
+
   input[type=search],
   button {
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    appearance: none;
+    border: 1px solid $border-color;
+    border-radius: 3px;
+    padding: 3px 4px;
     font-size: 20px;
+  }
+
+  input[type=search] {
+    max-width: 60%;
+    width: 400px;
+  }
+
+  button {
+    padding: 3px 10px;
+    background: #fff;
+    cursor: pointer;
   }
 }
