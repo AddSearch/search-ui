@@ -88,7 +88,7 @@ Settings that can be passed to the ```searchField``` function:
 | button | String | n/a | Add a button to execute the search. Button's label is the value of this setting |
 | placeholder | String | n/a | Input field's placeholder text |
 | searchAsYouType| true<br>false | false | Execute search after every keystroke |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/searchfield.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 
 ### Autocomplete
 Show suggested keyword, direct hits, or both under the search field as the keyword is being typed.
@@ -111,7 +111,7 @@ Settings that can be passed to the ```autocomplete``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for autocomplete results |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/autocomplete.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 | hideAutomatically| boolean| true | Hide the autocomplete component when the search field is blurred |
 | categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
 | categoryAliases | Object | n/a | A map of category aliases used by *categorySelectionFunction* |
@@ -139,9 +139,9 @@ Settings that can be passed to the ```searchResults``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for search results |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js) | Custom [Handlebars](https://handlebarsjs.com/) template for search results |
-| template_resultcount | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js) | Custom [Handlebars](https://handlebarsjs.com/) template for "Number of results" |
-| template_noresults | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/searchresults.js) | Custom [Handlebars](https://handlebarsjs.com/) template for "No search results found" |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template for search results |
+| template_resultcount | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template for "Number of results" |
+| template_noresults | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template for "No search results found" |
 | categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
 | categoryAliases | Object | n/a | A map of category aliases used by *categorySelectionFunction* |
 
@@ -159,7 +159,7 @@ Settings that can be passed to the ```pagination``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/pagination.js#L9) | Custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 
 ### Sort by
 Component for the user to decide the order of search results.
@@ -192,8 +192,8 @@ Settings that can be passed to the ```sortBy``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/sortby/sortby.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
-| type | <searchui-instance>.SORTBY_TYPE.RADIO_GROUP, <searchui-instance>.SORTBY_TYPE.SELECT_LIST | Select list | "Sort by" menu in a select list or in a group of radio buttons |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/sortby/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
+| type | AddSearchUI.SORTBY_TYPE.RADIO_GROUP, AddSearchUI.SORTBY_TYPE.SELECT_LIST | Select list | "Sort by" menu in a select list or in a group of radio buttons |
 
 The ```options``` array can contain objects with following fields:
 
@@ -203,22 +203,42 @@ The ```options``` array can contain objects with following fields:
 | sortBy | relevance, date, custom_field | n/a | Sort by this field |
 | order | desc, asc | desc | Ascending order (a-z or 1-9) or descending order (z-a, 9-1) |
 
-### Active filters
-Show active filters and facets. Let user remove specific filters or clear everything,
+### Filters
+Let the user filter search results by URL patterns or custom field values.
 
 ```js
-  searchui.activeFilters({
-    containerId: 'activefilters'
+  searchui.filters({
+    containerId: 'activefilters',
+    type: AddSearchUI.FILTER_TYPE.CHECKBOX_GROUP,
+      options: {
+        cars: {
+          label: 'Cars',
+          filter: {"doc.custom_fields.category": "cars"}
+        }
+    }
   });
 ```
 
-Settings that can be passed to the ```activeFilters``` function:
+Settings that can be passed to the ```filters``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for active filters list |
-| clearAll | true, false | true | Show "clear all filters" button if more than one filter is active |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/activefilters/activefilters.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
+| containerId | String | n/a | ID of the HTML component that will act as a container for filters |
+| type | AddSearchUI.FILTER_TYPE.CHECKBOX_GROUP, AddSearchUI.FILTER_TYPE.RADIO_GROUP, AddSearchUI.FILTER_TYPE.SELECT_LIST, AddSearchUI.FILTER_TYPE.TABS, AddSearchUI.FILTER_TYPE.TAGS | n/a | Filter component's type |
+| template | String | [Default templates](https://github.com/AddSearch/search-ui/blob/master/src/components/filters/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
+| options | Object | n/a | Object containing filtering options |
+
+The options object can contain multple filtering options. In *Tabs* and *Radio group* filters just one of the 
+options can be activated. In other filter types any number of options can be activated. The option key
+is shared across filter components, so all filters with the same key are enabled when any of the filters
+is clicked.
+
+Fields in ```options```:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| label | String | n/a | Label shown for the user |
+| filter | json | n/a | Filter object.  |
 
 ### Facets
 Show facets and let the user filter results by facets.
@@ -241,7 +261,24 @@ Settings that can be passed to the ```facets``` function:
 | containerId | String | n/a | ID of the HTML component that will act as a container for facets |
 | facetsFilter | function | n/a | Custom JS function that receives possible facet values in an array, removes some values, and returns a filtered array |
 | field | Facet field | n/a | Same field that you passed to the JS client. E.g. *custom_fields.brand* |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/facets.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
+
+### Active filters
+Show active filters and facets. Let user remove specific filters or clear everything,
+
+```js
+  searchui.activeFilters({
+    containerId: 'activefilters'
+  });
+```
+
+Settings that can be passed to the ```activeFilters``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML component that will act as a container for active filters list |
+| clearAll | true, false | true | Show "clear all filters" button if more than one filter is active |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/activefilters/templates.js) | Custom [Handlebars](https://handlebarsjs.com/) template |
 
 ## General functions
 ### Execute search
