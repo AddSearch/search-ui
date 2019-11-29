@@ -50,7 +50,7 @@ export default class SearchUI {
     }
 
     // FilterStateObserver to update client's filter object when any of the filters change
-    new FilterStateObserver(this.client, createFilterObjectFunction, this.settings.matchAllQuery);
+    new FilterStateObserver(this.client, createFilterObjectFunction);
 
     getStore().dispatch(start());
   }

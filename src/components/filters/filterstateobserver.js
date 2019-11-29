@@ -61,10 +61,9 @@ export function createFilterObject(state) {
  */
 export default class FilterStateObserver {
 
-  constructor(client, createFilterObjectFunction, automaticMatchAllQuery) {
+  constructor(client, createFilterObjectFunction) {
     this.client = client;
     this.createFilterObjectFunction = createFilterObjectFunction;
-    this.automaticMatchAllQuery = automaticMatchAllQuery;
 
     observeStoreByKey(getStore(), 'filters', state => this.onFilterStateChange(state));
   }
@@ -78,10 +77,7 @@ export default class FilterStateObserver {
       const filterObject = this.createFilterObjectFunction(state);
       this.client.setFilterObject(filterObject);
 
-      let keyword = getStore().getState().keyword.value;
-      if (keyword === '' && this.automaticMatchAllQuery) {
-        keyword = MATCH_ALL_QUERY;
-      }
+      const keyword = getStore().getState().keyword.value;
       getStore().dispatch(setPage(this.client, 1));
       getStore().dispatch(search(this.client, keyword, null));
     }
