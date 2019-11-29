@@ -1,14 +1,14 @@
 # AddSearch Search UI Library
 
-With the AddSearch Search UI library you can create beautiful, lightning fast, and cross-browser compatible 
+With the AddSearch Search UI library you can create lightning fast and cross-browser compatible 
 search solutions quickly and effortlessly.
 
 ## Quick example
 ```html
 <!-- Containers for UI components-->
-<div id="searchfield"></div>
-<div id="results"></div>
-<div id="pagination"></div>
+<div id="searchfield-container"></div>
+<div id="results-container"></div>
+<div id="pagination-container"></div>
 
 <script>
   // AddSearch JS client instance
@@ -19,19 +19,20 @@ search solutions quickly and effortlessly.
 
   // UI components
   searchui.searchField({
-    containerId: 'searchfield',
+    containerId: 'searchfield-container',
     placeholder: 'Keyword..',
     button: 'Search'
   });
 
   searchui.searchResults({
-    containerId: 'results'
+    containerId: 'results-container'
   });
   
   searchui.pagination({
-    containerId: 'pagination'
+    containerId: 'pagination-container'
   });
   
+  // Must be called after all components are added
   searchui.start();
 </script>
 ```
@@ -58,10 +59,10 @@ The configuration object can contain following values:
 | --- | --- | --- | --- |
 | debug | true<br>false | false | Log events to console and enable Redux DevTools |
 | matchAllQuery | true<br>false | false | Execute "match all" query when the Search UI is started |
-| reduxStore | Redux store | n/a | Redux store (with redux-thunk middleware) to use instead of creating a new store |
+| reduxStore | Object | n/a | Redux store (with redux-thunk middleware) to use instead of creating a new store |
 | searchResultsPageUrl | String | null | Redirect the user to a separate search results page with this URL instead of showing search results on this page |
 
-After all components are added to the SearchUI object, the start function must be called:
+After all UI components have been added to the SearchUI object, the start function must be called:
 
 ```js
   searchui.start();
