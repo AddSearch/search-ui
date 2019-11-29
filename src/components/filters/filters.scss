@@ -10,6 +10,7 @@
     padding: 0.5em 1.5em;
     display: inline-block;
     cursor: pointer;
+    background: #fff;
   }
 }
 
@@ -46,6 +47,7 @@
   button {
     margin: 1em 0;
     border-radius: 4px;
+    border: 1px solid $border-color;
 
     &.active {
       background-color: $active-background;
