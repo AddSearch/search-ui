@@ -137,8 +137,11 @@ export default class SearchField {
 
   // Handle characters and backspace
   oninput(e) {
-    const keyword = e.target.value;
     const store = getStore();
+    let keyword = e.target.value;
+    if (keyword === '' && this.matchAllQuery) {
+      keyword = MATCH_ALL_QUERY;
+    }
 
     // Keyword being erased
     if (e.keyCode === KEYCODES.BACKSPACE || e.keyCode === KEYCODES.DELETE) {
