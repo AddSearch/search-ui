@@ -1,4 +1,5 @@
 import './filters.scss';
+import { MATCH_ALL_QUERY } from '../../index';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { getStore, observeStoreByKey } from '../../store';
@@ -60,9 +61,10 @@ export function createFilterObject(state) {
  */
 export default class FilterStateObserver {
 
-  constructor(client, createFilterObjectFunction) {
+  constructor(client, createFilterObjectFunction, automaticMatchAllQuery) {
     this.client = client;
     this.createFilterObjectFunction = createFilterObjectFunction;
+    this.automaticMatchAllQuery = automaticMatchAllQuery;
 
     observeStoreByKey(getStore(), 'filters', state => this.onFilterStateChange(state));
   }
@@ -76,7 +78,10 @@ export default class FilterStateObserver {
       const filterObject = this.createFilterObjectFunction(state);
       this.client.setFilterObject(filterObject);
 
-      const keyword = getStore().getState().keyword.value;
+      let keyword = getStore().getState().keyword.value;
+      if (keyword === '' && this.automaticMatchAllQuery) {
+        keyword = MATCH_ALL_QUERY;
+      }
       getStore().dispatch(setPage(this.client, 1));
       getStore().dispatch(search(this.client, keyword, null));
     }
