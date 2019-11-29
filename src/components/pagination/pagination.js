@@ -1,26 +1,10 @@
 import './pagination.scss';
-import handlebars from 'handlebars';
+import { PAGINATION_TEMPLATE } from './templates';
 import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { getStore, observeStoreByKey } from '../../store';
-
-
-const TEMPLATE = `
-  <div class="addsearch-pagination">    
-    {{#gt currentPage 1}}
-      <button data-page="previous" aria-label="Previous page">&#171;</button>
-    {{/gt}}
-    {{#each pages}}
-      <button data-page="{{this}}" aria-label="Go to results page {{this}}" {{#equals ../currentPage this}}data-active="true"{{/equals}}>
-        {{this}}
-      </button>
-    {{/each}}
-    {{#lt currentPage lastPage}}
-      <button data-page="next" aria-label="Next page">&#187;</button>
-    {{/lt}}
-  </div>
-`;
+import { renderToContainer, validateContainer } from '../../util/dom';
 
 
 export default class Pagination {
@@ -29,7 +13,9 @@ export default class Pagination {
     this.client = client;
     this.conf = conf;
 
-    observeStoreByKey(getStore(), 'search', () => this.render());
+    if (validateContainer(conf.containerId)) {
+      observeStoreByKey(getStore(), 'search', () => this.render());
+    }
   }
 
 
@@ -48,9 +34,7 @@ export default class Pagination {
       pages: pageArr
     };
 
-    const html = handlebars.compile(this.conf.template || TEMPLATE)(data);
-    const container = document.getElementById(this.conf.containerId);
-    container.innerHTML = html;
+    const container = renderToContainer(this.conf.containerId, this.conf.template || PAGINATION_TEMPLATE, data);
 
     // Attach events
     const buttons = container.getElementsByTagName('button');

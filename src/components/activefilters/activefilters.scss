@@ -1,0 +1,19 @@
+@import "../../variables";
+
+.addsearch-active-filters {
+  .item {
+    margin: 1em 0;
+    font-size: 11px;
+    border: 1px solid $border-color;
+    border-radius: 3px;
+    padding: 3px 4px;
+    display: inline-block;
+
+    button {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+  }
+}
+

@@ -1,15 +1,16 @@
 import './index.scss';
 import oa from 'es6-object-assign';
 
+import ActiveFilters from './components/activefilters';
 import Autocomplete from './components/autocomplete';
-import FacetGroup from './components/facetgroup';
-import Filters, { FILTER_TYPE } from './components/filters';
+import Facets from './components/facets';
+import Filters from './components/filters';
 import FilterStateObserver, { createFilterObject } from './components/filters/filterstateobserver';
 import Pagination from './components/pagination';
 import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
-import SortBy, { SORTBY_TYPE } from './components/sortby';
-import { getStore } from './store';
+import SortBy from './components/sortby';
+import { initRedux, getStore } from './store';
 import { regisiterHelpers } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
@@ -29,11 +30,9 @@ export default class SearchUI {
   constructor(client, settings) {
     this.client = client;
     this.settings = settings || {};
-
-    // Expose some constants
-    this.FILTER_TYPE = FILTER_TYPE;
-    this.SORTBY_TYPE = SORTBY_TYPE;
+    initRedux(this.settings);
   }
+
 
   start() {
     this.initFromClientSettings();
@@ -54,6 +53,11 @@ export default class SearchUI {
     new FilterStateObserver(this.client, createFilterObjectFunction);
 
     getStore().dispatch(start());
+  }
+
+
+  getReduxStore() {
+    return getStore();
   }
 
 
@@ -97,8 +101,8 @@ export default class SearchUI {
     new SearchResults(conf);
   }
 
-  facetGroup(conf) {
-    new FacetGroup(this.client, conf);
+  facets(conf) {
+    new Facets(this.client, conf);
   }
 
   filters(conf) {
@@ -113,6 +117,9 @@ export default class SearchUI {
     new Pagination(this.client, conf);
   }
 
+  activeFilters(conf) {
+    new ActiveFilters(this.client, conf);
+  }
 
   /*
    * Public functions
