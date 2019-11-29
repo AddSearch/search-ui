@@ -39,7 +39,11 @@ export function regisiterHelpers() {
     return arg1 < arg2 ? options.fn(this) : options.inverse(this);
   });
 
-  handlebars.registerHelper('formatPrice', (price, locale, currency, options) => {
+  handlebars.registerHelper('formatPrice', (price, locale, currency) => {
+    if (typeof price == 'undefined' || typeof price != 'number' || !locale || !currency) {
+      return '';
+    }
+
     // Create formatter
     if (window.Intl && !currencyFormatter) {
       currencyFormatter = new Intl.NumberFormat(locale, {
