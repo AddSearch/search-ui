@@ -1,6 +1,7 @@
 import './autocomplete.scss';
 import { AUTOCOMPLETE_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
+import { AUTOCOMPLETE_TYPE } from './index';
 import { setHideAutomatically, autocompleteSuggestions, autocompleteSearch, setActiveSuggestion } from '../../actions/autocomplete';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
@@ -37,10 +38,10 @@ export default class Autocomplete {
 
     this.conf.sources.forEach(v => {
       const client = v.client || this.client;
-      if (v.type === 'suggestions') {
+      if (v.type === AUTOCOMPLETE_TYPE.SUGGESTIONS) {
         getStore().dispatch(autocompleteSuggestions(client, keyword));
       }
-      else if (v.type === 'search') {
+      else if (v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         getStore().dispatch(autocompleteSearch(client, v.jsonKey, keyword));
       }
     });
