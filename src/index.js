@@ -73,7 +73,7 @@ export default class SearchUI {
   matchAllQuery() {
     const store = getStore();
     if (store.getState().keyword.value === '') {
-      store.dispatch(setKeyword(MATCH_ALL_QUERY, false));
+      store.dispatch(setKeyword(MATCH_ALL_QUERY, true));
       store.dispatch(search(this.client, MATCH_ALL_QUERY));
     }
   }
