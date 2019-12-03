@@ -25,7 +25,7 @@ export const MATCH_ALL_QUERY = '*';
 oa.polyfill();
 registerHelpers();
 
-export default class SearchUI {
+export default class AddSearchUI {
 
   constructor(client, settings) {
     this.client = client;
