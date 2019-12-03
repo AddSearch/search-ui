@@ -4,7 +4,7 @@ import {
 
 const initialState = {
   value: '',
-  externallySet: false
+  skipAutocomplete: false
 };
 
 export default function keyword(state = initialState, action) {
@@ -13,7 +13,7 @@ export default function keyword(state = initialState, action) {
     case KEYWORD:
       return Object.assign({}, state, {
         value: action.value,
-        externallySet: action.externallySet === true
+        skipAutocomplete: action.skipAutocomplete === true
       });
 
     default:
