@@ -1,8 +1,8 @@
 {
   "name": "addsearch-search-ui",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "JavaScript library to develop Search UIs for the web",
-  "main": "index.js",
+  "main": "./dist/addsearch-search-ui.min.js",
   "jsdelivr": "./dist/addsearch-search-ui.min.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --recursive --require @babel/register --require ignore-styles",
