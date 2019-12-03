@@ -26,7 +26,7 @@ export function defaultCategorySelectionFunction(hit, categoryAliases) {
 
 
 let currencyFormatter = null;
-export function regisiterHelpers() {
+export function registerHelpers() {
   handlebars.registerHelper('equals', (arg1, arg2, options) => {
     return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
   });
@@ -45,20 +45,22 @@ export function regisiterHelpers() {
     }
 
     // Create formatter
-    if (window.Intl && !currencyFormatter) {
-      currencyFormatter = new Intl.NumberFormat(locale, {
-        style: 'currency',
-        currency: currency,
-        minimumFractionDigits: 2
-      });
-    }
+    try {
+      if (window.Intl && !currencyFormatter) {
+        currencyFormatter = new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency: currency,
+          minimumFractionDigits: 2
+        });
+      }
 
-    // Return price
-    if (currencyFormatter) {
-      return currencyFormatter.format(price);
+      // Return price
+      if (currencyFormatter) {
+        return currencyFormatter.format(price);
+      }
     }
-    else {
-      return (price/100) + ' ' + currency;
-    }
+    catch(err) {}
+
+    return (price/100) + ' ' + currency;
   });
 }
