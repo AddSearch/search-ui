@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>AddSearch Search UI: Search suggestions</title>
+    <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.2/dist/addsearch-js-client.min.js"></script>
+    <script src="../../dist/addsearch-search-ui.min.js"></script>
+    <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+  </head>
+  <body>
+
+    <!-- Containers. Search UI components will be added inside these divs -->
+    <div id="searchfield"></div>
+    <div id="autocomplete"></div>
+
+    <script>
+      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+      var client = new AddSearchClient('1bed1ffde465fddba2a53ad3ce69e6c2');
+
+      // Search UI instance
+      var searchui = new AddSearchUI(client);
+
+      // Add components
+      searchui.searchField({
+        containerId: 'searchfield',
+        placeholder: 'Keyword..'
+      });
+
+      searchui.autocomplete({
+        containerId: 'autocomplete',
+        sources: [
+          {
+            type: AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS
+          }
+        ]
+      });
+
+      // All components added. Start
+      searchui.start();
+    </script>
+
+  </body>
+</html>
