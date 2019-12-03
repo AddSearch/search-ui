@@ -68,7 +68,9 @@ export default class SearchField {
     const searchResultsPageUrl = getStore().getState().search.searchResultsPageUrl;
 
     // Redirect to results page
-    if (searchResultsPageUrl && keyword && keyword.length > 0) {
+    if (searchResultsPageUrl &&
+        this.conf.ignoreSearchResultsPageUrl !== true &&
+        keyword && keyword.length > 0) {
       redirectToSearchResultsPage(searchResultsPageUrl, keyword);
     }
 
@@ -148,7 +150,8 @@ export default class SearchField {
       store.dispatch(setActiveSuggestion(null, false));
     }
 
-    store.dispatch(setKeyword(keyword, false));
+    const skipAutocomplete = this.conf.ignoreAutocomplete === true;
+    store.dispatch(setKeyword(keyword, skipAutocomplete));
     if (this.conf.searchAsYouType === true) {
       this.executeSearch(this.client, keyword);
     }

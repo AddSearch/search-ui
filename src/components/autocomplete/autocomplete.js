@@ -34,7 +34,7 @@ export default class Autocomplete {
 
   keywordChanged(kw) {
     // Fetch suggestions if keyword was typed, not externally set (e.g. by browser's back button)
-    const keyword = kw.externallySet === false ? kw.value : null;
+    const keyword = kw.skipAutocomplete === false ? kw.value : null;
 
     this.conf.sources.forEach(v => {
       const client = v.client || this.client;

@@ -1,5 +1,5 @@
 export const KEYWORD = 'KEYWORD';
 
-export function setKeyword(value, externallySet) {
-  return { type: KEYWORD, value, externallySet }
+export function setKeyword(value, skipAutocomplete) {
+  return { type: KEYWORD, value, skipAutocomplete }
 }
