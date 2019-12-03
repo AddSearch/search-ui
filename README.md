@@ -106,7 +106,7 @@ before using the feature. Create your own template if you want to to show search
     containerId: 'autocomplete',
     sources: [
       {
-        type: 'suggestions'
+        type: AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS
       }
     ]
   });
