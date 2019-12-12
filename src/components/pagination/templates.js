@@ -4,7 +4,7 @@ export const PAGINATION_TEMPLATE = `
       <button data-page="previous" aria-label="Previous page">&#171;</button>
     {{/gt}}
     {{#each pages}}
-      <button data-page="{{this}}" aria-label="Go to results page {{this}}" {{#equals ../currentPage this}}data-active="true"{{/equals}}>
+      <button data-page="{{this}}" aria-label="Go to results page {{this}}" {{#equals ../currentPage this}}data-active="true" aria-current="true"{{/equals}}>
         {{this}}
       </button>
     {{/each}}
