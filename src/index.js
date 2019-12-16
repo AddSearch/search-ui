@@ -14,9 +14,10 @@ import { initRedux, getStore } from './store';
 import { registerHelpers } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
-import { start, search, setSearchResultsPageUrl } from './actions/search';
+import { start, search, setSearchResultsPageUrl, clearSearchResults } from './actions/search';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
+import { clearSelected } from './actions/filters';
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 export const MATCH_ALL_QUERY = '*';
@@ -70,11 +71,11 @@ export default class AddSearchUI {
     getStore().dispatch(sortBy(this.client, paging.sortBy, paging.sortOrder));
   }
 
-  matchAllQuery() {
+  matchAllQuery(onResultsScrollTo) {
     const store = getStore();
     if (store.getState().keyword.value === '') {
       store.dispatch(setKeyword(MATCH_ALL_QUERY, false));
-      store.dispatch(search(this.client, MATCH_ALL_QUERY));
+      store.dispatch(search(this.client, MATCH_ALL_QUERY, onResultsScrollTo));
     }
   }
 
@@ -132,5 +133,18 @@ export default class AddSearchUI {
 
   hideAutocomplete() {
     getStore().dispatch(autocompleteHide());
+  }
+
+  clear() {
+    const store = getStore();
+    store.dispatch(setKeyword('', true));
+    store.dispatch(clearSelected());
+
+    if (this.settings.matchAllQuery === true) {
+      this.matchAllQuery('top');
+    }
+    else {
+      store.dispatch(clearSearchResults('top'));
+    }
   }
 }
