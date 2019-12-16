@@ -167,6 +167,8 @@ Settings that can be passed to the ```pagination``` function:
 | containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 
+To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging)
+
 ### Sort by
 Component to change the order of search results.
 
@@ -295,6 +297,12 @@ Clicking the keyword executes the search.
   searchui.search(keyword);
 ```
 
+### Clear search
+Clear the keyword and enabled filters.
+```js
+  searchui.clear();
+```
+
 ### Hide autocomplete
 Hide the autocomplete component. For example, a "close" button inside the autocomplete modal would
 call this function.
@@ -339,5 +347,5 @@ npm run build
 ```
 
 ## Support
-
-Feel free to send any questions, ideas and suggestions at [support@addsearch.com](support@addsearch.com).
+Feel free to send any questions, ideas, and suggestions at [support@addsearch.com](mailto:support@addsearch.com) or 
+visit [addsearch.com](https://www.addsearch.com/) for more information.
