@@ -86,7 +86,7 @@ export default class SearchField {
 
     // Field already exists. Don't re-render
     if (container.querySelector('input')) {
-      if (preDefinedKeyword &&
+      if (preDefinedKeyword !== null &&
           preDefinedKeyword !== MATCH_ALL_QUERY &&
           container.querySelector('input').value !== preDefinedKeyword) {
         container.querySelector('input').value = preDefinedKeyword;
