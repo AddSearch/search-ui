@@ -1,5 +1,4 @@
 import './filters.scss';
-import { MATCH_ALL_QUERY } from '../../index';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { getStore, observeStoreByKey } from '../../store';
