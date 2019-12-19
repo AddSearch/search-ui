@@ -34,7 +34,7 @@ export default class ActiveFilters {
     let active = [];
 
     // Filters
-    for (var key in filterState.activeFilters) {
+    for (let key in filterState.activeFilters) {
       active.push({
         type: TYPE.FILTER,
         name: key,
@@ -44,7 +44,7 @@ export default class ActiveFilters {
     }
 
     // Facets
-    for (var key in filterState.activeFacets) {
+    for (let key in filterState.activeFacets) {
       // Category and custom field facets
       if (key === 'category' || key.indexOf('custom_fields.') === 0) {
         for (var category in filterState.activeFacets[key]) {
