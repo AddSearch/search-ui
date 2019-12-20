@@ -62,6 +62,7 @@ The configuration object can contain following values:
 | --- | --- | --- | --- |
 | debug | boolean | false | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools) |
 | matchAllQuery | boolean | false | Execute "match all" query when the Search UI is started |
+| onFilterChange | function | n/a | Function to call when active filters are changed (for conditional visibility) |
 | reduxStore | Object | n/a | Redux store (with redux-thunk middleware) to use instead of creating a new one |
 | searchResultsPageUrl | String | null | Redirect the user to a separate search results page, instead of showing search results on the current page |
 
