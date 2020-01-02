@@ -38,27 +38,27 @@
   "dependencies": {
     "es6-object-assign": "^1.1.0",
     "handlebars": "^4.5.3",
-    "redux": "^4.0.4",
+    "redux": "^4.0.5",
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.4",
-    "@babel/core": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
-    "@babel/register": "^7.7.4",
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/register": "^7.7.7",
     "assert": "^2.0.0",
     "babel-loader": "^8.0.6",
-    "css-loader": "^3.2.0",
+    "css-loader": "^3.4.0",
     "esm": "^3.2.22",
     "ignore-styles": "^5.0.1",
-    "mini-css-extract-plugin": "^0.8.0",
-    "mocha": "^5.2.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "mocha": "^6.2.2",
     "node-sass": "^4.13.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "sass-loader": "^8.0.0",
-    "terser-webpack-plugin": "^2.2.1",
-    "uglify-js": "^3.7.1",
-    "webpack": "^4.41.2",
+    "terser-webpack-plugin": "^2.3.1",
+    "uglify-js": "^3.7.3",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   }
 }
