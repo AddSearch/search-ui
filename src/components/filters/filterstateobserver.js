@@ -84,10 +84,7 @@ export default class FilterStateObserver {
 
     // Custom function to control conditional visibility (e.g. show a component only when a certain filter is active)
     if (this.onFilterChange) {
-      try {
-        this.onFilterChange(state.activeFilters);
-      }
-      catch(err) {}
+      this.onFilterChange(state.activeFilters);
     }
   }
 }
