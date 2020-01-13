@@ -26,20 +26,20 @@ export function defaultCategorySelectionFunction(hit, categoryAliases) {
 
 
 let currencyFormatter = null;
-export function registerHelpers() {
-  handlebars.registerHelper('equals', (arg1, arg2, options) => {
+export function registerDefaultHelpers() {
+  registerHelper('equals', (arg1, arg2, options) => {
     return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
   });
 
-  handlebars.registerHelper('gt', (arg1, arg2, options) => {
+  registerHelper('gt', (arg1, arg2, options) => {
     return arg1 > arg2 ? options.fn(this) : options.inverse(this);
   });
 
-  handlebars.registerHelper('lt', (arg1, arg2, options) => {
+  registerHelper('lt', (arg1, arg2, options) => {
     return arg1 < arg2 ? options.fn(this) : options.inverse(this);
   });
 
-  handlebars.registerHelper('formatPrice', (price, locale, currency) => {
+  registerHelper('formatPrice', (price, locale, currency) => {
     if (typeof price == 'undefined' || typeof price != 'number' || !locale || !currency) {
       return '';
     }
@@ -63,4 +63,8 @@ export function registerHelpers() {
 
     return (price/100) + ' ' + currency;
   });
+}
+
+export function registerHelper(helperName, helperFunction) {
+  handlebars.registerHelper(helperName, helperFunction);
 }
