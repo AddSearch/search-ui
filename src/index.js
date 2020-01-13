@@ -11,7 +11,7 @@ import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
 import SortBy from './components/sortby';
 import { initRedux, getStore } from './store';
-import { registerHelpers } from './util/handlebars';
+import { registerDefaultHelpers, registerHelper } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
 import { start, search, setSearchResultsPageUrl, clearSearchResults } from './actions/search';
@@ -24,7 +24,7 @@ export const MATCH_ALL_QUERY = '*';
 
 // Static
 oa.polyfill();
-registerHelpers();
+registerDefaultHelpers();
 
 export default class AddSearchUI {
 
@@ -146,5 +146,9 @@ export default class AddSearchUI {
     else {
       store.dispatch(clearSearchResults('top'));
     }
+  }
+
+  registerHandlebarsHelper(helperName, helperFunction) {
+    registerHelper(helperName, helperFunction);
   }
 }
