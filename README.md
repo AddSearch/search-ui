@@ -316,6 +316,16 @@ call this function.
   searchui.hideAutocomplete();
 ```
 
+### Register a custom Handlebars helper
+Handlebars Helpers can be used to implement functionality that is not part of the Handlebars language itself.
+Read more at [handlebarsjs.js](https://handlebarsjs.com/guide/expressions.html#helpers).
+```js
+  // This function can be called in a Handlebars template: {{toUpperCase "foo"}}
+  searchui.registerHandlebarsHelper('toUpperCase', function(param) {
+    return param.toUpperCase();
+  });
+```
+
 ## Supported web browsers
 This library is tested on
 - Chrome
