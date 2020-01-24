@@ -8,7 +8,8 @@ import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
 export default class SearchResults {
 
-  constructor(conf) {
+  constructor(client, conf) {
+    this.client = client;
     this.conf = conf;
 
     handlebars.registerPartial('numberOfResultsTemplate', this.conf.template_resultcount || NUMBER_OF_RESULTS_TEMPLATE);
@@ -19,6 +20,24 @@ export default class SearchResults {
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(getStore(), 'search', () => this.render());
     }
+  }
+
+
+  getDocumentPosition(results, docid) {
+    if (results && results.hits) {
+      // Calculate offset if the user is not on results page 1
+      const currentPage = results.page || 1;
+      const pageSize = this.client.getSettings().paging.pageSize;
+      const offset = (currentPage - 1) * pageSize;
+
+      // Find document's position in results array
+      for (let i=0; i<results.hits.length; i++) {
+        if (results.hits[i].id === docid) {
+          return offset + (i+1);
+        }
+      }
+    }
+    return 0;
   }
 
 
@@ -33,6 +52,21 @@ export default class SearchResults {
       template = this.conf.template_noresults || NO_RESULTS_TEMPLATE;
     }
 
-    renderToContainer(this.conf.containerId, template, data);
+    const container = renderToContainer(this.conf.containerId, template, data);
+
+
+    // Send result clicks to analytics
+    const links = container.querySelectorAll('[data-analytics-click]');
+    for (let i=0; i<links.length; i++) {
+      links[i].addEventListener('pointerdown', (e) => {
+        // Click with the second button
+        if (e.button && e.buttons && e.button === e.buttons) {
+          return;
+        }
+        const docid = e.target.getAttribute('data-analytics-click');
+        const position = this.getDocumentPosition(data, docid);
+        this.client.searchResultClicked(docid, position);
+      });
+    }
   }
 }
