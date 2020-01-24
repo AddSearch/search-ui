@@ -99,7 +99,7 @@ export default class AddSearchUI {
   }
 
   searchResults(conf) {
-    new SearchResults(conf);
+    new SearchResults(this.client, conf);
   }
 
   facets(conf) {
