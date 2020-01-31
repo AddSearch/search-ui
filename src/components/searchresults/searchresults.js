@@ -3,6 +3,7 @@ import { SEARCHRESULTS_TEMPLATE, NO_RESULTS_TEMPLATE, NUMBER_OF_RESULTS_TEMPLATE
 import handlebars from 'handlebars';
 import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
+import { addClickTrackers } from '../../util/analytics';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
 
@@ -23,24 +24,6 @@ export default class SearchResults {
   }
 
 
-  getDocumentPosition(results, docid) {
-    if (results && results.hits) {
-      // Calculate offset if the user is not on results page 1
-      const currentPage = results.page || 1;
-      const pageSize = this.client.getSettings().paging.pageSize;
-      const offset = (currentPage - 1) * pageSize;
-
-      // Find document's position in results array
-      for (let i=0; i<results.hits.length; i++) {
-        if (results.hits[i].id === docid) {
-          return offset + (i+1);
-        }
-      }
-    }
-    return 0;
-  }
-
-
   render() {
     const search = getStore().getState().search;
     const data = search.results || {};
@@ -57,16 +40,6 @@ export default class SearchResults {
 
     // Send result clicks to analytics
     const links = container.querySelectorAll('[data-analytics-click]');
-    for (let i=0; i<links.length; i++) {
-      links[i].addEventListener('pointerdown', (e) => {
-        // Click with the second button
-        if (e.button && e.buttons && e.button === e.buttons) {
-          return;
-        }
-        const docid = e.target.getAttribute('data-analytics-click');
-        const position = this.getDocumentPosition(data, docid);
-        this.client.searchResultClicked(docid, position);
-      });
-    }
+    addClickTrackers(this.client, links, data);
   }
 }
