@@ -78,9 +78,11 @@ export default class Autocomplete {
       lis[i].onmouseenter = (e) => this.suggestionMouseEnter(e);
     }
 
-    // Send result clicks to analytics
-    const links = container.querySelectorAll('[data-analytics-click]');
-    addClickTrackers(this.client, links, data);
+    // Send result clicks to analytics from the first child of searchResults
+    if (searchResults[Object.keys(searchResults)[0]]) {
+      const links = container.querySelectorAll('[data-analytics-click]');
+      addClickTrackers(this.client, links, {hits: searchResults[Object.keys(searchResults)[0]]});
+    }
   }
 
 
