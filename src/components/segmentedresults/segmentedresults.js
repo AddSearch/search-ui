@@ -8,7 +8,7 @@ export default class SegmentedResults {
     this.client = client;
     this.conf = conf;
 
-    if (validateContainer(conf.containerId)) {
+    if (validateContainer(conf.containerId) && conf.template) {
       observeStoreByKey(getStore(), 'segmentedsearch', (data) => this.render(data));
     }
   }
