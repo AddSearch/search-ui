@@ -69,22 +69,22 @@ export function getQueryParam(url, param) {
 }
 
 
-export function initFromURL(client, createFilterObjectFunction) {
+export function initFromURL(client, createFilterObjectFunction, searchFunction) {
   // Initial load
   const url = window.location.href;
   const qs = queryParamsToObject(url);
   const store = getStore();
-  handleURLParams(store, client, qs, false, createFilterObjectFunction);
+  handleURLParams(store, client, qs, false, createFilterObjectFunction, searchFunction);
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
     const q = queryParamsToObject(window.location.href);
-    handleURLParams(store, client, q, true, createFilterObjectFunction);
+    handleURLParams(store, client, q, true, createFilterObjectFunction, searchFunction);
   }
 }
 
 
-function handleURLParams(store, client, qs, clearIfNoKeyword, createFilterObjectFunction) {
+function handleURLParams(store, client, qs, clearIfNoKeyword, createFilterObjectFunction, searchFunction) {
 
   let hasFacetsOrFilters = false;
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
@@ -126,7 +126,7 @@ function handleURLParams(store, client, qs, clearIfNoKeyword, createFilterObject
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
     const keyword = decodeURIComponent(qs[HISTORY_PARAMETERS.SEARCH]);
     store.dispatch(setKeyword(keyword, true));
-    store.dispatch(search(client, keyword, 'top'));
+    searchFunction(keyword, 'top');
   }
   else if (clearIfNoKeyword) {
     store.dispatch(setKeyword('', true));
