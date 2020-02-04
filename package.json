@@ -42,9 +42,9 @@
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.3",
-    "@babel/core": "^7.8.3",
-    "@babel/preset-env": "^7.8.3",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
     "assert": "^2.0.0",
     "babel-loader": "^8.0.6",
@@ -56,8 +56,8 @@
     "node-sass": "^4.13.1",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "sass-loader": "^8.0.2",
-    "terser-webpack-plugin": "^2.3.2",
-    "uglify-js": "^3.7.6",
+    "terser-webpack-plugin": "^2.3.4",
+    "uglify-js": "^3.7.7",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   }
