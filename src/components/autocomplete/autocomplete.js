@@ -7,6 +7,7 @@ import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
+import { addClickTrackers } from '../../util/analytics';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
@@ -75,6 +76,12 @@ export default class Autocomplete {
     for (let i=0; i<lis.length; i++) {
       lis[i].onmousedown = (e) => this.suggestionMouseDown(e);
       lis[i].onmouseenter = (e) => this.suggestionMouseEnter(e);
+    }
+
+    // Send result clicks to analytics from the first child of searchResults
+    if (searchResults[Object.keys(searchResults)[0]]) {
+      const links = container.querySelectorAll('[data-analytics-click]');
+      addClickTrackers(this.client, links, {hits: searchResults[Object.keys(searchResults)[0]]});
     }
   }
 
