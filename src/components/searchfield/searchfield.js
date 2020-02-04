@@ -2,7 +2,6 @@
 import './searchfield.scss';
 import { SEARCHFIELD_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
-import { search } from '../../actions/search';
 import { autocompleteHide, keyboardEvent, setActiveSuggestion, ARROW_DOWN, ARROW_UP } from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
@@ -22,11 +21,12 @@ const KEYCODES = {
 
 export default class SearchField {
 
-  constructor(client, conf, matchAllQueryWhenSearchFieldEmpty) {
+  constructor(client, conf, matchAllQueryWhenSearchFieldEmpty, onSearch) {
     this.client = client;
     this.conf = conf;
     this.matchAllQuery = matchAllQueryWhenSearchFieldEmpty;
     this.firstRenderDone = false;
+    this.onSearch = onSearch;
 
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(getStore(), 'keyword', (kw) => this.render(kw.value));
@@ -60,7 +60,7 @@ export default class SearchField {
     if (kw.indexOf(WARMUP_QUERY_PREFIX) !== 0) {
       store.dispatch(setPage(client, 1));
     }
-    store.dispatch(search(client, kw));
+    this.onSearch(kw);
   }
 
 

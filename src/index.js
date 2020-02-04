@@ -9,12 +9,14 @@ import FilterStateObserver, { createFilterObject } from './components/filters/fi
 import Pagination from './components/pagination';
 import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
+import SegmentedResults from './components/segmentedresults';
 import SortBy from './components/sortby';
 import { initRedux, getStore } from './store';
 import { registerDefaultHelpers, registerHelper } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
 import { start, search, setSearchResultsPageUrl, clearSearchResults } from './actions/search';
+import { segmentedSearch } from './actions/segmentedsearch';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
 import { clearSelected } from './actions/filters';
@@ -30,6 +32,7 @@ export default class AddSearchUI {
 
   constructor(client, settings) {
     this.client = client;
+    this.segmentedSearchClients = {};
     this.settings = settings || {};
     initRedux(this.settings);
   }
@@ -43,7 +46,7 @@ export default class AddSearchUI {
     // Possible custom function to create filter group with custom and/or logic
     const createFilterObjectFunction = this.settings && this.settings.createFilterObjectFunction ?
       this.settings.createFilterObjectFunction : createFilterObject;
-    initFromURL(this.client, createFilterObjectFunction);
+    initFromURL(this.client, createFilterObjectFunction, (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo));
 
     // Possible match all query on load
     if (this.settings.matchAllQuery === true) {
@@ -62,6 +65,15 @@ export default class AddSearchUI {
   }
 
 
+  executeSearch(keyword, onResultsScrollTo) {
+    getStore().dispatch(search(this.client, keyword, onResultsScrollTo));
+
+    for (let key in this.segmentedSearchClients) {
+      getStore().dispatch(segmentedSearch(this.segmentedSearchClients[key], key, keyword));
+    }
+  }
+
+
   /*
    * Utils
    */
@@ -75,7 +87,7 @@ export default class AddSearchUI {
     const store = getStore();
     if (store.getState().keyword.value === '') {
       store.dispatch(setKeyword(MATCH_ALL_QUERY, false));
-      store.dispatch(search(this.client, MATCH_ALL_QUERY, onResultsScrollTo));
+      this.executeSearch(MATCH_ALL_QUERY, onResultsScrollTo);
     }
   }
 
@@ -91,7 +103,7 @@ export default class AddSearchUI {
    */
 
   searchField(conf) {
-    new SearchField(this.client, conf, this.settings.matchAllQuery === true);
+    new SearchField(this.client, conf, this.settings.matchAllQuery === true, (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo));
   }
 
   autocomplete(conf) {
@@ -100,6 +112,11 @@ export default class AddSearchUI {
 
   searchResults(conf) {
     new SearchResults(this.client, conf);
+  }
+
+  segmentedResults(conf) {
+    this.segmentedSearchClients[conf.containerId] = conf.client;
+    new SegmentedResults(conf.client, conf);
   }
 
   facets(conf) {
@@ -128,7 +145,7 @@ export default class AddSearchUI {
 
   search(keyword) {
     getStore().dispatch(setKeyword(keyword, true));
-    getStore().dispatch(search(this.client, keyword));
+    this.executeSearch(keyword, null);
   }
 
   hideAutocomplete() {
