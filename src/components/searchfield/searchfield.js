@@ -29,7 +29,11 @@ export default class SearchField {
     this.onSearch = onSearch;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'keyword', (kw) => this.render(kw.value));
+      observeStoreByKey(getStore(), 'keyword', (kw) => {
+        if (kw.searchFieldContainerId === this.conf.containerId || kw.searchFieldContainerId === null) {
+          this.render(kw.value);
+        }
+      });
       observeStoreByKey(getStore(), 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
     }
   }
@@ -114,6 +118,8 @@ export default class SearchField {
     if (container.querySelector('button')) {
       container.querySelector('button').onclick = (e) => {
         const keyword = this.field.value;
+        getStore().dispatch(setKeyword(keyword, true));
+        getStore().dispatch(autocompleteHide());
         this.redirectOrSearch(keyword);
       }
     }
@@ -151,7 +157,7 @@ export default class SearchField {
     }
 
     const skipAutocomplete = this.conf.ignoreAutocomplete === true;
-    store.dispatch(setKeyword(keyword, skipAutocomplete));
+    store.dispatch(setKeyword(keyword, skipAutocomplete, this.conf.containerId));
     if (this.conf.searchAsYouType === true) {
       this.executeSearch(this.client, keyword);
     }

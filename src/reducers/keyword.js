@@ -4,7 +4,8 @@ import {
 
 const initialState = {
   value: '',
-  skipAutocomplete: false
+  skipAutocomplete: false,
+  searchFieldContainerId: null
 };
 
 export default function keyword(state = initialState, action) {
@@ -13,7 +14,8 @@ export default function keyword(state = initialState, action) {
     case KEYWORD:
       return Object.assign({}, state, {
         value: action.value,
-        skipAutocomplete: action.skipAutocomplete === true
+        skipAutocomplete: action.skipAutocomplete === true,
+        searchFieldContainerId: action.searchFieldContainerId
       });
 
     default:
