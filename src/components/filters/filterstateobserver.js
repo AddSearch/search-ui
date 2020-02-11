@@ -38,7 +38,7 @@ export function createFilterObject(state) {
 
     for (let facetValue in state.activeFacets[facetField]) {
       const f = {};
-      f['doc.' + facetField] = facetValue;
+      f[facetField] = facetValue;
       facetGroupOR.or.push(f);
     }
 
