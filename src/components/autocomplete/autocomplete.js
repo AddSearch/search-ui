@@ -83,6 +83,11 @@ export default class Autocomplete {
       const links = container.querySelectorAll('[data-analytics-click]');
       addClickTrackers(this.client, links, {hits: searchResults[Object.keys(searchResults)[0]]});
     }
+
+    // Callback function for alignment
+    if (this.conf.onShow) {
+      this.conf.onShow(container);
+    }
   }
 
 
