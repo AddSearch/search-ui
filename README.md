@@ -42,9 +42,14 @@ effortlessly.
 </script>
 ```
 
-A basic example is located in the [examples folder](https://github.com/AddSearch/search-ui/tree/master/examples/basic/index.html)
-and it can be tested with a browser [here](https://demo.addsearch.com/search-ui-examples/basic/).
+## Examples
+Basic example
+- [Try it out](https://demo.addsearch.com/search-ui-examples/basic/)
+- [View source code](https://github.com/AddSearch/search-ui/tree/master/examples/basic/index.html)
 
+Advanced example with all components
+- [Try it out](https://demo.addsearch.com/search-ui-examples/components/)
+- [View source code](https://github.com/AddSearch/search-ui/tree/master/examples/components/index.html)
 
 ## Search UI instance and configuration
 To create a Search UI instance, call the constructor ```new AddSearchUI(client, conf)``` 
