@@ -126,6 +126,7 @@ Settings that can be passed to the ```autocomplete``` function:
 | categoryAliases | Object | n/a | A map of category aliases used by the *categorySelectionFunction* |
 | categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
 | hideAutomatically| boolean| true | Hide the autocomplete dropdown when the search field is blurred |
+| onShow | function | n/a | A function to call when the autocomplete is shown. Called as the container as parameter |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | sources| Array | n/a | Array of data sources  |
 
@@ -227,7 +228,7 @@ Components to let the user filter search results by URL patterns or custom field
       options: {
         cars: {
           label: 'Apple products',
-          filter: {"doc.custom_fields.brand": "apple"}
+          filter: {'custom_fields.brand': 'apple'}
         }
     }
   });
