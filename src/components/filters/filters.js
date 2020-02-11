@@ -31,6 +31,9 @@ export default class Filters {
     // Data is configuration object with information of activity status
     let data = Object.assign({}, this.conf);
 
+    // Reset state
+    this.activeFilter = null;
+
     // Update activity status of all filters
     let hasActiveFilter = false;
     for (let key in data.options) {
