@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <title>AddSearch Search UI: All components</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.2/dist/addsearch-js-client.min.js"></script>
+    <script src="../../dist/addsearch-search-ui.min.js"></script>
+    <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <script>
+      // Responsive menu
+      function toggleMobileMenu() {
+        var style = document.querySelector('aside').style;
+        style.display = style.display === 'block' ? 'none' : 'block';
+      }
+      if (window) {
+        window.onresize = function () {
+          document.querySelector('aside').style = '';
+          alignAutocomplete(document.querySelector('#autocomplete-container'));
+        };
+      }
+    </script>
+  </head>
+
+
+  <body>
+    <header>
+      <div class="mobilemenu" onclick="toggleMobileMenu();">&#9776;</div>
+
+      <section>
+        Search field and autocomplete:
+        <div>
+          <div id="searchfield-container"></div>
+          <div id="autocomplete-container"></div>
+        </div>
+      </section>
+    </header>
+
+
+    <aside>
+      <div class="mobilemenu" onclick="toggleMobileMenu();">X</div>
+
+      <section>
+        Active filters:
+        <div id="active-filters-container"></div>
+      </section>
+
+      <section>
+        Radio group filters:
+        <div id="radio-filters-container"></div>
+      </section>
+
+      <section>
+        Facets:
+        <div id="facets-container"></div>
+      </section>
+
+      <section>
+        Tags:
+        <div id="tags-container"></div>
+      </section>
+
+      <section>
+        Checkbox group:
+        <div id="checkbox-container"></div>
+      </section>
+
+      <section>
+        Sort by:
+        <div id="sortby-radio-container"></div>
+      </section>
+    </aside>
+
+    <main>
+      <section id="sort">
+        Sort by:
+        <div id="sortby-container"></div>
+      </section>
+
+      <section id="tabs">
+        Tab filters:
+        <div id="tabs-container"></div>
+      </section>
+
+      <section>
+        Search results
+        <div id="results-container"></div>
+      </section>
+
+      <section>
+        Pagination:
+        <div id="pagination-container"></div>
+      </section>
+    </main>
+
+
+    <script>
+      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+      var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+      client.addFacetField('category');
+
+      // Search UI
+      var conf = {
+        matchAllQuery: true
+      };
+      var searchui = new AddSearchUI(client, conf);
+
+
+      searchui.searchField({
+        containerId: 'searchfield-container',
+        autofocus: true,
+        placeholder: 'Keyword..',
+        button: 'Search',
+        searchAsYouType: false
+      });
+
+
+      // Align autocomplete with search field
+      function alignAutocomplete(container) {
+        var autocomplete = container.querySelector('.addsearch-autocomplete');
+        var searchfieldRect = document.querySelector('#searchfield-container input').getBoundingClientRect();
+
+        autocomplete.style.left = searchfieldRect.left + 'px';
+        autocomplete.style.width = searchfieldRect.width + 'px';
+      }
+
+      searchui.autocomplete({
+        containerId: 'autocomplete-container',
+        onShow: alignAutocomplete,
+        sources: [
+          {
+            type: AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS
+          }
+        ]
+      });
+
+
+      searchui.searchResults({
+        containerId: 'results-container'
+      });
+
+
+      searchui.activeFilters({
+        containerId: 'active-filters-container'
+      });
+
+
+      searchui.sortBy({
+        containerId: 'sortby-container',
+        options: [
+          {
+            label: 'Most relevant first',
+            sortBy: 'relevance',
+            order: 'desc'
+          },
+          {
+            label: 'Date: Newest first',
+            sortBy: 'date',
+            order: 'desc'
+          },
+          {
+            label: 'Date: Oldest first',
+            sortBy: 'date',
+            order: 'asc'
+          }
+        ]
+      });
+
+
+      searchui.sortBy({
+        containerId: 'sortby-radio-container',
+        type: AddSearchUI.SORTBY_TYPE.RADIO_GROUP,
+        options: [
+          {
+            label: 'Most relevant first',
+            sortBy: 'relevance',
+            order: 'desc'
+          },
+          {
+            label: 'Date: Newest first',
+            sortBy: 'date',
+            order: 'desc'
+          },
+          {
+            label: 'Date: Oldest first',
+            sortBy: 'date',
+            order: 'asc'
+          }
+        ]
+      });
+
+
+      searchui.filters({
+        containerId: 'radio-filters-container',
+        type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
+        options: {
+          nofilter: {
+            label: 'All results'
+          },
+          blog: {
+            label: 'Blog',
+            filter: {"category": "1xblog"}
+          },
+          docs: {
+            label: 'Documentation',
+            filter: {"category": "1xdocs"}
+          },
+          notblog: {
+            label: 'Not blog',
+            filter: {"not": {"category": "1xblog"}}
+          }
+        }
+      });
+
+
+      searchui.filters({
+        containerId: 'tabs-container',
+        type: AddSearchUI.FILTER_TYPE.TABS,
+        options: {
+          nofilter: {
+            label: 'All results'
+          },
+          blog: {
+            label: 'Blog',
+            filter: {"category": "1xblog"}
+          },
+          docs: {
+            label: 'Documentation',
+            filter: {"category": "1xdocs"}
+          }
+        }
+      });
+
+
+      searchui.filters({
+        containerId: 'tags-container',
+        type: AddSearchUI.FILTER_TYPE.TAGS,
+        options: {
+          pricing: {
+            label: 'Pricing',
+            filter: {"category": "1xpricing"}
+          },
+          partners  : {
+            label: 'Partners',
+            filter: {"category": "1xpartners"}
+          },
+          customers: {
+            label: 'Customers',
+            filter: {"category": "1xcustomers"}
+          }
+        }
+      });
+
+
+      searchui.filters({
+        containerId: 'checkbox-container',
+        type: AddSearchUI.FILTER_TYPE.CHECKBOX_GROUP,
+        options: {
+          pricing: {
+            label: 'Pricing',
+            filter: {"category": "1xpricing"}
+          },
+          partners  : {
+            label: 'Partners',
+            filter: {"category": "1xpartners"}
+          },
+          customers: {
+            label: 'Customers',
+            filter: {"category": "1xcustomers"}
+          }
+        }
+      });
+
+
+      searchui.pagination({
+        containerId: 'pagination-container'
+      });
+
+
+
+
+
+      // Custom filter to return categories with 1x or 2x prefix
+      function facetsFilter(facets) {
+        var filtered = [];
+        for (var i=0; i<facets.length; i++) {
+          if (facets[i].value.match(/^[1-2]{1}[x]{1}/)) {
+            filtered.push(facets[i]);
+          }
+        }
+        return filtered;
+      }
+
+      // Snip 1x or 2x prefix from facets
+      searchui.registerHandlebarsHelper('snipFacet', function(facet) {
+        return facet.substring(2);
+      });
+
+      // Custom template to hide the 1x or 2x prefix
+      var facetsTemplate =
+        '<div class="addsearch-facets">  '  +
+        '  <ul>  '  +
+        '    {{#each facets}}  '  +
+        '      <li data-facet="{{value}}">  '  +
+        '        <label>  '  +
+        '          <input type="checkbox" value="{{value}}" />  '  +
+        '          {{snipFacet value}} <em>({{count}})</em>  '  +
+        '        </label>  '  +
+        '      </li>  '  +
+        '    {{/each}}  '  +
+        '  </ul>  '  +
+        '</div>  ' ;
+
+      searchui.facets({
+        containerId: 'facets-container',
+        field: 'category',
+        template: facetsTemplate,
+        facetsFilter: facetsFilter
+      });
+
+
+
+      searchui.start();
+    </script>
+
+  </body>
+</html>
