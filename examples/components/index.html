@@ -122,10 +122,12 @@
       // Align autocomplete with search field
       function alignAutocomplete(container) {
         var autocomplete = container.querySelector('.addsearch-autocomplete');
-        var searchfieldRect = document.querySelector('#searchfield-container input').getBoundingClientRect();
+        var searchfield = document.querySelector('#searchfield-container input');
 
-        autocomplete.style.left = searchfieldRect.left + 'px';
-        autocomplete.style.width = searchfieldRect.width + 'px';
+        if (autocomplete && searchfield) {
+          autocomplete.style.left = searchfield.getBoundingClientRect().left + 'px';
+          autocomplete.style.width = searchfield.getBoundingClientRect().width + 'px';
+        }
       }
 
       searchui.autocomplete({
