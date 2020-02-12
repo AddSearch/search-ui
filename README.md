@@ -347,6 +347,7 @@ To modify this library, clone the repository and follow these steps:
 npm install
 ```
 
+#### Code
 Re-compile when source files change while developing
 ```sh
 npm run watch
