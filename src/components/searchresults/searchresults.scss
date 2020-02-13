@@ -7,9 +7,10 @@
   }
 
   h3 {
-    padding-top: 20px;
+    padding-top: 13px;
     font-size: 110%;
-    font-weight: bold;
+    font-weight: 700;
+    margin-top: 0;
 
     a {
       text-decoration: none;
@@ -26,6 +27,7 @@
 
   .hit {
     clear: both;
+    padding: 0 1em;
 
     &:after {
       content: " ";
@@ -41,11 +43,12 @@
 
     .category {
       margin-top: 2em;
+      margin-bottom: 1em;
       font-size: 11px;
       text-transform: uppercase;
-      background-color: $active-background;
+      background-color: #eee;
       border-radius: 3px;
-      padding: 3px 4px;
+      padding: 3px 6px;
       display: inline-block;
     }
 
@@ -61,6 +64,13 @@
     img {
       width: 100%;
       height: 100%;
+      border: 1px solid #e4e4e4;
+    }
+    &:hover {
+      background-color: #f1f1f1;
+      .category {
+        background-color: #dedede;
+      }
     }
   }
 }
