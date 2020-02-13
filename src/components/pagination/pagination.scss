@@ -1,15 +1,25 @@
 .addsearch-pagination {
   clear: both;
   padding: 1em 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 
   button {
     background-color: #fff;
     border: 1px solid #dedede;
     cursor: pointer;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 2px;
   }
 
   button[data-active="true"] {
     font-weight: bold;
+    background-color: #f1f1f1;
   }
 }
 
