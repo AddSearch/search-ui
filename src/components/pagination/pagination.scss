@@ -1,8 +1,14 @@
 .addsearch-pagination {
   clear: both;
   padding: 1em 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
   flex-direction: row;
+  -ms-flex-wrap: wrap;
   flex-wrap: wrap;
 
   button {
@@ -10,16 +16,32 @@
     border: 1px solid #dedede;
     cursor: pointer;
     border-radius: 2px;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -ms-flex-negative: 0;
     flex-shrink: 0;
     margin-right: 2px;
+    padding:0;
+    min-width: 34px;
+    height: 34px;
+    line-height: 34px;
   }
 
   button[data-active="true"] {
     font-weight: bold;
     background-color: #f1f1f1;
   }
+  button[data-page="next"],
+  button[data-page="previous"] {
+    font-size: 10px;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+  }
 }
-

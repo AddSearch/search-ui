@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no" />
     <meta charset="UTF-8">
     <title>AddSearch Search UI: All components</title>
 
@@ -42,7 +43,7 @@
 
 
     <aside>
-      <div class="mobilemenu" onclick="toggleMobileMenu();">X</div>
+      <div class="mobilemenu close" onclick="toggleMobileMenu();">&#x2716;</div>
 
       <section>
         Active filters:
@@ -309,8 +310,8 @@
         '    {{#each facets}}  '  +
         '      <li data-facet="{{value}}">  '  +
         '        <label>  '  +
-        '          <input type="checkbox" value="{{value}}" />  '  +
-        '          {{snipFacet value}} <em>({{count}})</em>  '  +
+        '          <input type="checkbox" value="{{value}}" />'  +
+        '<span>{{snipFacet value}}</span> <em>({{count}})</em>  '  +
         '        </label>  '  +
         '      </li>  '  +
         '    {{/each}}  '  +
