@@ -34,6 +34,12 @@
       "url": "https://www.addsearch.com"
     }
   ],
+  "browserslist": [
+    "> 0.1%",
+    "IE 9",
+    "last 2 versions",
+    "not dead"
+  ],
   "license": "MIT",
   "dependencies": {
     "es6-object-assign": "^1.1.0",
@@ -47,6 +53,7 @@
     "@babel/preset-env": "^7.8.4",
     "@babel/register": "^7.8.3",
     "assert": "^2.0.0",
+    "autoprefixer": "^9.7.4",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.4.2",
     "esm": "^3.2.22",
@@ -55,6 +62,7 @@
     "mocha": "^7.0.1",
     "node-sass": "^4.13.1",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-loader": "^3.0.0",
     "sass-loader": "^8.0.2",
     "terser-webpack-plugin": "^2.3.4",
     "uglify-js": "^3.7.7",
