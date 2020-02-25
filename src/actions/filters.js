@@ -43,8 +43,9 @@ export function toggleFacetFilter(field, value) {
   }
 }
 
-export function clearSelected() {
+export function clearSelected(refreshSearch) {
   return {
-    type: CLEAR_SELECTED_FILTERS_AND_FACETS
+    type: CLEAR_SELECTED_FILTERS_AND_FACETS,
+    refreshSearch
   }
 }
