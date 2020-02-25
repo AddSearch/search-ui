@@ -2,7 +2,7 @@
 import './searchfield.scss';
 import { SEARCHFIELD_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
-import { autocompleteHide, keyboardEvent, setActiveSuggestion, ARROW_DOWN, ARROW_UP } from '../../actions/autocomplete';
+import { autocompleteHide, autocompleteShow, keyboardEvent, setActiveSuggestion, ARROW_DOWN, ARROW_UP } from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
 import { getStore, observeStoreByKey } from '../../store';
@@ -190,6 +190,7 @@ export default class SearchField {
     // Warmup query
     if (e.target.value === '') {
       this.executeSearch(this.client, WARMUP_QUERY_PREFIX + Math.random());
+      getStore().dispatch(autocompleteShow());
     }
   }
 
