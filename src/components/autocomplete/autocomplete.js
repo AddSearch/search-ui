@@ -56,7 +56,7 @@ export default class Autocomplete {
     }
 
     // Hide autocomplete
-    if (autocompleteState.hide === true) {
+    if (autocompleteState.visible === false) {
       document.getElementById(this.conf.containerId).innerHTML = '';
       return;
     }

@@ -3,6 +3,7 @@ export const AUTOCOMPLETE_SUGGESTIONS_RESULTS = 'AUTOCOMPLETE_SUGGESTIONS_RESULT
 export const AUTOCOMPLETE_SUGGESTIONS_CLEAR = 'AUTOCOMPLETE_SUGGESTIONS_CLEAR';
 export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
 export const AUTOCOMPLETE_SEARCH_CLEAR = 'AUTOCOMPLETE_SEARCH_CLEAR';
+export const AUTOCOMPLETE_SHOW = 'AUTOCOMPLETE_SHOW';
 export const AUTOCOMPLETE_HIDE = 'AUTOCOMPLETE_HIDE';
 export const HIDE_AUTOMATICALLY = 'HIDE_AUTOMATICALLY';
 
@@ -54,6 +55,12 @@ export function autocompleteSearchResults(results, jsonKey) {
 export function autocompleteFetchStart() {
   return {
     type: AUTOCOMPLETE_FETCH
+  }
+}
+
+export function autocompleteShow() {
+  return {
+    type: AUTOCOMPLETE_SHOW
   }
 }
 
