@@ -8,7 +8,7 @@ import {
 } from './templates';
 import { FILTER_TYPE } from './index';
 import { getStore, observeStoreByKey } from '../../store';
-import { toggleFilter, registerFilter } from '../../actions/filters';
+import { toggleFilter, registerFilter, clearSelected } from '../../actions/filters';
 import { renderToContainer, attachEventListeners, validateContainer } from '../../util/dom';
 
 export const NO_FILTER_NAME = 'nofilter';
@@ -109,24 +109,30 @@ export default class Filters {
 
   singleActiveChangeEvent(filterKey) {
     const isNoFilter = filterKey === NO_FILTER_NAME;
+    const store = getStore();
 
     // Current filter re-activated (e.g. same tab clicked again)
     if (filterKey === this.activeFilter) {
       return;
     }
 
-    // Remove previous filter
-    if (this.activeFilter) {
-      getStore().dispatch(toggleFilter(this.activeFilter, 1, isNoFilter));
+    // Remove all other filters. Refresh results if there is no next filter
+    if (this.conf.clearOtherFilters === true) {
+      store.dispatch(clearSelected(isNoFilter));
+    }
+    // Remove previous filter. Refresh results if there is no next filter
+    else if (this.activeFilter) {
+      store.dispatch(toggleFilter(this.activeFilter, 1, isNoFilter));
     }
 
-    // Don't dispatch a new filter if it's the nofilter (i.e. "Show all")
+    // No next filter
     if (isNoFilter) {
       this.activeFilter = null;
     }
+    // Next filter. Set and refresh results
     else {
       this.activeFilter = filterKey;
-      getStore().dispatch(toggleFilter(filterKey, 1));
+      store.dispatch(toggleFilter(filterKey, 1, true));
     }
   }
 

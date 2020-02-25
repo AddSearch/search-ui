@@ -115,6 +115,10 @@ export default class AddSearchUI {
   }
 
   segmentedResults(conf) {
+    if (!conf.client) {
+      console.log('WARNING: segmentedResults configuration must include a client instance');
+      return;
+    }
     this.segmentedSearchClients[conf.containerId] = conf.client;
     new SegmentedResults(conf.client, conf);
   }
@@ -155,7 +159,7 @@ export default class AddSearchUI {
   clear() {
     const store = getStore();
     store.dispatch(setKeyword('', true));
-    store.dispatch(clearSelected());
+    store.dispatch(clearSelected(true));
 
     if (this.settings.matchAllQuery === true) {
       this.matchAllQuery('top');
