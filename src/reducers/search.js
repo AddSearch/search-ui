@@ -36,7 +36,7 @@ export default function search(state = initialState, action) {
 
     case SEARCH_RESULTS:
       if (!state.started) {
-        console.log('WARNING: AddSearch UI not started with the start() function')
+        console.log('WARNING: AddSearch UI not started with the start() function');
       }
 
       if (action.keyword.indexOf(WARMUP_QUERY_PREFIX) === 0) {
