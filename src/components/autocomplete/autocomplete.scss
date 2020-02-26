@@ -10,13 +10,13 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    border-radius: 0 0 2px 2px;
   }
   li {
     cursor: pointer;
-    padding: 3px 4px;
+    padding: 5px 8px;
   }
   li.active {
     background-color: $active-background;
   }
 }
-

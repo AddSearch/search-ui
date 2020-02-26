@@ -31,6 +31,10 @@ export function registerDefaultHelpers() {
     return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
   });
 
+  registerHelper('not', (arg1, arg2, options) => {
+    return ((arg1+'') !== (arg2+'')) ? options.fn(this) : options.inverse(this);
+  });
+
   registerHelper('gt', (arg1, arg2, options) => {
     return arg1 > arg2 ? options.fn(this) : options.inverse(this);
   });
