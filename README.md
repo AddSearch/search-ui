@@ -5,6 +5,8 @@ effortlessly.
 
 ![Search UI gif](https://demo.addsearch.com/search-ui-examples/components/search-ui-components.gif)
 
+[Open the demo](https://demo.addsearch.com/search-ui-examples/components/)
+
 ## Quick example
 ```html
 <!-- Libraries -->
