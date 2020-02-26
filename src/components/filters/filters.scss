@@ -17,17 +17,12 @@
 
 /* Tabs */
 .addsearch-filters-tabs {
+
   .tabs {
     display: block;
     text-align: left;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    -ms-flex-direction: row;
     flex-direction: row;
-    -ms-flex-wrap: nowrap;
     flex-wrap: nowrap;
 
     button {
@@ -95,11 +90,7 @@
 .addsearch-filters-radiogroup {
   label {
     display: block;
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
     align-items: center;
     padding: 2px 0;
     @media all and (max-width: 960px) {
