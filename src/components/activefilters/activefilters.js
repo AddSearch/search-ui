@@ -73,7 +73,7 @@ export default class ActiveFilters {
 
     const clearAll = container.querySelector('[data-clearall]');
     if (clearAll) {
-      clearAll.addEventListener('click', (e) => getStore().dispatch(clearSelected()));
+      clearAll.addEventListener('click', (e) => getStore().dispatch(clearSelected(true)));
     }
   }
 
