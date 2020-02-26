@@ -1,6 +1,6 @@
 {
   "name": "addsearch-search-ui",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "JavaScript library to develop Search UIs for the web",
   "main": "./dist/addsearch-search-ui.min.js",
   "jsdelivr": "./dist/addsearch-search-ui.min.js",
