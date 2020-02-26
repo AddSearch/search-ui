@@ -2,18 +2,41 @@
 
 .addsearch-active-filters {
   .item {
-    margin: 1em 0;
+    margin: 2px 0;
     font-size: 11px;
     border: 1px solid $border-color;
     border-radius: 3px;
     padding: 3px 4px;
     display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 100%;
+
+    > span {
+      text-overflow: ellipsis;
+      display: inline-block;
+      max-width: 90%;
+      overflow: hidden;
+      position: relative;
+      top: 1px;
+    }
 
     button {
       border: none;
       background: transparent;
       cursor: pointer;
+      font-size: 14px
+    }
+    @media screen and (max-width: 480px){
+      padding: 4px 6px;
+      font-size: 14px;
+      button {
+        font-size: 18px;
+        &[data-clearall="true"] {
+          font-size: 14px;
+          padding: 4px 6px;
+        }
+      }
     }
   }
 }
-
