@@ -4,6 +4,7 @@ import {
   AUTOCOMPLETE_SUGGESTIONS_CLEAR,
   AUTOCOMPLETE_SEARCH_RESULTS,
   AUTOCOMPLETE_SEARCH_CLEAR,
+  AUTOCOMPLETE_SHOW,
   AUTOCOMPLETE_HIDE,
   HIDE_AUTOMATICALLY,
   KEYBOARD_EVENT, ARROW_UP, ARROW_DOWN,
@@ -19,7 +20,7 @@ const initialState = {
 
   searchResults: {},
   hideAutomatically: true,
-  hide: false
+  visible: false
 };
 
 export default function searchsuggestions(state = initialState, action) {
@@ -40,7 +41,7 @@ export default function searchsuggestions(state = initialState, action) {
         pendingRequests: state.pendingRequests - 1,
         suggestions: action.results.suggestions,
         activeSuggestionIndex: null,
-        hide: false
+        visible: true
       });
 
     case AUTOCOMPLETE_SEARCH_CLEAR:
@@ -54,13 +55,18 @@ export default function searchsuggestions(state = initialState, action) {
       return Object.assign({}, state, {
         pendingRequests: state.pendingRequests - 1,
         searchResults: nextSearchResults,
-        hide: false
+        visible: true
       });
 
     case AUTOCOMPLETE_HIDE:
       return Object.assign({}, state, {
-        hide: true,
+        visible: false,
         activeSuggestionIndex: null
+      });
+
+    case AUTOCOMPLETE_SHOW:
+      return Object.assign({}, state, {
+        visible: true
       });
 
     case HIDE_AUTOMATICALLY:
@@ -101,7 +107,7 @@ export default function searchsuggestions(state = initialState, action) {
       }
 
       return Object.assign({}, state, {
-        hide: false,
+        visible: true,
         activeSuggestionIndex: nextActiveSuggestion,
         setSuggestionToSearchField: true
       });
