@@ -247,6 +247,7 @@ Settings that can be passed to the ```filters``` function:
 | containerId | String | n/a | ID of the HTML component that will act as a container for filters |
 | type | AddSearchUI.FILTER_TYPE.CHECKBOX_GROUP, AddSearchUI.FILTER_TYPE.RADIO_GROUP, AddSearchUI.FILTER_TYPE.SELECT_LIST, AddSearchUI.FILTER_TYPE.TABS, AddSearchUI.FILTER_TYPE.TAGS | n/a | Component's type |
 | template | String | [Default templates](https://github.com/AddSearch/search-ui/blob/master/src/components/filters/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| clearOtherFilters | boolean | false | Clear all other filters when the value of this filter changes. Works with RADIO_GROUP, SELECT_LIST, and TABS filters |
 | options | Object | n/a | Object containing filtering options |
 
 The options object can contain multiple filtering options. If the type is *Tabs*, *Select list*, or *Radio group*, just one of the 
