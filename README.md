@@ -3,6 +3,8 @@
 Use Search UI library to create fast, mobile-friendy, and cross-browser compatible search solutions quickly and 
 effortlessly.
 
+![Search UI gif](https://demo.addsearch.com/search-ui-examples/components/search-ui-components.gif)
+
 ## Quick example
 ```html
 <!-- Libraries -->
