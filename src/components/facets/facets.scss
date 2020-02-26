@@ -11,11 +11,7 @@
       label {
         padding: 2px 0;
         display: block;
-        display: -webkit-box;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-box-align: center;
-        -ms-flex-align: center;
         align-items: center;
         overflow: hidden;
         white-space: nowrap;
@@ -26,7 +22,6 @@
         }
 
         > span {
-          -o-text-overflow: ellipsis;
           text-overflow: ellipsis;
           display: inline-block;
           max-width: 80%;

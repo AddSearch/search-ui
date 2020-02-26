@@ -13,7 +13,6 @@
     max-width: 100%;
 
     > span {
-      -o-text-overflow: ellipsis;
       text-overflow: ellipsis;
       display: inline-block;
       max-width: 90%;
@@ -41,4 +40,3 @@
     }
   }
 }
-
