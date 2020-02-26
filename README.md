@@ -102,7 +102,8 @@ Settings that can be passed to the ```searchField``` function:
 | autofocus | boolean | true | Focus the input field automatically when the page is loaded |
 | button | String | n/a | Add a button to execute the search. The value of this field is the Button's label text |
 | placeholder | String | n/a | Search field's placeholder text |
-| searchAsYouType| boolean | false | Execute search after every keystroke |
+| searchAsYouType | boolean | false | Execute search after every keystroke |
+| icon | boolean | true | Show search icon |
 | ignoreAutocomplete| boolean | false | Don't show the autocomplete component if something is typed to this field (in case you have multiple fields) |
 | ignoreSearchResultsPageUrl | boolean | false | Don't redirect the user to a search results page from this field (in case you have multiple fields) |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |

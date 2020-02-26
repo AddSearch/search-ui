@@ -3,7 +3,7 @@ export const SEARCHFIELD_TEMPLATE = `
     <!--<span class="search-icon">&#x2315;</span>-->
     <?xml version="1.0" encoding="UTF-8"?>
     <div class="search-field-wrapper">     
-      <input type="search" placeholder="{{placeholder}}" aria-label="Search field" class="icon" />
+      <input type="search" placeholder="{{placeholder}}" aria-label="Search field" class="{{#not icon false}}icon{{/not}}" />
     </div>
     {{#if button}}
       <button type="button" aria-label="Search button" >{{button}}</button>
