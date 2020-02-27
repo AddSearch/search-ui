@@ -1,6 +1,6 @@
 /* global window, history */
 import { WARMUP_QUERY_PREFIX, MATCH_ALL_QUERY } from '../index';
-import { search, clearSearchResults } from '../actions/search';
+import { search } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
 import { setActiveFilters, setActiveFacets } from '../actions/filters';
