@@ -33,7 +33,7 @@ export const NUMBER_OF_RESULTS_TEMPLATE = `
 
 
 export const NO_RESULTS_TEMPLATE = `
-  <div class="addsearch-searchresults addsearch-searchresults-no-results">    
+  <div class="addsearch-searchresults addsearch-searchresults-no-results">
     <h2>No search results with keyword <em>{{keyword}}</em></h2>
   </div>
 `;
