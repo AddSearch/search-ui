@@ -69,23 +69,22 @@ export function getQueryParam(url, param) {
 }
 
 
-export function initFromURL(client, createFilterObjectFunction, searchFunction) {
+export function initFromURL(client, createFilterObjectFunction, searchFunction, hasMatchAllQuery) {
   // Initial load
   const url = window.location.href;
   const qs = queryParamsToObject(url);
   const store = getStore();
-  handleURLParams(store, client, qs, false, createFilterObjectFunction, searchFunction);
+  handleURLParams(store, client, qs, createFilterObjectFunction, searchFunction, false);
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
-    const q = queryParamsToObject(window.location.href);
-    handleURLParams(store, client, q, true, createFilterObjectFunction, searchFunction);
+    const qs = queryParamsToObject(window.location.href);
+    handleURLParams(store, client, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery);
   }
 }
 
 
-function handleURLParams(store, client, qs, clearIfNoKeyword, createFilterObjectFunction, searchFunction) {
-
+function handleURLParams(store, client, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery) {
   let hasFacetsOrFilters = false;
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
     // Take active filters from URL
@@ -126,11 +125,11 @@ function handleURLParams(store, client, qs, clearIfNoKeyword, createFilterObject
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
     const keyword = decodeURIComponent(qs[HISTORY_PARAMETERS.SEARCH]);
     store.dispatch(setKeyword(keyword, true));
-    searchFunction(keyword, 'top');
+    searchFunction(keyword);
   }
-  else if (clearIfNoKeyword) {
-    store.dispatch(setKeyword('', true));
-    store.dispatch(clearSearchResults('top'));
+  else if (hasMatchAllQuery === true) {
+    store.dispatch(setKeyword(MATCH_ALL_QUERY, true));
+    searchFunction(MATCH_ALL_QUERY);
   }
 }
 
