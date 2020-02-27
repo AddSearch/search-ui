@@ -63,7 +63,9 @@ section div {
 #autocomplete-container {
   text-align: left;
 }
-
+.addsearch-searchfield {
+  margin: 0 auto;
+}
 
 /* Mobile */
 .mobilemenu {
