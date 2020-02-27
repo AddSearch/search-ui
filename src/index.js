@@ -34,6 +34,7 @@ export default class AddSearchUI {
     this.client = client;
     this.segmentedSearchClients = {};
     this.settings = settings || {};
+    this.hasSearchResultsComponent = false;
     initRedux(this.settings);
   }
 
@@ -46,7 +47,14 @@ export default class AddSearchUI {
     // Possible custom function to create filter group with custom and/or logic
     const createFilterObjectFunction = this.settings && this.settings.createFilterObjectFunction ?
       this.settings.createFilterObjectFunction : createFilterObject;
-    initFromURL(this.client, createFilterObjectFunction, (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo));
+
+    // Handle browser history if the user is on a results page (i,e. not just a search field on any page)
+    if (this.hasSearchResultsComponent) {
+      initFromURL(this.client,
+        createFilterObjectFunction,
+        (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo),
+        this.settings.matchAllQuery);
+    }
 
     // Possible match all query on load
     if (this.settings.matchAllQuery === true) {
@@ -111,6 +119,7 @@ export default class AddSearchUI {
   }
 
   searchResults(conf) {
+    this.hasSearchResultsComponent = true;
     new SearchResults(this.client, conf);
   }
 
@@ -119,6 +128,7 @@ export default class AddSearchUI {
       console.log('WARNING: segmentedResults configuration must include a client instance');
       return;
     }
+    this.hasSearchResultsComponent = true;
     this.segmentedSearchClients[conf.containerId] = conf.client;
     new SegmentedResults(conf.client, conf);
   }
