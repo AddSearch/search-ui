@@ -1,9 +1,12 @@
 @import "../../variables";
 
-#searchfield-container {
+.addsearch-searchfield-container {
+  display: inline-block;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex-grow: 1;
 }
 
 .addsearch-searchfield {
@@ -31,19 +34,6 @@
     flex-wrap: nowrap;
     flex-grow: 1;
     float: left;
-  }
-  svg.search-icon {
-    display: inline-block;
-    margin-right: -32px;
-    margin-top: -2px;
-    flex-shrink: 0;
-    z-index: 1;
-    width: 30px;
-    height: 16px;
-    & *  {
-      fill: #b1b1b1;
-    }
-
   }
 
   input[type=search] {
