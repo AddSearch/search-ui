@@ -10,8 +10,8 @@ export const SEARCHRESULTS_TEMPLATE = `
           <a href="{{url}}" data-analytics-click="{{id}}">{{title}}</a>
         </h3>
         <div class="highlight">
-          <span class="main-image" style="background-image: url(data:image/jpeg;base64,{{images.main_b64}})">
-            <img src="{{images.main}}" alt="{{title}}" />
+          <span class="main-image"{{#if images.main}} style="background-image: url(data:image/jpeg;base64,{{images.main_b64}})"{{/if}}>
+            {{#if images.main}}<img src="{{images.main}}" alt="{{title}}" />{{else}}{{/if}}
           </span>
           {{{highlight}}}..
         </div>
