@@ -11,8 +11,7 @@ export const SEARCHRESULTS_TEMPLATE = `
         </h3>
         <div class="highlight">
           {{> searchResultImageTemplate}}
-          {{{highlight}}}..
-          {{categories.length}}
+          {{{highlight}}}{{#not type "PROMOTED"}}&#8230;{{/not}}
         </div>
         {{#gt categories.length 1}}
           <div class="category">
