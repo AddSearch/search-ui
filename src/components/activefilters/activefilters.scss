@@ -1,16 +1,25 @@
 @import "../../variables";
 
 .addsearch-active-filters {
+  display: block;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
   .item {
-    margin: 2px 0;
+    display: inline-block;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 3px 3px 0 0;
     font-size: 11px;
     border: 1px solid $border-color;
     border-radius: 3px;
-    padding: 3px 4px;
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
     max-width: 100%;
+    padding: 2px 4px;
 
     > span {
       text-overflow: ellipsis;
@@ -18,14 +27,15 @@
       max-width: 90%;
       overflow: hidden;
       position: relative;
-      top: 1px;
+      padding-left: 4px;
     }
 
     button {
       border: none;
       background: transparent;
       cursor: pointer;
-      font-size: 14px
+      font-size: 14px;
+      padding:0 0.5em;
     }
     @media screen and (max-width: 480px){
       padding: 4px 6px;
@@ -33,8 +43,9 @@
       button {
         font-size: 18px;
         &[data-clearall="true"] {
-          font-size: 14px;
-          padding: 4px 6px;
+         font-size: 16px;
+          padding: 1px 6px;
+          margin-left: 0;
         }
       }
     }
