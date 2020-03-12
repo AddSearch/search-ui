@@ -167,6 +167,7 @@ Settings that can be passed to the ```searchResults``` function:
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for search results |
 | template_resultcount | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for "Number of results" |
 | template_noresults | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for "No search results found" |
+| template_image | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for the featured image shown with search results |
 
 ### Pagination
 Pagination. Typically below search results.

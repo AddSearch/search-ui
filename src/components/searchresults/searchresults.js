@@ -1,5 +1,5 @@
 import './searchresults.scss';
-import { SEARCHRESULTS_TEMPLATE, NO_RESULTS_TEMPLATE, NUMBER_OF_RESULTS_TEMPLATE} from './templates';
+import { SEARCHRESULTS_TEMPLATE, NO_RESULTS_TEMPLATE,SEARCHRESULT_IMAGE_TEMPLATE, NUMBER_OF_RESULTS_TEMPLATE} from './templates';
 import handlebars from 'handlebars';
 import { getStore, observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
@@ -14,6 +14,7 @@ export default class SearchResults {
     this.conf = conf;
 
     handlebars.registerPartial('numberOfResultsTemplate', this.conf.template_resultcount || NUMBER_OF_RESULTS_TEMPLATE);
+    handlebars.registerPartial('searchResultImageTemplate', this.conf.template_image || SEARCHRESULT_IMAGE_TEMPLATE);
 
     const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
     handlebars.registerHelper('selectCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
