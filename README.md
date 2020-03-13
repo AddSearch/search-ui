@@ -237,7 +237,7 @@ Components to let the user filter search results by URL patterns or custom field
     containerId: 'filters',
     type: AddSearchUI.FILTER_TYPE.CHECKBOX_GROUP,
       options: {
-        cars: {
+        appleProducts: {
           label: 'Apple products',
           filter: {'custom_fields.brand': 'apple'}
         }
@@ -255,10 +255,11 @@ Settings that can be passed to the ```filters``` function:
 | clearOtherFilters | boolean | false | Clear all other filters when the value of this filter changes. Works with RADIO_GROUP, SELECT_LIST, and TABS filters |
 | options | Object | n/a | Object containing filtering options |
 
-The options object can contain multiple filtering options. If the type is *Tabs*, *Select list*, or *Radio group*, just one of the 
-options can be activated at the any given time. If the filter type is *Checkbox* or *Tags*, any number of filters can be activated. 
-The option key is shared across filter components, so all filters with the same key are enabled when any of the filters
-with that key is clicked.
+The *options* object can contain multiple filtering options. If the type is *Tabs*, *Select list*, or *Radio group*, just one of the 
+options can be activated at any given time. If the filter type is *Checkbox* or *Tags*, multiple filters can be activated. 
+The option *key* (appleProducts in the example above) is shared across filter components. All filters with the same *key*
+are enabled and disabled simultaneously. Because of this, you can have several filter components controlling the same 
+filter. For example, radio button list on desktop view and a select list on mobile.
 
 Fields in ```options```:
 
