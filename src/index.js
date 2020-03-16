@@ -12,6 +12,7 @@ import SearchResults from './components/searchresults';
 import SegmentedResults from './components/segmentedresults';
 import SortBy from './components/sortby';
 import { initRedux, getStore } from './store';
+import { setExternalAnalyticsCallback } from './util/analytics';
 import { registerDefaultHelpers, registerHelper } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
@@ -41,6 +42,10 @@ export default class AddSearchUI {
 
   start() {
     this.initFromClientSettings();
+
+    // Feed analytics manually with the sendStatsEvent function
+    this.client.setCollectAnalytics(false);
+    setExternalAnalyticsCallback(this.settings.analyticsCallback);
 
     getStore().dispatch(setSearchResultsPageUrl(this.settings.searchResultsPageUrl));
 
