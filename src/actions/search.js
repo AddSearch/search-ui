@@ -44,7 +44,7 @@ export function searchResults(client, keyword, results, onResultsScrollTo) {
 
   // Feed stats if not a warmup query
   if (keyword && keyword.indexOf(WARMUP_QUERY_PREFIX) === -1) {
-    sendSearchStats(client, results ? results.total_hits : 0);
+    sendSearchStats(client, keyword, results ? results.total_hits : 0);
   }
 
   return {
