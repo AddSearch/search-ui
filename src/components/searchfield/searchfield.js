@@ -117,7 +117,10 @@ export default class SearchField {
     // Event listeners to the possible search button
     if (container.querySelector('button')) {
       container.querySelector('button').onclick = (e) => {
-        const keyword = this.field.value;
+        let keyword = this.field.value;
+        if (keyword === '' && this.matchAllQuery) {
+          keyword = MATCH_ALL_QUERY;
+        }
         getStore().dispatch(setKeyword(keyword, true));
         getStore().dispatch(autocompleteHide());
         this.redirectOrSearch(keyword);
@@ -189,7 +192,10 @@ export default class SearchField {
   onfocus(e) {
     // Warmup query
     if (e.target.value === '') {
-      this.executeSearch(this.client, WARMUP_QUERY_PREFIX + Math.random());
+      if (!this.warmupQueryCompleted) {
+        this.executeSearch(this.client, WARMUP_QUERY_PREFIX + Math.random());
+        this.warmupQueryCompleted = true;
+      }
       getStore().dispatch(autocompleteShow());
     }
   }
