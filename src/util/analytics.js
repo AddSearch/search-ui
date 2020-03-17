@@ -21,7 +21,7 @@ function callExternalAnalyticsCallback(data) {
 let sendSearchStatsTimeout = null;
 let previousKeyword = null;
 let searchStatsSent = false; // If a search result is clicked within the SEARCH_ANALYTICS_DEBOUNCE_TIME, send search stats from onLinkClick
-export function sendSearchStats(client, numberOfResults) {
+export function sendSearchStats(client, keyword, numberOfResults) {
   const action = 'search';
 
   if (sendSearchStatsTimeout) {
@@ -29,7 +29,6 @@ export function sendSearchStats(client, numberOfResults) {
   }
 
   sendSearchStatsTimeout = setTimeout(() => {
-    const keyword = client.getSettings().keyword;
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== previousKeyword) {
       client.sendStatsEvent(action, keyword, {numberOfResults});
