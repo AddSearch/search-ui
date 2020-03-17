@@ -57,7 +57,7 @@ Advanced example with all components
 
 ## Search UI instance and configuration
 To create a Search UI instance, call the constructor ```new AddSearchUI(client, conf)``` 
-with the mandatory [AddSearchClient](https://github.com/AddSearch/js-client-library) parameter and 
+with the mandatory [AddSearchClient (v0.3.0 or newer)](https://github.com/AddSearch/js-client-library) parameter and 
 an optional configuration parameter:
 
 ```js
@@ -75,6 +75,7 @@ The configuration object can contain following values:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | debug | boolean | false | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools) |
+| analyticsCallback | function | n/a | A function to call when an analytics event occurs. [Read more](#analytics) |
 | matchAllQuery | boolean | false | Execute "match all" query when the Search UI is started |
 | onFilterChange | function | n/a | Function to call when active filters are changed (for conditional visibility) |
 | reduxStore | Object | n/a | Redux store (with redux-thunk middleware) to use instead of creating a new one |
@@ -339,6 +340,41 @@ Read more at [handlebarsjs.js](https://handlebarsjs.com/guide/expressions.html#h
     return param.toUpperCase();
   });
 ```
+
+## Analytics
+This library sends analytics events to AddSearch Analytics Dashboard when
+- Search results are returned
+- No results were found
+- A result was clicked
+
+You can add integration for a third party analytics software by passing a custom *analyticsCallback* function in
+AddSearchClient constructor's configuration object. This function is called with a single parameter containing
+one of the following payloads:
+
+#### Search results received:
+
+```js
+{
+  action: 'search', 
+  keyword: 'keyword', 
+  numberOfResults: 10 // If 0, no results were found
+}
+```
+
+#### Search result clicked:
+
+```js
+{
+  action: 'click', 
+  keyword: 'keyword', 
+  documentId: '...', // Hit's 32-char identifier
+  position: 1 // Position of the clicked result. The first result being 1
+}
+```
+
+To save clicks reliably before the user's browser leaves the page, 
+[navigator.sendBeacon](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon) is the recommended method.
+
 
 ## Supported web browsers
 This library is tested on
