@@ -1,5 +1,7 @@
 /* global window */
+import { WARMUP_QUERY_PREFIX } from '../index';
 import { setHistory, HISTORY_PARAMETERS } from '../util/history';
+import { sendSearchStats } from '../util/analytics';
 
 export const START = 'START';
 export const SET_SEARCH_RESULTS_PAGE_URL = 'SET_SEARCH_RESULTS_PAGE_URL';
@@ -25,7 +27,7 @@ export function search(client, keyword, onResultsScrollTo) {
   }
   return dispatch => {
     dispatch(searchFetchStart());
-    client.search(keyword, (res) => dispatch(searchResults(keyword, res, onResultsScrollTo)));
+    client.search(keyword, (res) => dispatch(searchResults(client, keyword, res, onResultsScrollTo)));
   }
 }
 
@@ -35,9 +37,16 @@ export function searchFetchStart(keyword) {
   }
 }
 
-export function searchResults(keyword, results, onResultsScrollTo) {
+export function searchResults(client, keyword, results, onResultsScrollTo) {
   if (onResultsScrollTo === 'top') {
     window.scrollTo(0, 0);
+  }
+
+  // Feed stats if not a warmup query
+  if (keyword && keyword.indexOf(WARMUP_QUERY_PREFIX) === -1) {
+    const hits = results ? results.total_hits : 0;
+    const time = results ? results.processing_time_ms : 0;
+    sendSearchStats(client, keyword, hits, time);
   }
 
   return {
