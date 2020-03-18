@@ -362,6 +362,9 @@ This function is called with a single parameter containing one of the following 
 }
 ```
 
+In search-as-you-type implementations the *search* event is sent after 2,5 second delay in typing or if a result is
+clicked within this debounce time.
+
 #### Search result clicked:
 
 ```js
