@@ -342,14 +342,14 @@ Read more at [handlebarsjs.js](https://handlebarsjs.com/guide/expressions.html#h
 ```
 
 ## Analytics
-This library sends analytics events to AddSearch Analytics Dashboard when
+This library sends analytics events to AddSearch Analytics Dashboard when:
 - Search results are returned
 - No results were found
 - A result was clicked
 
-You can add integration for a third party analytics software by passing a custom *analyticsCallback* function in
-AddSearchClient constructor's configuration object. This function is called with a single parameter containing
-one of the following payloads:
+You can add integration for third party analytics software by passing a custom *analyticsCallback* function in
+AddSearchClient constructor's [configuration object](#search-ui-instance-and-configuration). 
+This function is called with a single parameter containing one of the following JSON objects:
 
 #### Search results received:
 
@@ -373,8 +373,8 @@ one of the following payloads:
 }
 ```
 
-To save clicks reliably before the user's browser leaves the page, 
-[navigator.sendBeacon](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon) is the recommended method.
+To save clicks reliably before the user's browser leaves the page, it's recommended to use the
+[navigator.sendBeacon](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon) method.
 
 
 ## Supported web browsers
