@@ -357,7 +357,8 @@ one of the following payloads:
 {
   action: 'search', 
   keyword: 'keyword', 
-  numberOfResults: 10 // If 0, no results were found
+  numberOfResults: 10, // If 0, no results were found
+  processingTimeMs: 21 // Time it took to process the query and return search results (in milliseconds)
 }
 ```
 

@@ -21,7 +21,7 @@ function callExternalAnalyticsCallback(data) {
 let sendSearchStatsTimeout = null;
 let previousKeyword = null;
 let searchStatsSent = false; // If a search result is clicked within the SEARCH_ANALYTICS_DEBOUNCE_TIME, send search stats from onLinkClick
-export function sendSearchStats(client, keyword, numberOfResults) {
+export function sendSearchStats(client, keyword, numberOfResults, processingTimeMs) {
   const action = 'search';
 
   if (sendSearchStatsTimeout) {
@@ -32,7 +32,7 @@ export function sendSearchStats(client, keyword, numberOfResults) {
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== previousKeyword) {
       client.sendStatsEvent(action, keyword, {numberOfResults});
-      callExternalAnalyticsCallback({action, keyword, numberOfResults});
+      callExternalAnalyticsCallback({action, keyword, numberOfResults, processingTimeMs});
       previousKeyword = keyword;
       searchStatsSent = true;
     }
@@ -82,8 +82,9 @@ function onLinkClick(e, client, searchResults) {
   // Search stats were not sent within SEARCH_ANALYTICS_DEBOUNCE_TIME
   if (searchStatsSent === false) {
     const numberOfResults = searchResults ? searchResults.total_hits : 0;
+    const processingTimeMs = searchResults ? searchResults.processing_time_ms : 0;
     client.sendStatsEvent('search', keyword, {numberOfResults});
-    callExternalAnalyticsCallback({action: 'search', keyword, numberOfResults});
+    callExternalAnalyticsCallback({action: 'search', keyword, numberOfResults, processingTimeMs});
   }
 }
 
