@@ -15,7 +15,7 @@ export function start() {
   }
 }
 
-export function search(client, keyword, onResultsScrollTo) {
+export function search(client, keyword, onResultsScrollTo, appendResults) {
   // Update browser history
   setHistory(HISTORY_PARAMETERS.SEARCH, keyword);
 
@@ -27,7 +27,7 @@ export function search(client, keyword, onResultsScrollTo) {
   }
   return dispatch => {
     dispatch(searchFetchStart());
-    client.search(keyword, (res) => dispatch(searchResults(client, keyword, res, onResultsScrollTo)));
+    client.search(keyword, (res) => dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults)));
   }
 }
 
@@ -37,7 +37,7 @@ export function searchFetchStart(keyword) {
   }
 }
 
-export function searchResults(client, keyword, results, onResultsScrollTo) {
+export function searchResults(client, keyword, results, onResultsScrollTo, appendResults) {
   if (onResultsScrollTo === 'top') {
     window.scrollTo(0, 0);
   }
@@ -52,7 +52,8 @@ export function searchResults(client, keyword, results, onResultsScrollTo) {
   return {
     type: SEARCH_RESULTS,
     keyword,
-    results
+    results,
+    appendResults
   }
 }
 
