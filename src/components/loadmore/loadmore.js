@@ -18,9 +18,7 @@ export default class LoadMore {
     }
 
     if (conf.type === LOAD_MORE_TYPE.INFINITE_SCROLL) {
-      this.conf.scrollableElement.addEventListener('scroll', (e) => this.onScroll(e));
-
-      console.log(this.conf.scrollableElement.hasOwnProperty('tagName'));
+      this.conf.scrollableElement.addEventListener('scroll', () => this.onScroll());
     }
   }
 
@@ -48,6 +46,13 @@ export default class LoadMore {
         button.onclick = (e) => this.loadMore();
       }
     }
+
+    // If infinite scroll in a scrollable HTML element, scroll top when keyword changes
+    else if (this.conf.type === LOAD_MORE_TYPE.INFINITE_SCROLL &&
+             this.conf.scrollableElement.tagName &&
+             searchState.results.page === 1) {
+      this.conf.scrollableElement.scrollTop = 0;
+    }
   }
 
 
@@ -64,7 +69,7 @@ export default class LoadMore {
   }
 
 
-  onScroll(e) {
+  onScroll() {
 
     const isLoading = getStore().getState().search.loading;
     const scrollElement = document.querySelector('#' + this.conf.containerId + ' .loadmore-infinite-scroll');
@@ -77,7 +82,6 @@ export default class LoadMore {
       }
 
       if (infiniteScrollTop > 0 && infiniteScrollTop < viewportHeight) {
-        console.log('Loaaaad');
         this.loadMore();
       }
     }
