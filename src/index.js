@@ -6,6 +6,7 @@ import Autocomplete from './components/autocomplete';
 import Facets from './components/facets';
 import Filters from './components/filters';
 import FilterStateObserver, { createFilterObject } from './components/filters/filterstateobserver';
+import LoadMore from './components/loadmore';
 import Pagination from './components/pagination';
 import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
@@ -152,6 +153,10 @@ export default class AddSearchUI {
 
   pagination(conf) {
     new Pagination(this.client, conf);
+  }
+
+  loadMore(conf) {
+    new LoadMore(this.client, conf);
   }
 
   activeFilters(conf) {
