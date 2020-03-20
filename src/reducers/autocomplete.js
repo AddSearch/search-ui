@@ -61,7 +61,8 @@ export default function searchsuggestions(state = initialState, action) {
       return Object.assign({}, state, {
         pendingRequests: state.pendingRequests - 1,
         searchResults: nextSearchResults,
-        visible: true
+        visible: true,
+        appendResults: action.appendResults === true
       });
 
     case AUTOCOMPLETE_HIDE:

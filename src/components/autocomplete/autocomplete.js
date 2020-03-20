@@ -99,6 +99,12 @@ export default class Autocomplete {
       addClickTrackers(this.client, links, {hits: searchResults[Object.keys(searchResults)[0]]});
     }
 
+    // If infinite scroll and the first request, scroll top
+    if (this.conf.infiniteScrollElement &&
+        !autocompleteState.appendResults) {
+      this.conf.infiniteScrollElement.scrollTop = 0;
+    }
+
     // Callback function for alignment
     if (this.conf.onShow) {
       this.conf.onShow(container);
