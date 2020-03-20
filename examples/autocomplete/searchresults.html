@@ -12,11 +12,14 @@
 
     <!-- Containers. Search UI components will be added inside these divs -->
     <div id="searchfield"></div>
-    <div id="autocomplete"></div>
+
+    <section id="scrollable" style="max-height: 300px; max-width: 700px; overflow: auto;">
+      <div id="autocomplete"></div>
+    </section>
 
     <script>
       // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
-      var client = new AddSearchClient('1bed1ffde465fddba2a53ad3ce69e6c2');
+      var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
 
       // Search UI instance
       var searchui = new AddSearchUI(client);
@@ -27,12 +30,33 @@
         placeholder: 'Keyword..'
       });
 
-      // Don't forget to set up Search Suggestions on AddSearch Dashboard first
+      var autocompleteClient = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+      autocompleteClient.setPaging(1, 5, 'relevance', 'desc'); // Fetch 5 results by default
+
+      var autocompleteTemplate = `
+        <div class="addsearch-autocomplete" style="position: relative;">
+          {{#gt searchResults.results.length 0}}
+            <ul>
+              {{#each ../searchResults.results}}
+                <li>
+                  <strong>{{title}}</strong><br />
+                  {{{highlight}}}
+                </li>
+              {{/each}}
+            </ul>
+          {{/gt}}
+        </div>
+      `;
+
       searchui.autocomplete({
         containerId: 'autocomplete',
+        template: autocompleteTemplate,
+        infiniteScrollElement: document.querySelector('#scrollable'),
         sources: [
           {
-            type: AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS
+            type: AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH,
+            client: autocompleteClient,
+            jsonKey: 'results'
           }
         ]
       });
