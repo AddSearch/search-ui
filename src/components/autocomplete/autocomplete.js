@@ -30,6 +30,10 @@ export default class Autocomplete {
       observeStoreByKey(getStore(), 'autocomplete', (state) => this.render(state));
       observeStoreByKey(getStore(), 'keyword', (state) => this.keywordChanged(state));
     }
+
+    if (conf.infiniteScrollElement) {
+      this.conf.infiniteScrollElement.addEventListener('scroll', () => this.onScroll());
+    }
   }
 
 
@@ -44,6 +48,17 @@ export default class Autocomplete {
       }
       else if (v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         getStore().dispatch(autocompleteSearch(client, v.jsonKey, keyword));
+      }
+    });
+  }
+
+
+  loadMore(keyword) {
+    this.conf.sources.forEach(v => {
+      const client = v.client;
+      if (client && v.type === AUTOCOMPLETE_TYPE.SEARCH) {
+        client.nextPage();
+        getStore().dispatch(autocompleteSearch(client, v.jsonKey, keyword, true));
       }
     });
   }
@@ -115,5 +130,18 @@ export default class Autocomplete {
       this.lastOnmouseOver = index;
       getStore().dispatch(setActiveSuggestion(index, false));
     }
+  }
+
+
+  onScroll() {
+    const autocompleteState = getStore().getState().autocomplete;
+    if (autocompleteState.pendingRequests === 0) {
+      const scrollable = this.conf.infiniteScrollElement;
+      if (Math.ceil(scrollable.offsetHeight + scrollable.scrollTop) >= scrollable.scrollHeight) {
+        const keyword = getStore().getState().keyword.value;
+        this.loadMore(keyword);
+      }
+    }
+
   }
 }
