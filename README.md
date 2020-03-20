@@ -139,7 +139,7 @@ Settings that can be passed to the ```autocomplete``` function:
 | hideAutomatically| boolean| true | Hide the autocomplete dropdown when the search field is blurred |
 | onShow | function | n/a | A function to call when the autocomplete is shown. Called as the container as parameter |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
-| infiniteScrollElement | object| n/a | This is the scrollable container with *overflow: auto;* (for SEARCH sources) |
+| infiniteScrollElement | object| n/a | The scrollable container with *overflow: auto;* (for SEARCH sources in infinite scroll implementations) |
 | sources| Array | n/a | Array of data sources  |
 
 The ```sources``` array can contain objects with the following fields:
@@ -190,7 +190,7 @@ Settings that can be passed to the ```pagination``` function:
 To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging)
 
 ### Load more results
-Add a "Load more" button or create infinite scroll instead of traditional pagination.
+Add a button to load more results, or provide infinite scroll, instead of traditional pagination.
 
 ```js
   searchui.loadMore({
@@ -208,7 +208,8 @@ Settings that can be passed to the ```loadMore``` function:
 | type | AddSearchUI.LOAD_MORE_TYPE.BUTTON, AddSearchUI.LOAD_MORE_TYPE.INFINITE_SCROLL | n/a | Require user clicking "More results" button or load automatically on scroll bottom |
 | infiniteScrollElement | object | n/a | If the type is INFINITE_SCROLL, this is the scrollable element. Can be **window** or an HTML element with *overflow: auto;* (e.g. document.querySelector('#scrollable')) |
 
-To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging)
+To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging).
+The same Search UI can have the *pagination* component for desktop users and *loadMore* for mobile users.
 
 ### Sort by
 Component to change the order of search results.
