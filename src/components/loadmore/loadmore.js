@@ -18,7 +18,7 @@ export default class LoadMore {
     }
 
     if (conf.type === LOAD_MORE_TYPE.INFINITE_SCROLL) {
-      this.conf.scrollableElement.addEventListener('scroll', () => this.onScroll());
+      this.conf.infiniteScrollElement.addEventListener('scroll', () => this.onScroll());
     }
   }
 
@@ -49,9 +49,9 @@ export default class LoadMore {
 
     // If infinite scroll in a scrollable HTML element, scroll top when keyword changes
     else if (this.conf.type === LOAD_MORE_TYPE.INFINITE_SCROLL &&
-             this.conf.scrollableElement.tagName &&
+             this.conf.infiniteScrollElement.tagName &&
              searchState.results.page === 1) {
-      this.conf.scrollableElement.scrollTop = 0;
+      this.conf.infiniteScrollElement.scrollTop = 0;
     }
   }
 
@@ -70,19 +70,25 @@ export default class LoadMore {
 
 
   onScroll() {
-
     const isLoading = getStore().getState().search.loading;
     const scrollElement = document.querySelector('#' + this.conf.containerId + ' .loadmore-infinite-scroll');
+
     if (!isLoading && scrollElement) {
-      const infiniteScrollTop = scrollElement.getBoundingClientRect().top;
-      let viewportHeight = window.innerHeight;
       // Scrollable HTML element
-      if (this.conf.scrollableElement.tagName) {
-        viewportHeight = this.conf.scrollableElement.getBoundingClientRect().height;
+      if (this.conf.infiniteScrollElement.tagName) {
+        const scrollable = this.conf.infiniteScrollElement;
+        if (Math.ceil(scrollable.offsetHeight + scrollable.scrollTop) >= scrollable.scrollHeight) {
+          this.loadMore();
+        }
       }
 
-      if (infiniteScrollTop > 0 && infiniteScrollTop < viewportHeight) {
-        this.loadMore();
+      // Window onscroll
+      else {
+        const viewportHeight = window.innerHeight;
+        const infiniteScrollTop = scrollElement.getBoundingClientRect().top;
+        if (infiniteScrollTop > 0 && infiniteScrollTop < viewportHeight) {
+          this.loadMore();
+        }
       }
     }
   }
