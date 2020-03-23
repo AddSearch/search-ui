@@ -55,6 +55,10 @@ Advanced example with all components
 - [Try it out](https://demo.addsearch.com/search-ui-examples/components/)
 - [View source code](https://github.com/AddSearch/search-ui/tree/master/examples/components/index.html)
 
+See more examples
+- [All examples](https://demo.addsearch.com/search-ui-examples/)
+- [View source code](https://github.com/AddSearch/search-ui/tree/master/examples)
+
 ## Search UI instance and configuration
 To create a Search UI instance, call the constructor ```new AddSearchUI(client, conf)``` 
 with the mandatory [AddSearchClient (v0.3.0 or newer)](https://github.com/AddSearch/js-client-library) parameter and 
@@ -409,7 +413,7 @@ This library is tested on
 - Firefox
 - Edge
 - Safari 6.1+
-- Internet Explorer 10+
+- Internet Explorer 11
 
 ## Development
 To modify this library, clone the repository and follow these steps:
