@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>AddSearch Search UI: Conditional visibility</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.3/dist/addsearch-js-client.min.js"></script>
+    <script src="../../dist/addsearch-search-ui.min.js"></script>
+    <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+
+    <!-- Containers. Search UI components will be added inside these divs -->
+    <div id="searchfield"></div>
+    <div id="tabs"></div>
+    <div id="results"></div>
+    <div id="results-blog"></div>
+    <div id="pagination"></div>
+
+    <script>
+      // Function that is called when active filters have been changed.
+      function onFilterChange(activeFilters) {
+        if (activeFilters['blog']) {
+          document.querySelector('#results').style.display = 'none';
+          document.querySelector('#results-blog').innerHTML = '';
+          document.querySelector('#pagination').innerHTML = '';
+          document.querySelector('#results-blog').style.display = '';
+        }
+        else {
+          document.querySelector('#results').innerHTML = '';
+          document.querySelector('#results').style.display = '';
+          document.querySelector('#pagination').innerHTML = '';
+          document.querySelector('#results-blog').style.display = 'none';
+        }
+      }
+
+      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+      var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+
+      // Search UI instance
+      var settings = {
+        onFilterChange: onFilterChange
+      };
+      var searchui = new AddSearchUI(client, settings);
+
+      // Add components
+      searchui.searchField({
+        containerId: 'searchfield',
+        placeholder: 'Keyword..',
+        button: 'Search',
+        searchAsYouType: true
+      });
+
+      searchui.filters({
+        containerId: 'tabs',
+        type: AddSearchUI.FILTER_TYPE.TABS,
+        options: {
+          nofilter: {
+            label: 'All results'
+          },
+          blog: {
+            label: 'Blog',
+            filter: {"doc.category": "1xblog"},
+            hideIfActive: 'fooo blog'
+          }
+        }
+      });
+
+      searchui.searchResults({
+        containerId: 'results'
+      });
+
+      var blogTemplate = `
+        <div class="addsearch-searchresults">
+          {{#each hits}}
+            <div class="hit blog" data-id="{{docid}}">
+              <h3>
+                <a href="{{url}}">{{title}}</a>
+              </h3>
+              <div class="highlight">
+                <span class="main-image" style="background-image: url(data:image/jpeg;base64,{{images.main_b64}})">
+                  <img src="{{images.main}}" alt="{{title}}" />
+                </span>
+                <div>{{{highlight}}}</div>
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      `;
+
+      searchui.searchResults({
+        containerId: 'results-blog',
+        template: blogTemplate
+      });
+
+      searchui.pagination({
+        containerId: 'pagination'
+      });
+
+      // All components added. Start
+      searchui.start();
+    </script>
+
+  </body>
+</html>
