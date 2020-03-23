@@ -52,10 +52,17 @@ export default function searchsuggestions(state = initialState, action) {
     case AUTOCOMPLETE_SEARCH_RESULTS:
       const nextSearchResults = Object.assign({}, state.searchResults);
       nextSearchResults[action.jsonKey] = action.results.hits;
+
+      // Append results in infinite scroll
+      if (action.appendResults === true && state.searchResults[action.jsonKey]) {
+        nextSearchResults[action.jsonKey] = [...state.searchResults[action.jsonKey], ...action.results.hits];
+      }
+
       return Object.assign({}, state, {
         pendingRequests: state.pendingRequests - 1,
         searchResults: nextSearchResults,
-        visible: true
+        visible: true,
+        appendResults: action.appendResults === true
       });
 
     case AUTOCOMPLETE_HIDE:
