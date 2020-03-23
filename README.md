@@ -139,6 +139,7 @@ Settings that can be passed to the ```autocomplete``` function:
 | hideAutomatically| boolean| true | Hide the autocomplete dropdown when the search field is blurred |
 | onShow | function | n/a | A function to call when the autocomplete is shown. Called as the container as parameter |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| infiniteScrollElement | object| n/a | A scrollable container with *overflow: auto;* around the autocomplete box (for AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH) |
 | sources| Array | n/a | Array of data sources  |
 
 The ```sources``` array can contain objects with the following fields:
@@ -187,6 +188,28 @@ Settings that can be passed to the ```pagination``` function:
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 
 To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging)
+
+### Load more results
+Button to load more results or an infinite scroll implementation.
+
+```js
+  searchui.loadMore({
+    containerId: 'loadmore',
+    type: AddSearchUI.LOAD_MORE_TYPE.BUTTON
+  });
+```
+
+Settings that can be passed to the ```loadMore``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML component that will act as a container for the component|
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/loadmore/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| type | AddSearchUI.LOAD_MORE_TYPE.BUTTON, AddSearchUI.LOAD_MORE_TYPE.INFINITE_SCROLL | n/a | Require user clicking "More results" button or load automatically on scroll bottom |
+| infiniteScrollElement | object | n/a | If the type is INFINITE_SCROLL, this is the scrollable element. Can be **window** or an HTML element with *overflow: auto;* |
+
+To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging).
+The same Search UI can have the *pagination* component for desktop view and *loadMore* for mobile.
 
 ### Sort by
 Component to change the order of search results.

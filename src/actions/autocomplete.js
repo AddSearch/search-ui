@@ -32,7 +32,7 @@ export function autocompleteSuggestionsResults(results) {
   }
 }
 
-export function autocompleteSearch(client, jsonKey, keyword) {
+export function autocompleteSearch(client, jsonKey, keyword, appendResults) {
   if (!keyword || keyword === '') {
     return {
       type: AUTOCOMPLETE_SEARCH_CLEAR
@@ -40,15 +40,16 @@ export function autocompleteSearch(client, jsonKey, keyword) {
   }
   return dispatch => {
     dispatch(autocompleteFetchStart());
-    client.search(keyword, (res) => dispatch(autocompleteSearchResults(res, jsonKey)));
+    client.search(keyword, (res) => dispatch(autocompleteSearchResults(res, jsonKey, appendResults)));
   }
 }
 
-export function autocompleteSearchResults(results, jsonKey) {
+export function autocompleteSearchResults(results, jsonKey, appendResults) {
   return {
     type: AUTOCOMPLETE_SEARCH_RESULTS,
     results,
-    jsonKey
+    jsonKey,
+    appendResults
   }
 }
 
