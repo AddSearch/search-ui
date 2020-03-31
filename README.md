@@ -354,7 +354,7 @@ Settings that can be passed to the ```segmentedSearchResults``` function:
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML element that will act as a container for this component |
 | client | 	AddSearch JS Client instance | n/a | Client with appropriate filters/settings for this segment |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/segmentedresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | n/a | Custom [Handlebars](https://handlebarsjs.com/) template for this segment |
 
 ## General functions
 ### Execute search
