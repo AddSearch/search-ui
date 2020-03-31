@@ -25,12 +25,14 @@ export default function segmentedsearch(state = initialState, action) {
         return state;
       }
 
+      // Incoming segment
       const segment = {};
       segment[action.jsonKey] = action.results;
 
+      // Update list of pending segment requests
       let removePendingSegments = [...state.pendingSegments];
       if (removePendingSegments.indexOf(action.jsonKey) !== -1) {
-        removePendingSegments.splice(removePendingSegments.indexOf(action.jsonKey));
+        removePendingSegments.splice(removePendingSegments.indexOf(action.jsonKey), 1);
       }
 
       return Object.assign({}, state, segment, {
