@@ -15,6 +15,11 @@ export default class SegmentedResults {
 
 
   render(data) {
+    // Don't re-render while API requests are pending
+    if (data.pendingRequests !== 0) {
+      return;
+    }
+
     renderToContainer(this.conf.containerId, this.conf.template, data);
   }
 }
