@@ -14,6 +14,10 @@
         font-family: 'Lato', sans-serif;
         min-width: 320px;
       }
+      #searchfield {
+        margin: 20px;
+      }
+
       main {
         display: flex;
       }
@@ -47,9 +51,11 @@
     </main>
 
     <script>
+      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
       var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
 
-      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+
+      // Each segment requires dedicated client with appropriate filters etc.
       var allResultsClient = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
       allResultsClient.setPaging(1, 4, 'relevance', 'desc');
 
@@ -63,7 +69,7 @@
 
 
       // Search UI instance
-      var searchui = new AddSearchUI(client, {debug: true});
+      var searchui = new AddSearchUI(client);
 
       // Add components
       searchui.searchField({
