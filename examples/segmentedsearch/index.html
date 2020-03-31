@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>AddSearch Search UI: Segmented search</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.3/dist/addsearch-js-client.min.js"></script>
+    <script src="../../dist/addsearch-search-ui.min.js"></script>
+    <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+
+    <style type="text/css">
+      body {
+        font-family: 'Lato', sans-serif;
+        min-width: 320px;
+      }
+      main {
+        display: flex;
+      }
+      section {
+        background-color: #f7f7f7;
+        padding: 20px;
+        margin: 20px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Containers. Search UI components will be added inside these divs -->
+    <div id="searchfield"></div>
+
+    <main>
+      <section>
+        <h2>All results</h2>
+        <div id="all-results"></div>
+      </section>
+
+      <section>
+        <h2>Results from blog</h2>
+        <div id="blog-results"></div>
+      </section>
+
+      <section>
+        <h2>Results from docs</h2>
+        <div id="docs-results"></div>
+      </section>
+    </main>
+
+    <script>
+      var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+
+      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+      var allResultsClient = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+      allResultsClient.setPaging(1, 4, 'relevance', 'desc');
+
+      var blogClient = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+      blogClient.setFilterObject({"category": "1xblog"});
+      blogClient.setPaging(1, 4, 'relevance', 'desc');
+
+      var docsClient = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+      docsClient.setFilterObject({"category": "1xdocs"});
+      docsClient.setPaging(1, 4, 'relevance', 'desc');
+
+
+      // Search UI instance
+      var searchui = new AddSearchUI(client, {debug: true});
+
+      // Add components
+      searchui.searchField({
+        containerId: 'searchfield',
+        placeholder: 'Keyword..',
+        button: 'Search',
+        searchAsYouType: true
+      });
+
+
+      var allTemplate = `
+        <div class="addsearch-searchresults">
+          {{#each all-results/hits}}
+            <div class="hit">
+              <h3>
+                <a href="{{url}}" data-analytics-click="{{id}}">{{title}}</a>
+              </h3>
+              <div class="highlight">
+                {{{highlight}}}..
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      `;
+
+
+      var blogTemplate = `
+        <div class="addsearch-searchresults">
+          {{#each blog-results/hits}}
+            <div class="hit">
+              <h3>
+                <a href="{{url}}" data-analytics-click="{{id}}">{{title}}</a>
+              </h3>
+              <div class="highlight">
+                {{{highlight}}}..
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      `;
+
+
+      var docsTemplate = `
+        <div class="addsearch-searchresults">
+          {{#each docs-results/hits}}
+            <div class="hit">
+              <h3>
+                <a href="{{url}}" data-analytics-click="{{id}}">{{title}}</a>
+              </h3>
+              <div class="highlight">
+                {{{highlight}}}..
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      `;
+
+
+      searchui.segmentedResults({
+        containerId: 'all-results',
+        template: allTemplate,
+        client: allResultsClient
+      });
+
+      searchui.segmentedResults({
+        containerId: 'blog-results',
+        template: blogTemplate,
+        client: blogClient
+      });
+
+      searchui.segmentedResults({
+        containerId: 'docs-results',
+        template: docsTemplate,
+        client: docsClient
+      });
+
+      // All components added. Start
+      searchui.start();
+    </script>
+
+  </body>
+</html>
