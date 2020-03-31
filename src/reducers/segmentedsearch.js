@@ -5,15 +5,20 @@ import {
 } from '../actions/segmentedsearch';
 
 const initialState = {
-  pendingRequests: 0
+  pendingSegments: []
 };
 
 export default function segmentedsearch(state = initialState, action) {
   switch (action.type) {
     case SEGMENTED_SEARCH_START:
+      let addPendingSegments = [...state.pendingSegments];
+      if (addPendingSegments.indexOf(action.jsonKey) === -1) {
+        addPendingSegments.push(action.jsonKey);
+      }
       return Object.assign({}, state, {
-        pendingRequests: state.pendingRequests + 1
+        pendingSegments: addPendingSegments
       });
+
 
     case SEGMENTED_SEARCH_RESULTS:
       if (action.keyword.indexOf(WARMUP_QUERY_PREFIX) === 0) {
@@ -22,8 +27,15 @@ export default function segmentedsearch(state = initialState, action) {
 
       const segment = {};
       segment[action.jsonKey] = action.results;
-      segment.pendingRequests = state.pendingRequests - 1;
-      return Object.assign({}, state, segment);
+
+      let removePendingSegments = [...state.pendingSegments];
+      if (removePendingSegments.indexOf(action.jsonKey) !== -1) {
+        removePendingSegments.splice(removePendingSegments.indexOf(action.jsonKey));
+      }
+
+      return Object.assign({}, state, segment, {
+        pendingSegments: removePendingSegments
+      });
 
     default:
       return state;
