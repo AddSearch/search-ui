@@ -131,7 +131,7 @@ export default class AddSearchUI {
 
   segmentedResults(conf) {
     if (!conf.client) {
-      console.log('WARNING: segmentedResults configuration must include a client instance');
+      console.log('WARNING: segmentedResults component must have a client instance');
       return;
     }
     this.hasSearchResultsComponent = true;
