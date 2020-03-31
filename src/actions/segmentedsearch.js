@@ -3,15 +3,16 @@ export const SEGMENTED_SEARCH_RESULTS = 'SEGMENTED_SEARCH_RESULTS';
 
 export function segmentedSearch(client, jsonKey, keyword) {
   return dispatch => {
-    dispatch(segmentedSearchStart());
+    dispatch(segmentedSearchStart(jsonKey));
     client.search(keyword, (res) => dispatch(segmentedSearchResults(jsonKey, keyword, res)));
   }
 }
 
 
-export function segmentedSearchStart() {
+export function segmentedSearchStart(jsonKey) {
   return {
-    type: SEGMENTED_SEARCH_START
+    type: SEGMENTED_SEARCH_START,
+    jsonKey
   }
 }
 
