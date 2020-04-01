@@ -107,7 +107,7 @@ Settings that can be passed to the ```searchField``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for the search bar |
+| containerId | String | n/a | ID of the HTML element that will act as a container for the search bar |
 | autofocus | boolean | true | Focus the input field automatically when the page is loaded |
 | button | String | n/a | Add a button to execute the search. The value of this field is the Button's label text |
 | placeholder | String | n/a | Search field's placeholder text |
@@ -137,7 +137,7 @@ Settings that can be passed to the ```autocomplete``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for the autocomplete dropdown |
+| containerId | String | n/a | ID of the HTML element that will act as a container for the autocomplete dropdown |
 | categoryAliases | Object | n/a | A map of category aliases used by the *categorySelectionFunction* |
 | categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
 | hideAutomatically| boolean| true | Hide the autocomplete dropdown when the search field is blurred |
@@ -167,7 +167,7 @@ Settings that can be passed to the ```searchResults``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for search results |
+| containerId | String | n/a | ID of the HTML element that will act as a container for search results |
 | categoryAliases | Object | n/a | A map of category aliases used by the *categorySelectionFunction* |
 | categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for search results |
@@ -188,7 +188,7 @@ Settings that can be passed to the ```pagination``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
+| containerId | String | n/a | ID of the HTML element that will act as a container for the paging|
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 
 To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging)
@@ -207,7 +207,7 @@ Settings that can be passed to the ```loadMore``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for the component|
+| containerId | String | n/a | ID of the HTML element that will act as a container for the component|
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/loadmore/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | type | AddSearchUI.LOAD_MORE_TYPE.BUTTON, AddSearchUI.LOAD_MORE_TYPE.INFINITE_SCROLL | n/a | Require user clicking "More results" button or load automatically on scroll bottom |
 | infiniteScrollElement | object | n/a | If the type is INFINITE_SCROLL, this is the scrollable element. Can be **window** or an HTML element with *overflow: auto;* |
@@ -245,7 +245,7 @@ Settings that can be passed to the ```sortBy``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for the paging|
+| containerId | String | n/a | ID of the HTML element that will act as a container for the paging|
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/sortby/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | type | AddSearchUI.SORTBY_TYPE.SELECT_LIST, AddSearchUI.SORTBY_TYPE.RADIO_GROUP | Select list | "Sort by" menu shown as select list or as a radio button group |
 
@@ -277,7 +277,7 @@ Settings that can be passed to the ```filters``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for filters |
+| containerId | String | n/a | ID of the HTML element that will act as a container for filters |
 | type | AddSearchUI.FILTER_TYPE.CHECKBOX_GROUP, AddSearchUI.FILTER_TYPE.RADIO_GROUP, AddSearchUI.FILTER_TYPE.SELECT_LIST, AddSearchUI.FILTER_TYPE.TABS, AddSearchUI.FILTER_TYPE.TAGS | n/a | Component's type |
 | template | String | [Default templates](https://github.com/AddSearch/search-ui/blob/master/src/components/filters/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | clearOtherFilters | boolean | false | Clear all other filters when the value of this filter changes. Works with RADIO_GROUP, SELECT_LIST, and TABS filters |
@@ -315,7 +315,7 @@ Settings that can be passed to the ```facets``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for facets |
+| containerId | String | n/a | ID of the HTML element that will act as a container for facets |
 | facetsFilter | function | n/a | Custom JS function that receives facets in an array, removes some of them, and returns a filtered facet array |
 | field | String | n/a | Same field that you passed to the JS client. E.g. *custom_fields.brand* |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
@@ -333,9 +333,28 @@ Settings that can be passed to the ```activeFilters``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| containerId | String | n/a | ID of the HTML component that will act as a container for active filters list |
+| containerId | String | n/a | ID of the HTML element that will act as a container for active filters list |
 | clearAll | boolean | true | Show "clear all filters" button if more than one filter is active |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/activefilters/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+
+### Segmented search results
+Show multiple search results lists from several indices or with different filters.
+
+```js
+  searchui.segmentedSearchResults({
+    containerId: 'segment1',
+    client: segmentClient,
+    template: segmentTemplate
+  });
+```
+
+Settings that can be passed to the ```segmentedSearchResults``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML element that will act as a container for this component |
+| client | 	AddSearch JS Client instance | n/a | Client with appropriate filters/settings for this segment |
+| template | String | n/a | Custom [Handlebars](https://handlebarsjs.com/) template for this segment |
 
 ## General functions
 ### Execute search
