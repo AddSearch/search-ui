@@ -3,24 +3,25 @@ import { PAGINATION_TEMPLATE } from './templates';
 import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 
 
 export default class Pagination {
 
-  constructor(client, conf) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
+    this.reduxStore = reduxStore;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'search', () => this.render());
+      observeStoreByKey(this.reduxStore, 'search', () => this.render());
     }
   }
 
 
   render() {
-    const state = getStore().getState();
+    const state = this.reduxStore.getState();
 
     const currentPage = state.search.results.page || 1;
     const pageSize = this.client.getSettings().paging.pageSize;
@@ -51,12 +52,12 @@ export default class Pagination {
 
     // Previous
     if (button.getAttribute('data-page') === 'previous') {
-      const currentPage = getStore().getState().pagination.page;
+      const currentPage = this.reduxStore.getState().pagination.page;
       pageToDispatch = currentPage - 1;
     }
     // Next
     else if (button.getAttribute('data-page') === 'next') {
-      const currentPage = getStore().getState().pagination.page || 1;
+      const currentPage = this.reduxStore.getState().pagination.page || 1;
       pageToDispatch = currentPage + 1;
     }
     // Page number
@@ -65,10 +66,10 @@ export default class Pagination {
     }
 
     // Dispatch the new page number
-    getStore().dispatch(setPage(this.client, pageToDispatch));
+    this.reduxStore.dispatch(setPage(this.client, pageToDispatch));
 
     // Refresh search
-    const keyword = getStore().getState().keyword.value;
-    getStore().dispatch(search(this.client, keyword, 'top'));
+    const keyword = this.reduxStore.getState().keyword.value;
+    this.reduxStore.dispatch(search(this.client, keyword, 'top'));
   }
 }

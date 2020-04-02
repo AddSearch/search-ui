@@ -5,18 +5,19 @@ import { SORTBY_RADIOGROUP_TEMPLATE, SORTBY_SELECT_TEMPLATE} from './templates';
 import { sortBy } from '../../actions/sortby';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 
 
 export default class SortBy {
 
-  constructor(client, conf) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
+    this.reduxStore = reduxStore;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'sortby', (state) => this.render(state));
+      observeStoreByKey(reduxStore, 'sortby', (state) => this.render(state));
     }
   }
 
@@ -38,14 +39,14 @@ export default class SortBy {
 
   dispatchAndRefresh(field, order) {
     // Dispatch sortby
-    getStore().dispatch(sortBy(this.client, field, order));
+    this.reduxStore.dispatch(sortBy(this.client, field, order));
 
     // Reset paging
-    getStore().dispatch(setPage(this.client, 1));
+    this.reduxStore.dispatch(setPage(this.client, 1));
 
     // Refresh search
-    const keyword = getStore().getState().keyword.value;
-    getStore().dispatch(search(this.client, keyword));
+    const keyword = this.reduxStore.getState().keyword.value;
+    this.reduxStore.dispatch(search(this.client, keyword));
   }
 
 

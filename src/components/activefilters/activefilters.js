@@ -2,7 +2,7 @@ import './activefilters.scss';
 import { ACTIVE_FILTERS_TEMPLATE } from './templates';
 import { toggleFacetFilter, toggleFilter, clearSelected } from '../../actions/filters';
 import { renderToContainer, validateContainer } from '../../util/dom';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 
 const TYPE = {
   FILTER: 'FILTER',
@@ -11,12 +11,13 @@ const TYPE = {
 
 export default class ActiveFilters {
 
-  constructor(client, conf) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
+    this.reduxStore = reduxStore;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'filters', (state) => this.render(state));
+      observeStoreByKey(this.reduxStore, 'filters', (state) => this.render(state));
     }
   }
 
@@ -73,7 +74,7 @@ export default class ActiveFilters {
 
     const clearAll = container.querySelector('[data-clearall]');
     if (clearAll) {
-      clearAll.addEventListener('click', (e) => getStore().dispatch(clearSelected(true)));
+      clearAll.addEventListener('click', (e) => this.reduxStore.dispatch(clearSelected(true)));
     }
   }
 
@@ -84,10 +85,10 @@ export default class ActiveFilters {
     const value = e.target.getAttribute('data-value');
 
     if (type === TYPE.FILTER) {
-      getStore().dispatch(toggleFilter(name, value, true));
+      this.reduxStore.dispatch(toggleFilter(name, value, true));
     }
     else if (type === TYPE.FACET) {
-      getStore().dispatch(toggleFacetFilter(name, value));
+      this.reduxStore.dispatch(toggleFacetFilter(name, value));
     }
   }
 }
