@@ -1,5 +1,5 @@
 import {
-  AUTOCOMPLETE_FETCH,
+  AUTOCOMPLETE_FETCH_START,
   AUTOCOMPLETE_SUGGESTIONS_RESULTS,
   AUTOCOMPLETE_SUGGESTIONS_CLEAR,
   AUTOCOMPLETE_SEARCH_RESULTS,
@@ -8,11 +8,12 @@ import {
   AUTOCOMPLETE_HIDE,
   HIDE_AUTOMATICALLY,
   KEYBOARD_EVENT, ARROW_UP, ARROW_DOWN,
-  SET_ACTIVE_SUGGESTION
+  SET_ACTIVE_SUGGESTION,
+  SUGGESTIONS_JSON_KEY
 } from '../actions/autocomplete';
 
 const initialState = {
-  pendingRequests: 0,
+  pendingRequests: [],
 
   suggestions: [],
   activeSuggestionIndex: null,
@@ -25,10 +26,17 @@ const initialState = {
 
 export default function searchsuggestions(state = initialState, action) {
   switch (action.type) {
-    case AUTOCOMPLETE_FETCH:
+    case AUTOCOMPLETE_FETCH_START:
+      // Add to pending requests
+      let addPendingReq = [...state.pendingRequests];
+      if (addPendingReq.indexOf(action.jsonKey) === -1) {
+        addPendingReq.push(action.jsonKey);
+      }
+
       return Object.assign({}, state, {
-        pendingRequests: state.pendingRequests + 1
+        pendingRequests: addPendingReq
       });
+
 
     case AUTOCOMPLETE_SUGGESTIONS_CLEAR:
       return Object.assign({}, state, {
@@ -36,18 +44,28 @@ export default function searchsuggestions(state = initialState, action) {
         activeSuggestionIndex: null
       });
 
+
     case AUTOCOMPLETE_SUGGESTIONS_RESULTS:
+
+      // Remove suggestion from pending requests
+      let removePendingSuggestion = [...state.pendingRequests];
+      if (removePendingSuggestion.indexOf(SUGGESTIONS_JSON_KEY) !== -1) {
+        removePendingSuggestion.splice(removePendingSuggestion.indexOf(SUGGESTIONS_JSON_KEY), 1);
+      }
+
       return Object.assign({}, state, {
-        pendingRequests: state.pendingRequests - 1,
+        pendingRequests: removePendingSuggestion,
         suggestions: action.results.suggestions,
         activeSuggestionIndex: null,
         visible: true
       });
 
+
     case AUTOCOMPLETE_SEARCH_CLEAR:
       return Object.assign({}, state, {
         searchResults: {}
       });
+
 
     case AUTOCOMPLETE_SEARCH_RESULTS:
       const nextSearchResults = Object.assign({}, state.searchResults);
@@ -58,12 +76,19 @@ export default function searchsuggestions(state = initialState, action) {
         nextSearchResults[action.jsonKey] = [...state.searchResults[action.jsonKey], ...action.results.hits];
       }
 
+      // Remove search from pending requests
+      let removePendingSearch = [...state.pendingRequests];
+      if (removePendingSearch.indexOf(action.jsonKey) !== -1) {
+        removePendingSearch.splice(removePendingSearch.indexOf(action.jsonKey), 1);
+      }
+
       return Object.assign({}, state, {
-        pendingRequests: state.pendingRequests - 1,
+        pendingRequests: removePendingSearch,
         searchResults: nextSearchResults,
         visible: true,
         appendResults: action.appendResults === true
       });
+
 
     case AUTOCOMPLETE_HIDE:
       return Object.assign({}, state, {
@@ -71,10 +96,12 @@ export default function searchsuggestions(state = initialState, action) {
         activeSuggestionIndex: null
       });
 
+
     case AUTOCOMPLETE_SHOW:
       return Object.assign({}, state, {
         visible: true
       });
+
 
     case HIDE_AUTOMATICALLY:
       return Object.assign({}, state, {
@@ -87,6 +114,7 @@ export default function searchsuggestions(state = initialState, action) {
         activeSuggestionIndex: action.index,
         setSuggestionToSearchField: action.setSuggestionToSearchField
       });
+
 
     case KEYBOARD_EVENT:
       let nextActiveSuggestion = state.activeSuggestionIndex;
