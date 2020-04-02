@@ -7,7 +7,7 @@ import {
   FILTERS_TAGS_TEMPLATE
 } from './templates';
 import { FILTER_TYPE } from './index';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { toggleFilter, registerFilter, clearSelected } from '../../actions/filters';
 import { renderToContainer, attachEventListeners, validateContainer } from '../../util/dom';
 
@@ -15,14 +15,15 @@ export const NO_FILTER_NAME = 'nofilter';
 
 export default class Filters {
 
-  constructor(client, conf) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
+    this.reduxStore = reduxStore;
     this.conf = conf;
     this.activeFilter = null; // For select list and tab filters with a single selectable value
 
     if (validateContainer(conf.containerId)) {
-      getStore().dispatch(registerFilter(this.conf));
-      observeStoreByKey(getStore(), 'filters', (state) => this.render(state));
+      this.reduxStore.dispatch(registerFilter(this.conf));
+      observeStoreByKey(this.reduxStore, 'filters', (state) => this.render(state));
     }
   }
 
@@ -101,7 +102,7 @@ export default class Filters {
     // Attach event listeners to other filter types
     else {
       attachEventListeners(container, 'data-filter', 'click', (filterKey) => {
-        getStore().dispatch(toggleFilter(filterKey, 1));
+        this.reduxStore.dispatch(toggleFilter(filterKey, 1));
       });
     }
   }
@@ -109,7 +110,7 @@ export default class Filters {
 
   singleActiveChangeEvent(filterKey) {
     const isNoFilter = filterKey === NO_FILTER_NAME;
-    const store = getStore();
+    const store = this.reduxStore;
 
     // Current filter re-activated (e.g. same tab clicked again)
     if (filterKey === this.activeFilter) {

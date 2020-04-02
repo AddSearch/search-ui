@@ -5,7 +5,7 @@ import { AUTOCOMPLETE_TYPE } from './index';
 import { setHideAutomatically, autocompleteSuggestions, autocompleteSearch, setActiveSuggestion } from '../../actions/autocomplete';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 import { addClickTrackers } from '../../util/analytics';
 import { redirectToSearchResultsPage } from '../../util/history';
@@ -14,21 +14,22 @@ import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
 export default class Autocomplete {
 
-  constructor(client, conf) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
+    this.reduxStore = reduxStore;
     this.conf = conf;
     this.lastOnmouseOver = null;
 
     if (this.conf.hideAutomatically === false) {
-      getStore().dispatch(setHideAutomatically(false));
+      this.reduxStore.dispatch(setHideAutomatically(false));
     }
 
     const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
     handlebars.registerHelper('selectSearchResultCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'autocomplete', (state) => this.render(state));
-      observeStoreByKey(getStore(), 'keyword', (state) => this.keywordChanged(state));
+      observeStoreByKey(this.reduxStore, 'autocomplete', (state) => this.render(state));
+      observeStoreByKey(this.reduxStore, 'keyword', (state) => this.keywordChanged(state));
     }
 
     if (conf.infiniteScrollElement) {
@@ -44,10 +45,10 @@ export default class Autocomplete {
     this.conf.sources.forEach(v => {
       const client = v.client || this.client;
       if (v.type === AUTOCOMPLETE_TYPE.SUGGESTIONS) {
-        getStore().dispatch(autocompleteSuggestions(client, keyword));
+        this.reduxStore.dispatch(autocompleteSuggestions(client, keyword));
       }
       else if (v.type === AUTOCOMPLETE_TYPE.SEARCH) {
-        getStore().dispatch(autocompleteSearch(client, v.jsonKey, keyword));
+        this.reduxStore.dispatch(autocompleteSearch(client, v.jsonKey, keyword));
       }
     });
   }
@@ -58,7 +59,7 @@ export default class Autocomplete {
       const client = v.client;
       if (client && v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         client.nextPage();
-        getStore().dispatch(autocompleteSearch(client, v.jsonKey, keyword, true));
+        this.reduxStore.dispatch(autocompleteSearch(client, v.jsonKey, keyword, true));
       }
     });
   }
@@ -114,7 +115,7 @@ export default class Autocomplete {
 
   suggestionMouseDown(e) {
     const keyword = e.target.getAttribute('data-keyword');
-    const store = getStore();
+    const store = this.reduxStore;
     store.dispatch(setKeyword(keyword, true));
 
     // Redirect to search results page
@@ -134,17 +135,17 @@ export default class Autocomplete {
     // Fire once
     if (index !== null && index !== this.lastOnmouseOver) {
       this.lastOnmouseOver = index;
-      getStore().dispatch(setActiveSuggestion(index, false));
+      this.reduxStore.dispatch(setActiveSuggestion(index, false));
     }
   }
 
 
   onScroll() {
-    const autocompleteState = getStore().getState().autocomplete;
-    if (autocompleteState.pendingRequests.length !== 0) {
+    const autocompleteState = this.reduxStore.getState().autocomplete;
+    if (autocompleteState.pendingRequests.length === 0) {
       const scrollable = this.conf.infiniteScrollElement;
       if (Math.ceil(scrollable.offsetHeight + scrollable.scrollTop) >= scrollable.scrollHeight) {
-        const keyword = getStore().getState().keyword.value;
+        const keyword = this.reduxStore.getState().keyword.value;
         this.loadMore(keyword);
       }
     }
