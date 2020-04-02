@@ -1,7 +1,7 @@
 import './filters.scss';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { setHistory, jsonToUrlParam, HISTORY_PARAMETERS } from '../../util/history';
 
 
@@ -60,12 +60,13 @@ export function createFilterObject(state) {
  */
 export default class FilterStateObserver {
 
-  constructor(client, createFilterObjectFunction, onFilterChange) {
+  constructor(client, reduxStore, createFilterObjectFunction, onFilterChange) {
     this.client = client;
+    this.reduxStore = reduxStore;
     this.createFilterObjectFunction = createFilterObjectFunction;
     this.onFilterChange = onFilterChange;
 
-    observeStoreByKey(getStore(), 'filters', state => this.onFilterStateChange(state));
+    observeStoreByKey(this.reduxStore, 'filters', state => this.onFilterStateChange(state));
   }
 
 
@@ -77,9 +78,9 @@ export default class FilterStateObserver {
       const filterObject = this.createFilterObjectFunction(state);
       this.client.setFilterObject(filterObject);
 
-      const keyword = getStore().getState().keyword.value;
-      getStore().dispatch(setPage(this.client, 1));
-      getStore().dispatch(search(this.client, keyword, null));
+      const keyword = this.reduxStore.getState().keyword.value;
+      this.reduxStore.dispatch(setPage(this.client, 1));
+      this.reduxStore.dispatch(search(this.client, keyword, null));
     }
 
     // Custom function to control conditional visibility (e.g. show a component only when a certain filter is active)
