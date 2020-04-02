@@ -12,7 +12,7 @@ import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
 import SegmentedResults from './components/segmentedresults';
 import SortBy from './components/sortby';
-import { initRedux, getStore } from './store';
+import { initRedux } from './store';
 import { setExternalAnalyticsCallback } from './util/analytics';
 import { registerDefaultHelpers, registerHelper } from './util/handlebars';
 import { initFromURL } from './util/history';
@@ -37,7 +37,7 @@ export default class AddSearchUI {
     this.segmentedSearchClients = {};
     this.settings = settings || {};
     this.hasSearchResultsComponent = false;
-    initRedux(this.settings);
+    this.reduxStore = initRedux(this.settings);
   }
 
 
@@ -48,7 +48,7 @@ export default class AddSearchUI {
     this.client.setCollectAnalytics(false);
     setExternalAnalyticsCallback(this.settings.analyticsCallback);
 
-    getStore().dispatch(setSearchResultsPageUrl(this.settings.searchResultsPageUrl));
+    this.reduxStore.dispatch(setSearchResultsPageUrl(this.settings.searchResultsPageUrl));
 
     // Possible custom function to create filter group with custom and/or logic
     const createFilterObjectFunction = this.settings && this.settings.createFilterObjectFunction ?
@@ -56,7 +56,7 @@ export default class AddSearchUI {
 
     // Handle browser history if the user is on a results page (i,e. not just a search field on any page)
     if (this.hasSearchResultsComponent) {
-      initFromURL(this.client,
+      initFromURL(this.client, this.reduxStore,
         createFilterObjectFunction,
         (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo),
         this.settings.matchAllQuery);
@@ -68,22 +68,17 @@ export default class AddSearchUI {
     }
 
     // FilterStateObserver to update client's filter object when any of the filters change
-    new FilterStateObserver(this.client, createFilterObjectFunction, this.settings.onFilterChange);
+    new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange);
 
-    getStore().dispatch(start());
-  }
-
-
-  getReduxStore() {
-    return getStore();
+    this.reduxStore.dispatch(start());
   }
 
 
   executeSearch(keyword, onResultsScrollTo) {
-    getStore().dispatch(search(this.client, keyword, onResultsScrollTo));
+    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo));
 
     for (let key in this.segmentedSearchClients) {
-      getStore().dispatch(segmentedSearch(this.segmentedSearchClients[key], key, keyword));
+      this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key], key, keyword));
     }
   }
 
@@ -94,11 +89,11 @@ export default class AddSearchUI {
 
   initFromClientSettings() {
     const paging = this.client.getSettings().paging;
-    getStore().dispatch(sortBy(this.client, paging.sortBy, paging.sortOrder));
+    this.reduxStore.dispatch(sortBy(this.client, paging.sortBy, paging.sortOrder));
   }
 
   matchAllQuery(onResultsScrollTo) {
-    const store = getStore();
+    const store = this.reduxStore;
     if (store.getState().keyword.value === '') {
       store.dispatch(setKeyword(MATCH_ALL_QUERY, false));
       this.executeSearch(MATCH_ALL_QUERY, onResultsScrollTo);
@@ -117,16 +112,16 @@ export default class AddSearchUI {
    */
 
   searchField(conf) {
-    new SearchField(this.client, conf, this.settings.matchAllQuery === true, (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo));
+    new SearchField(this.client, this.reduxStore, conf, this.settings.matchAllQuery === true, (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo));
   }
 
   autocomplete(conf) {
-    new Autocomplete(this.client, conf);
+    new Autocomplete(this.client, this.reduxStore, conf);
   }
 
   searchResults(conf) {
     this.hasSearchResultsComponent = true;
-    new SearchResults(this.client, conf);
+    new SearchResults(this.client, this.reduxStore, conf);
   }
 
   segmentedSearchResults(conf) {
@@ -136,31 +131,31 @@ export default class AddSearchUI {
     }
     this.hasSearchResultsComponent = true;
     this.segmentedSearchClients[conf.containerId] = conf.client;
-    new SegmentedResults(conf.client, conf);
+    new SegmentedResults(conf.client, this.reduxStore, conf);
   }
 
   facets(conf) {
-    new Facets(this.client, conf);
+    new Facets(this.client, this.reduxStore, conf);
   }
 
   filters(conf) {
-    new Filters(this.client, conf);
+    new Filters(this.client, this.reduxStore, conf);
   }
 
   sortBy(conf) {
-    new SortBy(this.client, conf);
+    new SortBy(this.client, this.reduxStore, conf);
   }
 
   pagination(conf) {
-    new Pagination(this.client, conf);
+    new Pagination(this.client, this.reduxStore, conf);
   }
 
   loadMore(conf) {
-    new LoadMore(this.client, conf);
+    new LoadMore(this.client, this.reduxStore, conf);
   }
 
   activeFilters(conf) {
-    new ActiveFilters(this.client, conf);
+    new ActiveFilters(this.client, this.reduxStore, conf);
   }
 
   /*
@@ -168,16 +163,16 @@ export default class AddSearchUI {
    */
 
   search(keyword) {
-    getStore().dispatch(setKeyword(keyword, true));
+    this.reduxStore.dispatch(setKeyword(keyword, true));
     this.executeSearch(keyword, null);
   }
 
   hideAutocomplete() {
-    getStore().dispatch(autocompleteHide());
+    this.reduxStore.dispatch(autocompleteHide());
   }
 
   clear() {
-    const store = getStore();
+    const store = this.reduxStore;
     store.dispatch(setKeyword('', true));
     store.dispatch(clearSelected(true));
 
