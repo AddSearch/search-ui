@@ -82,7 +82,6 @@ The configuration object can contain following values:
 | analyticsCallback | function | n/a | A function to call when an analytics event occurs. [Read more](#analytics) |
 | matchAllQuery | boolean | false | Execute "match all" query when the Search UI is started |
 | onFilterChange | function | n/a | Function to call when active filters are changed (for conditional visibility) |
-| reduxStore | Object | n/a | Redux store (with redux-thunk middleware) to use instead of creating a new one |
 | searchResultsPageUrl | String | null | Redirect the user to a separate search results page, instead of showing search results on the current page |
 
 After all UI components have been added to the SearchUI object, the start function must be called:
