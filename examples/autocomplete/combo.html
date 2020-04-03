@@ -45,28 +45,26 @@
       var autocompleteClient = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
       autocompleteClient.setPaging(1, 3, 'relevance', 'desc'); // Fetch 3 results by default
 
-      var autocompleteTemplate = `
-        <div class="addsearch-autocomplete">
-          <div>
-            <ul class="suggestions">
-              {{#each suggestions}}
-                <li data-keyword="{{value}}" data-index="{{@index}}" {{#equals ../activeSuggestionIndex @index}}class="active"{{/equals}}>
-                  {{value}}
-                </li>
-              {{/each}}
-            </ul>
-
-            <ul>
-              {{#each searchResults.results}}
-                <li>
-                  <strong>{{title}}</strong><br />
-                  {{{highlight}}}
-                </li>
-              {{/each}}
-            </ul>
-          </div>
-        </div>
-      `;
+      var autocompleteTemplate =
+        '   <div class="addsearch-autocomplete">' +
+        '     <div>' +
+        '       <ul class="suggestions">' +
+        '         {{#each suggestions}}' +
+        '           <li data-keyword="{{value}}" data-index="{{@index}}" {{#equals ../activeSuggestionIndex @index}}class="active"{{/equals}}>' +
+        '             {{value}}' +
+        '           </li>' +
+        '         {{/each}}' +
+        '       </ul>' +
+        '       <ul>' +
+        '         {{#each searchResults.results}}' +
+        '           <li>' +
+        '             <strong>{{title}}</strong><br />' +
+        '             {{{highlight}}}' +
+        '           </li>' +
+        '         {{/each}}' +
+        '       </ul>' +
+        '     </div>' +
+        '  </div>';
 
       searchui.autocomplete({
         containerId: 'autocomplete',
