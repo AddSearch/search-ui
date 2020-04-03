@@ -1,4 +1,4 @@
-export const AUTOCOMPLETE_FETCH = 'AUTOCOMPLETE_FETCH';
+export const AUTOCOMPLETE_FETCH_START = 'AUTOCOMPLETE_FETCH_START';
 export const AUTOCOMPLETE_SUGGESTIONS_RESULTS = 'AUTOCOMPLETE_SUGGESTIONS_RESULTS';
 export const AUTOCOMPLETE_SUGGESTIONS_CLEAR = 'AUTOCOMPLETE_SUGGESTIONS_CLEAR';
 export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
@@ -12,6 +12,7 @@ export const ARROW_UP = 'ARROW_UP';
 export const ARROW_DOWN = 'ARROW_DOWN';
 export const SET_ACTIVE_SUGGESTION = 'SET_ACTIVE_SUGGESTION';
 
+export const SUGGESTIONS_JSON_KEY = 'suggestions';
 
 export function autocompleteSuggestions(client, keyword) {
   if (!keyword || keyword === '') {
@@ -20,7 +21,7 @@ export function autocompleteSuggestions(client, keyword) {
     }
   }
   return dispatch => {
-    dispatch(autocompleteFetchStart());
+    dispatch(autocompleteFetchStart(SUGGESTIONS_JSON_KEY));
     client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(res)));
   }
 }
@@ -39,7 +40,7 @@ export function autocompleteSearch(client, jsonKey, keyword, appendResults) {
     }
   }
   return dispatch => {
-    dispatch(autocompleteFetchStart());
+    dispatch(autocompleteFetchStart(jsonKey));
     client.search(keyword, (res) => dispatch(autocompleteSearchResults(res, jsonKey, appendResults)));
   }
 }
@@ -53,9 +54,10 @@ export function autocompleteSearchResults(results, jsonKey, appendResults) {
   }
 }
 
-export function autocompleteFetchStart() {
+export function autocompleteFetchStart(jsonKey) {
   return {
-    type: AUTOCOMPLETE_FETCH
+    type: AUTOCOMPLETE_FETCH_START,
+    jsonKey
   }
 }
 
