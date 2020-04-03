@@ -22,16 +22,18 @@ export function setHistory(parameter, value) {
   }
 
   const url = window.location.href;
+  const hash = window.location.hash || '';
   const params = queryParamsToObject(url);
 
   // If pagination parameter and page=1, don't add to URL
   if (parameter === HISTORY_PARAMETERS.PAGE && value == 1) {
     delete params[parameter];
   }
+  // If search=*, don't add to URL
   else if (parameter === HISTORY_PARAMETERS.SEARCH && value == MATCH_ALL_QUERY) {
     delete params[parameter];
   }
-  // Add value to URL
+  // Add value to URL if an value exists and it's not empty
   else if (parameter && value !== null && value !== '') {
     params[parameter] = value;
   }
@@ -47,6 +49,9 @@ export function setHistory(parameter, value) {
   if (JSON.stringify(params) !== JSON.stringify({})) {
     stateUrl = stateUrl + '?' + objectToQueryParams(params);
   }
+
+  // Put hash back to URL
+  stateUrl = stateUrl + hash;
 
   // Firt time called
   if (history.state === null) {

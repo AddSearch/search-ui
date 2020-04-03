@@ -196,8 +196,8 @@ export default class SearchField {
         this.executeSearch(this.client, WARMUP_QUERY_PREFIX + Math.random());
         this.warmupQueryCompleted = true;
       }
-      getStore().dispatch(autocompleteShow());
     }
+    getStore().dispatch(autocompleteShow());
   }
 
 
