@@ -21,8 +21,11 @@ export function setHistory(parameter, value) {
     return;
   }
 
-  const url = window.location.href;
-  const hash = window.location.hash;
+  let url = window.location.href;
+  if (url.indexOf('#') !== -1) {
+    url = url.substring(0, url.indexOf('#'));
+  }
+  const hash = window.location.hash || '';
   const params = queryParamsToObject(url);
 
   // If pagination parameter and page=1, don't add to URL
@@ -50,10 +53,8 @@ export function setHistory(parameter, value) {
     stateUrl = stateUrl + '?' + objectToQueryParams(params);
   }
 
-  // Put hash back to URL if it's not there yet (looking at you Firefox)
-  if (stateUrl.indexOf('#') === -1 && hash) {
-    stateUrl = stateUrl + hash;
-  }
+  // Put hash back to URL
+  stateUrl = stateUrl + hash;
 
   // Firt time called
   if (history.state === null) {
