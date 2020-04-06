@@ -17,7 +17,7 @@ export default class SortBy {
     this.reduxStore = reduxStore;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(reduxStore, 'sortby', (state) => this.render(state));
+      observeStoreByKey(this.reduxStore, 'sortby', (state) => this.render(state));
     }
   }
 
