@@ -1,7 +1,7 @@
 import './searchresults.scss';
 import { SEARCHRESULTS_TEMPLATE, NO_RESULTS_TEMPLATE,SEARCHRESULT_IMAGE_TEMPLATE, NUMBER_OF_RESULTS_TEMPLATE} from './templates';
 import handlebars from 'handlebars';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 import { addClickTrackers } from '../../util/analytics';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
