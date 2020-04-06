@@ -141,7 +141,7 @@ export default class Autocomplete {
 
   onScroll() {
     const autocompleteState = getStore().getState().autocomplete;
-    if (autocompleteState.pendingRequests.length !== 0) {
+    if (autocompleteState.pendingRequests.length === 0) {
       const scrollable = this.conf.infiniteScrollElement;
       if (Math.ceil(scrollable.offsetHeight + scrollable.scrollTop) >= scrollable.scrollHeight) {
         const keyword = getStore().getState().keyword.value;
