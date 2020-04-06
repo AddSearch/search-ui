@@ -4,7 +4,6 @@ import { search } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
 import { setActiveFilters, setActiveFacets } from '../actions/filters';
-import { getStore } from '../store';
 
 export const HISTORY_PARAMETERS = {
   SEARCH: 'search',
@@ -77,22 +76,21 @@ export function getQueryParam(url, param) {
 }
 
 
-export function initFromURL(client, createFilterObjectFunction, searchFunction, hasMatchAllQuery) {
+export function initFromURL(client, reduxStore, createFilterObjectFunction, searchFunction, hasMatchAllQuery) {
   // Initial load
   const url = window.location.href;
   const qs = queryParamsToObject(url);
-  const store = getStore();
-  handleURLParams(store, client, qs, createFilterObjectFunction, searchFunction, false);
+  handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, false);
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
     const qs = queryParamsToObject(window.location.href);
-    handleURLParams(store, client, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery);
+    handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery);
   }
 }
 
 
-function handleURLParams(store, client, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery) {
+function handleURLParams(client, store, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery) {
   let hasFacetsOrFilters = false;
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
     // Take active filters from URL
@@ -167,7 +165,7 @@ export function queryParamsToObject(url) {
 
   qsArr.forEach(v => {
     const kv = v.split('=');
-    if (kv[0] && kv[0].length > 0) {
+    if (kv[0] && kv[0].length > 0 && kv.length > 1) {
       obj[kv[0]] = decodeURIComponent(kv[1]);
     }
   });

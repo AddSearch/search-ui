@@ -3,32 +3,33 @@ import { FACETS_TEMPLATE } from './templates';
 import { toggleFacetFilter } from '../../actions/filters';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 
 
 export default class Facets {
 
-  constructor(client, conf) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
+    this.reduxStore = reduxStore;
     this.conf = conf;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'search', (search) => this.render(search));
+      observeStoreByKey(this.reduxStore, 'search', (search) => this.render(search));
     }
   }
 
 
   setFilter(value, active) {
     // Dispatch filter
-    getStore().dispatch(toggleFacetFilter(this.conf.field, value));
+    this.reduxStore.dispatch(toggleFacetFilter(this.conf.field, value));
 
     // Reset paging
-    getStore().dispatch(setPage(this.client, 1));
+    this.reduxStore.dispatch(setPage(this.client, 1));
 
     // Refresh search
-    const keyword = getStore().getState().keyword.value;
-    getStore().dispatch(search(this.client, keyword));
+    const keyword = this.reduxStore.getState().keyword.value;
+    this.reduxStore.dispatch(search(this.client, keyword));
   }
 
 
@@ -49,7 +50,7 @@ export default class Facets {
 
     // Read active facets from redux state
     let activeFacets = [];
-    const activeFacetState = getStore().getState().filters.activeFacets;
+    const activeFacetState = this.reduxStore.getState().filters.activeFacets;
     if (activeFacetState[facetField]) {
       for (let value in activeFacetState[facetField]) {
         activeFacets.push(value);

@@ -3,18 +3,19 @@ import { LOAD_MORE_TEMPLATE } from './templates';
 import { LOAD_MORE_TYPE } from './index';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 
 
 export default class LoadMore {
 
-  constructor(client, conf) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
+    this.reduxStore = reduxStore;
     this.conf = conf;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'search', (searchState) => this.render(searchState));
+      observeStoreByKey(this.reduxStore, 'search', (searchState) => this.render(searchState));
     }
 
     if (conf.type === LOAD_MORE_TYPE.INFINITE_SCROLL) {
@@ -57,20 +58,20 @@ export default class LoadMore {
 
 
   loadMore() {
-    const currentPage = getStore().getState().pagination.page || 1;
+    const currentPage = this.reduxStore.getState().pagination.page || 1;
     const pageToDispatch = currentPage + 1;
 
     // Dispatch the new page number
-    getStore().dispatch(setPage(this.client, pageToDispatch, false));
+    this.reduxStore.dispatch(setPage(this.client, pageToDispatch, false));
 
     // Fetch more results
-    const keyword = getStore().getState().keyword.value;
-    getStore().dispatch(search(this.client, keyword, null, true));
+    const keyword = this.reduxStore.getState().keyword.value;
+    this.reduxStore.dispatch(search(this.client, keyword, null, true));
   }
 
 
   onScroll() {
-    const isLoading = getStore().getState().search.loading;
+    const isLoading = this.reduxStore.getState().search.loading;
     const scrollElement = document.querySelector('#' + this.conf.containerId + ' .loadmore-infinite-scroll');
 
     if (!isLoading && scrollElement) {

@@ -1,15 +1,16 @@
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 import { addClickTrackers } from '../../util/analytics';
 
 export default class SegmentedResults {
 
-  constructor(client, conf) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
+    this.reduxStore = reduxStore;
     this.conf = conf;
 
     if (validateContainer(conf.containerId) && conf.template) {
-      observeStoreByKey(getStore(), 'segmentedsearch', (data) => this.render(data));
+      observeStoreByKey(this.reduxStore, 'segmentedsearch', (data) => this.render(data));
     }
   }
 
