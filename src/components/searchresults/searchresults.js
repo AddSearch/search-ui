@@ -1,7 +1,7 @@
 import './searchresults.scss';
 import { SEARCHRESULTS_TEMPLATE, NO_RESULTS_TEMPLATE,SEARCHRESULT_IMAGE_TEMPLATE, NUMBER_OF_RESULTS_TEMPLATE} from './templates';
 import handlebars from 'handlebars';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { renderToContainer, validateContainer } from '../../util/dom';
 import { addClickTrackers } from '../../util/analytics';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
@@ -9,9 +9,10 @@ import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
 export default class SearchResults {
 
-  constructor(client, conf) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
+    this.reduxStore = reduxStore;
 
     handlebars.registerPartial('numberOfResultsTemplate', this.conf.template_resultcount || NUMBER_OF_RESULTS_TEMPLATE);
     handlebars.registerPartial('searchResultImageTemplate', this.conf.template_image || SEARCHRESULT_IMAGE_TEMPLATE);
@@ -20,13 +21,13 @@ export default class SearchResults {
     handlebars.registerHelper('selectCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'search', () => this.render());
+      observeStoreByKey(this.reduxStore, 'search', () => this.render());
     }
   }
 
 
   render() {
-    const search = getStore().getState().search;
+    const search = this.reduxStore.getState().search;
     const data = search.results || {};
     data.resultcount = data.hits && this.conf.showNumberOfResults !== false;
     data.keyword = search.keyword;

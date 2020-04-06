@@ -5,7 +5,7 @@ import handlebars from 'handlebars';
 import { autocompleteHide, autocompleteShow, keyboardEvent, setActiveSuggestion, ARROW_DOWN, ARROW_UP } from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
-import { getStore, observeStoreByKey } from '../../store';
+import { observeStoreByKey } from '../../store';
 import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { validateContainer } from '../../util/dom';
@@ -21,20 +21,21 @@ const KEYCODES = {
 
 export default class SearchField {
 
-  constructor(client, conf, matchAllQueryWhenSearchFieldEmpty, onSearch) {
+  constructor(client, reduxStore, conf, matchAllQueryWhenSearchFieldEmpty, onSearch) {
     this.client = client;
+    this.reduxStore = reduxStore;
     this.conf = conf;
     this.matchAllQuery = matchAllQueryWhenSearchFieldEmpty;
     this.firstRenderDone = false;
     this.onSearch = onSearch;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(getStore(), 'keyword', (kw) => {
+      observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
         if (kw.searchFieldContainerId === this.conf.containerId || kw.searchFieldContainerId === null) {
           this.render(kw.value);
         }
       });
-      observeStoreByKey(getStore(), 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
+      observeStoreByKey(this.reduxStore, 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
     }
   }
 
@@ -48,7 +49,7 @@ export default class SearchField {
       }
       // Revert to original typed keyword
       else if (state.activeSuggestionIndex === null) {
-        this.render(getStore().getState().keyword.value);
+        this.render(this.reduxStore.getState().keyword.value);
       }
     }
   }
@@ -60,16 +61,15 @@ export default class SearchField {
       kw = MATCH_ALL_QUERY;
     }
 
-    const store = getStore();
     if (kw.indexOf(WARMUP_QUERY_PREFIX) !== 0) {
-      store.dispatch(setPage(client, 1));
+      this.reduxStore.dispatch(setPage(client, 1));
     }
     this.onSearch(kw);
   }
 
 
   redirectOrSearch(keyword) {
-    const searchResultsPageUrl = getStore().getState().search.searchResultsPageUrl;
+    const searchResultsPageUrl = this.reduxStore.getState().search.searchResultsPageUrl;
 
     // Redirect to results page
     if (searchResultsPageUrl &&
@@ -116,13 +116,13 @@ export default class SearchField {
 
     // Event listeners to the possible search button
     if (container.querySelector('button')) {
-      container.querySelector('button').onclick = (e) => {
+      container.querySelector('button').onclick = () => {
         let keyword = this.field.value;
         if (keyword === '' && this.matchAllQuery) {
           keyword = MATCH_ALL_QUERY;
         }
-        getStore().dispatch(setKeyword(keyword, true));
-        getStore().dispatch(autocompleteHide());
+        this.reduxStore.dispatch(setKeyword(keyword, true));
+        this.reduxStore.dispatch(autocompleteHide());
         this.redirectOrSearch(keyword);
       }
     }
@@ -148,7 +148,7 @@ export default class SearchField {
 
   // Handle characters and backspace
   oninput(e) {
-    const store = getStore();
+    const store = this.reduxStore;
     let keyword = e.target.value;
     if (keyword === '' && this.matchAllQuery) {
       keyword = MATCH_ALL_QUERY;
@@ -168,7 +168,7 @@ export default class SearchField {
 
   // Handle keyboard navi
   onkeyup(e) {
-    const store = getStore();
+    const store = this.reduxStore;
     if (e.keyCode === KEYCODES.ARROW_DOWN) {
       store.dispatch(keyboardEvent(ARROW_DOWN));
     }
@@ -180,7 +180,7 @@ export default class SearchField {
   // Handle enter
   onkeypress(e) {
     if (e.keyCode === KEYCODES.ENTER) {
-      const store = getStore();
+      const store = this.reduxStore;
       const keyword = e.target.value;
       store.dispatch(setKeyword(keyword, true));
       store.dispatch(autocompleteHide());
@@ -197,13 +197,13 @@ export default class SearchField {
         this.warmupQueryCompleted = true;
       }
     }
-    getStore().dispatch(autocompleteShow());
+    this.reduxStore.dispatch(autocompleteShow());
   }
 
 
   onblur() {
-    if (getStore().getState().autocomplete.hideAutomatically) {
-      getStore().dispatch(autocompleteHide());
+    if (this.reduxStore.getState().autocomplete.hideAutomatically) {
+      this.reduxStore.dispatch(autocompleteHide());
     }
   }
 }
