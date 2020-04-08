@@ -42,6 +42,14 @@ describe('history', () => {
       assert.deepEqual(queryParamsToObject(url), expectedValue);
     });
 
+    it('return a single query parameter with space', () => {
+      const url = 'https://addsearch.com/test?foo=bar+bar';
+      const expectedValue = {
+        foo: 'bar bar'
+      };
+      assert.deepEqual(queryParamsToObject(url), expectedValue);
+    });
+
     it('return a bunch of query parameter', () => {
       const url = 'https://addsearch.com/test?foo=bar&a=b&bar=b%C3%B6';
       const expectedValue = {
