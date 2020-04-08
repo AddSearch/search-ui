@@ -166,7 +166,9 @@ export function queryParamsToObject(url) {
   qsArr.forEach(v => {
     const kv = v.split('=');
     if (kv[0] && kv[0].length > 0 && kv.length > 1) {
-      obj[kv[0]] = decodeURIComponent(kv[1]);
+      let value = kv[1] || '';
+      value = value.replace(/\+/g, '%20');
+      obj[kv[0]] = decodeURIComponent(value);
     }
   });
 
