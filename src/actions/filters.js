@@ -1,4 +1,5 @@
 export const TOGGLE_FILTER = 'TOGGLE_FILTER';
+export const SET_RANGE_FILTER = 'SET_RANGE_FILTER';
 export const REGISTER_FILTER = 'REGISTER_FILTER';
 export const SET_ACTIVE_FILTERS = 'SET_ACTIVE_FILTERS';
 export const SET_ACTIVE_FACETS = 'SET_ACTIVE_FACETS';
@@ -18,6 +19,15 @@ export function toggleFilter(filterName, value, refreshSearch) {
     filterName,
     value,
     refreshSearch
+  }
+}
+
+export function setRangeFilter(field, from, to) {
+  return {
+    type: SET_RANGE_FILTER,
+    field,
+    from,
+    to
   }
 }
 

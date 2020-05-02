@@ -1,5 +1,6 @@
 import {
   TOGGLE_FILTER,
+  SET_RANGE_FILTER,
   REGISTER_FILTER,
   SET_ACTIVE_FILTERS,
   SET_ACTIVE_FACETS,
@@ -11,6 +12,7 @@ const initialState = {
   allAvailableFilters: [],
   activeFilters: {},
   activeFacets: {},
+  activeRangeFilters: {},
   refreshSearch: true
 };
 
@@ -44,10 +46,30 @@ export default function filters(state = initialState, action) {
       });
 
 
+    case SET_RANGE_FILTER:
+      let nextActiveRanges = Object.assign({}, state.activeRangeFilters);
+      nextActiveRanges[action.field] = {};
+      if (action.from !== null) {
+        nextActiveRanges[action.field].gte = action.from;
+      }
+      if (action.to !== null) {
+        nextActiveRanges[action.field].lte = action.to;
+      }
+      if (action.from === null && action.to === null) {
+        delete nextActiveRanges[action.field];
+      }
+      return Object.assign({}, state, {
+        activeRangeFilters: nextActiveRanges,
+        refreshSearch: true
+      });
+
+
+
     case CLEAR_SELECTED_FILTERS_AND_FACETS:
       return Object.assign({}, state, {
         activeFacets: {},
         activeFilters: {},
+        activeRangeFilters: {},
         refreshSearch: action.refreshSearch === false ? false : true
       });
 
