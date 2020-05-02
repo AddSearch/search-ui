@@ -7,6 +7,7 @@ import {
   TOGGLE_FACET_FILTER,
   CLEAR_SELECTED_FILTERS_AND_FACETS
 } from '../actions/filters';
+import { FILTER_TYPE } from '../components/filters';
 
 const initialState = {
   allAvailableFilters: [],
@@ -21,8 +22,18 @@ export default function filters(state = initialState, action) {
   switch (action.type) {
     case REGISTER_FILTER:
       let nextAllAvailableFilters = state.allAvailableFilters.slice();
-      const options = Object.assign({}, action.filterObj.options);
-      nextAllAvailableFilters.push(options);
+
+      // Range filter. Construct object
+      if (action.filterObj.type === FILTER_TYPE.RANGE) {
+        let range = {};
+        range[action.filterObj.field] = {label: action.filterObj.name}
+        nextAllAvailableFilters.push(range);
+      }
+      // Other filters
+      else if (action.filterObj.options) {
+        const options = Object.assign({}, action.filterObj.options);
+        nextAllAvailableFilters.push(options);
+      }
       return Object.assign({}, state, {
         allAvailableFilters: nextAllAvailableFilters
       });
