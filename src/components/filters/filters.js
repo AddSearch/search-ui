@@ -4,11 +4,12 @@ import {
   FILTERS_RADIOGROUP_TEMPLATE,
   FILTERS_SELECTLIST_TEMPLATE,
   FILTERS_TABS_TEMPLATE,
-  FILTERS_TAGS_TEMPLATE
+  FILTERS_TAGS_TEMPLATE,
+  FILTERS_RANGE_TEMPLATE
 } from './templates';
 import { FILTER_TYPE } from './index';
 import { observeStoreByKey } from '../../store';
-import { toggleFilter, registerFilter, clearSelected } from '../../actions/filters';
+import { toggleFilter, setRangeFilter, registerFilter, clearSelected } from '../../actions/filters';
 import { renderToContainer, attachEventListeners, validateContainer } from '../../util/dom';
 
 export const NO_FILTER_NAME = 'nofilter';
@@ -24,6 +25,18 @@ export default class Filters {
     if (validateContainer(conf.containerId)) {
       this.reduxStore.dispatch(registerFilter(this.conf));
       observeStoreByKey(this.reduxStore, 'filters', (state) => this.render(state));
+
+      // Observe search results for range filters to set min/max values
+      if (this.conf.type === FILTER_TYPE.RANGE) {
+        observeStoreByKey(this.reduxStore, 'search', (state) => this.searchResultsChanged(state));
+      }
+    }
+  }
+
+
+  searchResultsChanged(state) {
+    if (!state.loading && state.results.fieldStats[this.conf.field]) {
+      this.render(this.reduxStore.getState().filters);
     }
   }
 
@@ -71,7 +84,19 @@ export default class Filters {
     else if (this.conf.type === FILTER_TYPE.SELECT_LIST) {
       template = FILTERS_SELECTLIST_TEMPLATE;
     }
-
+    else if (this.conf.type === FILTER_TYPE.RANGE) {
+      if (state.activeRangeFilters[this.conf.field]) {
+        data.from = state.activeRangeFilters[this.conf.field].gte;
+        data.to = state.activeRangeFilters[this.conf.field].lte;
+      }
+      const res = this.reduxStore.getState().search.results;
+      if (res && res.fieldStats && res.fieldStats[this.conf.field]) {
+        const { min, max } = res.fieldStats[this.conf.field];
+        data.fromPlaceholder = min === 'Infinity' ? '' : min;
+        data.toPlaceholder = max === '-Infinity' ? '' : max;
+      }
+      template = FILTERS_RANGE_TEMPLATE;
+    }
 
     // Render and attach events to elements with data-filter attribute
     const container = renderToContainer(this.conf.containerId, this.conf.template || template, data);
@@ -97,6 +122,19 @@ export default class Filters {
       for (let i=0; i<radios.length; i++) {
         radios[i].addEventListener('click', (e) => this.singleActiveChangeEvent(e.target.value));
       }
+    }
+
+    // Range filter
+    if (this.conf.type === FILTER_TYPE.RANGE) {
+      const inputs = container.querySelectorAll('input');
+      for (let i=0; i<inputs.length; i++) {
+        inputs[i].addEventListener('change', (e) => {
+          this.rangeChangeEvent(this.conf.field,
+                                container.querySelector('input[name="from"]').value,
+                                container.querySelector('input[name="to"]').value)
+        });
+      }
+      container.querySelector('button').addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
     }
 
     // Attach event listeners to other filter types
@@ -137,4 +175,10 @@ export default class Filters {
     }
   }
 
+
+  rangeChangeEvent(field, from, to) {
+    const fromInt = from !== '' ? parseInt(from, 10) : null;
+    const toInt = to !== '' ? parseInt(to, 10) : null;
+    this.reduxStore.dispatch(setRangeFilter(field, isNaN(fromInt) ? null : fromInt, isNaN(toInt) ? null : toInt));
+  }
 }
