@@ -49,3 +49,12 @@ export const FILTERS_RADIOGROUP_TEMPLATE = `
     {{/each}}
   </div>
 `;
+
+
+export const FILTERS_RANGE_TEMPLATE = `
+  <div class="addsearch-filters-range">
+    <label>{{label}}</label>
+    <input type="text" name="from" value="{{from}}" placeholder="{{fromPlaceholder}}"> - <input type="text" name="to" value="{{to}}" placeholder="{{toPlaceholder}}">
+    <div class="clear"><button>Clear</button></div>
+  </div>
+`;

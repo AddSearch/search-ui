@@ -46,6 +46,11 @@
         Active filters:
         <div id="active-filters-container"></div>
       </section>
+
+      <section>
+        Range filter:
+        <div id="range-filters-container"></div>
+      </section>
     </aside>
 
     <main>
@@ -88,8 +93,9 @@
       // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
       var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
 
-      // Get min and max prices from results in the received result set
+      // Get min and max prices from results
       client.addStatsField('custom_fields.price');
+      client.addStatsField('custom_fields.cal');
 
       // Define buckets for calorie filters
       var ranges = [
@@ -106,7 +112,8 @@
 
       // Search UI
       var conf = {
-        matchAllQuery: true
+        matchAllQuery: true,
+        debug: true
       };
       var searchui = new AddSearchUI(client, conf);
 
@@ -126,6 +133,14 @@
 
       searchui.activeFilters({
         containerId: 'active-filters-container'
+      });
+
+      searchui.filters({
+        containerId: 'range-filters-container',
+        type: AddSearchUI.FILTER_TYPE.RANGE,
+        label: 'Calorie range',
+        field: 'custom_fields.cal',
+        options: {}
       });
 
       searchui.pagination({

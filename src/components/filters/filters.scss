@@ -109,7 +109,16 @@
 
 .addsearch-filters-checkboxgroup {
   input[type="checkbox"] {
-
     margin-right: 7px;
+  }
+}
+
+.addsearch-filters-range {
+  label {
+    display: block;
+    padding: 4px 0;
+  }
+  input {
+    width: 30%;
   }
 }
