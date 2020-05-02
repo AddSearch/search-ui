@@ -26,7 +26,7 @@ export default class Filters {
       this.reduxStore.dispatch(registerFilter(this.conf));
       observeStoreByKey(this.reduxStore, 'filters', (state) => this.render(state));
 
-      // Observe search results for range filters to set min/max values
+      // Observe fieldStats from search results for range filters' min/max values
       if (this.conf.type === FILTER_TYPE.RANGE) {
         observeStoreByKey(this.reduxStore, 'search', (state) => this.searchResultsChanged(state));
       }
@@ -35,6 +35,7 @@ export default class Filters {
 
 
   searchResultsChanged(state) {
+    // Re-render if fieldStats of this field change
     if (!state.loading && state.results.fieldStats[this.conf.field]) {
       this.render(this.reduxStore.getState().filters);
     }
@@ -126,15 +127,7 @@ export default class Filters {
 
     // Range filter
     if (this.conf.type === FILTER_TYPE.RANGE) {
-      const inputs = container.querySelectorAll('input');
-      for (let i=0; i<inputs.length; i++) {
-        inputs[i].addEventListener('change', (e) => {
-          this.rangeChangeEvent(this.conf.field,
-                                container.querySelector('input[name="from"]').value,
-                                container.querySelector('input[name="to"]').value)
-        });
-      }
-      container.querySelector('button').addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
+      this.attachRangeFilterEvents(container);
     }
 
     // Attach event listeners to other filter types
@@ -143,6 +136,20 @@ export default class Filters {
         this.reduxStore.dispatch(toggleFilter(filterKey, 1));
       });
     }
+  }
+
+
+  attachRangeFilterEvents(container) {
+    const inputs = container.querySelectorAll('input');
+    for (let i=0; i<inputs.length; i++) {
+      inputs[i].addEventListener('change', (e) => {
+        this.rangeChangeEvent(this.conf.field,
+          container.querySelector('input[name="from"]').value,
+          container.querySelector('input[name="to"]').value)
+      });
+    }
+    // Clear button
+    container.querySelector('button').addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
   }
 
 
