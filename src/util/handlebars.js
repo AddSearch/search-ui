@@ -43,6 +43,10 @@ export function registerDefaultHelpers() {
     return arg1 < arg2 ? options.fn(this) : options.inverse(this);
   });
 
+  registerHelper('or', (arg1, arg2, options) => {
+    return arg1 ||  arg2 ? options.fn(this) : options.inverse(this);
+  });
+
   registerHelper('formatPrice', (price, locale, currency) => {
     if (typeof price == 'undefined' || typeof price != 'number' || !locale || !currency) {
       return '';
