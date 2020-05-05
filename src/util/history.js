@@ -165,10 +165,14 @@ export function queryParamsToObject(url) {
 
   qsArr.forEach(v => {
     const kv = v.split('=');
-    if (kv[0] && kv[0].length > 0 && kv.length > 1) {
-      let value = kv[1] || '';
-      value = value.replace(/\+/g, '%20');
-      obj[kv[0]] = decodeURIComponent(value);
+    if (kv[0] && kv[0].length > 0) {
+      let value = null;
+      if (kv.length > 1) {
+        value = kv[1] || '';
+        value = value.replace(/\+/g, '%20');
+        value = decodeURIComponent(value);
+      }
+      obj[kv[0]] = value;
     }
   });
 
@@ -187,8 +191,11 @@ export function objectToQueryParams(obj) {
       if (qs !== '') {
         qs = qs + '&';
       }
-      const value = obj[key] ? obj[key] : '';
-      qs = qs + key + '=' + encodeURIComponent(value);
+      let value = '';
+      if (obj[key] !== null && obj[key] !== undefined) {
+        value = '=' + encodeURIComponent(obj[key]);
+      }
+      qs = qs + key + value;
     }
   }
 
