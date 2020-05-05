@@ -55,6 +55,6 @@ export const FILTERS_RANGE_TEMPLATE = `
   <div class="addsearch-filters-range">
     <label>{{label}}</label>
     <input type="text" name="from" value="{{from}}" placeholder="{{fromPlaceholder}}"> - <input type="text" name="to" value="{{to}}" placeholder="{{toPlaceholder}}">
-    <div class="clear"><button>Clear</button></div>
+    {{#or from to}}<button>&#215;</button>{{/or}}
   </div>
 `;
