@@ -63,7 +63,7 @@ export default class Filters {
     }
 
     // If not active filters, set the "nofilter" active
-    if (!hasActiveFilter && data.options[NO_FILTER_NAME]) {
+    if (!hasActiveFilter && data.options && data.options[NO_FILTER_NAME]) {
       data.options[NO_FILTER_NAME].active = true;
     }
 
@@ -149,7 +149,10 @@ export default class Filters {
       });
     }
     // Clear button
-    container.querySelector('button').addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
+    const button = container.querySelector('button');
+    if (button) {
+      button.addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
+    }
   }
 
 
