@@ -51,6 +51,12 @@
         Range filter:
         <div id="range-filters-container"></div>
       </section>
+
+      <section>
+        Facets:
+        <div id="facets-container"></div>
+      </section>
+
     </aside>
 
     <main>
@@ -60,8 +66,8 @@
       </section>
 
       <section>
-        Pagination:
-        <div id="pagination-container"></div>
+        Load more results:
+        <div id="loadmore-container"></div>
       </section>
     </main>
 
@@ -73,16 +79,23 @@
         {{/if}}
 
         {{#each hits}}
-          <div>
-            <h3>
-              {{custom_fields.strMeal}}
-            </h3>
-            <div class="highlight">
-              <span class="main-image">
-                <img src="https://db9gablo5ticv.cloudfront.net/fooddemo-1cfa4d/imgs/thumb-{{id}}.jpg" alt="{{custom_fields.strMeal}}" />
-              </span>
-              {{{highlight}}}{{#not type "PROMOTED"}}&#8230;{{/not}}
-            </div>
+          <div class="item">
+            <span class="main-image">
+              <img src="https://db9gablo5ticv.cloudfront.net/fooddemo-1cfa4d/imgs/thumb-{{id}}.jpg" alt="{{custom_fields.strMeal}}" />
+            </span>
+            <span>
+              <h3>
+               {{custom_fields.strMeal}}
+              </h3>
+              Price: {{formatPrice custom_fields.price "en-US" "USD"}}<br />
+              Calories: {{custom_fields.cal}}<br />
+
+              Special diets:
+              {{#each custom_fields.diets}}
+                <b>{{this}}</b>
+              {{/each}}
+              {{#unless custom_fields.diets}}n/a{{/unless}}
+            </span>
           </div>
         {{/each}}
       </div>
@@ -138,14 +151,20 @@
       searchui.filters({
         containerId: 'range-filters-container',
         type: AddSearchUI.FILTER_TYPE.RANGE,
-        name: 'Calories',
         label: 'Calorie range',
-        field: 'custom_fields.cal',
-        options: {}
+        labelShort: 'Calories',
+        field: 'custom_fields.cal'
       });
 
-      searchui.pagination({
-        containerId: 'pagination-container'
+      searchui.facets({
+        containerId: 'facets-container',
+        field: 'custom_fields.diets'
+      });
+
+
+      searchui.loadMore({
+        containerId: 'loadmore-container',
+        type: AddSearchUI.LOAD_MORE_TYPE.BUTTON
       });
 
       searchui.start();
