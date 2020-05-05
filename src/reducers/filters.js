@@ -23,10 +23,12 @@ export default function filters(state = initialState, action) {
     case REGISTER_FILTER:
       let nextAllAvailableFilters = state.allAvailableFilters.slice();
 
-      // Range filter. Construct object
+      // Range filter. Construct object. Use labelShort if available
       if (action.filterObj.type === FILTER_TYPE.RANGE) {
         let range = {};
-        range[action.filterObj.field] = {label: action.filterObj.name}
+        range[action.filterObj.field] = {
+          label: action.filterObj.labelShort ? action.filterObj.labelShort : action.filterObj.label
+        };
         nextAllAvailableFilters.push(range);
       }
       // Other filters
