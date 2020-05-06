@@ -120,7 +120,7 @@ export default function filters(state = initialState, action) {
 
       return Object.assign({}, state, {
         activeFacets: nextActiveFacets,
-        refreshSearch: true
+        refreshSearch: action.refreshSearch === false ? false : true
       });
 
 
