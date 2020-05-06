@@ -53,9 +53,15 @@
       </section>
 
       <section>
-        Facets:
-        <div id="facets-container"></div>
+        Area:
+        <div id="area-facets-container"></div>
       </section>
+
+      <section>
+        Main ingredient:
+        <div id="ingredient-facets-container"></div>
+      </section>
+
 
     </aside>
 
@@ -120,7 +126,8 @@
       client.addRangeFacet('custom_fields.cal', ranges);
 
       // Special diets as facets
-      client.addFacetField('custom_fields.diets');
+      client.addFacetField('custom_fields.strArea');
+      client.addFacetField('custom_fields.strIngredient1');
 
 
       // Search UI
@@ -158,8 +165,15 @@
       });
 
       searchui.facets({
-        containerId: 'facets-container',
-        field: 'custom_fields.diets'
+        containerId: 'area-facets-container',
+        field: 'custom_fields.strArea',
+        sticky: true
+      });
+
+      searchui.facets({
+        containerId: 'ingredient-facets-container',
+        field: 'custom_fields.strIngredient1',
+        sticky: true
       });
 
 
