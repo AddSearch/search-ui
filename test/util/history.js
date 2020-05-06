@@ -83,7 +83,7 @@ describe('history', () => {
         z: null,
         g: ''
       };
-      const url = 'foo=bar&a=f%C3%B6&z=&g=';
+      const url = 'foo=bar&a=f%C3%B6&z&g=';
       assert.deepEqual(objectToQueryParams(obj), url);
     });
   })
