@@ -132,8 +132,7 @@
 
       // Search UI
       var conf = {
-        matchAllQuery: true,
-        debug: true
+        matchAllQuery: true
       };
       var searchui = new AddSearchUI(client, conf);
 
@@ -142,8 +141,7 @@
         containerId: 'searchfield-container',
         autofocus: true,
         placeholder: 'Keyword..',
-        button: 'Search',
-        searchAsYouType: true
+        button: 'Search'
       });
 
       searchui.searchResults({
