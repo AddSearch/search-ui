@@ -126,7 +126,7 @@ export default class Filters {
     }
 
     // Range filter
-    if (this.conf.type === FILTER_TYPE.RANGE) {
+    else if (this.conf.type === FILTER_TYPE.RANGE) {
       this.attachRangeFilterEvents(container);
     }
 
