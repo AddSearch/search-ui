@@ -120,5 +120,9 @@
   }
   input {
     width: 30%;
+
+    &[data-valid='false'] {
+      border-color: red;
+    }
   }
 }
