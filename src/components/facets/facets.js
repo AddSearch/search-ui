@@ -21,15 +21,8 @@ export default class Facets {
 
 
   setFilter(value, active) {
-    // Dispatch filter
-    this.reduxStore.dispatch(toggleFacetFilter(this.conf.field, value));
-
-    // Reset paging
-    this.reduxStore.dispatch(setPage(this.client, 1));
-
-    // Refresh search
-    const keyword = this.reduxStore.getState().keyword.value;
-    this.reduxStore.dispatch(search(this.client, keyword));
+    // Dispatch facet and refresh search
+    this.reduxStore.dispatch(toggleFacetFilter(this.conf.field, value, true));
   }
 
 
