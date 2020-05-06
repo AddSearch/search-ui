@@ -43,19 +43,30 @@ export default class Facets {
       facets = results.facets[facetField];
     }
 
-    // Possible filter
+
+    // Read active facets from redux state
+    const activeFacets = this.getActiveFacets(facetField);
+
+
+    // Sticky facets (i.e. not updating if keyword is unchanged)
+    if (this.conf.sticky === true) {
+      // Keyword has changed, facets are not saved yet, or no selected facets. Show new incoming facets
+      if (this.keyword !== results.keyword || !this.stickyFacets || activeFacets.length === 0) {
+        this.keyword = results.keyword;
+        this.stickyFacets = facets;
+      }
+      // Keyword not changed. Show old facets
+      else {
+        facets = this.stickyFacets;
+      }
+    }
+
+
+    // Possible filtering function to remove unwanted facets
     if (this.conf.facetsFilter) {
       facets = this.conf.facetsFilter(facets);
     }
 
-    // Read active facets from redux state
-    let activeFacets = [];
-    const activeFacetState = this.reduxStore.getState().filters.activeFacets;
-    if (activeFacetState[facetField]) {
-      for (let value in activeFacetState[facetField]) {
-        activeFacets.push(value);
-      }
-    }
 
     // Render
     const data = {
@@ -75,5 +86,18 @@ export default class Facets {
         this.setFilter(e.target.value, e.target.checked);
       };
     }
+  }
+
+
+  getActiveFacets(facetField) {
+    // Read active facets from redux state
+    let activeFacets = [];
+    const activeFacetState = this.reduxStore.getState().filters.activeFacets;
+    if (activeFacetState[facetField]) {
+      for (let value in activeFacetState[facetField]) {
+        activeFacets.push(value);
+      }
+    }
+    return activeFacets;
   }
 }
