@@ -36,7 +36,7 @@ export default class Filters {
 
   searchResultsChanged(state) {
     // Re-render if fieldStats of this field change
-    if (!state.loading && state.results.fieldStats[this.conf.field]) {
+    if (!state.loading && state.results.fieldStats && state.results.fieldStats[this.conf.field]) {
       this.render(this.reduxStore.getState().filters);
     }
   }
@@ -139,23 +139,6 @@ export default class Filters {
   }
 
 
-  attachRangeFilterEvents(container) {
-    const inputs = container.querySelectorAll('input');
-    for (let i=0; i<inputs.length; i++) {
-      inputs[i].addEventListener('change', (e) => {
-        this.rangeChangeEvent(this.conf.field,
-          container.querySelector('input[name="from"]').value,
-          container.querySelector('input[name="to"]').value)
-      });
-    }
-    // Clear button
-    const button = container.querySelector('button');
-    if (button) {
-      button.addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
-    }
-  }
-
-
   singleActiveChangeEvent(filterKey) {
     const isNoFilter = filterKey === NO_FILTER_NAME;
     const store = this.reduxStore;
@@ -186,9 +169,35 @@ export default class Filters {
   }
 
 
+  attachRangeFilterEvents(container) {
+    const inputs = container.querySelectorAll('input');
+    for (let i=0; i<inputs.length; i++) {
+      inputs[i].addEventListener('change', (e) => {
+
+        // Validate with the regex rule given in conf
+        if (this.conf.validator && !(new RegExp(this.conf.validator)).test(e.target.value)) {
+          e.target.setAttribute('data-valid', 'false');
+        }
+        // Value valid (or no validator)
+        else {
+          e.target.setAttribute('data-valid', 'true');
+          this.rangeChangeEvent(this.conf.field,
+            container.querySelector('input[name="from"]').value,
+            container.querySelector('input[name="to"]').value)
+        }
+      });
+    }
+    // Clear button
+    const button = container.querySelector('button');
+    if (button) {
+      button.addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
+    }
+  }
+
+
   rangeChangeEvent(field, from, to) {
-    const fromInt = from !== '' ? parseInt(from, 10) : null;
-    const toInt = to !== '' ? parseInt(to, 10) : null;
-    this.reduxStore.dispatch(setRangeFilter(field, isNaN(fromInt) ? null : fromInt, isNaN(toInt) ? null : toInt));
+    const fromVal = from !== '' ? from : null;
+    const toVal = to !== '' ? to : null;
+    this.reduxStore.dispatch(setRangeFilter(field, fromVal, toVal));
   }
 }
