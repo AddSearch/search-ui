@@ -4,11 +4,12 @@ import {
   FILTERS_RADIOGROUP_TEMPLATE,
   FILTERS_SELECTLIST_TEMPLATE,
   FILTERS_TABS_TEMPLATE,
-  FILTERS_TAGS_TEMPLATE
+  FILTERS_TAGS_TEMPLATE,
+  FILTERS_RANGE_TEMPLATE
 } from './templates';
 import { FILTER_TYPE } from './index';
 import { observeStoreByKey } from '../../store';
-import { toggleFilter, registerFilter, clearSelected } from '../../actions/filters';
+import { toggleFilter, setRangeFilter, registerFilter, clearSelected } from '../../actions/filters';
 import { renderToContainer, attachEventListeners, validateContainer } from '../../util/dom';
 
 export const NO_FILTER_NAME = 'nofilter';
@@ -24,6 +25,19 @@ export default class Filters {
     if (validateContainer(conf.containerId)) {
       this.reduxStore.dispatch(registerFilter(this.conf));
       observeStoreByKey(this.reduxStore, 'filters', (state) => this.render(state));
+
+      // Observe fieldStats from search results for range filters' min/max values
+      if (this.conf.type === FILTER_TYPE.RANGE) {
+        observeStoreByKey(this.reduxStore, 'search', (state) => this.searchResultsChanged(state));
+      }
+    }
+  }
+
+
+  searchResultsChanged(state) {
+    // Re-render if fieldStats of this field change
+    if (!state.loading && state.results.fieldStats && state.results.fieldStats[this.conf.field]) {
+      this.render(this.reduxStore.getState().filters);
     }
   }
 
@@ -49,7 +63,7 @@ export default class Filters {
     }
 
     // If not active filters, set the "nofilter" active
-    if (!hasActiveFilter && data.options[NO_FILTER_NAME]) {
+    if (!hasActiveFilter && data.options && data.options[NO_FILTER_NAME]) {
       data.options[NO_FILTER_NAME].active = true;
     }
 
@@ -71,7 +85,19 @@ export default class Filters {
     else if (this.conf.type === FILTER_TYPE.SELECT_LIST) {
       template = FILTERS_SELECTLIST_TEMPLATE;
     }
-
+    else if (this.conf.type === FILTER_TYPE.RANGE) {
+      if (state.activeRangeFilters[this.conf.field]) {
+        data.from = state.activeRangeFilters[this.conf.field].gte;
+        data.to = state.activeRangeFilters[this.conf.field].lte;
+      }
+      const res = this.reduxStore.getState().search.results;
+      if (res && res.fieldStats && res.fieldStats[this.conf.field]) {
+        const { min, max } = res.fieldStats[this.conf.field];
+        data.fromPlaceholder = min === 'Infinity' ? '' : min;
+        data.toPlaceholder = max === '-Infinity' ? '' : max;
+      }
+      template = FILTERS_RANGE_TEMPLATE;
+    }
 
     // Render and attach events to elements with data-filter attribute
     const container = renderToContainer(this.conf.containerId, this.conf.template || template, data);
@@ -97,6 +123,11 @@ export default class Filters {
       for (let i=0; i<radios.length; i++) {
         radios[i].addEventListener('click', (e) => this.singleActiveChangeEvent(e.target.value));
       }
+    }
+
+    // Range filter
+    else if (this.conf.type === FILTER_TYPE.RANGE) {
+      this.attachRangeFilterEvents(container);
     }
 
     // Attach event listeners to other filter types
@@ -137,4 +168,36 @@ export default class Filters {
     }
   }
 
+
+  attachRangeFilterEvents(container) {
+    const inputs = container.querySelectorAll('input');
+    for (let i=0; i<inputs.length; i++) {
+      inputs[i].addEventListener('change', (e) => {
+
+        // Validate with the regex rule given in conf
+        if (this.conf.validator && !(new RegExp(this.conf.validator)).test(e.target.value)) {
+          e.target.setAttribute('data-valid', 'false');
+        }
+        // Value valid (or no validator)
+        else {
+          e.target.setAttribute('data-valid', 'true');
+          this.rangeChangeEvent(this.conf.field,
+            container.querySelector('input[name="from"]').value,
+            container.querySelector('input[name="to"]').value)
+        }
+      });
+    }
+    // Clear button
+    const button = container.querySelector('button');
+    if (button) {
+      button.addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
+    }
+  }
+
+
+  rangeChangeEvent(field, from, to) {
+    const fromVal = from !== '' ? from : null;
+    const toVal = to !== '' ? to : null;
+    this.reduxStore.dispatch(setRangeFilter(field, fromVal, toVal));
+  }
 }

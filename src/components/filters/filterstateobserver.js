@@ -32,6 +32,11 @@ export function createFilterObject(state) {
     }
   });
 
+  // Range filters
+  for (let key in state.activeRangeFilters) {
+    filterObject.and.push({'range': {[key]: Object.assign({}, state.activeRangeFilters[key])}});
+  }
+
   // Iterate active facets. Create OR filter group of active filters.
   for (let facetField in state.activeFacets) {
     let facetGroupOR = {or: []};
