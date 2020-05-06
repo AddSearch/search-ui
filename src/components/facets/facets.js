@@ -27,6 +27,10 @@ export default class Facets {
 
 
   render(search) {
+    if (search.loading) {
+      return;
+    }
+
     const facetField = this.conf.field;
     const results = search.results;
 
@@ -44,8 +48,8 @@ export default class Facets {
     // Sticky facets (i.e. not updating if keyword is unchanged)
     if (this.conf.sticky === true) {
       // Keyword has changed, facets are not saved yet, or no selected facets. Show new incoming facets
-      if (this.keyword !== results.keyword || !this.stickyFacets || activeFacets.length === 0) {
-        this.keyword = results.keyword;
+      if (this.keyword !== search.keyword || !this.stickyFacets || activeFacets.length === 0) {
+        this.keyword = search.keyword;
         this.stickyFacets = facets;
       }
       // Keyword not changed. Show old facets
