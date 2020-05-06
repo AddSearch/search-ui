@@ -1,11 +1,12 @@
 import './activefilters.scss';
 import { ACTIVE_FILTERS_TEMPLATE } from './templates';
-import { toggleFacetFilter, toggleFilter, clearSelected } from '../../actions/filters';
+import { toggleFacetFilter, toggleFilter, setRangeFilter, clearSelected } from '../../actions/filters';
 import { renderToContainer, validateContainer } from '../../util/dom';
 import { observeStoreByKey } from '../../store';
 
 const TYPE = {
   FILTER: 'FILTER',
+  RANGE_FILTER: 'RANGE_FILTER',
   FACET: 'FACET'
 }
 
@@ -31,6 +32,14 @@ export default class ActiveFilters {
   }
 
 
+  emptyIfNull(val) {
+    if (val === null || val === undefined) {
+      return '';
+    }
+    return val;
+  }
+
+
   render(filterState) {
     let active = [];
 
@@ -41,6 +50,16 @@ export default class ActiveFilters {
         name: key,
         value: filterState.activeFilters[key],
         label: this.getFilterLabel(key, filterState.allAvailableFilters)
+      });
+    }
+
+    // Range filters
+    for (let key in filterState.activeRangeFilters) {
+      const rangeVal = filterState.activeRangeFilters[key];
+      active.push({
+        type: TYPE.RANGE_FILTER,
+        name: key,
+        label: this.getFilterLabel(key, filterState.allAvailableFilters) + ': ' + this.emptyIfNull(rangeVal.gte) + '-' + this.emptyIfNull(rangeVal.lte)
       });
     }
 
@@ -86,6 +105,9 @@ export default class ActiveFilters {
 
     if (type === TYPE.FILTER) {
       this.reduxStore.dispatch(toggleFilter(name, value, true));
+    }
+    else if (type === TYPE.RANGE_FILTER) {
+      this.reduxStore.dispatch(setRangeFilter(name, null, null));
     }
     else if (type === TYPE.FACET) {
       this.reduxStore.dispatch(toggleFacetFilter(name, value));

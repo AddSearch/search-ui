@@ -20,7 +20,7 @@
       }
       if (window) {
         window.onresize = function () {
-          alignAutocomplete(document.querySelector('#autocomplete-container'));
+          if (alignAutocomplete) { alignAutocomplete(document.querySelector('#autocomplete-container')); }
         };
       }
     </script>
