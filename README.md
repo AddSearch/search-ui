@@ -51,7 +51,7 @@ Basic example
 - [Try it out](https://demo.addsearch.com/search-ui-examples/basic/)
 - [View source code](https://github.com/AddSearch/search-ui/tree/master/examples/basic/index.html)
 
-Advanced example with all components
+Advanced example with many components
 - [Try it out](https://demo.addsearch.com/search-ui-examples/components/)
 - [View source code](https://github.com/AddSearch/search-ui/tree/master/examples/components/index.html)
 
