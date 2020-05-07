@@ -45,11 +45,12 @@ export function setActiveFacets(json) {
   }
 }
 
-export function toggleFacetFilter(field, value) {
+export function toggleFacetFilter(field, value, refreshSearch) {
   return {
     type: TOGGLE_FACET_FILTER,
     field,
-    value
+    value,
+    refreshSearch
   }
 }
 

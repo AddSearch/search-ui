@@ -21,19 +21,16 @@ export default class Facets {
 
 
   setFilter(value, active) {
-    // Dispatch filter
-    this.reduxStore.dispatch(toggleFacetFilter(this.conf.field, value));
-
-    // Reset paging
-    this.reduxStore.dispatch(setPage(this.client, 1));
-
-    // Refresh search
-    const keyword = this.reduxStore.getState().keyword.value;
-    this.reduxStore.dispatch(search(this.client, keyword));
+    // Dispatch facet and refresh search
+    this.reduxStore.dispatch(toggleFacetFilter(this.conf.field, value, true));
   }
 
 
   render(search) {
+    if (search.loading) {
+      return;
+    }
+
     const facetField = this.conf.field;
     const results = search.results;
 
@@ -51,8 +48,8 @@ export default class Facets {
     // Sticky facets (i.e. not updating if keyword is unchanged)
     if (this.conf.sticky === true) {
       // Keyword has changed, facets are not saved yet, or no selected facets. Show new incoming facets
-      if (this.keyword !== results.keyword || !this.stickyFacets || activeFacets.length === 0) {
-        this.keyword = results.keyword;
+      if (this.keyword !== search.keyword || !this.stickyFacets || activeFacets.length === 0) {
+        this.keyword = search.keyword;
         this.stickyFacets = facets;
       }
       // Keyword not changed. Show old facets
