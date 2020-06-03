@@ -13,7 +13,7 @@ import SearchResults from './components/searchresults';
 import SegmentedResults from './components/segmentedresults';
 import SortBy from './components/sortby';
 import { initRedux } from './store';
-import { setExternalAnalyticsCallback } from './util/analytics';
+import { setExternalAnalyticsCallback, setCollectAnalytics } from './util/analytics';
 import { registerDefaultHelpers, registerHelper } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
@@ -47,6 +47,7 @@ export default class AddSearchUI {
     // Feed analytics manually with the sendStatsEvent function
     this.client.setCollectAnalytics(false);
     setExternalAnalyticsCallback(this.settings.analyticsCallback);
+    setCollectAnalytics(this.settings.collectAnalytics);
 
     this.reduxStore.dispatch(setSearchResultsPageUrl(this.settings.searchResultsPageUrl));
 
