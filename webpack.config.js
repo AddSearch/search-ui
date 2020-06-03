@@ -1,6 +1,9 @@
 const TerserJSPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const webpack = require('webpack');
+const PACKAGE = require('./package.json');
+const banner = PACKAGE.name + ' ' + PACKAGE.version;
 
 module.exports = {
   entry: './index.js',
@@ -11,11 +14,14 @@ module.exports = {
   },
   mode: 'production',
   optimization: {
-    minimizer: [new TerserJSPlugin({}), new OptimizeCssAssetsPlugin({})],
+    minimizer: [new TerserJSPlugin({extractComments: false}), new OptimizeCssAssetsPlugin({})],
   },
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'addsearch-search-ui.min.css'
+    }),
+    new webpack.BannerPlugin({
+      banner: banner
     })
   ],
   module: {
