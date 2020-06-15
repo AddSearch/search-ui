@@ -10,6 +10,7 @@ import {
 import { FILTER_TYPE } from './index';
 import { observeStoreByKey } from '../../store';
 import { toggleFilter, setRangeFilter, registerFilter, clearSelected } from '../../actions/filters';
+import { sortBy } from '../../actions/sortby';
 import { renderToContainer, attachEventListeners, validateContainer } from '../../util/dom';
 
 export const NO_FILTER_NAME = 'nofilter';
@@ -146,6 +147,10 @@ export default class Filters {
     // Current filter re-activated (e.g. same tab clicked again)
     if (filterKey === this.activeFilter) {
       return;
+    }
+
+    if (this.conf.setSorting) {
+      store.dispatch(sortBy(this.client, this.conf.setSorting.field, this.conf.setSorting.order));
     }
 
     // Remove all other filters. Refresh results if there is no next filter
