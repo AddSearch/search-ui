@@ -223,6 +223,10 @@
         containerId: 'tabs-container',
         type: AddSearchUI.FILTER_TYPE.TABS,
         clearOtherFilters: true,
+        setSorting: {
+          field: 'relevance',
+          order: 'desc'
+        },
         options: {
           nofilter: {
             label: 'All results'
