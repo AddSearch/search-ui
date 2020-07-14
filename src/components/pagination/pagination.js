@@ -70,6 +70,7 @@ export default class Pagination {
 
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
-    this.reduxStore.dispatch(search(this.client, keyword, 'top'));
+    const onResultsScrollTo = this.conf.onResultsScrollTo || 'top';
+    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo));
   }
 }

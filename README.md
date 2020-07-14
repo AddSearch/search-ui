@@ -190,6 +190,7 @@ Settings that can be passed to the ```pagination``` function:
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML element that will act as a container for the paging|
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| onResultsScrollTo | "top", "no scrolling" | "top" | Set a scrolling behavior when navigate to a new page of results | 
 
 To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging)
 
