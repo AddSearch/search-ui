@@ -1,7 +1,8 @@
 import { WARMUP_QUERY_PREFIX } from '../index';
 import {
   SEGMENTED_SEARCH_START,
-  SEGMENTED_SEARCH_RESULTS
+  SEGMENTED_SEARCH_RESULTS,
+  CLEAR_SEGMENTED_SEARCH_RESULTS
 } from '../actions/segmentedsearch';
 
 const initialState = {
@@ -16,12 +17,13 @@ export default function segmentedsearch(state = initialState, action) {
         addPendingSegments.push(action.jsonKey);
       }
       return Object.assign({}, state, {
-        pendingSegments: addPendingSegments
+        pendingSegments: addPendingSegments,
+        dropReturningResults: false
       });
 
 
     case SEGMENTED_SEARCH_RESULTS:
-      if (action.keyword.indexOf(WARMUP_QUERY_PREFIX) === 0) {
+      if (action.keyword.indexOf(WARMUP_QUERY_PREFIX) === 0 || state.dropReturningResults === true) {
         return state;
       }
 
@@ -37,6 +39,12 @@ export default function segmentedsearch(state = initialState, action) {
 
       return Object.assign({}, state, segment, {
         pendingSegments: removePendingSegments
+      });
+
+    case CLEAR_SEGMENTED_SEARCH_RESULTS:
+      return Object.assign({}, {
+        pendingSegments: [],
+        dropReturningResults: true // Don't render pending results returning after clear
       });
 
     default:
