@@ -26,17 +26,23 @@ export default function search(state = initialState, action) {
       return Object.assign({}, state, {
         keyword: null,
         results: {},
-        loading: false
+        loading: false,
+        dropReturningResults: true // Don't render pending results returning after clear
       });
 
     case SEARCH_FETCH_START:
       return Object.assign({}, state, {
-        loading: true
+        loading: true,
+        dropReturningResults: false
       });
 
     case SEARCH_RESULTS:
       if (!state.started) {
         console.log('WARNING: AddSearch UI not started with the start() function');
+      }
+
+      if (state.dropReturningResults === true) {
+        return state;
       }
 
       if (action.keyword.indexOf(WARMUP_QUERY_PREFIX) === 0) {
