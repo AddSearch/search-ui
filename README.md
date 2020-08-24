@@ -84,6 +84,7 @@ The configuration object can contain following values:
 | matchAllQuery | boolean | false | Execute "match all" query when the Search UI is started |
 | onFilterChange | function | n/a | Function to call when active filters are changed (for conditional visibility) |
 | searchResultsPageUrl | String | null | Redirect the user to a separate search results page, instead of showing search results on the current page |
+| searchParameter | String | "search" | Name of the search parameter which is added to the URL, by default the library adds "?search=" |
 
 After all UI components have been added to the SearchUI object, the start function must be called:
 
