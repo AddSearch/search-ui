@@ -22,6 +22,7 @@ import { segmentedSearch } from './actions/segmentedsearch';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
 import { clearSelected } from './actions/filters';
+import { HISTORY_PARAMETERS } from "./util/history";
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 export const MATCH_ALL_QUERY = '*';
@@ -36,6 +37,7 @@ export default class AddSearchUI {
     this.client = client;
     this.segmentedSearchClients = {};
     this.settings = settings || {};
+    HISTORY_PARAMETERS.SEARCH = this.settings.searchParameter || HISTORY_PARAMETERS.SEARCH;
     this.hasSearchResultsComponent = false;
     this.reduxStore = initRedux(this.settings);
   }

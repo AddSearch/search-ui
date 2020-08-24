@@ -10,7 +10,7 @@ export const HISTORY_PARAMETERS = {
   FILTERS: 'search_filters',
   FACETS: 'search_facets',
   PAGE: 'search_page'
-}
+};
 
 
 export function setHistory(parameter, value) {
