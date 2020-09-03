@@ -70,6 +70,15 @@ export default class AddSearchUI {
       this.matchAllQuery();
     }
 
+    // Safari back button reload page
+    if (this.settings.reloadOnBrowserBackButton) {
+      window.onpageshow = function(event) {
+        if (event.persisted) {
+          window.location.reload();
+        }
+      };
+    }
+
     // FilterStateObserver to update client's filter object when any of the filters change
     new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange);
 
