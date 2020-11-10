@@ -80,6 +80,7 @@ The configuration object can contain following values:
 | --- | --- | --- | --- |
 | debug | boolean | false | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools) |
 | analyticsCallback | function | n/a | A function to call when an analytics event occurs. [Read more](#analytics) |
+| baseFilters | object | null | A filter object that is applied to all searches under the hood. The user can't disable baseFilters. |
 | collectAnalytics | boolean | true | Control if analytics events are collected at all |
 | matchAllQuery | boolean | false | Execute "match all" query when the Search UI is started |
 | onFilterChange | function | n/a | Function to call when active filters are changed (for conditional visibility) |
