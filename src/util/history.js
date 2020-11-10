@@ -76,21 +76,21 @@ export function getQueryParam(url, param) {
 }
 
 
-export function initFromURL(client, reduxStore, createFilterObjectFunction, searchFunction, hasMatchAllQuery) {
+export function initFromURL(client, reduxStore, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters) {
   // Initial load
   const url = window.location.href;
   const qs = queryParamsToObject(url);
-  handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, false);
+  handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, false, baseFilters);
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
     const qs = queryParamsToObject(window.location.href);
-    handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery);
+    handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters);
   }
 }
 
 
-function handleURLParams(client, store, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery) {
+function handleURLParams(client, store, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters) {
   let hasFacetsOrFilters = false;
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
     // Take active filters from URL
@@ -109,14 +109,14 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
   // Has facets or filters. Update client state
   if (hasFacetsOrFilters) {
     const filterState = store.getState().filters;
-    const filterObject = createFilterObjectFunction(filterState);
+    const filterObject = createFilterObjectFunction(filterState, baseFilters);
     client.setFilterObject(filterObject);
   }
   // No facets or filters
   else {
     store.dispatch(setActiveFilters(null));
     store.dispatch(setActiveFacets(null));
-    client.setFilterObject(null);
+    client.setFilterObject(baseFilters || null);
   }
 
 
@@ -227,5 +227,10 @@ export function jsonToUrlParam(json) {
  * Redirect to search results page
  */
 export function redirectToSearchResultsPage(url, keyword) {
-  window.location.href = url + '?' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
+  if (url.indexOf('?') === -1) {
+    window.location.href = url + '?' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
+  }
+  else {
+    window.location.href = url + '&' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
+  }
 }
