@@ -62,7 +62,9 @@ export default class AddSearchUI {
       initFromURL(this.client, this.reduxStore,
         createFilterObjectFunction,
         (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo),
-        this.settings.matchAllQuery);
+        this.settings.matchAllQuery,
+        this.settings.baseFilters
+      );
     }
 
     // Possible match all query on load
@@ -71,7 +73,7 @@ export default class AddSearchUI {
     }
 
     // FilterStateObserver to update client's filter object when any of the filters change
-    new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange);
+    new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange, this.settings.baseFilters);
 
     this.reduxStore.dispatch(start());
   }
