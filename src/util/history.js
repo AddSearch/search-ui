@@ -76,21 +76,21 @@ export function getQueryParam(url, param) {
 }
 
 
-export function initFromURL(client, reduxStore, createFilterObjectFunction, searchFunction, hasMatchAllQuery, defaultFilters) {
+export function initFromURL(client, reduxStore, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters) {
   // Initial load
   const url = window.location.href;
   const qs = queryParamsToObject(url);
-  handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, false, defaultFilters);
+  handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, false, baseFilters);
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
     const qs = queryParamsToObject(window.location.href);
-    handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery, defaultFilters);
+    handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters);
   }
 }
 
 
-function handleURLParams(client, store, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery, defaultFilters) {
+function handleURLParams(client, store, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters) {
   let hasFacetsOrFilters = false;
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
     // Take active filters from URL
@@ -109,14 +109,14 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
   // Has facets or filters. Update client state
   if (hasFacetsOrFilters) {
     const filterState = store.getState().filters;
-    const filterObject = createFilterObjectFunction(filterState, defaultFilters);
+    const filterObject = createFilterObjectFunction(filterState, baseFilters);
     client.setFilterObject(filterObject);
   }
   // No facets or filters
   else {
     store.dispatch(setActiveFilters(null));
     store.dispatch(setActiveFacets(null));
-    client.setFilterObject(defaultFilters || null);
+    client.setFilterObject(baseFilters || null);
   }
 
 

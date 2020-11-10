@@ -8,15 +8,15 @@ import { setHistory, jsonToUrlParam, HISTORY_PARAMETERS } from '../../util/histo
 /**
  * Default function to map the current filter state to a filter object suitable for the AddSearch client
  */
-export function createFilterObject(state, defaultFilters) {
+export function createFilterObject(state, baseFilters) {
 
   let filterObject = {
     and: []
   };
 
   // Possible default filters that can't be disabled by the user
-  if (defaultFilters) {
-    filterObject.and.push(defaultFilters);
+  if (baseFilters) {
+    filterObject.and.push(baseFilters);
   }
 
   // Iterate available filters. Create OR filter group of active filters.
@@ -70,22 +70,22 @@ export function createFilterObject(state, defaultFilters) {
  */
 export default class FilterStateObserver {
 
-  constructor(client, reduxStore, createFilterObjectFunction, onFilterChange, defaultFilters) {
+  constructor(client, reduxStore, createFilterObjectFunction, onFilterChange, baseFilters) {
     this.client = client;
     this.reduxStore = reduxStore;
     this.createFilterObjectFunction = createFilterObjectFunction;
     this.onFilterChange = onFilterChange;
 
-    observeStoreByKey(this.reduxStore, 'filters', state => this.onFilterStateChange(state, defaultFilters));
+    observeStoreByKey(this.reduxStore, 'filters', state => this.onFilterStateChange(state, baseFilters));
   }
 
 
-  onFilterStateChange(state, defaultFilters) {
+  onFilterStateChange(state, baseFilters) {
     if (state.refreshSearch) {
       setHistory(HISTORY_PARAMETERS.FILTERS, jsonToUrlParam(state.activeFilters));
       setHistory(HISTORY_PARAMETERS.FACETS, jsonToUrlParam(state.activeFacets));
 
-      const filterObject = this.createFilterObjectFunction(state, defaultFilters);
+      const filterObject = this.createFilterObjectFunction(state, baseFilters);
       this.client.setFilterObject(filterObject);
 
       const keyword = this.reduxStore.getState().keyword.value;
