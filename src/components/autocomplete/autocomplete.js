@@ -48,6 +48,8 @@ export default class Autocomplete {
         this.reduxStore.dispatch(autocompleteSuggestions(client, keyword));
       }
       else if (v.type === AUTOCOMPLETE_TYPE.SEARCH) {
+        const currentPaging = client.getSettings().paging;
+        client.setPaging(1, currentPaging.pageSize, currentPaging.sortBy, currentPaging.sortOrder);
         this.reduxStore.dispatch(autocompleteSearch(client, v.jsonKey, keyword));
       }
     });
@@ -144,7 +146,9 @@ export default class Autocomplete {
     const autocompleteState = this.reduxStore.getState().autocomplete;
     if (autocompleteState.pendingRequests.length === 0) {
       const scrollable = this.conf.infiniteScrollElement;
-      if (Math.ceil(scrollable.offsetHeight + scrollable.scrollTop) >= scrollable.scrollHeight) {
+
+      if (scrollable.scrollHeight > 0 &&
+          Math.ceil(scrollable.offsetHeight + scrollable.scrollTop) >= scrollable.scrollHeight) {
         const keyword = this.reduxStore.getState().keyword.value;
         this.loadMore(keyword);
       }
