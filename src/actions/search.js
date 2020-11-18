@@ -15,9 +15,9 @@ export function start() {
   }
 }
 
-export function search(client, keyword, onResultsScrollTo, appendResults) {
+export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced) {
   // Update browser history
-  setHistory(HISTORY_PARAMETERS.SEARCH, keyword);
+  setHistory(HISTORY_PARAMETERS.SEARCH, keyword, isHistoryDebounced);
 
   // Clear search results if there is no keyword
   if (!keyword || keyword === '') {
