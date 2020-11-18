@@ -12,8 +12,31 @@ export const HISTORY_PARAMETERS = {
   PAGE: 'search_page'
 };
 
+const SET_HISTORY_DEBOUNCE_TIME = 2500;
 
-export function setHistory(parameter, value) {
+let setHistoryDebounceTimeout = null;
+
+// Set history right away or after a debounce delay
+export function setHistory(parameter, value, debounce) {
+  // Debounce for search-as-you-type
+  if (debounce) {
+    if (setHistoryDebounceTimeout) {
+      clearTimeout(setHistoryDebounceTimeout);
+    }
+    setHistoryDebounceTimeout = setTimeout(() => {
+      doSetHistory(parameter, value);
+    }, SET_HISTORY_DEBOUNCE_TIME);
+  }
+
+  // No debounce
+  else {
+    doSetHistory(parameter, value);
+  }
+}
+
+
+// Set the actual history state
+function doSetHistory(parameter, value) {
   // ignore warmup search query
   if (parameter === HISTORY_PARAMETERS.SEARCH &&
       value && value.indexOf(WARMUP_QUERY_PREFIX) === 0) {
