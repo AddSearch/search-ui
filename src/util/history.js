@@ -12,7 +12,7 @@ export const HISTORY_PARAMETERS = {
   PAGE: 'search_page'
 };
 
-const SET_HISTORY_DEBOUNCE_TIME = 2500;
+const SET_HISTORY_DEBOUNCE_TIME = 1500;
 
 let setHistoryDebounceTimeout = null;
 
