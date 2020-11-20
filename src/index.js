@@ -61,7 +61,7 @@ export default class AddSearchUI {
     if (this.hasSearchResultsComponent) {
       initFromURL(this.client, this.reduxStore,
         createFilterObjectFunction,
-        (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo),
+        (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo, false),
         this.settings.matchAllQuery,
         this.settings.baseFilters
       );
@@ -79,8 +79,8 @@ export default class AddSearchUI {
   }
 
 
-  executeSearch(keyword, onResultsScrollTo) {
-    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo));
+  executeSearch(keyword, onResultsScrollTo, searchAsYouType) {
+    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, false, searchAsYouType));
 
     for (let key in this.segmentedSearchClients) {
       this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key], key, keyword));
@@ -101,7 +101,7 @@ export default class AddSearchUI {
     const store = this.reduxStore;
     if (store.getState().keyword.value === '') {
       store.dispatch(setKeyword(MATCH_ALL_QUERY, false));
-      this.executeSearch(MATCH_ALL_QUERY, onResultsScrollTo);
+      this.executeSearch(MATCH_ALL_QUERY, onResultsScrollTo, false);
     }
   }
 
@@ -117,7 +117,8 @@ export default class AddSearchUI {
    */
 
   searchField(conf) {
-    new SearchField(this.client, this.reduxStore, conf, this.settings.matchAllQuery === true, (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo));
+    const onSearch = (keyword, onResultsScrollTo, searchAsYouType) => this.executeSearch(keyword, onResultsScrollTo, searchAsYouType);
+    new SearchField(this.client, this.reduxStore, conf, this.settings.matchAllQuery === true, onSearch);
   }
 
   autocomplete(conf) {
@@ -169,7 +170,7 @@ export default class AddSearchUI {
 
   search(keyword) {
     this.reduxStore.dispatch(setKeyword(keyword, true));
-    this.executeSearch(keyword, null);
+    this.executeSearch(keyword, null, false);
   }
 
   hideAutocomplete() {

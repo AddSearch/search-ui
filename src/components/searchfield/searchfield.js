@@ -55,7 +55,7 @@ export default class SearchField {
   }
 
 
-  executeSearch(client, keyword) {
+  executeSearch(client, keyword, searchAsYouType) {
     let kw = keyword;
     if (kw === '' && this.matchAllQuery) {
       kw = MATCH_ALL_QUERY;
@@ -64,7 +64,7 @@ export default class SearchField {
     if (kw.indexOf(WARMUP_QUERY_PREFIX) !== 0) {
       this.reduxStore.dispatch(setPage(client, 1));
     }
-    this.onSearch(kw);
+    this.onSearch(kw, false, searchAsYouType);
   }
 
 
@@ -80,7 +80,7 @@ export default class SearchField {
 
     // Search
     else {
-      this.executeSearch(this.client, keyword);
+      this.executeSearch(this.client, keyword, false);
     }
   }
 
@@ -162,7 +162,7 @@ export default class SearchField {
     const skipAutocomplete = this.conf.ignoreAutocomplete === true;
     store.dispatch(setKeyword(keyword, skipAutocomplete, this.conf.containerId));
     if (this.conf.searchAsYouType === true) {
-      this.executeSearch(this.client, keyword);
+      this.executeSearch(this.client, keyword, true);
     }
   }
 
@@ -193,7 +193,7 @@ export default class SearchField {
     // Warmup query
     if (e.target.value === '') {
       if (!this.warmupQueryCompleted) {
-        this.executeSearch(this.client, WARMUP_QUERY_PREFIX + Math.random());
+        this.executeSearch(this.client, WARMUP_QUERY_PREFIX + Math.random(), false);
         this.warmupQueryCompleted = true;
       }
     }
