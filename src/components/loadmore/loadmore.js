@@ -51,7 +51,7 @@ export default class LoadMore {
     // If infinite scroll in a scrollable HTML element, scroll top when keyword changes
     else if (this.conf.type === LOAD_MORE_TYPE.INFINITE_SCROLL &&
              this.conf.infiniteScrollElement.tagName &&
-             searchState.results.page === 1) {
+             searchState.results.page === 1 && !searchState.loading) {
       this.conf.infiniteScrollElement.scrollTop = 0;
     }
   }
