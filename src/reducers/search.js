@@ -56,7 +56,6 @@ export default function search(state = initialState, action) {
       // If append mode (e.g. infinite scroll) keep old hits as well
       if (action.appendResults === true && state.results.hits) {
         const allHits = [...state.results.hits, ...action.results.hits];
-        console.log(allHits);
         nextResults.hits = allHits;
       }
 
