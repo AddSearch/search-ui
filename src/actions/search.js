@@ -15,9 +15,11 @@ export function start() {
   }
 }
 
-export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced) {
+export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, updateBrowserHistory) {
   // Update browser history
-  setHistory(HISTORY_PARAMETERS.SEARCH, keyword, isHistoryDebounced);
+  if (updateBrowserHistory) {
+    setHistory(HISTORY_PARAMETERS.SEARCH, keyword, isHistoryDebounced);
+  }
 
   // Clear search results if there is no keyword
   if (!keyword || keyword === '') {

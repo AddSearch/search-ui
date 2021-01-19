@@ -40,6 +40,7 @@ export default class AddSearchUI {
     HISTORY_PARAMETERS.SEARCH = this.settings.searchParameter || HISTORY_PARAMETERS.SEARCH;
     this.hasSearchResultsComponent = false;
     this.reduxStore = initRedux(this.settings);
+    this.updateBrowserHistory = settings.updateBrowserHistory !== false;
   }
 
 
@@ -73,14 +74,14 @@ export default class AddSearchUI {
     }
 
     // FilterStateObserver to update client's filter object when any of the filters change
-    new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange, this.settings.baseFilters);
+    new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange, this.settings.baseFilters, this.updateBrowserHistory);
 
     this.reduxStore.dispatch(start());
   }
 
 
-  executeSearch(keyword, onResultsScrollTo, searchAsYouType) {
-    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, false, searchAsYouType));
+  executeSearch(keyword, onResultsScrollTo, searchAsYouType, updateBrowserHistory) {
+    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, false, searchAsYouType, updateBrowserHistory));
 
     for (let key in this.segmentedSearchClients) {
       this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key], key, keyword));
@@ -117,12 +118,13 @@ export default class AddSearchUI {
    */
 
   searchField(conf) {
-    const onSearch = (keyword, onResultsScrollTo, searchAsYouType) => this.executeSearch(keyword, onResultsScrollTo, searchAsYouType);
-    new SearchField(this.client, this.reduxStore, conf, this.settings.matchAllQuery === true, onSearch);
+    const onSearch = (keyword, onResultsScrollTo, searchAsYouType, updateBrowserHistory) =>
+      this.executeSearch(keyword, onResultsScrollTo, searchAsYouType, updateBrowserHistory);
+    new SearchField(this.client, this.reduxStore, conf, this.settings.matchAllQuery === true, onSearch, this.updateBrowserHistory);
   }
 
   autocomplete(conf) {
-    new Autocomplete(this.client, this.reduxStore, conf);
+    new Autocomplete(this.client, this.reduxStore, conf, this.updateBrowserHistory);
   }
 
   searchResults(conf) {
@@ -149,11 +151,11 @@ export default class AddSearchUI {
   }
 
   sortBy(conf) {
-    new SortBy(this.client, this.reduxStore, conf);
+    new SortBy(this.client, this.reduxStore, conf, this.updateBrowserHistory);
   }
 
   pagination(conf) {
-    new Pagination(this.client, this.reduxStore, conf);
+    new Pagination(this.client, this.reduxStore, conf, this.updateBrowserHistory);
   }
 
   loadMore(conf) {

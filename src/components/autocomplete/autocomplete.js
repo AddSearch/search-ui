@@ -14,11 +14,12 @@ import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
 export default class Autocomplete {
 
-  constructor(client, reduxStore, conf) {
+  constructor(client, reduxStore, conf, updateBrowserHistory) {
     this.client = client;
     this.reduxStore = reduxStore;
     this.conf = conf;
     this.lastOnmouseOver = null;
+    this.updateBrowserHistory = updateBrowserHistory;
 
     if (this.conf.hideAutomatically === false) {
       this.reduxStore.dispatch(setHideAutomatically(false));
@@ -127,7 +128,7 @@ export default class Autocomplete {
     }
     // Search on this page
     else {
-      store.dispatch(search(this.client, keyword));
+      store.dispatch(search(this.client, keyword, null, null, null, this.updateBrowserHistory));
     }
   }
 
