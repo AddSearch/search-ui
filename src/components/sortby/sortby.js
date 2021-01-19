@@ -11,10 +11,11 @@ import { renderToContainer, validateContainer } from '../../util/dom';
 
 export default class SortBy {
 
-  constructor(client, reduxStore, conf) {
+  constructor(client, reduxStore, conf, updateBrowserHistory) {
     this.client = client;
     this.conf = conf;
     this.reduxStore = reduxStore;
+    this.updateBrowserHistory = updateBrowserHistory;
 
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'sortby', (state) => this.render(state));
@@ -42,11 +43,11 @@ export default class SortBy {
     this.reduxStore.dispatch(sortBy(this.client, field, order));
 
     // Reset paging
-    this.reduxStore.dispatch(setPage(this.client, 1));
+    this.reduxStore.dispatch(setPage(this.client, 1, this.updateBrowserHistory));
 
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
-    this.reduxStore.dispatch(search(this.client, keyword));
+    this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.updateBrowserHistory));
   }
 
 

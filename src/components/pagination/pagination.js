@@ -9,10 +9,11 @@ import { renderToContainer, validateContainer } from '../../util/dom';
 
 export default class Pagination {
 
-  constructor(client, reduxStore, conf) {
+  constructor(client, reduxStore, conf, updateBrowserHistory) {
     this.client = client;
     this.conf = conf;
     this.reduxStore = reduxStore;
+    this.updateBrowserHistory = updateBrowserHistory;
 
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'search', () => this.render());
@@ -66,11 +67,11 @@ export default class Pagination {
     }
 
     // Dispatch the new page number
-    this.reduxStore.dispatch(setPage(this.client, pageToDispatch));
+    this.reduxStore.dispatch(setPage(this.client, pageToDispatch, this.updateBrowserHistory));
 
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
     const onResultsScrollTo = this.conf.onResultsScrollTo || 'top';
-    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo));
+    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, null, null, this.updateBrowserHistory));
   }
 }

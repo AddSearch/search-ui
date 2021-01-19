@@ -70,11 +70,12 @@ export function createFilterObject(state, baseFilters) {
  */
 export default class FilterStateObserver {
 
-  constructor(client, reduxStore, createFilterObjectFunction, onFilterChange, baseFilters) {
+  constructor(client, reduxStore, createFilterObjectFunction, onFilterChange, baseFilters, updateBrowserHistory) {
     this.client = client;
     this.reduxStore = reduxStore;
     this.createFilterObjectFunction = createFilterObjectFunction;
     this.onFilterChange = onFilterChange;
+    this.updateBrowserHistory = updateBrowserHistory;
 
     observeStoreByKey(this.reduxStore, 'filters', state => this.onFilterStateChange(state, baseFilters));
   }
@@ -82,15 +83,17 @@ export default class FilterStateObserver {
 
   onFilterStateChange(state, baseFilters) {
     if (state.refreshSearch) {
-      setHistory(HISTORY_PARAMETERS.FILTERS, jsonToUrlParam(state.activeFilters));
-      setHistory(HISTORY_PARAMETERS.FACETS, jsonToUrlParam(state.activeFacets));
+      if (this.updateBrowserHistory) {
+        setHistory(HISTORY_PARAMETERS.FILTERS, jsonToUrlParam(state.activeFilters));
+        setHistory(HISTORY_PARAMETERS.FACETS, jsonToUrlParam(state.activeFacets));
+      }
 
       const filterObject = this.createFilterObjectFunction(state, baseFilters);
       this.client.setFilterObject(filterObject);
 
       const keyword = this.reduxStore.getState().keyword.value;
       this.reduxStore.dispatch(setPage(this.client, 1));
-      this.reduxStore.dispatch(search(this.client, keyword, null));
+      this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.updateBrowserHistory));
     }
 
     // Custom function to control conditional visibility (e.g. show a component only when a certain filter is active)
