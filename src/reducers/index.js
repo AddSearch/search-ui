@@ -6,6 +6,7 @@ import pagination from './pagination';
 import search from './search';
 import segmentedsearch from './segmentedsearch';
 import sortby from './sortby';
+import configuration from "./configuration";
 
 const reducer = combineReducers({
   autocomplete,
@@ -14,7 +15,8 @@ const reducer = combineReducers({
   pagination,
   search,
   segmentedsearch,
-  sortby
+  sortby,
+  configuration
 });
 
 export default reducer;
