@@ -3,11 +3,14 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 
 export function initRedux(settings) {
+  const preloadedstate = {
+    configuration: settings
+  };
   let composeEnhancers = compose;
   if (settings.debug && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
     composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
   }
-  return createStore(reducers, composeEnhancers(applyMiddleware(thunk)));
+  return createStore(reducers, preloadedstate, composeEnhancers(applyMiddleware(thunk)));
 }
 
 

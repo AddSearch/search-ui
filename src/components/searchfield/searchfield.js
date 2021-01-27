@@ -21,14 +21,13 @@ const KEYCODES = {
 
 export default class SearchField {
 
-  constructor(client, reduxStore, conf, matchAllQueryWhenSearchFieldEmpty, onSearch, updateBrowserHistory) {
+  constructor(client, reduxStore, conf, matchAllQueryWhenSearchFieldEmpty, onSearch) {
     this.client = client;
     this.reduxStore = reduxStore;
     this.conf = conf;
     this.matchAllQuery = matchAllQueryWhenSearchFieldEmpty;
     this.firstRenderDone = false;
     this.onSearch = onSearch;
-    this.updateBrowserHistory = updateBrowserHistory;
 
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
@@ -63,9 +62,9 @@ export default class SearchField {
     }
 
     if (kw.indexOf(WARMUP_QUERY_PREFIX) !== 0) {
-      this.reduxStore.dispatch(setPage(client, 1));
+      this.reduxStore.dispatch(setPage(client, 1, null, this.reduxStore));
     }
-    this.onSearch(kw, false, searchAsYouType, this.updateBrowserHistory);
+    this.onSearch(kw, false, searchAsYouType);
   }
 
 
