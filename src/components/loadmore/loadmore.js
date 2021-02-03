@@ -62,11 +62,11 @@ export default class LoadMore {
     const pageToDispatch = currentPage + 1;
 
     // Dispatch the new page number
-    this.reduxStore.dispatch(setPage(this.client, pageToDispatch, false));
+    this.reduxStore.dispatch(setPage(this.client, pageToDispatch, false, this.reduxStore));
 
     // Fetch more results
     const keyword = this.reduxStore.getState().keyword.value;
-    this.reduxStore.dispatch(search(this.client, keyword, null, true));
+    this.reduxStore.dispatch(search(this.client, keyword, null, true, null, this.reduxStore));
   }
 
 

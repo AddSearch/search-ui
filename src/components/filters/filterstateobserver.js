@@ -82,15 +82,15 @@ export default class FilterStateObserver {
 
   onFilterStateChange(state, baseFilters) {
     if (state.refreshSearch) {
-      setHistory(HISTORY_PARAMETERS.FILTERS, jsonToUrlParam(state.activeFilters));
-      setHistory(HISTORY_PARAMETERS.FACETS, jsonToUrlParam(state.activeFacets));
+      setHistory(HISTORY_PARAMETERS.FILTERS, jsonToUrlParam(state.activeFilters), null, this.reduxStore);
+      setHistory(HISTORY_PARAMETERS.FACETS, jsonToUrlParam(state.activeFacets), null, this.reduxStore);
 
       const filterObject = this.createFilterObjectFunction(state, baseFilters);
       this.client.setFilterObject(filterObject);
 
       const keyword = this.reduxStore.getState().keyword.value;
-      this.reduxStore.dispatch(setPage(this.client, 1));
-      this.reduxStore.dispatch(search(this.client, keyword, null));
+      this.reduxStore.dispatch(setPage(this.client, 1, null, this.reduxStore));
+      this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore));
     }
 
     // Custom function to control conditional visibility (e.g. show a component only when a certain filter is active)

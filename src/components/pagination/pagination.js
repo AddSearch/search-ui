@@ -66,11 +66,11 @@ export default class Pagination {
     }
 
     // Dispatch the new page number
-    this.reduxStore.dispatch(setPage(this.client, pageToDispatch));
+    this.reduxStore.dispatch(setPage(this.client, pageToDispatch, null, this.reduxStore));
 
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
     const onResultsScrollTo = this.conf.onResultsScrollTo || 'top';
-    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo));
+    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, null, null, this.reduxStore));
   }
 }

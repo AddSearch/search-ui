@@ -17,7 +17,11 @@ const SET_HISTORY_DEBOUNCE_TIME = 1500;
 let setHistoryDebounceTimeout = null;
 
 // Set history right away or after a debounce delay
-export function setHistory(parameter, value, debounce) {
+export function setHistory(parameter, value, debounce, store) {
+  const state = store.getState();
+  if (state && state.configuration && state.configuration.updateBrowserHistory === false) {
+    return;
+  }
   // Debounce for search-as-you-type
   if (debounce) {
     if (setHistoryDebounceTimeout) {
@@ -145,10 +149,10 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
 
 
   if (qs[HISTORY_PARAMETERS.PAGE]) {
-    store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10)));
+    store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10), null, store));
   }
   else {
-    store.dispatch(setPage(client, 1));
+    store.dispatch(setPage(client, 1, null, store));
   }
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {

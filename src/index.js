@@ -80,7 +80,7 @@ export default class AddSearchUI {
 
 
   executeSearch(keyword, onResultsScrollTo, searchAsYouType) {
-    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, false, searchAsYouType));
+    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, false, searchAsYouType, this.reduxStore));
 
     for (let key in this.segmentedSearchClients) {
       this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key], key, keyword));
@@ -117,7 +117,8 @@ export default class AddSearchUI {
    */
 
   searchField(conf) {
-    const onSearch = (keyword, onResultsScrollTo, searchAsYouType) => this.executeSearch(keyword, onResultsScrollTo, searchAsYouType);
+    const onSearch = (keyword, onResultsScrollTo, searchAsYouType) =>
+      this.executeSearch(keyword, onResultsScrollTo, searchAsYouType);
     new SearchField(this.client, this.reduxStore, conf, this.settings.matchAllQuery === true, onSearch);
   }
 

@@ -42,11 +42,11 @@ export default class SortBy {
     this.reduxStore.dispatch(sortBy(this.client, field, order));
 
     // Reset paging
-    this.reduxStore.dispatch(setPage(this.client, 1));
+    this.reduxStore.dispatch(setPage(this.client, 1, null, this.reduxStore));
 
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
-    this.reduxStore.dispatch(search(this.client, keyword));
+    this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore));
   }
 
 
