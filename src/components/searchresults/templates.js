@@ -7,7 +7,7 @@ export const SEARCHRESULTS_TEMPLATE = `
     {{#each hits}}
       <div class="hit{{#equals type "PROMOTED"}} promoted{{/equals}}">
         <h3>
-          <a href="{{url}}" data-analytics-click="{{id}}">{{title}}</a>
+          <a href="{{url}}" data-analytics-click="{{id}}">{{#if title}} {{title}} {{else}} {{removeTrailingQueriesFromUrl url}} {{/if}}</a>
         </h3>
         <div class="highlight">
           {{> searchResultImageTemplate}}
