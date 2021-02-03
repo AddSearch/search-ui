@@ -127,7 +127,7 @@ export default class Autocomplete {
     }
     // Search on this page
     else {
-      store.dispatch(search(this.client, keyword));
+      store.dispatch(search(this.client, keyword, null, null, null, store));
     }
   }
 

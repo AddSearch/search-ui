@@ -2,10 +2,10 @@ import { setHistory, HISTORY_PARAMETERS } from '../util/history';
 
 export const SET_PAGE = 'SET_PAGE';
 
-export function setPage(client, page, updateBrowserHistory) {
+export function setPage(client, page, updateBrowserHistory, store) {
   if (updateBrowserHistory !== false &&
-      client.getSettings().paging.page !== page) {
-    setHistory(HISTORY_PARAMETERS.PAGE, page + '');
+    (client.getSettings().paging.page !== page || page === 1)) {
+    setHistory(HISTORY_PARAMETERS.PAGE, page + '', null, store);
   }
 
   const paging = client.getSettings().paging;
