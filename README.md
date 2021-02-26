@@ -178,6 +178,9 @@ Settings that can be passed to the ```searchResults``` function:
 | template_noresults | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for "No search results found" |
 | template_image | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for the featured image shown with search results |
 
+If you are customising the default search result template, make sure your links still include the ```data-analytics-click="{{id}}"``` attribute, 
+otherwise your analytics will not report clicks or CTR correctly.
+
 ### Pagination
 Pagination. Typically below search results.
 
