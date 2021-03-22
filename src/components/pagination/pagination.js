@@ -32,6 +32,7 @@ export default class Pagination {
     const data = {
       currentPage,
       lastPage: pageArr ? pageArr[pageArr.length-1] : 0,
+      totalPages,
       pages: pageArr
     };
 
