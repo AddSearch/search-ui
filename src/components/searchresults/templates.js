@@ -1,3 +1,5 @@
+//   If you are customising the default search result template, make sure your links still include the data-analytics-click="{{id}}" attribute,
+//   otherwise your analytics will not report clicks or CTR correctly.
 export const SEARCHRESULTS_TEMPLATE = `
   <div class="addsearch-searchresults">    
     {{#if resultcount}}
