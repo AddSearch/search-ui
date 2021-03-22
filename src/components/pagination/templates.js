@@ -1,5 +1,5 @@
 export const PAGINATION_TEMPLATE = `
-  <div class="addsearch-pagination">    
+  <div class="addsearch-pagination">
     {{#gt currentPage 1}}
       <button data-page="previous" aria-label="Previous page">❮</button>
     {{/gt}}
