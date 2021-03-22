@@ -25,6 +25,9 @@ export default class LoadMore {
 
 
   render(searchState) {
+    if (searchState.loading) {
+      return;
+    }
 
     const currentPage = searchState.results.page || 1;
     const pageSize = this.client.getSettings().paging.pageSize;

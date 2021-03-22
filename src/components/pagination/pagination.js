@@ -15,17 +15,19 @@ export default class Pagination {
     this.reduxStore = reduxStore;
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(this.reduxStore, 'search', () => this.render());
+      observeStoreByKey(this.reduxStore, 'search', (search) => this.render(search));
     }
   }
 
 
-  render() {
-    const state = this.reduxStore.getState();
+  render(search) {
+    if (search.loading) {
+      return;
+    }
 
-    const currentPage = state.search.results.page || 1;
+    const currentPage = search.results.page || 1;
     const pageSize = this.client.getSettings().paging.pageSize;
-    const totalHits = state.search.results.total_hits || 0;
+    const totalHits = search.results.total_hits || 0;
     const totalPages = Math.ceil(totalHits / pageSize);
     const pageArr = getPageNumbers(currentPage, totalPages);
 

@@ -24,13 +24,15 @@ export default class SearchResults {
 
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(this.reduxStore, 'search', () => this.render());
+      observeStoreByKey(this.reduxStore, 'search', (search) => this.render(search));
     }
   }
 
 
-  render() {
-    const search = this.reduxStore.getState().search;
+  render(search) {
+    if (search.loading) {
+      return;
+    }
     const data = search.results || {};
     data.resultcount = data.hits && this.conf.showNumberOfResults !== false;
     data.keyword = search.keyword;
