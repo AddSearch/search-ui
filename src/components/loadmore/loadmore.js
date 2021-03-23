@@ -1,4 +1,5 @@
 import './loadmore.scss';
+import handlebars from 'handlebars';
 import { LOAD_MORE_TEMPLATE } from './templates';
 import { LOAD_MORE_TYPE } from './index';
 import { setPage } from '../../actions/pagination';
@@ -38,7 +39,19 @@ export default class LoadMore {
       totalHits
     };
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template || LOAD_MORE_TEMPLATE, data);
+
+    // POC abort rendering if HTML doesn't change
+    const template = this.conf.template || LOAD_MORE_TEMPLATE;
+    const html = handlebars.compile(template)(data);
+    if (this.previousHtml === html) {
+      console.log('LoadMore: Abort rendering, html not changed');
+      return;
+    }
+    this.previousHtml = html;
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    //const container = renderToContainer(this.conf.containerId, this.conf.template || LOAD_MORE_TEMPLATE, data);
+
 
     // Attach click event
     if (this.conf.type === LOAD_MORE_TYPE.BUTTON) {

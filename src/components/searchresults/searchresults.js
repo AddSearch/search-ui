@@ -40,7 +40,16 @@ export default class SearchResults {
       template = this.conf.template_noresults || NO_RESULTS_TEMPLATE;
     }
 
-    const container = renderToContainer(this.conf.containerId, template, data);
+    // POC abort rendering if HTML doesn't change
+    const html = handlebars.compile(template)(data);
+    if (this.previousHtml === html) {
+      console.log('SearchResults: Abort rendering, html not changed');
+      return;
+    }
+    this.previousHtml = html;
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    //const container = renderToContainer(this.conf.containerId, template, data);
 
 
     // Send result clicks to analytics

@@ -1,4 +1,5 @@
 import './pagination.scss';
+import handlebars from 'handlebars';
 import { PAGINATION_TEMPLATE } from './templates';
 import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
@@ -36,7 +37,19 @@ export default class Pagination {
       pages: pageArr
     };
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template || PAGINATION_TEMPLATE, data);
+
+    // POC abort rendering if HTML doesn't change
+    const template = this.conf.template || PAGINATION_TEMPLATE;
+    const html = handlebars.compile(template)(data);
+    if (this.previousHtml === html) {
+      console.log('Pagination: Abort rendering, html not changed');
+      return;
+    }
+    this.previousHtml = html;
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    // const container = renderToContainer(this.conf.containerId, this.conf.template || PAGINATION_TEMPLATE, data);
+
 
     // Attach events
     const buttons = container.getElementsByTagName('button');
