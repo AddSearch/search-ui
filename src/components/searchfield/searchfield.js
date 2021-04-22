@@ -190,9 +190,14 @@ export default class SearchField {
 
 
   onfocus(e) {
-    // Warmup query unless match all query is sent
     if (e.target.value === '') {
-      if (!this.warmupQueryCompleted && !this.matchAllQuery) {
+      // Execute match all query for autocomplete box
+      if (this.conf.onfocusAutocompleteMatchAllQuery) {
+        this.reduxStore.dispatch(setKeyword(MATCH_ALL_QUERY, false));
+      }
+
+      // Warmup query unless match all query is sent
+      else if (!this.warmupQueryCompleted && !this.matchAllQuery) {
         this.executeSearch(this.client, WARMUP_QUERY_PREFIX + Math.random(), false);
         this.warmupQueryCompleted = true;
       }
