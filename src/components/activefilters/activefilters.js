@@ -1,7 +1,8 @@
 import './activefilters.scss';
+import handlebars from 'handlebars';
 import { ACTIVE_FILTERS_TEMPLATE } from './templates';
 import { toggleFacetFilter, toggleFilter, setRangeFilter, clearSelected } from '../../actions/filters';
-import { renderToContainer, validateContainer } from '../../util/dom';
+import { validateContainer } from '../../util/dom';
 import { observeStoreByKey } from '../../store';
 
 const TYPE = {
@@ -83,7 +84,16 @@ export default class ActiveFilters {
       clearAll: this.conf.clearAll !== false
     };
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template || ACTIVE_FILTERS_TEMPLATE, data);
+
+    // Compile HTML and inject to element if changed
+    const html = handlebars.compile(this.conf.template || ACTIVE_FILTERS_TEMPLATE)(data);
+    if (this.renderedHtml === html) {
+      return;
+    }
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    this.renderedHtml = html;
+
 
     // Attach events
     const elems = container.querySelectorAll('[data-type]');

@@ -1,10 +1,11 @@
 import './pagination.scss';
+import handlebars from 'handlebars';
 import { PAGINATION_TEMPLATE } from './templates';
 import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
-import { renderToContainer, validateContainer } from '../../util/dom';
+import { validateContainer } from '../../util/dom';
 
 
 export default class Pagination {
@@ -36,7 +37,16 @@ export default class Pagination {
       pages: pageArr
     };
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template || PAGINATION_TEMPLATE, data);
+
+    // Compile HTML and inject to element if changed
+    const html = handlebars.compile(this.conf.template || PAGINATION_TEMPLATE)(data);
+    if (this.renderedHtml === html) {
+      return;
+    }
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    this.renderedHtml = html;
+
 
     // Attach events
     const buttons = container.getElementsByTagName('button');

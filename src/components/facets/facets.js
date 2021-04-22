@@ -1,10 +1,10 @@
 import './facets.scss';
+import handlebars from 'handlebars';
 import { FACETS_TEMPLATE } from './templates';
 import { toggleFacetFilter } from '../../actions/filters';
-import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
-import { renderToContainer, validateContainer } from '../../util/dom';
+import { validateContainer } from '../../util/dom';
 
 
 export default class Facets {
@@ -70,7 +70,16 @@ export default class Facets {
       conf: this.conf,
       facets: facets
     };
-    const container = renderToContainer(this.conf.containerId, this.conf.template || FACETS_TEMPLATE, data);
+
+
+    // Compile HTML and inject to element if changed
+    const html = handlebars.compile(this.conf.template || FACETS_TEMPLATE)(data);
+    if (this.renderedHtml === html) {
+      return;
+    }
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    this.renderedHtml = html;
 
 
     // Attach events
