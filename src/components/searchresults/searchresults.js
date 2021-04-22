@@ -2,7 +2,7 @@ import './searchresults.scss';
 import { SEARCHRESULTS_TEMPLATE, NO_RESULTS_TEMPLATE,SEARCHRESULT_IMAGE_TEMPLATE, NUMBER_OF_RESULTS_TEMPLATE} from './templates';
 import handlebars from 'handlebars';
 import { observeStoreByKey } from '../../store';
-import { renderToContainer, validateContainer } from '../../util/dom';
+import { validateContainer } from '../../util/dom';
 import { addClickTrackers } from '../../util/analytics';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
@@ -40,8 +40,14 @@ export default class SearchResults {
       template = this.conf.template_noresults || NO_RESULTS_TEMPLATE;
     }
 
-    const container = renderToContainer(this.conf.containerId, template, data);
-
+    // Compile HTML and inject to element if changed
+    const html = handlebars.compile(template)(data);
+    if (this.renderedHtml === html) {
+      return;
+    }
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    this.renderedHtml = html;
 
     // Send result clicks to analytics
     const links = container.querySelectorAll('[data-analytics-click]');

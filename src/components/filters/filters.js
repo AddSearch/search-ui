@@ -1,4 +1,5 @@
 import './filters.scss';
+import handlebars from 'handlebars';
 import {
   FILTERS_CHECKBOXGROUP_TEMPLATE,
   FILTERS_RADIOGROUP_TEMPLATE,
@@ -11,7 +12,7 @@ import { FILTER_TYPE } from './index';
 import { observeStoreByKey } from '../../store';
 import { toggleFilter, setRangeFilter, registerFilter, clearSelected } from '../../actions/filters';
 import { sortBy } from '../../actions/sortby';
-import { renderToContainer, attachEventListeners, validateContainer } from '../../util/dom';
+import { attachEventListeners, validateContainer } from '../../util/dom';
 
 export const NO_FILTER_NAME = 'nofilter';
 
@@ -100,8 +101,15 @@ export default class Filters {
       template = FILTERS_RANGE_TEMPLATE;
     }
 
-    // Render and attach events to elements with data-filter attribute
-    const container = renderToContainer(this.conf.containerId, this.conf.template || template, data);
+
+    // Compile HTML and inject to element if changed
+    const html = handlebars.compile(this.conf.template || template)(data);
+    if (this.renderedHtml === html) {
+      return;
+    }
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    this.renderedHtml = html;
 
 
     // Attach event listeners to select list
