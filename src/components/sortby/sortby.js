@@ -1,12 +1,12 @@
 import './sortby.scss';
-
+import handlebars from 'handlebars';
 import { SORTBY_TYPE } from './index';
 import { SORTBY_RADIOGROUP_TEMPLATE, SORTBY_SELECT_TEMPLATE} from './templates';
 import { sortBy } from '../../actions/sortby';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { observeStoreByKey } from '../../store';
-import { renderToContainer, validateContainer } from '../../util/dom';
+import { validateContainer } from '../../util/dom';
 
 
 export default class SortBy {
@@ -77,7 +77,15 @@ export default class SortBy {
     });
 
 
-    const container = renderToContainer(this.conf.containerId, template, data);
+    // Compile HTML and inject to element if changed
+    const html = handlebars.compile(template)(data);
+    if (this.renderedHtml === html) {
+      return;
+    }
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    this.renderedHtml = html;
+
 
     // Attach listeners
     if (this.conf.type === SORTBY_TYPE.RADIO_GROUP) {

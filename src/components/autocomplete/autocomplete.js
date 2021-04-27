@@ -6,7 +6,7 @@ import { setHideAutomatically, autocompleteSuggestions, autocompleteSearch, setA
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { observeStoreByKey } from '../../store';
-import { renderToContainer, validateContainer } from '../../util/dom';
+import { validateContainer } from '../../util/dom';
 import { addClickTrackers } from '../../util/analytics';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
@@ -76,6 +76,7 @@ export default class Autocomplete {
     // Hide autocomplete
     if (autocompleteState.visible === false) {
       document.getElementById(this.conf.containerId).innerHTML = '';
+      this.renderedHtml = '';
       return;
     }
 
@@ -87,7 +88,16 @@ export default class Autocomplete {
       searchResults
     };
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template || AUTOCOMPLETE_TEMPLATE, data);
+
+    // Compile HTML and inject to element if changed
+    const html = handlebars.compile(this.conf.template || AUTOCOMPLETE_TEMPLATE)(data);
+    if (this.renderedHtml === html) {
+      return;
+    }
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    this.renderedHtml = html;
+
 
     // Attach events to suggestions only for keyboard accessibility
     const lis = container.querySelector('.suggestions') ? container.querySelectorAll('.suggestions > li') : [];

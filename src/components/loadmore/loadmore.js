@@ -1,10 +1,11 @@
 import './loadmore.scss';
+import handlebars from 'handlebars';
 import { LOAD_MORE_TEMPLATE } from './templates';
 import { LOAD_MORE_TYPE } from './index';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
-import { renderToContainer, validateContainer } from '../../util/dom';
+import { validateContainer } from '../../util/dom';
 
 
 export default class LoadMore {
@@ -38,7 +39,16 @@ export default class LoadMore {
       totalHits
     };
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template || LOAD_MORE_TEMPLATE, data);
+
+    // Compile HTML and inject to element if changed
+    const html = handlebars.compile(this.conf.template || LOAD_MORE_TEMPLATE)(data);
+    if (this.renderedHtml === html) {
+      return;
+    }
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    this.renderedHtml = html;
+
 
     // Attach click event
     if (this.conf.type === LOAD_MORE_TYPE.BUTTON) {
