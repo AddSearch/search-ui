@@ -1,5 +1,6 @@
+import handlebars from 'handlebars';
 import { observeStoreByKey } from '../../store';
-import { renderToContainer, validateContainer } from '../../util/dom';
+import { validateContainer } from '../../util/dom';
 import { addClickTrackers } from '../../util/analytics';
 
 export default class SegmentedResults {
@@ -21,7 +22,16 @@ export default class SegmentedResults {
       return;
     }
 
-    const container = renderToContainer(this.conf.containerId, this.conf.template, data);
+
+    // Compile HTML and inject to element if changed
+    const html = handlebars.compile(this.conf.template)(data);
+    if (this.renderedHtml === html) {
+      return;
+    }
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = html;
+    this.renderedHtml = html;
+
 
     // Send result clicks to analytics
     const links = container.querySelectorAll('[data-analytics-click]');
