@@ -156,6 +156,7 @@ The ```sources``` array can contain objects with the following fields:
 | --- | --- | --- | --- |
 | type | AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS, AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH | n/a | Fetch search suggestions or search results |
 | client | AddSearch JS Client instance | Client passed to the AddSearchUI constructor | Use a custom client to use specific filters or different search index |
+| collectSearchAnalytics | boolean | false | If enabled and the type of this source is SEARCH, save the number of searches to analytics |
 | jsonKey | String | n/a | If the type is *AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH*, the Handlebars template can access the results from the JSON object ```searchResults.<jsonKey>``` |
 
 ### Search results
