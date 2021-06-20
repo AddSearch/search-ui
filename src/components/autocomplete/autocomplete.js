@@ -7,7 +7,7 @@ import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
-import { addClickTrackers } from '../../util/analytics';
+import { addClickTrackers, sendSearchStats } from '../../util/analytics';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
@@ -28,13 +28,42 @@ export default class Autocomplete {
     handlebars.registerHelper('selectSearchResultCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
 
     if (validateContainer(conf.containerId)) {
-      observeStoreByKey(this.reduxStore, 'autocomplete', (state) => this.render(state));
+      observeStoreByKey(this.reduxStore, 'autocomplete', (state) => this.autocompleteResultsChanged(state));
       observeStoreByKey(this.reduxStore, 'keyword', (state) => this.keywordChanged(state));
     }
 
     if (conf.infiniteScrollElement) {
       this.conf.infiniteScrollElement.addEventListener('scroll', () => this.onScroll());
     }
+  }
+
+
+  autocompleteResultsChanged(state) {
+    // Wait until pending API requests have finished (if multiple autocomplete clients)
+    if (state.pendingRequests.length !== 0) {
+      return;
+    }
+
+    // Send possible search analytics
+    if (state.keyword && state.keyword !== '') {
+      this.sendSearchAnalytics(state);
+    }
+
+    // Render
+    this.render(state);
+  }
+
+
+  sendSearchAnalytics(state) {
+    this.conf.sources.forEach(v => {
+      // Analytics supported for autocomplete type = search
+      if (v.type === AUTOCOMPLETE_TYPE.SEARCH && v.collectSearchAnalytics) {
+        const client = v.client || this.client;
+        const hits = state.searchResultsStats[v.jsonKey] ? state.searchResultsStats[v.jsonKey].total_hits : 0;
+        const time = state.searchResultsStats[v.jsonKey] ? state.searchResultsStats[v.jsonKey].processing_time_ms : 0;
+        sendSearchStats(client, state.keyword, hits, time);
+      }
+    });
   }
 
 
@@ -68,10 +97,6 @@ export default class Autocomplete {
 
 
   render(autocompleteState) {
-    // Don't re-render while API requests are pending
-    if (autocompleteState.pendingRequests.length !== 0) {
-      return;
-    }
 
     // Hide autocomplete
     if (autocompleteState.visible === false) {
