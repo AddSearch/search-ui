@@ -14,6 +14,7 @@ import {
 
 const initialState = {
   pendingRequests: [],
+  keyword: null,
 
   suggestions: [],
   activeSuggestionIndex: null,
@@ -54,6 +55,7 @@ export default function searchsuggestions(state = initialState, action) {
       }
 
       return Object.assign({}, state, {
+        keyword: action.keyword,
         pendingRequests: removePendingSuggestion,
         suggestions: action.results.suggestions,
         activeSuggestionIndex: null,
@@ -83,6 +85,7 @@ export default function searchsuggestions(state = initialState, action) {
       }
 
       return Object.assign({}, state, {
+        keyword: action.keyword,
         pendingRequests: removePendingSearch,
         searchResults: nextSearchResults,
         visible: true,
