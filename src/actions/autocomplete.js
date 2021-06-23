@@ -1,5 +1,6 @@
 export const AUTOCOMPLETE_FETCH_START = 'AUTOCOMPLETE_FETCH_START';
 export const AUTOCOMPLETE_SUGGESTIONS_RESULTS = 'AUTOCOMPLETE_SUGGESTIONS_RESULTS';
+export const AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS = 'AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS';
 export const AUTOCOMPLETE_SUGGESTIONS_CLEAR = 'AUTOCOMPLETE_SUGGESTIONS_CLEAR';
 export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
 export const AUTOCOMPLETE_SEARCH_CLEAR = 'AUTOCOMPLETE_SEARCH_CLEAR';
@@ -26,9 +27,31 @@ export function autocompleteSuggestions(client, keyword) {
   }
 }
 
+export function autocompleteCustomFields(client, keyword, field) {
+  window.console.log('+++ field', field);
+  if (!keyword || keyword === '') {
+    return {
+      type: AUTOCOMPLETE_SUGGESTIONS_CLEAR
+    }
+  }
+  return dispatch => {
+    dispatch(autocompleteFetchStart(SUGGESTIONS_JSON_KEY));
+    // client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(res)));
+    client.autocomplete(field, keyword, (res) => dispatch(autocompleteCustomFieldsResults(res)));
+
+  }
+}
+
 export function autocompleteSuggestionsResults(results) {
   return {
     type: AUTOCOMPLETE_SUGGESTIONS_RESULTS,
+    results
+  }
+}
+
+export function autocompleteCustomFieldsResults(results) {
+  return {
+    type: AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS,
     results
   }
 }

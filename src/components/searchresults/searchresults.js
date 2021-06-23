@@ -17,7 +17,11 @@ export default class SearchResults {
     handlebars.registerPartial('numberOfResultsTemplate', this.conf.template_resultcount || NUMBER_OF_RESULTS_TEMPLATE);
     handlebars.registerPartial('searchResultImageTemplate', this.conf.template_image || SEARCHRESULT_IMAGE_TEMPLATE);
 
-    handlebars.registerHelper('removeTrailingQueriesFromUrl', (url) => url.replace(/\?.*$/, ''));
+    handlebars.registerHelper('removeTrailingQueriesFromUrl', (url) => {
+      if (url) {
+        return url.replace(/\?.*$/, '')
+      }
+    });
 
     const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
     handlebars.registerHelper('selectCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));

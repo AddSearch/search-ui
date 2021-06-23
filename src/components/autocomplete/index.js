@@ -2,5 +2,6 @@ export { default } from './autocomplete';
 
 export const AUTOCOMPLETE_TYPE = {
   SEARCH: 'SEARCH',
-  SUGGESTIONS: 'SUGGESTIONS'
+  SUGGESTIONS: 'SUGGESTIONS',
+  CUSTOM_FIELDS: 'CUSTOM_FIELDS'
 };
