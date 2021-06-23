@@ -1,6 +1,7 @@
 import {
   AUTOCOMPLETE_FETCH_START,
   AUTOCOMPLETE_SUGGESTIONS_RESULTS,
+  AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS,
   AUTOCOMPLETE_SUGGESTIONS_CLEAR,
   AUTOCOMPLETE_SEARCH_RESULTS,
   AUTOCOMPLETE_SEARCH_CLEAR,
@@ -56,6 +57,22 @@ export default function searchsuggestions(state = initialState, action) {
       return Object.assign({}, state, {
         pendingRequests: removePendingSuggestion,
         suggestions: action.results.suggestions,
+        activeSuggestionIndex: null,
+        visible: true
+      });
+
+
+    case AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS:
+
+      // Remove suggestion from pending requests
+      let removePendingCustomFields = [...state.pendingRequests];
+      if (removePendingCustomFields.indexOf(SUGGESTIONS_JSON_KEY) !== -1) {
+        removePendingCustomFields.splice(removePendingCustomFields.indexOf(SUGGESTIONS_JSON_KEY), 1);
+      }
+
+      return Object.assign({}, state, {
+        pendingRequests: removePendingCustomFields,
+        suggestions: action.results.autocomplete,
         activeSuggestionIndex: null,
         visible: true
       });

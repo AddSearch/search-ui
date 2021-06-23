@@ -2,7 +2,13 @@ import './autocomplete.scss';
 import { AUTOCOMPLETE_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
 import { AUTOCOMPLETE_TYPE } from './index';
-import { setHideAutomatically, autocompleteSuggestions, autocompleteSearch, setActiveSuggestion } from '../../actions/autocomplete';
+import {
+  setHideAutomatically,
+  autocompleteSuggestions,
+  autocompleteSearch,
+  setActiveSuggestion,
+  autocompleteCustomFields
+} from '../../actions/autocomplete';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { observeStoreByKey } from '../../store';
@@ -46,6 +52,9 @@ export default class Autocomplete {
       const client = v.client || this.client;
       if (v.type === AUTOCOMPLETE_TYPE.SUGGESTIONS) {
         this.reduxStore.dispatch(autocompleteSuggestions(client, keyword));
+      }
+      else if (v.type === AUTOCOMPLETE_TYPE.CUSTOM_FIELDS) {
+        this.reduxStore.dispatch(autocompleteCustomFields(client, keyword, v.field));
       }
       else if (v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         const currentPaging = client.getSettings().paging;
