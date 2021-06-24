@@ -134,7 +134,22 @@ export default class Autocomplete {
     // Send result clicks to analytics from the first child of searchResults
     if (searchResults[Object.keys(searchResults)[0]]) {
       const links = container.querySelectorAll('[data-analytics-click]');
-      addClickTrackers(this.client, links, {hits: searchResults[Object.keys(searchResults)[0]]});
+
+      let analyticsClient = null;
+      this.conf.sources.forEach(v => {
+        if (v.type === AUTOCOMPLETE_TYPE.SEARCH) {
+          if (!analyticsClient) {
+            analyticsClient = v.client;
+          }
+        }
+      });
+
+      // Use default client
+      if (!analyticsClient) {
+        analyticsClient = this.client;
+      }
+
+      addClickTrackers(analyticsClient, links, {hits: searchResults[Object.keys(searchResults)[0]]});
     }
 
     // If infinite scroll and the first request, scroll top
