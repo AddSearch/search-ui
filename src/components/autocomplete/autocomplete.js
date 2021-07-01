@@ -90,10 +90,11 @@ export default class Autocomplete {
     }
 
     // Autocomplete data (search suggestions, search results, or both)
-    const { suggestions, searchResults, activeSuggestionIndex } = autocompleteState;
+    const { suggestions, customFields, searchResults, activeSuggestionIndex } = autocompleteState;
     const data = {
       activeSuggestionIndex,
       suggestions,
+      customFields,
       searchResults
     };
 

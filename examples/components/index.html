@@ -100,8 +100,7 @@
 
     <script>
       // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
-      // var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
-      var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+      var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
       client.addFacetField('category');
 
       // Search UI
@@ -136,8 +135,7 @@
         onShow: alignAutocomplete,
         sources: [
           {
-            type: AddSearchUI.AUTOCOMPLETE_TYPE.CUSTOM_FIELDS,
-            field: 'custom_fields.strIngredient1'
+            type: AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS
           }
         ]
       });
@@ -330,11 +328,6 @@
         template: facetsTemplate,
         facetsFilter: facetsFilter
       });
-
-
-      // client.autocomplete('custom_fields.strIngredient1', 'e', function(data) {
-      //   window.console.log('+++ data', data);
-      // });
 
       searchui.start();
     </script>
