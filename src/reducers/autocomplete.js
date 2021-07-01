@@ -3,6 +3,7 @@ import {
   AUTOCOMPLETE_SUGGESTIONS_RESULTS,
   AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS,
   AUTOCOMPLETE_SUGGESTIONS_CLEAR,
+  AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR,
   AUTOCOMPLETE_SEARCH_RESULTS,
   AUTOCOMPLETE_SEARCH_CLEAR,
   AUTOCOMPLETE_SHOW,
@@ -10,13 +11,15 @@ import {
   HIDE_AUTOMATICALLY,
   KEYBOARD_EVENT, ARROW_UP, ARROW_DOWN,
   SET_ACTIVE_SUGGESTION,
-  SUGGESTIONS_JSON_KEY
+  SUGGESTIONS_JSON_KEY,
+  CUSTOM_FIELDS_JSON_KEY
 } from '../actions/autocomplete';
 
 const initialState = {
   pendingRequests: [],
 
   suggestions: [],
+  customFields: [],
   activeSuggestionIndex: null,
   setSuggestionToSearchField: false,
 
@@ -45,6 +48,12 @@ export default function searchsuggestions(state = initialState, action) {
         activeSuggestionIndex: null
       });
 
+    case AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR:
+      return Object.assign({}, state, {
+        customFields: [],
+        activeSuggestionIndex: null
+      });
+
 
     case AUTOCOMPLETE_SUGGESTIONS_RESULTS:
 
@@ -66,13 +75,13 @@ export default function searchsuggestions(state = initialState, action) {
 
       // Remove suggestion from pending requests
       let removePendingCustomFields = [...state.pendingRequests];
-      if (removePendingCustomFields.indexOf(SUGGESTIONS_JSON_KEY) !== -1) {
-        removePendingCustomFields.splice(removePendingCustomFields.indexOf(SUGGESTIONS_JSON_KEY), 1);
+      if (removePendingCustomFields.indexOf(CUSTOM_FIELDS_JSON_KEY) !== -1) {
+        removePendingCustomFields.splice(removePendingCustomFields.indexOf(CUSTOM_FIELDS_JSON_KEY), 1);
       }
 
       return Object.assign({}, state, {
         pendingRequests: removePendingCustomFields,
-        suggestions: action.results.autocomplete,
+        customFields: action.results.autocomplete,
         activeSuggestionIndex: null,
         visible: true
       });
