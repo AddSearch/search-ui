@@ -64,7 +64,7 @@ export default class SearchField {
     if (kw.indexOf(WARMUP_QUERY_PREFIX) !== 0) {
       this.reduxStore.dispatch(setPage(client, 1, null, this.reduxStore));
     }
-    this.onSearch(kw, false, searchAsYouType);
+    this.onSearch(kw, false, searchAsYouType, this.conf.fieldForJumpSearch);
   }
 
 
