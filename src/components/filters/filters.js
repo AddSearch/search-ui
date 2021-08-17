@@ -158,7 +158,7 @@ export default class Filters {
     }
 
     if (this.conf.setSorting) {
-      store.dispatch(sortBy(this.client, this.conf.setSorting.field, this.conf.setSorting.order));
+      store.dispatch(sortBy(this.client, this.conf.setSorting.field, this.conf.setSorting.order, this.reduxStore));
     }
 
     // Remove all other filters. Refresh results if there is no next filter

@@ -39,7 +39,7 @@ export default class SortBy {
 
   dispatchAndRefresh(field, order) {
     // Dispatch sortby
-    this.reduxStore.dispatch(sortBy(this.client, field, order));
+    this.reduxStore.dispatch(sortBy(this.client, field, order, this.reduxStore));
 
     // Reset paging
     this.reduxStore.dispatch(setPage(this.client, 1, null, this.reduxStore));
