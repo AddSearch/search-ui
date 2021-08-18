@@ -5,6 +5,7 @@ export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
 export const AUTOCOMPLETE_SEARCH_CLEAR = 'AUTOCOMPLETE_SEARCH_CLEAR';
 export const AUTOCOMPLETE_SHOW = 'AUTOCOMPLETE_SHOW';
 export const AUTOCOMPLETE_HIDE = 'AUTOCOMPLETE_HIDE';
+export const AUTOCOMPLETE_HIDE_CLEAR_PENDING = 'AUTOCOMPLETE_HIDE_CLEAR_PENDING';
 export const HIDE_AUTOMATICALLY = 'HIDE_AUTOMATICALLY';
 
 export const KEYBOARD_EVENT = 'KEYBOARD_EVENT';
@@ -70,6 +71,12 @@ export function autocompleteShow() {
 export function autocompleteHide() {
   return {
     type: AUTOCOMPLETE_HIDE
+  }
+}
+
+export function autocompleteHideAndClearPending() {
+  return {
+    type: AUTOCOMPLETE_HIDE_CLEAR_PENDING
   }
 }
 

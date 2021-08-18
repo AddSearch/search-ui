@@ -9,7 +9,8 @@ import {
   HIDE_AUTOMATICALLY,
   KEYBOARD_EVENT, ARROW_UP, ARROW_DOWN,
   SET_ACTIVE_SUGGESTION,
-  SUGGESTIONS_JSON_KEY
+  SUGGESTIONS_JSON_KEY,
+  AUTOCOMPLETE_HIDE_CLEAR_PENDING
 } from '../actions/autocomplete';
 
 const initialState = {
@@ -91,7 +92,15 @@ export default function searchsuggestions(state = initialState, action) {
 
 
     case AUTOCOMPLETE_HIDE:
+
       return Object.assign({}, state, {
+        visible: false,
+        activeSuggestionIndex: null
+      });
+
+    case AUTOCOMPLETE_HIDE_CLEAR_PENDING:
+      return Object.assign({}, state, {
+        pendingRequests: [],
         visible: false,
         activeSuggestionIndex: null
       });
