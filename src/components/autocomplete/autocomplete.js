@@ -7,7 +7,7 @@ import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
-import { addClickTrackers, sendSearchStats } from '../../util/analytics';
+import { addClickTrackers, sendAutocompleteStats } from '../../util/analytics';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 
@@ -55,15 +55,17 @@ export default class Autocomplete {
 
 
   sendSearchAnalytics(state) {
+    let statArr = [];
     this.conf.sources.forEach(v => {
       // Analytics supported for autocomplete type = search
       if (v.type === AUTOCOMPLETE_TYPE.SEARCH && v.collectSearchAnalytics) {
         const client = v.client || this.client;
         const hits = state.searchResultsStats[v.jsonKey] ? state.searchResultsStats[v.jsonKey].total_hits : 0;
-        const time = state.searchResultsStats[v.jsonKey] ? state.searchResultsStats[v.jsonKey].processing_time_ms : 0;
-        sendSearchStats(client, state.keyword, hits, time);
+        statArr.push({client: client, numberOfResults: hits});
       }
     });
+
+    sendAutocompleteStats(state.keyword, statArr);
   }
 
 
