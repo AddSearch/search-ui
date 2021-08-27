@@ -66,6 +66,7 @@ export function sendAutocompleteStats(keyword, statsArray) {
     if (keyword !== autocompletePreviousKeyword) {
       statsArray.forEach(c => (c.client).sendStatsEvent(action, keyword, {numberOfResults: c.numberOfResults}))
       autocompletePreviousKeyword = keyword;
+      searchStatsSent = true;
     }
   }, SEARCH_ANALYTICS_DEBOUNCE_TIME);
 }
