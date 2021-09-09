@@ -90,7 +90,7 @@ export default class FilterStateObserver {
 
       const keyword = this.reduxStore.getState().keyword.value;
       this.reduxStore.dispatch(setPage(this.client, 1, null, this.reduxStore));
-      this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore));
+      this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore, state.targetFacetGroup));
     }
 
     // Custom function to control conditional visibility (e.g. show a component only when a certain filter is active)
