@@ -82,6 +82,6 @@ export default class Pagination {
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
     const onResultsScrollTo = this.conf.onResultsScrollTo || 'top';
-    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, null, null, this.reduxStore));
+    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, null, null, this.reduxStore, 'component.pagination'));
   }
 }

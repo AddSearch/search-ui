@@ -8,6 +8,7 @@ export const SET_SEARCH_RESULTS_PAGE_URL = 'SET_SEARCH_RESULTS_PAGE_URL';
 export const SEARCH_FETCH_START = 'SEARCH_FETCH_START';
 export const SEARCH_RESULTS = 'SEARCH_RESULTS';
 export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
+export const SEARCH_BY_COMPONENT = 'SEARCH_BY_COMPONENT';
 
 export function start() {
   return {
@@ -15,7 +16,7 @@ export function start() {
   }
 }
 
-export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, store) {
+export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, store, requestBy) {
   // Update browser history
   setHistory(HISTORY_PARAMETERS.SEARCH, keyword, isHistoryDebounced, store);
 
@@ -27,7 +28,7 @@ export function search(client, keyword, onResultsScrollTo, appendResults, isHist
   }
   return dispatch => {
     dispatch(searchFetchStart());
-    client.search(keyword, (res) => dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults)));
+    client.search(keyword, (res) => dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults, requestBy)));
   }
 }
 
@@ -37,7 +38,7 @@ export function searchFetchStart(keyword) {
   }
 }
 
-export function searchResults(client, keyword, results, onResultsScrollTo, appendResults) {
+export function searchResults(client, keyword, results, onResultsScrollTo, appendResults, requestBy) {
   if (onResultsScrollTo === 'top') {
     window.scrollTo(0, 0);
   }
@@ -53,7 +54,8 @@ export function searchResults(client, keyword, results, onResultsScrollTo, appen
     type: SEARCH_RESULTS,
     keyword,
     results,
-    appendResults
+    appendResults,
+    requestBy
   }
 }
 
