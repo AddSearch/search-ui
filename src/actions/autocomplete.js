@@ -23,9 +23,6 @@ export function autocompleteSuggestions(client, keyword) {
   }
   return dispatch => {
     dispatch(autocompleteFetchStart(SUGGESTIONS_JSON_KEY));
-    // client.suggestions(keyword, (res) => {
-    //   dispatch(autocompleteSuggestionsResults(res));
-    // });
     client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(res)));
   }
 }
