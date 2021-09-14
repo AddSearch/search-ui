@@ -10,7 +10,7 @@ import {
   KEYBOARD_EVENT, ARROW_UP, ARROW_DOWN,
   SET_ACTIVE_SUGGESTION,
   SUGGESTIONS_JSON_KEY,
-  AUTOCOMPLETE_HIDE_CLEAR_PENDING
+  AUTOCOMPLETE_HIDE_AND_DROP_RENDERING
 } from '../actions/autocomplete';
 
 const initialState = {
@@ -35,7 +35,8 @@ export default function searchsuggestions(state = initialState, action) {
       }
 
       return Object.assign({}, state, {
-        pendingRequests: addPendingReq
+        pendingRequests: addPendingReq,
+        dropRendering: false
       });
 
 
@@ -98,9 +99,9 @@ export default function searchsuggestions(state = initialState, action) {
         activeSuggestionIndex: null
       });
 
-    case AUTOCOMPLETE_HIDE_CLEAR_PENDING:
+    case AUTOCOMPLETE_HIDE_AND_DROP_RENDERING:
       return Object.assign({}, state, {
-        pendingRequests: [],
+        dropRendering: true,
         visible: false,
         activeSuggestionIndex: null
       });

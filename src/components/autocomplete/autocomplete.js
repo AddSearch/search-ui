@@ -68,8 +68,16 @@ export default class Autocomplete {
 
 
   render(autocompleteState) {
+
+    // Hide autocomplete after a search is triggered
+    if (autocompleteState.dropRendering && this.renderedHtml) {
+      document.getElementById(this.conf.containerId).innerHTML = '';
+      this.renderedHtml = '';
+      return;
+    }
+
     // Don't re-render while API requests are pending
-    if (autocompleteState.pendingRequests.length !== 0) {
+    if (autocompleteState.pendingRequests.length !== 0 || autocompleteState.dropRendering) {
       return;
     }
 

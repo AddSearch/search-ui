@@ -5,7 +5,7 @@ export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
 export const AUTOCOMPLETE_SEARCH_CLEAR = 'AUTOCOMPLETE_SEARCH_CLEAR';
 export const AUTOCOMPLETE_SHOW = 'AUTOCOMPLETE_SHOW';
 export const AUTOCOMPLETE_HIDE = 'AUTOCOMPLETE_HIDE';
-export const AUTOCOMPLETE_HIDE_CLEAR_PENDING = 'AUTOCOMPLETE_HIDE_CLEAR_PENDING';
+export const AUTOCOMPLETE_HIDE_AND_DROP_RENDERING = 'AUTOCOMPLETE_HIDE_AND_DROP_RENDERING';
 export const HIDE_AUTOMATICALLY = 'HIDE_AUTOMATICALLY';
 
 export const KEYBOARD_EVENT = 'KEYBOARD_EVENT';
@@ -23,6 +23,9 @@ export function autocompleteSuggestions(client, keyword) {
   }
   return dispatch => {
     dispatch(autocompleteFetchStart(SUGGESTIONS_JSON_KEY));
+    // client.suggestions(keyword, (res) => {
+    //   dispatch(autocompleteSuggestionsResults(res));
+    // });
     client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(res)));
   }
 }
@@ -74,9 +77,9 @@ export function autocompleteHide() {
   }
 }
 
-export function autocompleteHideAndClearPending() {
+export function autocomplteHideAndDropRendering() {
   return {
-    type: AUTOCOMPLETE_HIDE_CLEAR_PENDING
+    type: AUTOCOMPLETE_HIDE_AND_DROP_RENDERING
   }
 }
 
