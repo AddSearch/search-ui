@@ -32,6 +32,7 @@ let searchStatsSent = false; // If a search result is clicked within the SEARCH_
 export function sendSearchStats(client, keyword, numberOfResults, processingTimeMs) {
   if (collectAnalytics === false) return;
   const action = 'search';
+  const analyticsTag = client.getSettings().analyticsTag;
 
   if (sendSearchStatsTimeout) {
     clearTimeout(sendSearchStatsTimeout);
@@ -40,7 +41,7 @@ export function sendSearchStats(client, keyword, numberOfResults, processingTime
   sendSearchStatsTimeout = setTimeout(() => {
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== previousKeyword) {
-      client.sendStatsEvent(action, keyword, {numberOfResults});
+      client.sendStatsEvent(action, keyword, {numberOfResults}, analyticsTag);
       callExternalAnalyticsCallback({action, keyword, numberOfResults, processingTimeMs});
       previousKeyword = keyword;
       searchStatsSent = true;
@@ -53,7 +54,7 @@ export function sendSearchStats(client, keyword, numberOfResults, processingTime
  */
 let autocompleteStatsTimeout = null;
 let autocompletePreviousKeyword = null;
-export function sendAutocompleteStats(keyword, statsArray) {
+export function sendAutocompleteStats(keyword, statsArray, clientAnalyticsTag) {
   if (collectAnalytics === false || !statsArray || statsArray.length < 1) return;
   const action = 'search';
 
@@ -64,7 +65,10 @@ export function sendAutocompleteStats(keyword, statsArray) {
   autocompleteStatsTimeout = setTimeout(() => {
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== autocompletePreviousKeyword) {
-      statsArray.forEach(c => (c.client).sendStatsEvent(action, keyword, {numberOfResults: c.numberOfResults}))
+      statsArray.forEach(c => {
+        const autocompleteClientAnalyticsTag =  c.client.getSettings().analyticsTag || clientAnalyticsTag;
+        (c.client).sendStatsEvent(action, keyword, {numberOfResults: c.numberOfResults}, autocompleteClientAnalyticsTag);
+      })
       autocompletePreviousKeyword = keyword;
       searchStatsSent = true;
     }
@@ -108,15 +112,16 @@ function onLinkClick(e, client, searchResults) {
     e.target.parentNode.parentNode.getAttribute('data-analytics-click');
   const position = getDocumentPosition(client.getSettings().paging.pageSize, searchResults, documentId);
   const keyword = client.getSettings().keyword;
+  const analyticsTag = client.getSettings().analyticsTag;
 
-  client.sendStatsEvent('click', keyword, {documentId, position});
+  client.sendStatsEvent('click', keyword, {documentId, position}, analyticsTag);
   callExternalAnalyticsCallback({action: 'click', keyword, documentId, position});
 
   // Search stats were not sent within SEARCH_ANALYTICS_DEBOUNCE_TIME
   if (searchStatsSent === false) {
     const numberOfResults = searchResults ? searchResults.total_hits : 0;
     const processingTimeMs = searchResults ? searchResults.processing_time_ms : 0;
-    client.sendStatsEvent('search', keyword, {numberOfResults});
+    client.sendStatsEvent('search', keyword, {numberOfResults}, analyticsTag);
     callExternalAnalyticsCallback({action: 'search', keyword, numberOfResults, processingTimeMs});
   }
 }

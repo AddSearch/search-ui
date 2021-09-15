@@ -65,7 +65,7 @@ export default class Autocomplete {
       }
     });
 
-    sendAutocompleteStats(state.keyword, statArr);
+    sendAutocompleteStats(state.keyword, statArr, client.getSettings().analyticsTag);
   }
 
 
