@@ -32,7 +32,6 @@ let searchStatsSent = false; // If a search result is clicked within the SEARCH_
 export function sendSearchStats(client, keyword, numberOfResults, processingTimeMs) {
   if (collectAnalytics === false) return;
   const action = 'search';
-  const analyticsTag = client.getSettings().analyticsTag;
 
   if (sendSearchStatsTimeout) {
     clearTimeout(sendSearchStatsTimeout);
@@ -41,7 +40,7 @@ export function sendSearchStats(client, keyword, numberOfResults, processingTime
   sendSearchStatsTimeout = setTimeout(() => {
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== previousKeyword) {
-      client.sendStatsEvent(action, keyword, {numberOfResults}, analyticsTag);
+      client.sendStatsEvent(action, keyword, {numberOfResults});
       callExternalAnalyticsCallback({action, keyword, numberOfResults, processingTimeMs});
       previousKeyword = keyword;
       searchStatsSent = true;
@@ -66,8 +65,10 @@ export function sendAutocompleteStats(keyword, statsArray, clientAnalyticsTag) {
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== autocompletePreviousKeyword) {
       statsArray.forEach(c => {
-        const autocompleteClientAnalyticsTag =  c.client.getSettings().analyticsTag || clientAnalyticsTag;
-        (c.client).sendStatsEvent(action, keyword, {numberOfResults: c.numberOfResults}, autocompleteClientAnalyticsTag);
+        if (!c.client.getSettings().analyticsTag) {
+          c.client.setAnalyticsTag(clientAnalyticsTag);
+        }
+        (c.client).sendStatsEvent(action, keyword, {numberOfResults: c.numberOfResults});
       })
       autocompletePreviousKeyword = keyword;
       searchStatsSent = true;
@@ -78,14 +79,14 @@ export function sendAutocompleteStats(keyword, statsArray, clientAnalyticsTag) {
 /**
  * Add click trackers to search result links
  */
-export function addClickTrackers(client, linkArray, searchResults) {
+export function addClickTrackers(client, linkArray, searchResults, clientAnalyticsTag) {
   if (linkArray && linkArray.length > 0) {
     for (let i=0; i<linkArray.length; i++) {
 
       // Enter pressed when link is active
       linkArray[i].addEventListener('keyup', (e) => {
         if (e.keyCode === 13) {
-          onLinkClick(e, client, searchResults);
+          onLinkClick(e, client, searchResults, clientAnalyticsTag);
         }
       });
 
@@ -95,7 +96,7 @@ export function addClickTrackers(client, linkArray, searchResults) {
         if (e.button && e.buttons && e.button === e.buttons) {
           return;
         }
-        onLinkClick(e, client, searchResults);
+        onLinkClick(e, client, searchResults, clientAnalyticsTag);
       });
 
     }
@@ -103,7 +104,7 @@ export function addClickTrackers(client, linkArray, searchResults) {
 }
 
 
-function onLinkClick(e, client, searchResults) {
+function onLinkClick(e, client, searchResults, clientAnalyticsTag) {
   if (collectAnalytics === false) return;
 
   // Support data attributes in parent and grandparent elements
@@ -112,16 +113,21 @@ function onLinkClick(e, client, searchResults) {
     e.target.parentNode.parentNode.getAttribute('data-analytics-click');
   const position = getDocumentPosition(client.getSettings().paging.pageSize, searchResults, documentId);
   const keyword = client.getSettings().keyword;
-  const analyticsTag = client.getSettings().analyticsTag;
 
-  client.sendStatsEvent('click', keyword, {documentId, position}, analyticsTag);
+  if (!client.getSettings().analyticsTag && clientAnalyticsTag) {
+    client.setAnalyticsTag(clientAnalyticsTag);
+  }
+  client.sendStatsEvent('click', keyword, {documentId, position});
   callExternalAnalyticsCallback({action: 'click', keyword, documentId, position});
 
   // Search stats were not sent within SEARCH_ANALYTICS_DEBOUNCE_TIME
   if (searchStatsSent === false) {
     const numberOfResults = searchResults ? searchResults.total_hits : 0;
     const processingTimeMs = searchResults ? searchResults.processing_time_ms : 0;
-    client.sendStatsEvent('search', keyword, {numberOfResults}, analyticsTag);
+    if (!client.getSettings().analyticsTag && clientAnalyticsTag) {
+      client.setAnalyticsTag(clientAnalyticsTag);
+    }
+    client.sendStatsEvent('search', keyword, {numberOfResults});
     callExternalAnalyticsCallback({action: 'search', keyword, numberOfResults, processingTimeMs});
   }
 }

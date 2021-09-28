@@ -35,6 +35,6 @@ export default class SegmentedResults {
 
     // Send result clicks to analytics
     const links = container.querySelectorAll('[data-analytics-click]');
-    addClickTrackers(this.client, links, data);
+    addClickTrackers(this.client, links, data, client.getSettings().analyticsTag);
   }
 }

@@ -151,7 +151,7 @@ export default class Autocomplete {
         analyticsClient = this.client;
       }
 
-      addClickTrackers(analyticsClient, links, {hits: searchResults[Object.keys(searchResults)[0]]});
+      addClickTrackers(analyticsClient, links, {hits: searchResults[Object.keys(searchResults)[0]]}, client.getSettings().analyticsTag);
     }
 
     // If infinite scroll and the first request, scroll top
