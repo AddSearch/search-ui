@@ -58,7 +58,6 @@ export default class Facets {
       }
     }
 
-
     // Possible filtering function to remove unwanted facets
     if (this.conf.facetsFilter) {
       facets = this.conf.facetsFilter(facets);
@@ -74,9 +73,11 @@ export default class Facets {
 
     // Compile HTML and inject to element if changed
     const html = handlebars.compile(this.conf.template || FACETS_TEMPLATE)(data);
-    if (this.renderedHtml === html) {
+    if (this.renderedHtml === html && activeFacets === this.renderedActiveFacets) {
       return;
     }
+    this.renderedActiveFacets = activeFacets;
+
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
     this.renderedHtml = html;

@@ -4,12 +4,14 @@ import { search } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
 import { setActiveFilters, setActiveFacets } from '../actions/filters';
+import {sortBy} from "../actions/sortby";
 
 export const HISTORY_PARAMETERS = {
   SEARCH: 'search',
   FILTERS: 'search_filters',
   FACETS: 'search_facets',
-  PAGE: 'search_page'
+  PAGE: 'search_page',
+  SORTBY: 'search_sort'
 };
 
 const SET_HISTORY_DEBOUNCE_TIME = 1500;
@@ -146,7 +148,12 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
     client.setFilterObject(baseFilters || null);
   }
 
-
+  // Has sort method
+  if (qs[HISTORY_PARAMETERS.SORTBY]) {
+    // Take sort method from URL
+    const sortMethod = urlParamToJSON(qs[HISTORY_PARAMETERS.SORTBY]);
+    store.dispatch(sortBy(client, sortMethod.field, sortMethod.order));
+  }
 
   if (qs[HISTORY_PARAMETERS.PAGE]) {
     store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10), null, store));
