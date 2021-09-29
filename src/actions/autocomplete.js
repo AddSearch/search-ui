@@ -23,13 +23,14 @@ export function autocompleteSuggestions(client, keyword) {
   }
   return dispatch => {
     dispatch(autocompleteFetchStart(SUGGESTIONS_JSON_KEY));
-    client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(res)));
+    client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(keyword, res)));
   }
 }
 
-export function autocompleteSuggestionsResults(results) {
+export function autocompleteSuggestionsResults(keyword, results) {
   return {
     type: AUTOCOMPLETE_SUGGESTIONS_RESULTS,
+    keyword,
     results
   }
 }
@@ -42,13 +43,14 @@ export function autocompleteSearch(client, jsonKey, keyword, appendResults) {
   }
   return dispatch => {
     dispatch(autocompleteFetchStart(jsonKey));
-    client.search(keyword, (res) => dispatch(autocompleteSearchResults(res, jsonKey, appendResults)));
+    client.search(keyword, (res) => dispatch(autocompleteSearchResults(keyword, res, jsonKey, appendResults)));
   }
 }
 
-export function autocompleteSearchResults(results, jsonKey, appendResults) {
+export function autocompleteSearchResults(keyword, results, jsonKey, appendResults) {
   return {
     type: AUTOCOMPLETE_SEARCH_RESULTS,
+    keyword,
     results,
     jsonKey,
     appendResults
