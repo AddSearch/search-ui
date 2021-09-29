@@ -2,7 +2,15 @@
 import './searchfield.scss';
 import { SEARCHFIELD_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
-import { autocompleteHide, autocompleteShow, keyboardEvent, setActiveSuggestion, ARROW_DOWN, ARROW_UP } from '../../actions/autocomplete';
+import {
+  autocompleteHide,
+  autocompleteShow,
+  keyboardEvent,
+  setActiveSuggestion,
+  ARROW_DOWN,
+  ARROW_UP,
+  autocomplteHideAndDropRendering
+} from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
 import { observeStoreByKey } from '../../store';
@@ -56,6 +64,7 @@ export default class SearchField {
 
 
   executeSearch(client, keyword, searchAsYouType) {
+    this.reduxStore.dispatch(autocomplteHideAndDropRendering());
     let kw = keyword;
     if (kw === '' && this.matchAllQuery) {
       kw = MATCH_ALL_QUERY;
