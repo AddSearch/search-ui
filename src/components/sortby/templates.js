@@ -2,7 +2,7 @@ export const SORTBY_SELECT_TEMPLATE = `
   <div class="addsearch-sortby">        
     <select>
       {{#each options}}
-        <option data-field={{sortBy}} data-order={{order}}>{{label}}</option>
+        <option data-field={{sortBy}} data-order={{order}} {{#if active}}selected="selected"{{/if}}>{{label}}</option>
       {{/each}}
     </select>
   </div>
