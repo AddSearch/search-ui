@@ -12,11 +12,13 @@ import {
   KEYBOARD_EVENT, ARROW_UP, ARROW_DOWN,
   SET_ACTIVE_SUGGESTION,
   SUGGESTIONS_JSON_KEY,
+  AUTOCOMPLETE_HIDE_AND_DROP_RENDERING,
   CUSTOM_FIELDS_JSON_KEY
 } from '../actions/autocomplete';
 
 const initialState = {
   pendingRequests: [],
+  keyword: null,
 
   suggestions: [],
   customFields: [],
@@ -24,6 +26,7 @@ const initialState = {
   setSuggestionToSearchField: false,
 
   searchResults: {},
+  searchResultsStats: {},
   hideAutomatically: true,
   visible: false
 };
@@ -38,7 +41,8 @@ export default function searchsuggestions(state = initialState, action) {
       }
 
       return Object.assign({}, state, {
-        pendingRequests: addPendingReq
+        pendingRequests: addPendingReq,
+        dropRendering: false
       });
 
 
@@ -64,6 +68,7 @@ export default function searchsuggestions(state = initialState, action) {
       }
 
       return Object.assign({}, state, {
+        keyword: action.keyword,
         pendingRequests: removePendingSuggestion,
         suggestions: action.results.suggestions,
         activeSuggestionIndex: null,
@@ -89,35 +94,57 @@ export default function searchsuggestions(state = initialState, action) {
 
     case AUTOCOMPLETE_SEARCH_CLEAR:
       return Object.assign({}, state, {
-        searchResults: {}
+        searchResults: {},
+        searchResultsStats: {}
       });
 
 
     case AUTOCOMPLETE_SEARCH_RESULTS:
       const nextSearchResults = Object.assign({}, state.searchResults);
       nextSearchResults[action.jsonKey] = action.results.hits;
+      const nextSearchResultsStats = Object.assign({}, state.searchResultsStats);
 
       // Append results in infinite scroll
       if (action.appendResults === true && state.searchResults[action.jsonKey]) {
         nextSearchResults[action.jsonKey] = [...state.searchResults[action.jsonKey], ...action.results.hits];
       }
 
-      // Remove search from pending requests
+      // Not infinite scroll. Save stats (number of hits, processing time) for possible analytics usage
+      else {
+        if (!nextSearchResultsStats[action.jsonKey]) {
+          nextSearchResultsStats[action.jsonKey] = {};
+        }
+        nextSearchResultsStats[action.jsonKey].total_hits = action.results.total_hits;
+        nextSearchResultsStats[action.jsonKey].processing_time_ms = action.results.processing_time_ms;
+      }
+
+
+      // Remove this search from pending requests
       let removePendingSearch = [...state.pendingRequests];
       if (removePendingSearch.indexOf(action.jsonKey) !== -1) {
         removePendingSearch.splice(removePendingSearch.indexOf(action.jsonKey), 1);
       }
 
       return Object.assign({}, state, {
+        keyword: action.keyword,
         pendingRequests: removePendingSearch,
         searchResults: nextSearchResults,
+        searchResultsStats: nextSearchResultsStats,
         visible: true,
         appendResults: action.appendResults === true
       });
 
 
     case AUTOCOMPLETE_HIDE:
+
       return Object.assign({}, state, {
+        visible: false,
+        activeSuggestionIndex: null
+      });
+
+    case AUTOCOMPLETE_HIDE_AND_DROP_RENDERING:
+      return Object.assign({}, state, {
+        dropRendering: true,
         visible: false,
         activeSuggestionIndex: null
       });

@@ -7,6 +7,7 @@ export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
 export const AUTOCOMPLETE_SEARCH_CLEAR = 'AUTOCOMPLETE_SEARCH_CLEAR';
 export const AUTOCOMPLETE_SHOW = 'AUTOCOMPLETE_SHOW';
 export const AUTOCOMPLETE_HIDE = 'AUTOCOMPLETE_HIDE';
+export const AUTOCOMPLETE_HIDE_AND_DROP_RENDERING = 'AUTOCOMPLETE_HIDE_AND_DROP_RENDERING';
 export const HIDE_AUTOMATICALLY = 'HIDE_AUTOMATICALLY';
 
 export const KEYBOARD_EVENT = 'KEYBOARD_EVENT';
@@ -25,7 +26,7 @@ export function autocompleteSuggestions(client, keyword) {
   }
   return dispatch => {
     dispatch(autocompleteFetchStart(SUGGESTIONS_JSON_KEY));
-    client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(res)));
+    client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(keyword, res)));
   }
 }
 
@@ -45,6 +46,7 @@ export function autocompleteCustomFields(client, keyword, field) {
 export function autocompleteSuggestionsResults(results) {
   return {
     type: AUTOCOMPLETE_SUGGESTIONS_RESULTS,
+    keyword,
     results
   }
 }
@@ -64,13 +66,14 @@ export function autocompleteSearch(client, jsonKey, keyword, appendResults) {
   }
   return dispatch => {
     dispatch(autocompleteFetchStart(jsonKey));
-    client.search(keyword, (res) => dispatch(autocompleteSearchResults(res, jsonKey, appendResults)));
+    client.search(keyword, (res) => dispatch(autocompleteSearchResults(keyword, res, jsonKey, appendResults)));
   }
 }
 
-export function autocompleteSearchResults(results, jsonKey, appendResults) {
+export function autocompleteSearchResults(keyword, results, jsonKey, appendResults) {
   return {
     type: AUTOCOMPLETE_SEARCH_RESULTS,
+    keyword,
     results,
     jsonKey,
     appendResults
@@ -93,6 +96,12 @@ export function autocompleteShow() {
 export function autocompleteHide() {
   return {
     type: AUTOCOMPLETE_HIDE
+  }
+}
+
+export function autocomplteHideAndDropRendering() {
+  return {
+    type: AUTOCOMPLETE_HIDE_AND_DROP_RENDERING
   }
 }
 

@@ -48,6 +48,28 @@ export function sendSearchStats(client, keyword, numberOfResults, processingTime
   }, SEARCH_ANALYTICS_DEBOUNCE_TIME);
 }
 
+/**
+ * Send info on autocomplete results to analytics. Supports multiple sources
+ */
+let autocompleteStatsTimeout = null;
+let autocompletePreviousKeyword = null;
+export function sendAutocompleteStats(keyword, statsArray) {
+  if (collectAnalytics === false || !statsArray || statsArray.length < 1) return;
+  const action = 'search';
+
+  if (autocompleteStatsTimeout) {
+    clearTimeout(autocompleteStatsTimeout);
+  }
+
+  autocompleteStatsTimeout = setTimeout(() => {
+    // Don't send if keyword not changed (i.e. filters changed)
+    if (keyword !== autocompletePreviousKeyword) {
+      statsArray.forEach(c => (c.client).sendStatsEvent(action, keyword, {numberOfResults: c.numberOfResults}))
+      autocompletePreviousKeyword = keyword;
+      searchStatsSent = true;
+    }
+  }, SEARCH_ANALYTICS_DEBOUNCE_TIME);
+}
 
 /**
  * Add click trackers to search result links
