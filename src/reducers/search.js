@@ -4,7 +4,8 @@ import {
   SEARCH_FETCH_START,
   SEARCH_RESULTS,
   CLEAR_SEARCH_RESULTS,
-  SET_SEARCH_RESULTS_PAGE_URL
+  SET_SEARCH_RESULTS_PAGE_URL,
+  SEARCH_BY_COMPONENT
 } from '../actions/search';
 
 const initialState = {
@@ -62,7 +63,8 @@ export default function search(state = initialState, action) {
       return Object.assign({}, state, {
         keyword: action.keyword,
         results: nextResults,
-        loading: false
+        loading: false,
+        callBy: action.requestBy
       });
 
     case SET_SEARCH_RESULTS_PAGE_URL:

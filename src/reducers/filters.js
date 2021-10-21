@@ -55,7 +55,8 @@ export default function filters(state = initialState, action) {
 
       return Object.assign({}, state, {
         activeFilters: nextActive,
-        refreshSearch: action.refreshSearch === false ? false : true
+        refreshSearch: action.refreshSearch === false ? false : true,
+        targetFacetGroup: null
       });
 
 
@@ -120,9 +121,9 @@ export default function filters(state = initialState, action) {
 
       return Object.assign({}, state, {
         activeFacets: nextActiveFacets,
-        refreshSearch: action.refreshSearch === false ? false : true
+        refreshSearch: action.refreshSearch === false ? false : true,
+        targetFacetGroup: action.field
       });
-
 
     default:
       return state

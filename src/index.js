@@ -143,7 +143,7 @@ export default class AddSearchUI {
   }
 
   facets(conf) {
-    new Facets(this.client, this.reduxStore, conf);
+    new Facets(this.client, this.reduxStore, conf, this.settings.baseFilters);
   }
 
   filters(conf) {
