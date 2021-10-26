@@ -46,7 +46,7 @@ export default class SortBy {
 
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
-    this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore, 'component.sortby'));
+    this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore, null, 'component.sortby'));
   }
 
 

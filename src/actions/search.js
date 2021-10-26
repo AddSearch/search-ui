@@ -16,7 +16,7 @@ export function start() {
   }
 }
 
-export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, store, requestBy) {
+export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, store, fieldForInstantRedirect, requestBy) {
   // Update browser history
   setHistory(HISTORY_PARAMETERS.SEARCH, keyword, isHistoryDebounced, store);
 
@@ -28,7 +28,17 @@ export function search(client, keyword, onResultsScrollTo, appendResults, isHist
   }
   return dispatch => {
     dispatch(searchFetchStart());
-    client.search(keyword, (res) => dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults, requestBy)));
+    client.search(keyword, (res) => {
+      if (fieldForInstantRedirect && res && res.hits && res.hits.length) {
+        var customFieldName = fieldForInstantRedirect.replace('custom_fields.', '');
+        var matchedHit = res.hits.find((hit) => hit.custom_fields && hit.custom_fields[customFieldName] &&
+          keyword.toLowerCase() === hit.custom_fields[customFieldName].toLowerCase());
+        if (matchedHit) {
+          window.location.href = matchedHit.url;
+        }
+      }
+      dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults, requestBy));
+    });
   }
 }
 
