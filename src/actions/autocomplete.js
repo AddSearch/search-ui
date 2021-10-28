@@ -43,7 +43,7 @@ export function autocompleteCustomFields(client, keyword, field) {
   }
 }
 
-export function autocompleteSuggestionsResults(results) {
+export function autocompleteSuggestionsResults(keyword, results) {
   return {
     type: AUTOCOMPLETE_SUGGESTIONS_RESULTS,
     keyword,
