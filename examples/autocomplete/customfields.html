@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>AddSearch Search UI: Search suggestion with custom field values</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.6/dist/addsearch-js-client.min.js"></script>
+  <script src="../../dist/addsearch-search-ui.min.js"></script>
+  <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+</head>
+<body>
+
+<!-- Containers. Search UI components will be added inside these divs -->
+<div id="searchfield"></div>
+<div id="autocomplete"></div>
+
+<script>
+  // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+  var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+
+  // Search UI instance
+  var searchui = new AddSearchUI(client);
+
+  // Add components
+  searchui.searchField({
+    containerId: 'searchfield',
+    placeholder: 'Keyword..'
+  });
+
+  // Don't forget to set up Search Suggestions on AddSearch Dashboard first
+  searchui.autocomplete({
+    containerId: 'autocomplete',
+    sources: [
+      {
+        type: AddSearchUI.AUTOCOMPLETE_TYPE.CUSTOM_FIELDS,
+        field: 'custom_fields.strArea'
+      }
+    ]
+  });
+
+  // All components added. Start
+  searchui.start();
+</script>
+
+</body>
+</html>
