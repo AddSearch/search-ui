@@ -4,6 +4,7 @@ import oa from 'es6-object-assign';
 import ActiveFilters from './components/activefilters';
 import Autocomplete from './components/autocomplete';
 import Facets from './components/facets';
+import HierarchicalFacets from './components/hierarchicalfacets';
 import Filters from './components/filters';
 import FilterStateObserver, { createFilterObject } from './components/filters/filterstateobserver';
 import LoadMore from './components/loadmore';
@@ -144,6 +145,10 @@ export default class AddSearchUI {
 
   facets(conf) {
     new Facets(this.client, this.reduxStore, conf, this.settings.baseFilters);
+  }
+
+  hierarchicalFacets(conf) {
+    new HierarchicalFacets(this.client, this.reduxStore, conf, this.settings.baseFilters);
   }
 
   filters(conf) {

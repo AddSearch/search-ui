@@ -1,0 +1,79 @@
+.addsearch-hierarchical-facets {
+  list-style-type: none;
+  padding: 0;
+
+  li {
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    position: relative;
+    padding-left: 10px;
+
+    label {
+      display: block;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 100%;
+      padding-left: 10px !important;
+
+      @media all and (max-width: 960px) {
+        padding: 4px 0;
+      }
+
+      > span {
+        text-overflow: ellipsis;
+        display: inline-block;
+        max-width: 80%;
+        overflow: hidden;
+        position: relative;
+        padding-right: 3px;
+      }
+    }
+    input[type="checkbox"] {
+      margin-right: 7px;
+    }
+    .addsearch-facet-group-expansion-arrow::after {
+      //content: '↓'
+      content: '';
+      border: solid black;
+      border-width: 0 2px 2px 0;
+      display: inline-block;
+      padding: 3px;
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+    }
+    .addsearch-facet-child-container {
+      border-left: 1px solid gainsboro;
+      padding-left: 10px;
+    }
+  }
+
+  li.shrink {
+    .addsearch-facet-group-expansion-arrow::after {
+      //content: '→'
+      transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+    }
+    .addsearch-facet-child-container {
+      display: none;
+    }
+  }
+
+  em {
+    font-style: normal;
+    color: #666;
+    font-size: 80%;
+  }
+
+  //.addsearch-facet-group-wrapper {
+  //  padding-left: 10px;
+  //}
+
+  .addsearch-facet-group-expansion-arrow {
+    position: absolute;
+    top: -3px;
+    left: 7px;
+  }
+}
