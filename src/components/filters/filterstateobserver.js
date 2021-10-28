@@ -57,6 +57,22 @@ export function createFilterObject(state, baseFilters) {
     }
   }
 
+  // Iterate active hierarchical facets. Create OR filter group of active filters for every lowest level of facet field.
+  for (let facetContainer in state.activeHierarchicalFacets) {
+    let hierarchicalFacetGroupOR = {or: []};
+    for (let facetField in state.activeHierarchicalFacets[facetContainer]) {
+
+      for (let facetValue in state.activeHierarchicalFacets[facetContainer][facetField]) {
+        const f = {};
+        f[facetField] = encodeURIComponent(facetValue);
+        hierarchicalFacetGroupOR.or.push(f);
+      }
+    }
+    if (hierarchicalFacetGroupOR.or.length > 0) {
+      filterObject.and.push(hierarchicalFacetGroupOR);
+    }
+  }
+
   // Filter object ready
   if (filterObject.and.length > 0) {
     return filterObject;

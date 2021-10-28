@@ -1,14 +1,21 @@
 import './activefilters.scss';
 import handlebars from 'handlebars';
 import { ACTIVE_FILTERS_TEMPLATE } from './templates';
-import { toggleFacetFilter, toggleFilter, setRangeFilter, clearSelected } from '../../actions/filters';
+import {
+  toggleFacetFilter,
+  toggleFilter,
+  setRangeFilter,
+  clearSelected,
+  toggleHierarchicalFacetFilter
+} from '../../actions/filters';
 import { validateContainer } from '../../util/dom';
 import { observeStoreByKey } from '../../store';
 
 const TYPE = {
   FILTER: 'FILTER',
   RANGE_FILTER: 'RANGE_FILTER',
-  FACET: 'FACET'
+  FACET: 'FACET',
+  HIERARCHICAL_FACET: 'HIERARCHICAL_FACET'
 }
 
 export default class ActiveFilters {
@@ -79,6 +86,21 @@ export default class ActiveFilters {
       }
     }
 
+    for (let container in filterState.activeHierarchicalFacets) {
+      for (let field in filterState.activeHierarchicalFacets[container]) {
+        for (let facetValue in filterState.activeHierarchicalFacets[container][field]) {
+          active.push({
+            name: field,
+            type: TYPE.HIERARCHICAL_FACET,
+            container: container,
+            confFields: filterState.hierarchicalFacetConfFields[container],
+            value: facetValue,
+            label: facetValue
+          });
+        }
+      }
+    }
+
     const data = {
       active,
       clearAll: this.conf.clearAll !== false
@@ -112,6 +134,8 @@ export default class ActiveFilters {
     const type = e.target.getAttribute('data-type');
     const name = e.target.getAttribute('data-name');
     const value = e.target.getAttribute('data-value');
+    const container = e.target.getAttribute('data-container');
+    const confFields = e.target.getAttribute('data-conf-fields') ? e.target.getAttribute('data-conf-fields').split(',') : [];
 
     if (type === TYPE.FILTER) {
       this.reduxStore.dispatch(toggleFilter(name, value, true));
@@ -121,6 +145,15 @@ export default class ActiveFilters {
     }
     else if (type === TYPE.FACET) {
       this.reduxStore.dispatch(toggleFacetFilter(name, value));
+    }
+    else if (type === TYPE.HIERARCHICAL_FACET) {
+      window.console.log('+++ log 2', e.target, {
+        name,
+        container,
+        confFields,
+        value
+      });
+      this.reduxStore.dispatch(toggleHierarchicalFacetFilter(name, container, confFields, value, true))
     }
   }
 }

@@ -4,6 +4,7 @@ export const REGISTER_FILTER = 'REGISTER_FILTER';
 export const SET_ACTIVE_FILTERS = 'SET_ACTIVE_FILTERS';
 export const SET_ACTIVE_FACETS = 'SET_ACTIVE_FACETS';
 export const TOGGLE_FACET_FILTER = 'TOGGLE_FACET_FILTER';
+export const TOGGLE_HIERARCHICAL_FACET_FILTER = 'TOGGLE_HIERARCHICAL_FACET_FILTER';
 export const CLEAR_SELECTED_FILTERS_AND_FACETS = 'CLEAR_SELECTED_FILTERS_AND_FACETS';
 
 export function registerFilter(filterObj) {
@@ -49,6 +50,17 @@ export function toggleFacetFilter(field, value, refreshSearch) {
   return {
     type: TOGGLE_FACET_FILTER,
     field,
+    value,
+    refreshSearch
+  }
+}
+
+export function toggleHierarchicalFacetFilter(field, container, confFields, value, refreshSearch) {
+  return {
+    type: TOGGLE_HIERARCHICAL_FACET_FILTER,
+    field,
+    container,
+    confFields,
     value,
     refreshSearch
   }
