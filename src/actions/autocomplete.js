@@ -76,7 +76,7 @@ export function autocompleteHide() {
   }
 }
 
-export function autocomplteHideAndDropRendering() {
+export function autocompleteHideAndDropRendering() {
   return {
     type: AUTOCOMPLETE_HIDE_AND_DROP_RENDERING
   }
