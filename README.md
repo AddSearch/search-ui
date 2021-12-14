@@ -340,6 +340,7 @@ Settings that can be passed to the ```facets``` function:
 | facetsFilter | function | n/a | Custom JS function that receives facets in an array, removes some of them, and returns a filtered facet array |
 | field | String | n/a | Same field that you passed to the JS client. E.g. *custom_fields.brand* |
 | sticky | boolean | false | Show all options even if a facet is selected. Options are reset on keyword change |
+| advancedSticky | boolean | false | Similar to sticky, extra search queries are made to update other facet groups. Enabling this setting would use quite an amount of search query usage in your subscription plan |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 
 ### Active filters
