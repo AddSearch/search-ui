@@ -98,14 +98,22 @@ export function addClickTrackers(client, linkArray, searchResults) {
   }
 }
 
+function findDocId(element) {
+  const docId = element.getAttribute('data-analytics-click');
+  if (element.nodeName === 'BODY' || element.nodeName === 'body') {
+    return null;
+  }
+  if (docId) {
+    return docId;
+  }
+  return findDocId(element.parentNode);
+}
 
 function onLinkClick(e, client, searchResults) {
   if (collectAnalytics === false) return;
 
   // Support data attributes in parent and grandparent elements
-  const documentId = e.target.getAttribute('data-analytics-click') ||
-    e.target.parentNode.getAttribute('data-analytics-click') ||
-    e.target.parentNode.parentNode.getAttribute('data-analytics-click');
+  const documentId = findDocId(e.target);
   const position = getDocumentPosition(client.getSettings().paging.pageSize, searchResults, documentId);
   const keyword = client.getSettings().keyword;
 
