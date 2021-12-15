@@ -150,9 +150,12 @@ export default class Autocomplete {
 
     // Attach events to suggestions only for keyboard accessibility
     const lis = container.querySelector('.suggestions') ? container.querySelectorAll('.suggestions > li') : [];
+    const suggestionsContainers = container.querySelectorAll('.suggestions');
     for (let i=0; i<lis.length; i++) {
       lis[i].onmousedown = (e) => this.suggestionMouseDown(e);
-      lis[i].onmouseenter = (e) => this.suggestionMouseEnter(e);
+      if (suggestionsContainers.length <= 1) {
+        lis[i].onmouseenter = (e) => this.suggestionMouseEnter(e);
+      }
     }
 
     // Send result clicks to analytics from the first child of searchResults

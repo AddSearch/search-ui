@@ -168,29 +168,37 @@ export default function searchsuggestions(state = initialState, action) {
         setSuggestionToSearchField: action.setSuggestionToSearchField
       });
 
-
     case KEYBOARD_EVENT:
       let nextActiveSuggestion = state.activeSuggestionIndex;
-      if (action.direction === ARROW_DOWN) {
-        if (nextActiveSuggestion === null && state.suggestions.length > 0) {
-          nextActiveSuggestion = 0;
+      let setSuggestionToSearchField = true;
+
+      if (state.suggestions.length && state.customFields.length) {
+        nextActiveSuggestion = null;
+        setSuggestionToSearchField = false;
+      } else {
+
+        const source = state.suggestions.length ? 'suggestions' : 'customFields';
+        if (action.direction === ARROW_DOWN) {
+          if (nextActiveSuggestion === null && state[source].length > 0) {
+            nextActiveSuggestion = 0;
+          }
+          else if (nextActiveSuggestion === state[source].length-1) {
+            nextActiveSuggestion = null;
+          }
+          else {
+            nextActiveSuggestion = nextActiveSuggestion + 1;
+          }
         }
-        else if (nextActiveSuggestion === state.suggestions.length-1) {
-          nextActiveSuggestion = null;
-        }
-        else {
-          nextActiveSuggestion = nextActiveSuggestion + 1;
-        }
-      }
-      else if (action.direction === ARROW_UP) {
-        if (nextActiveSuggestion === null && state.suggestions.length > 0) {
-          nextActiveSuggestion = state.suggestions.length-1;
-        }
-        else if (nextActiveSuggestion === 0) {
-          nextActiveSuggestion = null;
-        }
-        else {
-          nextActiveSuggestion = nextActiveSuggestion - 1;
+        else if (action.direction === ARROW_UP) {
+          if (nextActiveSuggestion === null && state[source].length > 0) {
+            nextActiveSuggestion = state[source].length-1;
+          }
+          else if (nextActiveSuggestion === 0) {
+            nextActiveSuggestion = null;
+          }
+          else {
+            nextActiveSuggestion = nextActiveSuggestion - 1;
+          }
         }
       }
 
