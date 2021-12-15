@@ -49,10 +49,11 @@ export default class SearchField {
 
 
   onAutocompleteUpdate(state) {
-    if (state.suggestions.length > 0 && state.setSuggestionToSearchField) {
+    if ((state.suggestions.length > 0 || state.customFields.length > 0) && state.setSuggestionToSearchField) {
       // Set field value
       if (state.activeSuggestionIndex !== null && state.setSuggestionToSearchField) {
-        const suggestion = state.suggestions[state.activeSuggestionIndex].value;
+        const suggestionObj = state.suggestions[state.activeSuggestionIndex] || state.customFields[state.activeSuggestionIndex];
+        const suggestion = suggestionObj.value;
         this.render(suggestion);
       }
       // Revert to original typed keyword
