@@ -48,7 +48,7 @@ export function createFilterObject(state, baseFilters) {
 
     for (let facetValue in state.activeFacets[facetField]) {
       const f = {};
-      f[facetField] = encodeURIComponent(facetValue);
+      f[facetField] = facetValue;
       facetGroupOR.or.push(f);
     }
 
