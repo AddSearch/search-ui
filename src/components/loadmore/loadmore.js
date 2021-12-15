@@ -76,7 +76,7 @@ export default class LoadMore {
 
     // Fetch more results
     const keyword = this.reduxStore.getState().keyword.value;
-    this.reduxStore.dispatch(search(this.client, keyword, null, true, null, this.reduxStore));
+    this.reduxStore.dispatch(search(this.client, keyword, null, true, null, this.reduxStore, null, 'component.loadMore'));
   }
 
 
