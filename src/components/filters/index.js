@@ -6,6 +6,5 @@ export const FILTER_TYPE = {
   SELECT_LIST: 'SELECT_LIST',
   RANGE: 'RANGE',
   TABS: 'TABS',
-  TAGS: 'TAGS',
-  RANGE: 'RANGE'
+  TAGS: 'TAGS'
 };
