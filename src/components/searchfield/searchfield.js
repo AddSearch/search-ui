@@ -9,7 +9,7 @@ import {
   setActiveSuggestion,
   ARROW_DOWN,
   ARROW_UP,
-  autocomplteHideAndDropRendering
+  autocompleteHideAndDropRendering
 } from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
@@ -65,7 +65,9 @@ export default class SearchField {
 
 
   executeSearch(client, keyword, searchAsYouType) {
-    this.reduxStore.dispatch(autocomplteHideAndDropRendering());
+    if (!searchAsYouType) {
+      this.reduxStore.dispatch(autocompleteHideAndDropRendering());
+    }
     let kw = keyword;
     if (kw === '' && this.matchAllQuery) {
       kw = MATCH_ALL_QUERY;
