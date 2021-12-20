@@ -1,6 +1,8 @@
 export const AUTOCOMPLETE_FETCH_START = 'AUTOCOMPLETE_FETCH_START';
 export const AUTOCOMPLETE_SUGGESTIONS_RESULTS = 'AUTOCOMPLETE_SUGGESTIONS_RESULTS';
+export const AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS = 'AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS';
 export const AUTOCOMPLETE_SUGGESTIONS_CLEAR = 'AUTOCOMPLETE_SUGGESTIONS_CLEAR';
+export const AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR = 'AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR';
 export const AUTOCOMPLETE_SEARCH_RESULTS = 'AUTOCOMPLETE_SEARCH_RESULTS';
 export const AUTOCOMPLETE_SEARCH_CLEAR = 'AUTOCOMPLETE_SEARCH_CLEAR';
 export const AUTOCOMPLETE_SHOW = 'AUTOCOMPLETE_SHOW';
@@ -14,6 +16,7 @@ export const ARROW_DOWN = 'ARROW_DOWN';
 export const SET_ACTIVE_SUGGESTION = 'SET_ACTIVE_SUGGESTION';
 
 export const SUGGESTIONS_JSON_KEY = 'suggestions';
+export const CUSTOM_FIELDS_JSON_KEY = 'custom_fields';
 
 export function autocompleteSuggestions(client, keyword) {
   if (!keyword || keyword === '') {
@@ -27,10 +30,30 @@ export function autocompleteSuggestions(client, keyword) {
   }
 }
 
+export function autocompleteCustomFields(client, keyword, field) {
+  if (!keyword || keyword === '') {
+    return {
+      type: AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR
+    }
+  }
+  return dispatch => {
+    dispatch(autocompleteFetchStart(CUSTOM_FIELDS_JSON_KEY));
+    client.autocomplete(field, keyword, (res) => dispatch(autocompleteCustomFieldsResults(res)));
+
+  }
+}
+
 export function autocompleteSuggestionsResults(keyword, results) {
   return {
     type: AUTOCOMPLETE_SUGGESTIONS_RESULTS,
     keyword,
+    results
+  }
+}
+
+export function autocompleteCustomFieldsResults(results) {
+  return {
+    type: AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS,
     results
   }
 }
