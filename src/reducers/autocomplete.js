@@ -1,7 +1,9 @@
 import {
   AUTOCOMPLETE_FETCH_START,
   AUTOCOMPLETE_SUGGESTIONS_RESULTS,
+  AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS,
   AUTOCOMPLETE_SUGGESTIONS_CLEAR,
+  AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR,
   AUTOCOMPLETE_SEARCH_RESULTS,
   AUTOCOMPLETE_SEARCH_CLEAR,
   AUTOCOMPLETE_SHOW,
@@ -10,7 +12,8 @@ import {
   KEYBOARD_EVENT, ARROW_UP, ARROW_DOWN,
   SET_ACTIVE_SUGGESTION,
   SUGGESTIONS_JSON_KEY,
-  AUTOCOMPLETE_HIDE_AND_DROP_RENDERING
+  AUTOCOMPLETE_HIDE_AND_DROP_RENDERING,
+  CUSTOM_FIELDS_JSON_KEY
 } from '../actions/autocomplete';
 
 const initialState = {
@@ -18,6 +21,7 @@ const initialState = {
   keyword: null,
 
   suggestions: [],
+  customFields: [],
   activeSuggestionIndex: null,
   setSuggestionToSearchField: false,
 
@@ -48,6 +52,12 @@ export default function searchsuggestions(state = initialState, action) {
         activeSuggestionIndex: null
       });
 
+    case AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR:
+      return Object.assign({}, state, {
+        customFields: [],
+        activeSuggestionIndex: null
+      });
+
 
     case AUTOCOMPLETE_SUGGESTIONS_RESULTS:
 
@@ -61,6 +71,22 @@ export default function searchsuggestions(state = initialState, action) {
         keyword: action.keyword,
         pendingRequests: removePendingSuggestion,
         suggestions: action.results.suggestions,
+        activeSuggestionIndex: null,
+        visible: true
+      });
+
+
+    case AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS:
+
+      // Remove suggestion from pending requests
+      let removePendingCustomFields = [...state.pendingRequests];
+      if (removePendingCustomFields.indexOf(CUSTOM_FIELDS_JSON_KEY) !== -1) {
+        removePendingCustomFields.splice(removePendingCustomFields.indexOf(CUSTOM_FIELDS_JSON_KEY), 1);
+      }
+
+      return Object.assign({}, state, {
+        pendingRequests: removePendingCustomFields,
+        customFields: action.results.autocomplete,
         activeSuggestionIndex: null,
         visible: true
       });
@@ -142,29 +168,37 @@ export default function searchsuggestions(state = initialState, action) {
         setSuggestionToSearchField: action.setSuggestionToSearchField
       });
 
-
     case KEYBOARD_EVENT:
       let nextActiveSuggestion = state.activeSuggestionIndex;
-      if (action.direction === ARROW_DOWN) {
-        if (nextActiveSuggestion === null && state.suggestions.length > 0) {
-          nextActiveSuggestion = 0;
+      let setSuggestionToSearchField = true;
+
+      if (state.suggestions.length && state.customFields.length) {
+        nextActiveSuggestion = null;
+        setSuggestionToSearchField = false;
+      } else {
+
+        const source = state.suggestions.length ? 'suggestions' : 'customFields';
+        if (action.direction === ARROW_DOWN) {
+          if (nextActiveSuggestion === null && state[source].length > 0) {
+            nextActiveSuggestion = 0;
+          }
+          else if (nextActiveSuggestion === state[source].length-1) {
+            nextActiveSuggestion = null;
+          }
+          else {
+            nextActiveSuggestion = nextActiveSuggestion + 1;
+          }
         }
-        else if (nextActiveSuggestion === state.suggestions.length-1) {
-          nextActiveSuggestion = null;
-        }
-        else {
-          nextActiveSuggestion = nextActiveSuggestion + 1;
-        }
-      }
-      else if (action.direction === ARROW_UP) {
-        if (nextActiveSuggestion === null && state.suggestions.length > 0) {
-          nextActiveSuggestion = state.suggestions.length-1;
-        }
-        else if (nextActiveSuggestion === 0) {
-          nextActiveSuggestion = null;
-        }
-        else {
-          nextActiveSuggestion = nextActiveSuggestion - 1;
+        else if (action.direction === ARROW_UP) {
+          if (nextActiveSuggestion === null && state[source].length > 0) {
+            nextActiveSuggestion = state[source].length-1;
+          }
+          else if (nextActiveSuggestion === 0) {
+            nextActiveSuggestion = null;
+          }
+          else {
+            nextActiveSuggestion = nextActiveSuggestion - 1;
+          }
         }
       }
 

@@ -1,92 +1,92 @@
 <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <title>AddSearch Search UI: Autocomplete with combination of suggestions and instant hits</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta charset="UTF-8">
-    <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.5/dist/addsearch-js-client.min.js"></script>
-    <script src="../../dist/addsearch-search-ui.min.js"></script>
-    <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+<html lang="en">
+<head>
+  <title>AddSearch Search UI: Autocomplete with combination of suggestions and instant hits</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.5/dist/addsearch-js-client.min.js"></script>
+  <script src="../../dist/addsearch-search-ui.min.js"></script>
+  <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
 
-    <style type="text/css">
-      .addsearch-autocomplete {
-        max-width: 640px;
+  <style type="text/css">
+    .addsearch-autocomplete {
+      max-width: 640px;
+    }
+    .addsearch-autocomplete div {
+      border: 1px solid #666;
+      display: flex;
+    }
+    .addsearch-autocomplete ul {
+      width: 50%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Containers. Search UI components will be added inside these divs -->
+<div id="searchfield"></div>
+<div id="autocomplete"></div>
+
+<script>
+  // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+  var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+
+  // Search UI instance
+  var searchui = new AddSearchUI(client);
+
+  // Add components
+  searchui.searchField({
+    containerId: 'searchfield',
+    placeholder: 'Keyword..',
+    autofocus: false
+  });
+
+  var autocompleteClient = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+  autocompleteClient.setPaging(1, 3, 'relevance', 'desc'); // Fetch 3 results by default
+
+  var autocompleteTemplate =
+    '   <div class="addsearch-autocomplete">' +
+    '     <div>' +
+    '       <ul class="suggestions">' +
+    '         {{#each suggestions}}' +
+    '           <li data-keyword="{{value}}" data-index="{{@index}}" {{#equals ../activeSuggestionIndex @index}}class="active"{{/equals}}>' +
+    '             {{value}}' +
+    '           </li>' +
+    '         {{/each}}' +
+    '       </ul>' +
+    '       <ul>' +
+    '         {{#each searchResults.results}}' +
+    '           <li>' +
+    '             <strong>{{title}}</strong><br />' +
+    '             {{{highlight}}}' +
+    '           </li>' +
+    '         {{/each}}' +
+    '       </ul>' +
+    '     </div>' +
+    '  </div>';
+
+  searchui.autocomplete({
+    containerId: 'autocomplete',
+    template: autocompleteTemplate,
+    sources: [
+      {
+        type: AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS,
+        client: client,
+        jsonKey: 'suggestions'
+      },
+      {
+        type: AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH,
+        client: autocompleteClient,
+        jsonKey: 'results',
+        collectSearchAnalytics: true
       }
-      .addsearch-autocomplete div {
-        border: 1px solid #666;
-        display: flex;
-      }
-      .addsearch-autocomplete ul {
-        width: 50%;
-        border: none;
-      }
-    </style>
-  </head>
-  <body>
+    ]
+  });
 
-    <!-- Containers. Search UI components will be added inside these divs -->
-    <div id="searchfield"></div>
-    <div id="autocomplete"></div>
+  // All components added. Start
+  searchui.start();
+</script>
 
-    <script>
-      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
-      var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
-
-      // Search UI instance
-      var searchui = new AddSearchUI(client);
-
-      // Add components
-      searchui.searchField({
-        containerId: 'searchfield',
-        placeholder: 'Keyword..',
-        autofocus: false
-      });
-
-      var autocompleteClient = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
-      autocompleteClient.setPaging(1, 3, 'relevance', 'desc'); // Fetch 3 results by default
-
-      var autocompleteTemplate =
-        '   <div class="addsearch-autocomplete">' +
-        '     <div>' +
-        '       <ul class="suggestions">' +
-        '         {{#each suggestions}}' +
-        '           <li data-keyword="{{value}}" data-index="{{@index}}" {{#equals ../activeSuggestionIndex @index}}class="active"{{/equals}}>' +
-        '             {{value}}' +
-        '           </li>' +
-        '         {{/each}}' +
-        '       </ul>' +
-        '       <ul>' +
-        '         {{#each searchResults.results}}' +
-        '           <li>' +
-        '             <strong>{{title}}</strong><br />' +
-        '             {{{highlight}}}' +
-        '           </li>' +
-        '         {{/each}}' +
-        '       </ul>' +
-        '     </div>' +
-        '  </div>';
-
-      searchui.autocomplete({
-        containerId: 'autocomplete',
-        template: autocompleteTemplate,
-        sources: [
-          {
-            type: AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS,
-            client: client,
-            jsonKey: 'suggestions'
-          },
-          {
-            type: AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH,
-            client: autocompleteClient,
-            jsonKey: 'results',
-            collectSearchAnalytics: true
-          }
-        ]
-      });
-
-      // All components added. Start
-      searchui.start();
-    </script>
-
-  </body>
+</body>
 </html>
