@@ -10,9 +10,9 @@ effortlessly.
 ## Quick example
 ```html
 <!-- Libraries -->
-<script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.5/dist/addsearch-js-client.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/addsearch-search-ui@0.4/dist/addsearch-search-ui.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/addsearch-search-ui@0.4/dist/addsearch-search-ui.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.6/dist/addsearch-js-client.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/addsearch-search-ui@0.5/dist/addsearch-search-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/addsearch-search-ui@0.5/dist/addsearch-search-ui.min.css" />
 
 <!-- Containers for UI components-->
 <div id="searchfield-container"></div>
@@ -155,10 +155,11 @@ The ```sources``` array can contain objects with the following fields:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| type | AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS, AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH | n/a | Fetch search suggestions or search results |
+| type | AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS, AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH, AddSearchUI.AUTOCOMPLETE_TYPE.CUSTOM_FIELDS | n/a | Fetch search suggestions or search results |
 | client | AddSearch JS Client instance | Client passed to the AddSearchUI constructor | Use a custom client to use specific filters or different search index |
 | collectSearchAnalytics | boolean | false | If enabled and the type of this source is SEARCH, save the number of searches to analytics |
 | jsonKey | String | n/a | If the type is *AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH*, the Handlebars template can access the results from the JSON object ```searchResults.<jsonKey>``` |
+| field | String | n/a | If the type is *AddSearchUI.AUTOCOMPLETE_TYPE.CUSTOM_FIELDS*, choose a custom field, then its value will be used to generate suggestion terms |
 
 ### Search results
 Actual search results.
@@ -340,6 +341,7 @@ Settings that can be passed to the ```facets``` function:
 | facetsFilter | function | n/a | Custom JS function that receives facets in an array, removes some of them, and returns a filtered facet array |
 | field | String | n/a | Same field that you passed to the JS client. E.g. *custom_fields.brand* |
 | sticky | boolean | false | Show all options even if a facet is selected. Options are reset on keyword change |
+| advancedSticky | boolean | false | Similar to sticky, extra search queries are made to update other facet groups. Enabling this setting would use quite an amount of search query usage in your subscription plan |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 
 ### Active filters
