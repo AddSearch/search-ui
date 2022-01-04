@@ -9,7 +9,7 @@ import {
   setActiveSuggestion,
   ARROW_DOWN,
   ARROW_UP,
-  autocomplteHideAndDropRendering
+  autocompleteHideAndDropRendering
 } from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
@@ -49,10 +49,11 @@ export default class SearchField {
 
 
   onAutocompleteUpdate(state) {
-    if (state.suggestions.length > 0 && state.setSuggestionToSearchField) {
+    if ((state.suggestions.length > 0 || state.customFields.length > 0) && state.setSuggestionToSearchField) {
       // Set field value
       if (state.activeSuggestionIndex !== null && state.setSuggestionToSearchField) {
-        const suggestion = state.suggestions[state.activeSuggestionIndex].value;
+        const suggestionObj = state.suggestions[state.activeSuggestionIndex] || state.customFields[state.activeSuggestionIndex];
+        const suggestion = suggestionObj.value;
         this.render(suggestion);
       }
       // Revert to original typed keyword
@@ -64,7 +65,9 @@ export default class SearchField {
 
 
   executeSearch(client, keyword, searchAsYouType) {
-    this.reduxStore.dispatch(autocomplteHideAndDropRendering());
+    if (!searchAsYouType) {
+      this.reduxStore.dispatch(autocompleteHideAndDropRendering());
+    }
     let kw = keyword;
     if (kw === '' && this.matchAllQuery) {
       kw = MATCH_ALL_QUERY;

@@ -2,7 +2,13 @@ import './autocomplete.scss';
 import { AUTOCOMPLETE_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
 import { AUTOCOMPLETE_TYPE } from './index';
-import { setHideAutomatically, autocompleteSuggestions, autocompleteSearch, setActiveSuggestion } from '../../actions/autocomplete';
+import {
+  setHideAutomatically,
+  autocompleteSuggestions,
+  autocompleteSearch,
+  setActiveSuggestion,
+  autocompleteCustomFields
+} from '../../actions/autocomplete';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { observeStoreByKey } from '../../store';
@@ -78,6 +84,9 @@ export default class Autocomplete {
       if (v.type === AUTOCOMPLETE_TYPE.SUGGESTIONS) {
         this.reduxStore.dispatch(autocompleteSuggestions(client, keyword));
       }
+      else if (v.type === AUTOCOMPLETE_TYPE.CUSTOM_FIELDS) {
+        this.reduxStore.dispatch(autocompleteCustomFields(client, keyword, v.field));
+      }
       else if (v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         const currentPaging = client.getSettings().paging;
         client.setPaging(1, currentPaging.pageSize, currentPaging.sortBy, currentPaging.sortOrder);
@@ -120,10 +129,11 @@ export default class Autocomplete {
     }
 
     // Autocomplete data (search suggestions, search results, or both)
-    const { suggestions, searchResults, activeSuggestionIndex } = autocompleteState;
+    const { suggestions, customFields, searchResults, activeSuggestionIndex } = autocompleteState;
     const data = {
       activeSuggestionIndex,
       suggestions,
+      customFields,
       searchResults
     };
 
@@ -140,9 +150,12 @@ export default class Autocomplete {
 
     // Attach events to suggestions only for keyboard accessibility
     const lis = container.querySelector('.suggestions') ? container.querySelectorAll('.suggestions > li') : [];
+    const suggestionsContainers = container.querySelectorAll('.suggestions');
     for (let i=0; i<lis.length; i++) {
       lis[i].onmousedown = (e) => this.suggestionMouseDown(e);
-      lis[i].onmouseenter = (e) => this.suggestionMouseEnter(e);
+      if (suggestionsContainers.length <= 1) {
+        lis[i].onmouseenter = (e) => this.suggestionMouseEnter(e);
+      }
     }
 
     // Send result clicks to analytics from the first child of searchResults
