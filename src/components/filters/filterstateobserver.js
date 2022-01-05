@@ -64,7 +64,7 @@ export function createFilterObject(state, baseFilters) {
 
       for (let facetValue in state.activeHierarchicalFacets[facetContainer][facetField]) {
         const f = {};
-        f[facetField] = encodeURIComponent(facetValue);
+        f[facetField] = facetValue;
         hierarchicalFacetGroupOR.or.push(f);
       }
     }
