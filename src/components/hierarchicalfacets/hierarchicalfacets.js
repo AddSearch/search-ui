@@ -45,9 +45,6 @@ export default class HierarchicalFacets {
       return reduxStore.getState().filters.openedHierarchicalFacetGroups.indexOf(value) === -1;
     });
 
-    // update state.filters.hierarchicalFacetConfFields
-    this.reduxStore
-
     if (validateContainer(conf.containerId)) {
 
       observeStoreByKey(this.reduxStore, 'search', (search) => {
@@ -62,7 +59,6 @@ export default class HierarchicalFacets {
             this.reduxStore.getState().filters, baseFilters, this.conf.fields);
           
           if (this.conf.fields.indexOf(search.callBy) === -1) {
-            window.console.log('+++ log 1');
             client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
               this.render(res, true);
             })
@@ -75,9 +71,6 @@ export default class HierarchicalFacets {
           }
         }
       });
-
-      // update state.filters.hierarchicalFacetConfFields
-      this.reduxStore.getState().filters.hierarchicalFacetConfFields[conf.containerId] = conf.fields;
     }
   }
 
@@ -95,6 +88,7 @@ export default class HierarchicalFacets {
       return;
     }
 
+
     const confFacetFields = this.conf.fields;
     const results = isStickyFacetsRenderer ? search : search.results;
 
@@ -102,8 +96,11 @@ export default class HierarchicalFacets {
     let facets = [];
     if (results && results.hierarchicalFacets && results.hierarchicalFacets[confFacetFields[0]]) {
       facets = results.hierarchicalFacets[confFacetFields[0]];
+      facets = facets.map(facet => {
+        facet.field = facet.field.replace('hierarchical_facet.', '');
+        return facet;
+      });
     }
-
 
     // Read active facets from redux state
     const activeFacets = this.getActiveFacets(confFacetFields, this.conf.containerId);

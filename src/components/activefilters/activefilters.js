@@ -93,7 +93,6 @@ export default class ActiveFilters {
             name: field,
             type: TYPE.HIERARCHICAL_FACET,
             container: container,
-            confFields: filterState.hierarchicalFacetConfFields[container],
             value: facetValue,
             label: facetValue
           });
@@ -147,12 +146,6 @@ export default class ActiveFilters {
       this.reduxStore.dispatch(toggleFacetFilter(name, value));
     }
     else if (type === TYPE.HIERARCHICAL_FACET) {
-      window.console.log('+++ log 2', e.target, {
-        name,
-        container,
-        confFields,
-        value
-      });
       this.reduxStore.dispatch(toggleHierarchicalFacetFilter(name, container, confFields, value, true))
     }
   }

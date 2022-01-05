@@ -4,7 +4,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="viewport" content="width=device-width, user-scalable=no" />
   <meta charset="UTF-8">
-  <title>AddSearch Search UI: Range filters demo</title>
+  <title>AddSearch Search UI: Hierarchical facets demo</title>
 
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
 <!--  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.5/dist/addsearch-js-client.min.js"></script>-->
@@ -159,16 +159,17 @@
     containerId: 'active-filters-container'
   });
 
-  client.addHierarchicalFacetSetting(JSON.stringify([
+  client.addHierarchicalFacetSetting([
     {
       "fields": [
         "custom_fields.nested_facet_lvl_0",
         "custom_fields.nested_facet_lvl_1",
-        "custom_fields.nested_facet_lvl_2"
+        "custom_fields.nested_facet_lvl_2",
+        "custom_fields.nested_facet_lvl_3"
       ],
       "sortOrder": "COUNT_DESC_NAME_ASC"
     }
-  ]));
+  ]);
 
   // client.addFacetField('custom_fields.category');
 
@@ -177,7 +178,8 @@
     fields: [
       'custom_fields.nested_facet_lvl_0',
       'custom_fields.nested_facet_lvl_1',
-      'custom_fields.nested_facet_lvl_2'
+      'custom_fields.nested_facet_lvl_2',
+      'custom_fields.nested_facet_lvl_3'
     ],
     advancedSticky: true
   });
