@@ -57,7 +57,7 @@ export default class HierarchicalFacets {
         } else {
           var filterObjectCustom = createFilterObjectWithoutFacetGroup(
             this.reduxStore.getState().filters, baseFilters, this.conf.fields);
-          
+
           if (this.conf.fields.indexOf(search.callBy) === -1) {
             client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
               this.render(res, true);
@@ -88,7 +88,6 @@ export default class HierarchicalFacets {
       return;
     }
 
-
     const confFacetFields = this.conf.fields;
     const results = isStickyFacetsRenderer ? search : search.results;
 
@@ -104,20 +103,6 @@ export default class HierarchicalFacets {
 
     // Read active facets from redux state
     const activeFacets = this.getActiveFacets(confFacetFields, this.conf.containerId);
-
-
-    // Sticky facets (i.e. not updating if keyword is unchanged)
-    if (this.conf.sticky === true && !this.conf.advancedSticky) {
-      // Keyword has changed, facets are not saved yet, or no selected facets. Show new incoming facets
-      if (this.keyword !== search.keyword || !this.stickyFacets || activeFacets.length === 0) {
-        this.keyword = search.keyword;
-        this.stickyFacets = facets;
-      }
-      // Keyword not changed. Show old facets
-      else {
-        facets = this.stickyFacets;
-      }
-    }
 
     // Possible filtering function to remove unwanted facets
     if (this.conf.facetsFilter) {
