@@ -14,7 +14,7 @@ import SegmentedResults from './components/segmentedresults';
 import SortBy from './components/sortby';
 import { initRedux } from './store';
 import { setExternalAnalyticsCallback, setCollectAnalytics } from './util/analytics';
-import { registerDefaultHelpers, registerHelper } from './util/handlebars';
+import { registerDefaultHelpers, registerHelper, registerPartial } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
 import { start, search, setSearchResultsPageUrl, clearSearchResults } from './actions/search';
@@ -194,5 +194,9 @@ export default class AddSearchUI {
 
   registerHandlebarsHelper(helperName, helperFunction) {
     registerHelper(helperName, helperFunction);
+  }
+
+  registerHandlebarsPartial(partialName, partialTemplate) {
+    registerPartial(partialName, partialTemplate);
   }
 }
