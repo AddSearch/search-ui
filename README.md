@@ -411,6 +411,19 @@ Read more at [handlebarsjs.js](https://handlebarsjs.com/guide/expressions.html#h
   });
 ```
 
+### Register a custom Handlebars partial
+Handlebars allows for template reuse through partials. Partials are normal Handlebars templates that may be called directly by other templates.
+Read more at [handlebarsjs.js](https://handlebarsjs.com/guide/partials.html#basic-partials).
+```js
+  // This function can be called in a Handlebars template: {{toUpperCase "foo"}}
+  var partialTemplate = `Print this line in main template.`;
+  searchui.registerHandlebarsPartial('myPartial', partialTemplate);
+```
+```js
+  // Calling the partial in main template
+  {{> myPartial}}
+```
+
 ## Analytics
 This library sends analytics events to AddSearch Analytics Dashboard when:
 - Search results are returned
