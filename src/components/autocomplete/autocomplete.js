@@ -41,6 +41,14 @@ export default class Autocomplete {
     if (conf.infiniteScrollElement) {
       this.conf.infiniteScrollElement.addEventListener('scroll', () => this.onScroll());
     }
+
+    if (conf.sources && conf.sources.length) {
+      conf.sources.forEach(s => {
+        if (s.client) {
+          s.client.setCollectAnalytics(false);
+        }
+      });
+    }
   }
 
 
