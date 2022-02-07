@@ -32,7 +32,6 @@
 
       var autocompleteClient = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
       autocompleteClient.setPaging(1, 5, 'relevance', 'desc'); // Fetch 5 results by default
-      var autocompleteClient_2 = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
 
       var autocompleteTemplate = `
         <div class="addsearch-autocomplete" style="position: relative;">
@@ -57,11 +56,6 @@
           {
             type: AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH,
             client: autocompleteClient,
-            jsonKey: 'results'
-          },
-          {
-            type: AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH,
-            client: autocompleteClient_2,
             jsonKey: 'results'
           }
         ]
