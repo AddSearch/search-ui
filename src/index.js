@@ -68,7 +68,8 @@ export default class AddSearchUI {
     }
 
     // FilterStateObserver to update client's filter object when any of the filters change
-    new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange, this.settings.baseFilters);
+    new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange,
+      this.settings.baseFilters, this.segmentedSearchClients);
 
     // Possible match all query on load
     if (this.settings.matchAllQuery === true) {
