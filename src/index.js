@@ -85,7 +85,7 @@ export default class AddSearchUI {
       this.reduxStore, fieldForInstantRedirect));
 
     for (let key in this.segmentedSearchClients) {
-      this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key], key, keyword));
+      this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key].client, key, keyword));
     }
   }
 
@@ -139,7 +139,9 @@ export default class AddSearchUI {
       return;
     }
     this.hasSearchResultsComponent = true;
-    this.segmentedSearchClients[conf.containerId] = conf.client;
+    this.segmentedSearchClients[conf.containerId] = {};
+    this.segmentedSearchClients[conf.containerId].client = conf.client;
+    this.segmentedSearchClients[conf.containerId].originalFilters = Object.assign({}, conf.client.getSettings().filterObject);
     new SegmentedResults(conf.client, this.reduxStore, conf);
   }
 

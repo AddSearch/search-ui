@@ -95,8 +95,9 @@ export default class FilterStateObserver {
       this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore, null, state.targetFacetGroup));
 
       for (let key in this.segmentedSearchClients) {
-        this.segmentedSearchClients[key].setFilterObject(filterObject);
-        this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key], key, keyword));
+        const segmentFilters = this.createFilterObjectFunction(state, this.segmentedSearchClients[key].originalFilters);
+        this.segmentedSearchClients[key].client.setFilterObject(segmentFilters);
+        this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key].client, key, keyword));
       }
     }
 
