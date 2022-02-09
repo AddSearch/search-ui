@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <title>AddSearch Search UI: Segmented search with filters</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.6/dist/addsearch-js-client.min.js"></script>
+    <script src="../../dist/addsearch-search-ui.min.js"></script>
+    <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+
+    <style type="text/css">
+      body {
+        font-family: 'Lato', sans-serif;
+        min-width: 320px;
+      }
+      #searchfield {
+        margin: 20px;
+      }
+
+      main {
+        display: flex;
+      }
+      section {
+        background-color: #f7f7f7;
+        padding: 20px;
+        margin: 20px;
+        width: 400px;
+      }
+      .hit h3 {
+        width: 400px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Containers. Search UI components will be added inside these divs -->
+    <div id="searchfield"></div>
+
+    <main>
+      <section>
+        <h2>Filter</h2>
+        <div id="radio-filters-container"></div>
+      </section>
+
+      <section>
+        <h2>American recipies</h2>
+        <div id="segment1"></div>
+      </section>
+
+      <section>
+        <h2>British recipies</h2>
+        <div id="segment2"></div>
+      </section>
+    </main>
+
+
+    <script>
+      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+      var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+
+      var segmentClient1 = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+      segmentClient1.setFilterObject({"custom_fields.strArea": "American"});
+      segmentClient1.setPaging(1, 4, 'relevance', 'desc');
+
+      var segmentClient2 = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+      segmentClient2.setFilterObject({"custom_fields.strArea": "British"});
+      segmentClient2.setPaging(1, 4, 'relevance', 'desc');
+
+
+      // Search UI instance
+      var searchui = new AddSearchUI(client, {matchAllQuery: true});
+
+      // Add components
+      searchui.searchField({
+        containerId: 'searchfield',
+        placeholder: 'Keyword..',
+        button: 'Search',
+        searchAsYouType: true
+      });
+
+
+      var template1 = `
+        <div class="addsearch-searchresults">
+          {{#each segment1/hits}}
+            <div class="hit">
+              <h3>{{custom_fields.strMeal}}</h3>
+              <div class="highlight">
+                Calories: {{{custom_fields.cal}}}
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      `;
+
+
+      var template2 = `
+        <div class="addsearch-searchresults">
+          {{#each segment2/hits}}
+            <div class="hit">
+              <h3>{{custom_fields.strMeal}}</h3>
+              <div class="highlight">
+                Calories: {{{custom_fields.cal}}}
+              </div>
+            </div>
+          {{/each}}
+        </div>
+      `;
+
+
+      searchui.segmentedSearchResults({
+        containerId: 'segment1',
+        template: template1,
+        client: segmentClient1
+      });
+
+      searchui.segmentedSearchResults({
+        containerId: 'segment2',
+        template: template2,
+        client: segmentClient2
+      });
+
+
+
+      searchui.filters({
+        containerId: 'radio-filters-container',
+        type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
+        options: {
+          nofilter: {
+            label: 'All results'
+          },
+          light: {
+            label: 'Less than 600 calories',
+            filter: {'range': {'custom_fields.cal': {'lt': 600}}}
+          },
+          medium: {
+            label: '600-700 calories',
+            filter: {'range': {'custom_fields.cal': {'gte': 600, 'lte': 700}}}
+          },
+          heavy: {
+            label: 'Over 700 calories',
+            filter: {'range': {'custom_fields.cal': {'gt': 700}}}
+          }
+        }
+      });
+
+      // All components added. Start
+      searchui.start();
+    </script>
+
+  </body>
+</html>
