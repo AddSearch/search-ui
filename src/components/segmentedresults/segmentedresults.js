@@ -13,6 +13,7 @@ export default class SegmentedResults {
     if (validateContainer(conf.containerId) && conf.template) {
       observeStoreByKey(this.reduxStore, 'segmentedsearch', (data) => this.render(data));
     }
+    this.client.setCollectAnalytics(false);
   }
 
 
