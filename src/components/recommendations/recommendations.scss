@@ -1,0 +1,92 @@
+.addsearch-recommendations {
+  display: flex;
+  padding: 30px;
+  justify-content: space-between;
+}
+
+.addsearch-recommendations .hit .main-image {
+  width: 100%;
+  min-height: 100px;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.addsearch-recommendations .hit {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  border: solid 1px #d6d0d0;
+  max-width: calc(100% / 3 - 30px);
+
+  &:hover {
+    background-color: #f7f7f7;
+  }
+}
+
+.page-content {
+  width: 100%;
+  background-color: #ececec;
+  height: 600px;
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#myUL ul, #myUL {
+  list-style-type: none;
+  font-size: 15px;
+  color: black;
+  margin-top: 5px;
+}
+
+/* Remove margins and padding from the parent ul */
+#myUL {
+  margin: 0;
+  padding: 0;
+  margin-top: 20px;
+}
+
+#myUL li {
+  margin-top: 10px;
+}
+
+#myUL li a {
+  cursor: pointer;
+}
+
+/* Style the caret/arrow */
+#myUL .caret {
+  cursor: pointer;
+  user-select: none; /* Prevent text selection */
+}
+
+/* Create the caret/arrow with a unicode, and style it */
+#myUL .caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+#myUL .caret-down::before {
+  transform: rotate(90deg);
+}
+
+/* Hide the nested list */
+#myUL .nested {
+  display: none;
+}
+
+/* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
+#myUL .active {
+  display: block;
+}
+
+#myUL .category.selected {
+  color: red;
+}
+
+

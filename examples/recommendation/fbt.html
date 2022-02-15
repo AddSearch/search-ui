@@ -4,25 +4,26 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="viewport" content="width=device-width, user-scalable=no" />
   <meta charset="UTF-8">
-  <title>AddSearch Search UI: Range filters demo</title>
+  <title>AddSearch Search UI: Recommendation - frequently bought together</title>
 
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.6/dist/addsearch-js-client.min.js"></script>
+<!--  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.6/dist/addsearch-js-client.min.js"></script>-->
+  <script src="../../dist/js-client-dev.js"></script>
   <script src="../../dist/addsearch-search-ui.min.js"></script>
   <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
   <link rel="stylesheet" href="styles.css" />
 
   <script>
     // Responsive menu
-    function toggleMobileMenu() {
-      var style = document.querySelector('aside').style;
-      style.display = style.display === 'block' ? 'none' : 'block';
-    }
-    if (window) {
-      window.onresize = function () {
-        alignAutocomplete(document.querySelector('#autocomplete-container'));
-      };
-    }
+    // function toggleMobileMenu() {
+    //   var style = document.querySelector('aside').style;
+    //   style.display = style.display === 'block' ? 'none' : 'block';
+    // }
+    // if (window) {
+    //   window.onresize = function () {
+    //     alignAutocomplete(document.querySelector('#autocomplete-container'));
+    //   };
+    // }
   </script>
 </head>
 
@@ -81,6 +82,16 @@
 
 <main>
   <section>
+    FBT Recommendation
+    <div id="recommendation-container"></div>
+  </section>
+
+  <section>
+    Other Recommendation
+    <div id="recommendation-container-2"></div>
+  </section>
+
+  <section>
     Search results
     <div id="results-container"></div>
   </section>
@@ -130,6 +141,7 @@
 <script>
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
   var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+  client.setPaging(1, 5, 'relevance', 'desc');
   // client.setNumberOfFacets(20);
 
   // Get min and max prices from results
@@ -221,6 +233,28 @@
     field: 'custom_fields.strCategory',
     sticky: true,
     advancedSticky: true
+  });
+
+  searchui.recommendations({
+    containerId: 'recommendation-container',
+    type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
+    dataset: 'test',
+    itemIdPath: 'id',
+    getProductIdFunction: function() {
+      return '2f0825af3b25a2842db639a9c67b0e5f';
+    },
+    ignoreFetchOnStart: true
+  });
+
+  searchui.recommendations({
+    containerId: 'recommendation-container-2',
+    type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
+    dataset: 'test',
+    itemIdPath: 'custom_fields.sku',
+    getProductIdFunction: function() {
+      return 'abc123';
+    },
+    ignoreFetchOnStart: true
   });
 
 

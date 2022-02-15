@@ -23,6 +23,8 @@ import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
 import { clearSelected } from './actions/filters';
 import { HISTORY_PARAMETERS } from "./util/history";
+import Recommendations from "./components/recommendations";
+import { recommend } from "./actions/recommendations";
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 export const MATCH_ALL_QUERY = '*';
@@ -36,6 +38,7 @@ export default class AddSearchUI {
   constructor(client, settings) {
     this.client = client;
     this.segmentedSearchClients = {};
+    this.recommendationsSettings = [];
     this.settings = settings || {};
     HISTORY_PARAMETERS.SEARCH = this.settings.searchParameter || HISTORY_PARAMETERS.SEARCH;
     this.hasSearchResultsComponent = false;
@@ -61,7 +64,7 @@ export default class AddSearchUI {
     if (this.hasSearchResultsComponent) {
       initFromURL(this.client, this.reduxStore,
         createFilterObjectFunction,
-        (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo, false),
+        (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo, false, 'firstSearch'),
         this.settings.matchAllQuery,
         this.settings.baseFilters
       );
@@ -74,6 +77,13 @@ export default class AddSearchUI {
     // Possible match all query on load
     if (this.settings.matchAllQuery === true) {
       this.matchAllQuery();
+    }
+
+    // fetch all recommendations
+    for (var i = 0; i < this.recommendationsSettings.length; i++) {
+      if (!this.recommendationsSettings[i].ignoreFetchOnStart) {
+        this.fetchRecommendation(this.recommendationsSettings[i].containerId);
+      }
     }
 
     this.reduxStore.dispatch(start());
@@ -89,6 +99,17 @@ export default class AddSearchUI {
     }
   }
 
+  fetchRecommendation(containerId) {
+    const recoSetting = this.recommendationsSettings.filter(setting => setting.containerId === containerId)[0];
+    if (!recoSetting) return;
+    this.reduxStore.dispatch(recommend(this.client, {
+      container: recoSetting.containerId,
+      type: recoSetting.type,
+      dataset: recoSetting.dataset,
+      itemId: recoSetting.getProductIdFunction.call(),
+      itemIdPath: recoSetting.itemIdPath === 'id' ? 'docid' : recoSetting.itemIdPath
+    }));
+  }
 
   /*
    * Utils
@@ -167,6 +188,10 @@ export default class AddSearchUI {
 
   activeFilters(conf) {
     new ActiveFilters(this.client, this.reduxStore, conf);
+  }
+
+  recommendations(conf) {
+    new Recommendations(this.client, this.reduxStore, conf, this.recommendationsSettings);
   }
 
   /*
