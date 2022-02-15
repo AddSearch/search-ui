@@ -16,7 +16,8 @@ export function start() {
   }
 }
 
-export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, store, fieldForInstantRedirect, requestBy) {
+export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, store,
+                       fieldForInstantRedirect, requestBy, fieldForInstantRedirectGlobal) {
   // Update browser history
   setHistory(HISTORY_PARAMETERS.SEARCH, keyword, isHistoryDebounced, store);
 
@@ -29,10 +30,13 @@ export function search(client, keyword, onResultsScrollTo, appendResults, isHist
   return dispatch => {
     dispatch(searchFetchStart());
     client.search(keyword, (res) => {
-      if (fieldForInstantRedirect && res && res.hits && res.hits.length) {
-        var customFieldName = fieldForInstantRedirect.replace('custom_fields.', '');
+      if ((fieldForInstantRedirectGlobal || fieldForInstantRedirect) && res && res.hits && res.hits.length) {
+
+        var field = fieldForInstantRedirectGlobal || fieldForInstantRedirect;
+        var customFieldName = field.replace('custom_fields.', '');
         var matchedHit = res.hits.find((hit) => hit.custom_fields && hit.custom_fields[customFieldName] &&
           keyword.toLowerCase() === hit.custom_fields[customFieldName].toLowerCase());
+
         if (matchedHit) {
           window.location.href = matchedHit.url;
         }
