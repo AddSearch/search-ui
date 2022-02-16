@@ -61,7 +61,8 @@ export default class AddSearchUI {
     if (this.hasSearchResultsComponent) {
       initFromURL(this.client, this.reduxStore,
         createFilterObjectFunction,
-        (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo, false),
+        (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo, false,
+          null, this.settings.fieldForInstantRedirect),
         this.settings.matchAllQuery,
         this.settings.baseFilters
       );
@@ -80,9 +81,9 @@ export default class AddSearchUI {
   }
 
 
-  executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect) {
+  executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal) {
     this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, false, searchAsYouType,
-      this.reduxStore, fieldForInstantRedirect));
+      this.reduxStore, fieldForInstantRedirect, null, fieldForInstantRedirectGlobal));
 
     for (let key in this.segmentedSearchClients) {
       this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key].client, key, keyword));
@@ -119,8 +120,12 @@ export default class AddSearchUI {
    */
 
   searchField(conf) {
-    const onSearch = (keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect) =>
-      this.executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect);
+    if (conf.fieldForInstantRedirect) {
+      console.log('WARNING: searchField setting "fieldForInstantRedirect" is deprecated. Use it ' +
+        'in Search UI configuration object instead.');
+    }
+    const onSearch = (keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal) =>
+      this.executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal);
     new SearchField(this.client, this.reduxStore, conf, this.settings.matchAllQuery === true, onSearch);
   }
 
