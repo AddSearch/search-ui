@@ -38,7 +38,7 @@ export function search(client, keyword, onResultsScrollTo, appendResults, isHist
           keyword.toLowerCase() === hit.custom_fields[customFieldName].toLowerCase());
 
         if (matchedHit) {
-          window.location.href = matchedHit.url;
+          window.location.replace(matchedHit.url);
         }
       }
       dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults, requestBy));

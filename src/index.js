@@ -62,7 +62,7 @@ export default class AddSearchUI {
       initFromURL(this.client, this.reduxStore,
         createFilterObjectFunction,
         (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo, false,
-          null, this.settings.fieldForInstantRedirectGlobal),
+          null, this.settings.fieldForInstantRedirect),
         this.settings.matchAllQuery,
         this.settings.baseFilters
       );
@@ -121,7 +121,7 @@ export default class AddSearchUI {
 
   searchField(conf) {
     if (conf.fieldForInstantRedirect) {
-      console.log('WARNING: searchField setting "fieldForInstantRedirect" has been deprecated. Please use "fieldForInstantRedirectGlobal" ' +
+      console.log('WARNING: searchField setting "fieldForInstantRedirect" is deprecated. Use it ' +
         'in Search UI configuration object instead.');
     }
     const onSearch = (keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal) =>

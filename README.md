@@ -87,6 +87,7 @@ The configuration object can contain following values:
 | searchResultsPageUrl | String | null | Redirect the user to a separate search results page, instead of showing search results on the current page |
 | searchParameter | String | "search" | Name of the search parameter which is added to the URL, by default the library adds "?search=" |
 | updateBrowserHistory | boolean | true | Set this value to false for a second/third searchui's instance to prevent conflict in browser's URL |
+| fieldForInstantRedirect | String | n/a | Checking if the search keyword is matching with any search result's custom field's value, then redirect users to the matched page. E.g. custom_fields.sku |
 
 After all UI components have been added to the SearchUI object, the start function must be called:
 
@@ -120,7 +121,7 @@ Settings that can be passed to the ```searchField``` function:
 | ignoreSearchResultsPageUrl | boolean | false | Don't redirect the user to a search results page from this field (in case you have multiple fields) |
 | onfocusAutocompleteMatchAllQuery | boolean | false | If true, execute match all query for autocomplete box when this field is empty and focused |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
-| fieldForInstantRedirect | String | n/a | Checking if the search keyword is matching with any search result's custom field's value, then redirect users to the matched page. E.g. *custom_fields.sku* |
+| fieldForInstantRedirect | String | n/a | *This setting is deprecated, use it in Search UI Configuration instead* |
 
 ### Autocomplete
 Show suggested keyword, search results, or both under the search field.
