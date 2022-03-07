@@ -12,35 +12,13 @@
   <script src="../../dist/addsearch-search-ui.min.js"></script>
   <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
   <link rel="stylesheet" href="styles.css" />
-
-  <script>
-    // Responsive menu
-    // function toggleMobileMenu() {
-    //   var style = document.querySelector('aside').style;
-    //   style.display = style.display === 'block' ? 'none' : 'block';
-    // }
-    // if (window) {
-    //   window.onresize = function () {
-    //     alignAutocomplete(document.querySelector('#autocomplete-container'));
-    //   };
-    // }
-  </script>
 </head>
 
 
 <body>
-<header>
-  <div class="mobilemenu" onclick="toggleMobileMenu();">&#9776;</div>
 
-  <section>
-    <div>
-      <div id="searchfield-container"></div>
-    </div>
-    <div>
-      Sort by:
-      <div id="sortby-container"></div>
-    </div>
-  </section>
+<header>
+  <a href="index.html">Home page</a>
 </header>
 
 
@@ -76,34 +54,23 @@
     Category:
     <div id="category-facets-container"></div>
   </section>
-
-
 </aside>
 
 <main>
+  <h1 class="product-title">
+    Product
+    <span></span>
+  </h1>
+  <div class="content-wrapper">
+    <div class="product-image">Product image</div>
+    <div class="product-description">Product details</div>
+  </div>
+</main>
+
+<main>
   <section>
-    FBT Recommendation
+    Frequently Bought Together Items
     <div id="recommendation-container"></div>
-  </section>
-
-  <section>
-    Other Recommendation
-    <div id="recommendation-container-2"></div>
-  </section>
-
-  <section>
-    Search results
-    <div id="results-container"></div>
-  </section>
-
-  <section>
-    Load more results:
-    <div id="loadmore-container"></div>
-  </section>
-
-  <section>
-    Pagination:
-    <div id="pagination-container"></div>
   </section>
 </main>
 
@@ -140,28 +107,9 @@
 
 <script>
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
-  var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+  // var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+  var client = new AddSearchClient('80b604de66911aa0de5f44623e28f8a2');
   client.setPaging(1, 5, 'relevance', 'desc');
-  // client.setNumberOfFacets(20);
-
-  // Get min and max prices from results
-  client.addStatsField('custom_fields.price');
-  client.addStatsField('custom_fields.cal');
-
-  // Define buckets for calorie filters
-  var ranges = [
-    {'to': 400},
-    {'from': 400, 'to': 500},
-    {'from': 500, 'to': 600},
-    {'from': 600}
-  ];
-  client.addRangeFacet('custom_fields.cal', ranges);
-
-  // Special diets as facets
-  client.addFacetField('custom_fields.strArea');
-  client.addFacetField('custom_fields.strIngredient1');
-  client.addFacetField('custom_fields.strCategory')
-
 
   // Search UI
   var conf = {
@@ -169,126 +117,34 @@
   };
   var searchui = new AddSearchUI(client, conf);
 
-  searchui.filters({
-    containerId: 'strMeal-filters-container',
-    type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
-    options: {
-      op1: {
-        label: 'Mince Pies',
-        filter: {'custom_fields.strMeal': 'Mince Pies'}
-      },
-      op2: {
-        label: 'Beef Sunday Roast',
-        filter: {'custom_fields.strMeal': 'Beef Sunday Roast'}
-      },
-      op3: {
-        label: 'Beef and Oyster pie',
-        filter: {'custom_fields.strMeal': 'Beef and Oyster pie'}
-      }
-    }
-  });
-
-
-  searchui.searchField({
-    containerId: 'searchfield-container',
-    autofocus: true,
-    placeholder: 'Keyword..',
-    button: 'Search'
-  });
-
-  searchui.searchResults({
-    containerId: 'results-container',
-    template: document.querySelector('#search-results-template').innerHTML
-  });
-
-  searchui.activeFilters({
-    containerId: 'active-filters-container'
-  });
-
-  searchui.filters({
-    containerId: 'range-filters-container',
-    type: AddSearchUI.FILTER_TYPE.RANGE,
-    label: 'Calorie range',
-    labelShort: 'Calories',
-    field: 'custom_fields.cal',
-    validator: '^[\\d]*$'
-  });
-
-  searchui.facets({
-    containerId: 'area-facets-container',
-    field: 'custom_fields.strArea',
-    sticky: true,
-    advancedSticky: true
-  });
-
-  searchui.facets({
-    containerId: 'ingredient-facets-container',
-    field: 'custom_fields.strIngredient1',
-    sticky: false,
-    advancedSticky: true
-  });
-
-  searchui.facets({
-    containerId: 'category-facets-container',
-    field: 'custom_fields.strCategory',
-    sticky: true,
-    advancedSticky: true
-  });
-
   searchui.recommendations({
     containerId: 'recommendation-container',
     type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
-    dataset: 'test',
-    itemIdPath: 'id',
+    datasetzzz: '8b4abf3d3dc9425a9329dc9ec9945a6f',
+    dataset: '5a2724ae95f54deb9385e3565463dbb4',
+    itemIdPath: 'custom_fields.SKU',
     getProductIdFunction: function() {
-      return '2f0825af3b25a2842db639a9c67b0e5f';
+      return new URLSearchParams(window.location.search).get('prod');
     },
-    ignoreFetchOnStart: true
+    ignoreFetchOnStart: false
   });
 
-  searchui.recommendations({
-    containerId: 'recommendation-container-2',
-    type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
-    dataset: 'test',
-    itemIdPath: 'custom_fields.sku',
-    getProductIdFunction: function() {
-      return 'abc123';
-    },
-    ignoreFetchOnStart: true
-  });
-
-
-  searchui.loadMore({
-    containerId: 'loadmore-container',
-    type: AddSearchUI.LOAD_MORE_TYPE.BUTTON
-  });
-
-  searchui.pagination({
-    containerId: 'pagination-container'
-  });
-
-  searchui.sortBy({
-    containerId: 'sortby-container',
-    options: [
-      {
-        label: 'Sort by relevance',
-        sortBy: 'relevance',
-        order: 'desc'
-      },
-      {
-        label: 'Oldest first',
-        sortBy: 'date',
-        order: 'asc'
-      },
-      {
-        label: 'Most expensive first',
-        sortBy: 'custom_fields.price',
-        order: 'desc'
-      }
-    ]
-  });
+  // searchui.recommendations({
+  //   containerId: 'recommendation-container-2',
+  //   type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
+  //   dataset: 'test',
+  //   itemIdPath: 'custom_fields.sku',
+  //   getProductIdFunction: function() {
+  //     return 'abc123';
+  //   },
+  //   ignoreFetchOnStart: true
+  // });
 
   searchui.start();
+
+  var productTitleEl = document.querySelector('.product-title > span');
+  var productId = new URLSearchParams(window.location.search).get('prod');
+  productTitleEl.textContent = productId;
 </script>
 
 </body>

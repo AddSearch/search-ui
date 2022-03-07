@@ -2,16 +2,12 @@ export const RECO_FBT_TEMPLATE = `
   <div class="addsearch-recommendations">
     {{#each es.hits.hits}}
       <div class="hit">
-        
-        <span class="main-image" style="background-image: {{getImg (lookup ../images @index)}}">
-        </span>
-
+        <img class="main-image" src="{{fields.custom_fields.Img}}"></img>
         <h3>
           <a href="{{fields.url}}" target="_blank">{{fields.title}}</a>
         </h3>
-
         <div class="highlight">
-          {{fields.main_content}}
+          {{fields.custom_fields.Name}}
         </div>
       </div>
     {{/each}}

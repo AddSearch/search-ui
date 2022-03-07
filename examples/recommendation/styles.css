@@ -120,3 +120,22 @@ section div {
     background-color: red;
   }
 }
+
+.content-wrapper {
+  max-width: 970px;
+  display: flex;
+  justify-content: space-between;
+  padding: 30px;
+}
+
+.product-image {
+  width: 300px;
+  height: 500px;
+  border: solid 1px #c8c8c8;
+}
+
+.product-description {
+  width: 600px;
+  height: 500px;
+  border: solid 1px #c8c8c8;
+}
