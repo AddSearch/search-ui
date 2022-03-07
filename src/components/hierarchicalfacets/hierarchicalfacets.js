@@ -5,7 +5,7 @@ import { toggleHierarchicalFacetFilter } from '../../actions/filters';
 import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
-import {createFilterObjectWithoutFacetGroup} from "../filters/customfilters";
+import {createFilterObject} from "../filters/filterstateobserver";
 
 
 export default class HierarchicalFacets {
@@ -55,7 +55,7 @@ export default class HierarchicalFacets {
         if (_isAllEmpty(activeFacets, this.conf.fields)) {
           this.render(search);
         } else {
-          var filterObjectCustom = createFilterObjectWithoutFacetGroup(
+          var filterObjectCustom = createFilterObject(
             this.reduxStore.getState().filters, baseFilters, this.conf.fields);
 
           if (this.conf.fields.indexOf(search.callBy) === -1) {
