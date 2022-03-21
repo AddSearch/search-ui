@@ -10,7 +10,8 @@ module.exports = {
   output: {
     filename: 'addsearch-search-ui.min.js',
     library: 'AddSearchUI',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
+    globalObject: 'this'
   },
   mode: 'production',
   optimization: {
