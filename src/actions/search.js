@@ -54,6 +54,7 @@ export function search(client, keyword, onResultsScrollTo, appendResults, isHist
 
         if (matchedHit && !isHistoryDebounced) {
           window.location.replace(matchedHit.url);
+          return;
         }
       }
       dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults, requestBy));
