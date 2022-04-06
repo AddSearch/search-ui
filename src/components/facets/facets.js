@@ -73,7 +73,6 @@ export default class Facets {
     // Read active facets from redux state
     const activeFacets = this.getActiveFacets(facetField);
 
-
     // Sticky facets (i.e. not updating if keyword is unchanged)
     if (this.conf.sticky === true && !this.conf.advancedSticky) {
       // Keyword has changed, facets are not saved yet, or no selected facets. Show new incoming facets

@@ -76,3 +76,6 @@ export function registerDefaultHelpers() {
 export function registerHelper(helperName, helperFunction) {
   handlebars.registerHelper(helperName, helperFunction);
 }
+export function registerPartial(partialName, partialTemplate) {
+  handlebars.registerPartial(partialName, partialTemplate);
+}

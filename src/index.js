@@ -15,7 +15,7 @@ import SegmentedResults from './components/segmentedresults';
 import SortBy from './components/sortby';
 import { initRedux } from './store';
 import { setExternalAnalyticsCallback, setCollectAnalytics } from './util/analytics';
-import { registerDefaultHelpers, registerHelper } from './util/handlebars';
+import { registerDefaultHelpers, registerHelper, registerPartial } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
 import { start, search, setSearchResultsPageUrl, clearSearchResults } from './actions/search';
@@ -62,14 +62,16 @@ export default class AddSearchUI {
     if (this.hasSearchResultsComponent) {
       initFromURL(this.client, this.reduxStore,
         createFilterObjectFunction,
-        (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo, false),
+        (keyword, onResultsScrollTo) => this.executeSearch(keyword, onResultsScrollTo, false,
+          null, this.settings.fieldForInstantRedirect),
         this.settings.matchAllQuery,
         this.settings.baseFilters
       );
     }
 
     // FilterStateObserver to update client's filter object when any of the filters change
-    new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange, this.settings.baseFilters);
+    new FilterStateObserver(this.client, this.reduxStore, createFilterObjectFunction, this.settings.onFilterChange,
+      this.settings.baseFilters, this.segmentedSearchClients);
 
     // Possible match all query on load
     if (this.settings.matchAllQuery === true) {
@@ -80,12 +82,12 @@ export default class AddSearchUI {
   }
 
 
-  executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect) {
+  executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal) {
     this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, false, searchAsYouType,
-      this.reduxStore, fieldForInstantRedirect));
+      this.reduxStore, fieldForInstantRedirect, null, fieldForInstantRedirectGlobal));
 
     for (let key in this.segmentedSearchClients) {
-      this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key], key, keyword));
+      this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key].client, key, keyword));
     }
   }
 
@@ -119,8 +121,12 @@ export default class AddSearchUI {
    */
 
   searchField(conf) {
-    const onSearch = (keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect) =>
-      this.executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect);
+    if (conf.fieldForInstantRedirect) {
+      console.log('WARNING: searchField setting "fieldForInstantRedirect" is deprecated. Use it ' +
+        'in Search UI configuration object instead.');
+    }
+    const onSearch = (keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal) =>
+      this.executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal);
     new SearchField(this.client, this.reduxStore, conf, this.settings.matchAllQuery === true, onSearch);
   }
 
@@ -139,7 +145,9 @@ export default class AddSearchUI {
       return;
     }
     this.hasSearchResultsComponent = true;
-    this.segmentedSearchClients[conf.containerId] = conf.client;
+    this.segmentedSearchClients[conf.containerId] = {};
+    this.segmentedSearchClients[conf.containerId].client = conf.client;
+    this.segmentedSearchClients[conf.containerId].originalFilters = Object.assign({}, conf.client.getSettings().filterObject);
     new SegmentedResults(conf.client, this.reduxStore, conf);
   }
 
@@ -199,5 +207,9 @@ export default class AddSearchUI {
 
   registerHandlebarsHelper(helperName, helperFunction) {
     registerHelper(helperName, helperFunction);
+  }
+
+  registerHandlebarsPartial(partialName, partialTemplate) {
+    registerPartial(partialName, partialTemplate);
   }
 }
