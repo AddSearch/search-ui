@@ -9,7 +9,7 @@ import { segmentedSearch } from "../../actions/segmentedsearch";
 /**
  * Default function to map the current filter state to a filter object suitable for the AddSearch client
  */
-export function createFilterObject(state, baseFilters) {
+export function createFilterObject(state, baseFilters, excludedFacetGroup) {
 
   let filterObject = {
     and: []
@@ -48,13 +48,33 @@ export function createFilterObject(state, baseFilters) {
     let facetGroupOR = {or: []};
 
     for (let facetValue in state.activeFacets[facetField]) {
-      const f = {};
-      f[facetField] = facetValue;
-      facetGroupOR.or.push(f);
+      if (facetField !== excludedFacetGroup) {
+        const f = {};
+        f[facetField] = facetValue;
+        facetGroupOR.or.push(f);
+      }
     }
 
     if (facetGroupOR.or.length > 0) {
       filterObject.and.push(facetGroupOR);
+    }
+  }
+
+  // Iterate active hierarchical facets. Create OR filter group of active filters for every lowest level of facet field.
+  for (let facetContainer in state.activeHierarchicalFacets) {
+    let hierarchicalFacetGroupOR = {or: []};
+    for (let facetField in state.activeHierarchicalFacets[facetContainer]) {
+
+      for (let facetValue in state.activeHierarchicalFacets[facetContainer][facetField]) {
+        if (!excludedFacetGroup || excludedFacetGroup.indexOf(facetField) === -1) {
+          const f = {};
+          f[facetField] = facetValue;
+          hierarchicalFacetGroupOR.or.push(f);
+        }
+      }
+    }
+    if (hierarchicalFacetGroupOR.or.length > 0) {
+      filterObject.and.push(hierarchicalFacetGroupOR);
     }
   }
 

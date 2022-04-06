@@ -80,11 +80,11 @@ section div {
 .addsearch-searchresults .item {
   clear: both;
   border-bottom: 1px solid #eee;
-  height: 142px;
+  display: flex;
+  padding: 30px 0;
 }
 .addsearch-searchresults span {
-  float: left;
-  line-height: 150%;
+
 }
 .addsearch-searchresults span b {
   background-color: #dedede;
@@ -119,4 +119,11 @@ section div {
     display: none;
     background-color: red;
   }
+}
+
+.tag {
+  padding: 5px 15px;
+  background: #b9b9b970;
+  border-radius: 5px;
+  margin-right: 10px;
 }

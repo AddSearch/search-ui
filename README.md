@@ -345,6 +345,49 @@ Settings that can be passed to the ```facets``` function:
 | advancedSticky | boolean | false | Similar to sticky, extra search queries are made to update other facet groups. Enabling this setting would use quite an amount of search query usage in your subscription plan |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 
+
+### Hierarchical Facets
+Display hierarchical facets and let the user filter results by facets. In addition, user can drill down each facets and select more specific values. (i.e. dynamic property filters).
+By default, hierarchical facet is sticky.
+Currently, this component does not support historical URL, refreshing the page will lose the current state of the facet group.
+
+```js
+  searchui.hierarchicalFacets({
+    containerId: 'hierarchical-facets-container',
+    fields: [
+      'custom_fields.nested_facet_lvl_0',
+      'custom_fields.nested_facet_lvl_1',
+      'custom_fields.nested_facet_lvl_2',
+      'custom_fields.nested_facet_lvl_3'
+    ]
+  });
+```
+Before using this component, add appropriate hierarchical facets to your client instance so the information is fetched from the
+search index:
+
+```js
+  client.addHierarchicalFacetSetting([
+    {
+      "fields": [
+       "custom_fields.nested_facet_lvl_0",
+        "custom_fields.nested_facet_lvl_1",
+       "custom_fields.nested_facet_lvl_2",
+        "custom_fields.nested_facet_lvl_3"
+      ],
+      "sortOrder": "COUNT_DESC_NAME_ASC"
+    }
+  ]);
+```
+
+Settings that can be passed to the ```facets``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML element that will act as a container for facets |
+| fields | String | n/a | Define a list of custom fields in hierarchical order (top level facet is placed first). |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/hierarchicalfacets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+
+
 ### Active filters
 Show active filters and facets. Let user remove specific filters or clear everything,
 
