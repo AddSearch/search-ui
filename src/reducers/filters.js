@@ -5,7 +5,7 @@ import {
   SET_ACTIVE_FILTERS,
   SET_ACTIVE_FACETS,
   TOGGLE_FACET_FILTER,
-  CLEAR_SELECTED_FILTERS_AND_FACETS
+  CLEAR_SELECTED_FILTERS_AND_FACETS, TOGGLE_HIERARCHICAL_FACET_FILTER
 } from '../actions/filters';
 import { FILTER_TYPE } from '../components/filters';
 
@@ -13,8 +13,90 @@ const initialState = {
   allAvailableFilters: [],
   activeFilters: {},
   activeFacets: {},
+  activeHierarchicalFacets: {},
+  indeterminateHierarchicalFacets: [],
+  openedHierarchicalFacetGroups: [],
   activeRangeFilters: {},
   refreshSearch: true
+};
+
+const hasActiveSelection = function(activeGroups, parentFacet) {
+
+  return Object.keys(activeGroups).filter(function(key) {
+    return key.indexOf(parentFacet + ' >') > -1;
+  }).length > 0;
+}
+
+const updateHierarchicalFacetState = function(activeHierarchicalFacetState, indeterminateHierarchicalFacets, action) {
+
+  if (!activeHierarchicalFacetState[action.container]) {
+    activeHierarchicalFacetState[action.container] = {};
+  }
+
+  if (!activeHierarchicalFacetState[action.container][action.field]) {
+    activeHierarchicalFacetState[action.container][action.field] = {};
+  }
+
+  // Remove filter
+  if (activeHierarchicalFacetState[action.container][action.field][action.value]) {
+    const lastSeparatorPos = action.value.lastIndexOf('>');
+    const parentFacetValue = lastSeparatorPos > -1 ? action.value.slice(0, lastSeparatorPos - 1) : null;
+
+    delete activeHierarchicalFacetState[action.container][action.field][action.value];
+    if (parentFacetValue && !hasActiveSelection(activeHierarchicalFacetState[action.container][action.field], parentFacetValue)) {
+      const j = indeterminateHierarchicalFacets.indexOf(parentFacetValue);
+      if (j > -1) {
+        indeterminateHierarchicalFacets.splice(j, 1);
+      }
+    }
+  }
+  // Add filter
+  else {
+    activeHierarchicalFacetState[action.container][action.field][action.value] = 'true';
+
+    // Remove all related facets in the below level
+    for (let level in activeHierarchicalFacetState[action.container]) {
+      for (let activeFacetGroup in activeHierarchicalFacetState[action.container][level]) {
+        if (activeFacetGroup.indexOf(action.value + ' >') === 0) {
+          delete activeHierarchicalFacetState[action.container][level][activeFacetGroup];
+        }
+      }
+    }
+    indeterminateHierarchicalFacets = indeterminateHierarchicalFacets.filter(facet => facet.indexOf(action.value + ' > ') !== 0);
+
+    // Remove all relating parent facets
+    const removingFacetList = action.value.split(' > ').reduce((prev, curr) => {
+      const l = prev[prev.length - 1];
+      const f = l ? l + ' > ' + curr : curr;
+      if (f !== action.value) {
+        prev.push(f)
+      }
+      return prev;
+    }, []);
+
+    for (let level in activeHierarchicalFacetState[action.container]) {
+      for (let activeFacetGroup in activeHierarchicalFacetState[action.container][level]) {
+        if (removingFacetList.indexOf(activeFacetGroup) !== -1) {
+          delete activeHierarchicalFacetState[action.container][level][activeFacetGroup];
+        }
+      }
+    }
+
+    indeterminateHierarchicalFacets = indeterminateHierarchicalFacets
+      .filter(f => removingFacetList.indexOf(f) === -1)
+      .concat(removingFacetList);
+  }
+
+  // Remove indeterminate facet
+  const j = indeterminateHierarchicalFacets.indexOf(action.value);
+  if (j > -1) {
+    indeterminateHierarchicalFacets.splice(j, 1);
+  }
+
+  return {
+    activeHierarchicalFacetState,
+    indeterminateHierarchicalFacets
+  };
 };
 
 export default function filters(state = initialState, action) {
@@ -83,6 +165,8 @@ export default function filters(state = initialState, action) {
       return Object.assign({}, state, {
         activeFacets: {},
         activeFilters: {},
+        activeHierarchicalFacets: {},
+        indeterminateHierarchicalFacets: [],
         activeRangeFilters: {},
         refreshSearch: action.refreshSearch === false ? false : true
       });
@@ -121,6 +205,23 @@ export default function filters(state = initialState, action) {
 
       return Object.assign({}, state, {
         activeFacets: nextActiveFacets,
+        refreshSearch: action.refreshSearch === false ? false : true,
+        targetFacetGroup: action.field
+      });
+
+
+    case TOGGLE_HIERARCHICAL_FACET_FILTER:
+      let nextActiveHierarchicalFacets = Object.assign({}, state.activeHierarchicalFacets);
+      let nextIndeterminateHierarchicalFacets = state.indeterminateHierarchicalFacets.slice();
+      const newFacetStates = updateHierarchicalFacetState(nextActiveHierarchicalFacets, nextIndeterminateHierarchicalFacets, action);
+
+      nextActiveHierarchicalFacets = newFacetStates.activeHierarchicalFacetState;
+      nextIndeterminateHierarchicalFacets = newFacetStates.indeterminateHierarchicalFacets;
+      nextActiveHierarchicalFacets['v'] = !nextActiveHierarchicalFacets['v'] ? 1 : nextActiveHierarchicalFacets['v']+1;
+
+      return Object.assign({}, state, {
+        activeHierarchicalFacets: nextActiveHierarchicalFacets,
+        indeterminateHierarchicalFacets: nextIndeterminateHierarchicalFacets,
         refreshSearch: action.refreshSearch === false ? false : true,
         targetFacetGroup: action.field
       });
