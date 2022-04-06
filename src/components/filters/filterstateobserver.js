@@ -3,6 +3,7 @@ import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { observeStoreByKey } from '../../store';
 import { setHistory, jsonToUrlParam, HISTORY_PARAMETERS } from '../../util/history';
+import { segmentedSearch } from "../../actions/segmentedsearch";
 
 
 /**
@@ -90,11 +91,12 @@ export function createFilterObject(state, baseFilters, excludedFacetGroup) {
  */
 export default class FilterStateObserver {
 
-  constructor(client, reduxStore, createFilterObjectFunction, onFilterChange, baseFilters) {
+  constructor(client, reduxStore, createFilterObjectFunction, onFilterChange, baseFilters, segmentedSearchClients) {
     this.client = client;
     this.reduxStore = reduxStore;
     this.createFilterObjectFunction = createFilterObjectFunction;
     this.onFilterChange = onFilterChange;
+    this.segmentedSearchClients = segmentedSearchClients;
 
     observeStoreByKey(this.reduxStore, 'filters', state => this.onFilterStateChange(state, baseFilters));
   }
@@ -111,6 +113,12 @@ export default class FilterStateObserver {
       const keyword = this.reduxStore.getState().keyword.value;
       this.reduxStore.dispatch(setPage(this.client, 1, null, this.reduxStore));
       this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore, null, state.targetFacetGroup));
+
+      for (let key in this.segmentedSearchClients) {
+        const segmentFilters = this.createFilterObjectFunction(state, this.segmentedSearchClients[key].originalFilters);
+        this.segmentedSearchClients[key].client.setFilterObject(segmentFilters);
+        this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key].client, key, keyword));
+      }
     }
 
     // Custom function to control conditional visibility (e.g. show a component only when a certain filter is active)
