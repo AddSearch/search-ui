@@ -5,7 +5,6 @@ import {
   SEARCH_RESULTS,
   CLEAR_SEARCH_RESULTS,
   SET_SEARCH_RESULTS_PAGE_URL,
-  SEARCH_BY_COMPONENT
 } from '../actions/search';
 
 const initialState = {
@@ -37,7 +36,7 @@ export default function search(state = initialState, action) {
         dropReturningResults: false
       });
 
-    case SEARCH_RESULTS:
+    case SEARCH_RESULTS: {
       if (!state.started) {
         console.log('WARNING: AddSearch UI not started with the start() function');
       }
@@ -66,6 +65,7 @@ export default function search(state = initialState, action) {
         loading: false,
         callBy: action.requestBy
       });
+    }
 
     case SET_SEARCH_RESULTS_PAGE_URL:
       return Object.assign({}, state, {

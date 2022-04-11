@@ -124,7 +124,7 @@ export default class ActiveFilters {
 
     const clearAll = container.querySelector('[data-clearall]');
     if (clearAll) {
-      clearAll.addEventListener('click', (e) => this.reduxStore.dispatch(clearSelected(true)));
+      clearAll.addEventListener('click', () => this.reduxStore.dispatch(clearSelected(true)));
     }
   }
 

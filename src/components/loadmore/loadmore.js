@@ -54,7 +54,7 @@ export default class LoadMore {
     if (this.conf.type === LOAD_MORE_TYPE.BUTTON) {
       const button = container.querySelector('button');
       if (button) {
-        button.onclick = (e) => this.loadMore();
+        button.onclick = () => this.loadMore();
       }
     }
 

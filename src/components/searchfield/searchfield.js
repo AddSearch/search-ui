@@ -1,4 +1,3 @@
-/* global window */
 import './searchfield.scss';
 import { SEARCHFIELD_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
@@ -126,7 +125,7 @@ export default class SearchField {
     this.field.onkeypress = (e) => this.onkeypress(e);
     this.field.onkeyup = (e) => this.onkeyup(e);
     this.field.onfocus = (e) => this.onfocus(e);
-    this.field.onblur = (e) => setTimeout(() => this.onblur(), 200); // Possible search button onclick event first
+    this.field.onblur = () => setTimeout(() => this.onblur(), 200); // Possible search button onclick event first
 
     // Event listeners to the possible search button
     if (container.querySelector('button')) {

@@ -33,7 +33,7 @@ const initialState = {
 
 export default function searchsuggestions(state = initialState, action) {
   switch (action.type) {
-    case AUTOCOMPLETE_FETCH_START:
+    case AUTOCOMPLETE_FETCH_START: {
       // Add to pending requests
       let addPendingReq = [...state.pendingRequests];
       if (addPendingReq.indexOf(action.jsonKey) === -1) {
@@ -44,23 +44,23 @@ export default function searchsuggestions(state = initialState, action) {
         pendingRequests: addPendingReq,
         dropRendering: false
       });
+    }
 
-
-    case AUTOCOMPLETE_SUGGESTIONS_CLEAR:
+    case AUTOCOMPLETE_SUGGESTIONS_CLEAR: {
       return Object.assign({}, state, {
         suggestions: [],
         activeSuggestionIndex: null
       });
+    }
 
-    case AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR:
+    case AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR: {
       return Object.assign({}, state, {
         customFields: [],
         activeSuggestionIndex: null
       });
+    }
 
-
-    case AUTOCOMPLETE_SUGGESTIONS_RESULTS:
-
+    case AUTOCOMPLETE_SUGGESTIONS_RESULTS: {
       // Remove suggestion from pending requests
       let removePendingSuggestion = [...state.pendingRequests];
       if (removePendingSuggestion.indexOf(SUGGESTIONS_JSON_KEY) !== -1) {
@@ -74,9 +74,9 @@ export default function searchsuggestions(state = initialState, action) {
         activeSuggestionIndex: null,
         visible: true
       });
+    }
 
-
-    case AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS:
+    case AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS: {
 
       // Remove suggestion from pending requests
       let removePendingCustomFields = [...state.pendingRequests];
@@ -90,16 +90,16 @@ export default function searchsuggestions(state = initialState, action) {
         activeSuggestionIndex: null,
         visible: true
       });
+    }
 
-
-    case AUTOCOMPLETE_SEARCH_CLEAR:
+    case AUTOCOMPLETE_SEARCH_CLEAR: {
       return Object.assign({}, state, {
         searchResults: {},
         searchResultsStats: {}
       });
+    }
 
-
-    case AUTOCOMPLETE_SEARCH_RESULTS:
+    case AUTOCOMPLETE_SEARCH_RESULTS: {
       const nextSearchResults = Object.assign({}, state.searchResults);
       nextSearchResults[action.jsonKey] = action.results.hits;
       const nextSearchResultsStats = Object.assign({}, state.searchResultsStats);
@@ -133,43 +133,45 @@ export default function searchsuggestions(state = initialState, action) {
         visible: true,
         appendResults: action.appendResults === true
       });
+    }
 
-
-    case AUTOCOMPLETE_HIDE:
+    case AUTOCOMPLETE_HIDE: {
 
       return Object.assign({}, state, {
         visible: false,
         activeSuggestionIndex: null
       });
+    }
 
-    case AUTOCOMPLETE_HIDE_AND_DROP_RENDERING:
+    case AUTOCOMPLETE_HIDE_AND_DROP_RENDERING: {
       return Object.assign({}, state, {
         dropRendering: true,
         visible: false,
         activeSuggestionIndex: null
       });
+    }
 
-
-    case AUTOCOMPLETE_SHOW:
+    case AUTOCOMPLETE_SHOW: {
       return Object.assign({}, state, {
         visible: true
       });
+    }
 
-
-    case HIDE_AUTOMATICALLY:
+    case HIDE_AUTOMATICALLY: {
       return Object.assign({}, state, {
         hideAutomatically: action.hideAutomatically
       });
+    }
 
-
-    case SET_ACTIVE_SUGGESTION:
+    case SET_ACTIVE_SUGGESTION: {
       return Object.assign({}, state, {
         activeSuggestionIndex: action.index,
         setSuggestionToSearchField: action.setSuggestionToSearchField
       });
+    }
 
-    case KEYBOARD_EVENT:
-      let nextActiveSuggestion = state.activeSuggestionIndex;
+    case KEYBOARD_EVENT: {
+        let nextActiveSuggestion = state.activeSuggestionIndex;
       let setSuggestionToSearchField = true;
 
       if (state.suggestions.length && state.customFields.length) {
@@ -181,22 +183,17 @@ export default function searchsuggestions(state = initialState, action) {
         if (action.direction === ARROW_DOWN) {
           if (nextActiveSuggestion === null && state[source].length > 0) {
             nextActiveSuggestion = 0;
-          }
-          else if (nextActiveSuggestion === state[source].length-1) {
+          } else if (nextActiveSuggestion === state[source].length - 1) {
             nextActiveSuggestion = null;
-          }
-          else {
+          } else {
             nextActiveSuggestion = nextActiveSuggestion + 1;
           }
-        }
-        else if (action.direction === ARROW_UP) {
+        } else if (action.direction === ARROW_UP) {
           if (nextActiveSuggestion === null && state[source].length > 0) {
-            nextActiveSuggestion = state[source].length-1;
-          }
-          else if (nextActiveSuggestion === 0) {
+            nextActiveSuggestion = state[source].length - 1;
+          } else if (nextActiveSuggestion === 0) {
             nextActiveSuggestion = null;
-          }
-          else {
+          } else {
             nextActiveSuggestion = nextActiveSuggestion - 1;
           }
         }
@@ -205,8 +202,9 @@ export default function searchsuggestions(state = initialState, action) {
       return Object.assign({}, state, {
         visible: true,
         activeSuggestionIndex: nextActiveSuggestion,
-        setSuggestionToSearchField: true
+        setSuggestionToSearchField: setSuggestionToSearchField
       });
+    }
 
     default:
       return state;
