@@ -131,7 +131,7 @@ export default class HierarchicalFacets {
     this._updateCheckBoxes(container, activeFacets, true, this.reduxStore.getState().filters.indeterminateHierarchicalFacets);
 
     // Attach events - expansion arrows
-    const arrows = container.getElementsByClassName('addsearch-facet-group-expansion-arrow');
+    const arrows = container.getElementsByClassName('adds-facet-container');
     for (let i=0; i<arrows.length; i++) {
       arrows[i].addEventListener('click', () => {
         arrows[i].parentNode.classList.toggle('shrink');
