@@ -131,11 +131,11 @@ export default class HierarchicalFacets {
     this._updateCheckBoxes(container, activeFacets, true, this.reduxStore.getState().filters.indeterminateHierarchicalFacets);
 
     // Attach events - expansion arrows
-    const arrows = container.getElementsByClassName('adds-facet-container');
+    const arrows = container.getElementsByClassName('addsearch-facet-group-expansion-arrow');
     for (let i=0; i<arrows.length; i++) {
       arrows[i].addEventListener('click', () => {
-        arrows[i].parentNode.classList.toggle('shrink');
-        this._toggleFacetGroupOpenState(arrows[i].parentNode.getAttribute('data-facet'));
+        arrows[i].parentNode.parentNode.classList.toggle('shrink');
+        this._toggleFacetGroupOpenState(arrows[i].parentNode.parentNode.getAttribute('data-facet'));
       });
     }
   }
