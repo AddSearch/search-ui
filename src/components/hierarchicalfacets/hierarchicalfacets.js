@@ -134,8 +134,8 @@ export default class HierarchicalFacets {
     const arrows = container.getElementsByClassName('addsearch-facet-group-expansion-arrow');
     for (let i=0; i<arrows.length; i++) {
       arrows[i].addEventListener('click', () => {
-        arrows[i].parentNode.classList.toggle('shrink');
-        this._toggleFacetGroupOpenState(arrows[i].parentNode.getAttribute('data-facet'));
+        arrows[i].parentNode.parentNode.classList.toggle('shrink');
+        this._toggleFacetGroupOpenState(arrows[i].parentNode.parentNode.getAttribute('data-facet'));
       });
     }
   }
