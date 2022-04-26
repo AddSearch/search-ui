@@ -4,6 +4,7 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const webpack = require('webpack');
 const PACKAGE = require('./package.json');
 const banner = PACKAGE.name + ' ' + PACKAGE.version;
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   entry: './index.js',
@@ -18,6 +19,7 @@ module.exports = {
     minimizer: [new TerserJSPlugin({extractComments: false}), new OptimizeCssAssetsPlugin({})],
   },
   plugins: [
+    new ESLintPlugin({}),
     new MiniCssExtractPlugin({
       filename: 'addsearch-search-ui.min.css'
     }),
@@ -25,6 +27,11 @@ module.exports = {
       banner: banner
     })
   ],
+  resolve: {
+    alias: {
+      handlebars: 'handlebars/dist/handlebars.min.js'
+    }
+  },
   module: {
     rules: [
       {

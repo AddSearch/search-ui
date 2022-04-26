@@ -203,7 +203,7 @@ export default class Filters {
     // Clear button
     const button = container.querySelector('button');
     if (button) {
-      button.addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
+      button.addEventListener('click', () => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
     }
   }
 

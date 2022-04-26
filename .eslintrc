@@ -1,0 +1,19 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true
+  },
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "allowImportExportEverywhere": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "no-eval": ["error"],
+    "no-trailing-spaces": "error",
+    "no-irregular-whitespace": "off"
+  }
+}

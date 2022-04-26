@@ -1,6 +1,4 @@
-/* global window, history */
 import { WARMUP_QUERY_PREFIX, MATCH_ALL_QUERY } from '../index';
-import { search } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
 import { setActiveFilters, setActiveFacets } from '../actions/filters';
@@ -96,7 +94,7 @@ function doSetHistory(parameter, value) {
 
 
 export function getQueryParam(url, param) {
-  const name = param.replace(/[\[\]]/g, "\\$&");
+  const name = param.replace(/[\[\]]/g, "\\$&"); // eslint-disable-line
   const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
   const results = regex.exec(url);
   if (!results) return null;
@@ -112,7 +110,7 @@ export function initFromURL(client, reduxStore, createFilterObjectFunction, sear
   handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, false, baseFilters);
 
   // Browser back button. Re-handle URL
-  window.onpopstate = (e) => {
+  window.onpopstate = () => {
     const qs = queryParamsToObject(window.location.href);
     handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters);
   }
@@ -221,7 +219,7 @@ export function objectToQueryParams(obj) {
   let qs = '';
 
   for (let key in obj) {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       if (qs !== '') {
         qs = qs + '&';
       }
@@ -243,7 +241,9 @@ export function urlParamToJSON(urlParameter) {
   try {
     return JSON.parse(urlParameter);
   }
-  catch(error) {}
+  catch(error) {
+    // empty
+  }
   return null;
 }
 

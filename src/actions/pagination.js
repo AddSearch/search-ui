@@ -1,4 +1,4 @@
-import { setHistory, HISTORY_PARAMETERS } from '../util/history';
+import {setHistory, HISTORY_PARAMETERS} from '../util/history';
 
 export const SET_PAGE = 'SET_PAGE';
 

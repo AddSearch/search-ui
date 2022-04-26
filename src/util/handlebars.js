@@ -67,7 +67,9 @@ export function registerDefaultHelpers() {
         return currencyFormatter.format(price);
       }
     }
-    catch(err) {}
+    catch(err) {
+      // empty
+    }
 
     return (price/100) + ' ' + currency;
   });

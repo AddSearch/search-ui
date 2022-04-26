@@ -2,7 +2,6 @@ import './hierarchicalfacets.scss';
 import handlebars from 'handlebars';
 import { FACETS_TEMPLATE, SUB_HIERARCHICAL_FACETS_TEMPLATE } from './templates';
 import { toggleHierarchicalFacetFilter } from '../../actions/filters';
-import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import {createFilterObject} from "../filters/filterstateobserver";

@@ -1,4 +1,3 @@
-/* global window */
 import { WARMUP_QUERY_PREFIX } from '../index';
 import { setHistory, HISTORY_PARAMETERS } from '../util/history';
 import { sendSearchStats } from '../util/analytics';
@@ -62,7 +61,7 @@ export function search(client, keyword, onResultsScrollTo, appendResults, isHist
   }
 }
 
-export function searchFetchStart(keyword) {
+export function searchFetchStart() {
   return {
     type: SEARCH_FETCH_START
   }

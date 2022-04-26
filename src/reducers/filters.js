@@ -102,7 +102,7 @@ const updateHierarchicalFacetState = function(activeHierarchicalFacetState, inde
 export default function filters(state = initialState, action) {
 
   switch (action.type) {
-    case REGISTER_FILTER:
+    case REGISTER_FILTER: {
       let nextAllAvailableFilters = state.allAvailableFilters.slice();
 
       // Range filter. Construct object. Use labelShort if available
@@ -121,9 +121,9 @@ export default function filters(state = initialState, action) {
       return Object.assign({}, state, {
         allAvailableFilters: nextAllAvailableFilters
       });
+    }
 
-
-    case TOGGLE_FILTER:
+    case TOGGLE_FILTER: {
       let nextActive = Object.assign({}, state.activeFilters);
 
       // Remove filter
@@ -140,9 +140,9 @@ export default function filters(state = initialState, action) {
         refreshSearch: action.refreshSearch === false ? false : true,
         targetFacetGroup: null
       });
+    }
 
-
-    case SET_RANGE_FILTER:
+    case SET_RANGE_FILTER: {
       let nextActiveRanges = Object.assign({}, state.activeRangeFilters);
       nextActiveRanges[action.field] = {};
       if (action.from !== null) {
@@ -158,10 +158,9 @@ export default function filters(state = initialState, action) {
         activeRangeFilters: nextActiveRanges,
         refreshSearch: true
       });
+    }
 
-
-
-    case CLEAR_SELECTED_FILTERS_AND_FACETS:
+    case CLEAR_SELECTED_FILTERS_AND_FACETS: {
       return Object.assign({}, state, {
         activeFacets: {},
         activeFilters: {},
@@ -170,23 +169,23 @@ export default function filters(state = initialState, action) {
         activeRangeFilters: {},
         refreshSearch: action.refreshSearch === false ? false : true
       });
+    }
 
-
-    case SET_ACTIVE_FILTERS:
+    case SET_ACTIVE_FILTERS: {
       return Object.assign({}, state, {
         activeFilters: action.json || {},
         refreshSearch: false
       });
+    }
 
-
-    case SET_ACTIVE_FACETS:
+    case SET_ACTIVE_FACETS: {
       return Object.assign({}, state, {
         activeFacets: action.json || {},
         refreshSearch: false
       });
+    }
 
-
-    case TOGGLE_FACET_FILTER:
+    case TOGGLE_FACET_FILTER: {
       let nextActiveFacets = Object.assign({}, state.activeFacets);
 
       if (!nextActiveFacets[action.field]) {
@@ -201,23 +200,23 @@ export default function filters(state = initialState, action) {
       else {
         nextActiveFacets[action.field][action.value] = 'true';
       }
-      nextActiveFacets['v'] = !nextActiveFacets['v'] ? 1 : nextActiveFacets['v']+1;
+      nextActiveFacets['v'] = !nextActiveFacets['v'] ? 1 : nextActiveFacets['v'] + 1;
 
       return Object.assign({}, state, {
         activeFacets: nextActiveFacets,
         refreshSearch: action.refreshSearch === false ? false : true,
         targetFacetGroup: action.field
       });
+    }
 
-
-    case TOGGLE_HIERARCHICAL_FACET_FILTER:
+    case TOGGLE_HIERARCHICAL_FACET_FILTER: {
       let nextActiveHierarchicalFacets = Object.assign({}, state.activeHierarchicalFacets);
       let nextIndeterminateHierarchicalFacets = state.indeterminateHierarchicalFacets.slice();
       const newFacetStates = updateHierarchicalFacetState(nextActiveHierarchicalFacets, nextIndeterminateHierarchicalFacets, action);
 
       nextActiveHierarchicalFacets = newFacetStates.activeHierarchicalFacetState;
       nextIndeterminateHierarchicalFacets = newFacetStates.indeterminateHierarchicalFacets;
-      nextActiveHierarchicalFacets['v'] = !nextActiveHierarchicalFacets['v'] ? 1 : nextActiveHierarchicalFacets['v']+1;
+      nextActiveHierarchicalFacets['v'] = !nextActiveHierarchicalFacets['v'] ? 1 : nextActiveHierarchicalFacets['v'] + 1;
 
       return Object.assign({}, state, {
         activeHierarchicalFacets: nextActiveHierarchicalFacets,
@@ -225,6 +224,7 @@ export default function filters(state = initialState, action) {
         refreshSearch: action.refreshSearch === false ? false : true,
         targetFacetGroup: action.field
       });
+    }
 
     default:
       return state
