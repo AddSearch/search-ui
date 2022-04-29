@@ -5,7 +5,8 @@ import {
 const initialState = {
   value: '',
   skipAutocomplete: false,
-  searchFieldContainerId: null
+  searchFieldContainerId: null,
+  setByUrlParam: null
 };
 
 export default function keyword(state = initialState, action) {
@@ -15,7 +16,8 @@ export default function keyword(state = initialState, action) {
       return Object.assign({}, state, {
         value: action.value,
         skipAutocomplete: action.skipAutocomplete === true,
-        searchFieldContainerId: action.searchFieldContainerId
+        searchFieldContainerId: action.searchFieldContainerId,
+        setByUrlParam: action.setByUrlParam
       });
 
     default:

@@ -35,7 +35,10 @@ export default class SearchField {
     this.conf = conf;
     this.matchAllQuery = matchAllQueryWhenSearchFieldEmpty;
     this.firstRenderDone = false;
+    this.firstSelectorBindDone = false;
     this.onSearch = onSearch;
+
+    console.log('dev-search-ui');
 
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
@@ -44,6 +47,16 @@ export default class SearchField {
         }
       });
       observeStoreByKey(this.reduxStore, 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
+    } else if (conf.selectorToBind) {
+      observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
+        if (!this.firstSelectorBindDone) {
+          this.firstSelectorBindDone = true;
+          this.bindContainer();
+        }
+        if (kw.setByUrlParam) {
+          this.boundField.value = kw.value;
+        }
+      });
     }
   }
 
@@ -98,6 +111,31 @@ export default class SearchField {
     }
   }
 
+  addEventListenersToField(field) {
+    field.oninput = (e) => this.oninput(e);
+    field.onkeypress = (e) => this.onkeypress(e);
+    field.onkeyup = (e) => this.onkeyup(e);
+    field.onfocus = (e) => this.onfocus(e);
+    field.onblur = (e) => setTimeout(() => this.onblur(), 200); // Possible search button onclick event first
+  }
+
+  handleAutoFocus(field) {
+    if (this.conf.autofocus !== false &&
+      this.firstRenderDone === false) {
+      field.focus();
+      this.firstRenderDone = true;
+    }
+  }
+
+  handleSubmitKeyword(keyword) {
+    const store = this.reduxStore;
+    if (keyword === '' && this.matchAllQuery) {
+      keyword = MATCH_ALL_QUERY;
+    }
+    store.dispatch(setKeyword(keyword, true));
+    store.dispatch(autocompleteHide());
+    this.redirectOrSearch(keyword);
+  }
 
   render(preDefinedKeyword) {
     const container = document.getElementById(this.conf.containerId);
@@ -122,22 +160,13 @@ export default class SearchField {
     }
 
     // Event listeners to the field
-    this.field.oninput = (e) => this.oninput(e);
-    this.field.onkeypress = (e) => this.onkeypress(e);
-    this.field.onkeyup = (e) => this.onkeyup(e);
-    this.field.onfocus = (e) => this.onfocus(e);
-    this.field.onblur = (e) => setTimeout(() => this.onblur(), 200); // Possible search button onclick event first
+    this.addEventListenersToField(this.field);
 
     // Event listeners to the possible search button
     if (container.querySelector('button')) {
       container.querySelector('button').onclick = () => {
         let keyword = this.field.value;
-        if (keyword === '' && this.matchAllQuery) {
-          keyword = MATCH_ALL_QUERY;
-        }
-        this.reduxStore.dispatch(setKeyword(keyword, true));
-        this.reduxStore.dispatch(autocompleteHide());
-        this.redirectOrSearch(keyword);
+        this.handleSubmitKeyword(keyword);
       }
     }
 
@@ -148,11 +177,34 @@ export default class SearchField {
 
 
     // Autofocus when loaded first time
-    if (this.conf.autofocus !== false &&
-      this.firstRenderDone === false) {
-      this.field.focus();
-      this.firstRenderDone = true;
+    this.handleAutoFocus(this.field);
+  }
+
+  bindContainer() {
+    this.boundField = document.querySelector(this.conf.selectorToBind);
+    this.addEventListenersToField(this.boundField);
+
+    // Event listeners to the possible search button
+    if (this.conf.buttonSelector && document.querySelector(this.conf.buttonSelector)) {
+      const boundButton =  document.querySelector(this.conf.buttonSelector);
+      if (boundButton.type === 'submit') {
+        boundButton.type = 'button';
+      }
+      boundButton.onclick = () => {
+        let keyword = this.boundField.value;
+        this.handleSubmitKeyword(keyword);
+      }
     }
+
+    // Event listeners to the form
+    if (this.boundField.form) {
+      this.boundField.form.onsubmit = (e) => {
+        e.preventDefault();
+      }
+    }
+
+    // Autofocus when loaded first time
+    this.handleAutoFocus(this.boundField);
   }
 
 
@@ -194,11 +246,8 @@ export default class SearchField {
   // Handle enter
   onkeypress(e) {
     if (e.keyCode === KEYCODES.ENTER) {
-      const store = this.reduxStore;
       const keyword = e.target.value;
-      store.dispatch(setKeyword(keyword, true));
-      store.dispatch(autocompleteHide());
-      this.redirectOrSearch(keyword);
+      this.handleSubmitKeyword(keyword);
     }
   }
 
