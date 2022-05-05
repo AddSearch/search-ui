@@ -38,16 +38,7 @@ export default class SearchField {
     this.firstSelectorBindDone = false;
     this.onSearch = onSearch;
 
-    console.log('dev-search-ui');
-
-    if (validateContainer(conf.containerId)) {
-      observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
-        if (kw.searchFieldContainerId === this.conf.containerId || kw.searchFieldContainerId === null) {
-          this.render(kw.value);
-        }
-      });
-      observeStoreByKey(this.reduxStore, 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
-    } else if (conf.selectorToBind) {
+    if (conf.selectorToBind) {
       observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
         if (!this.firstSelectorBindDone) {
           this.firstSelectorBindDone = true;
@@ -57,6 +48,14 @@ export default class SearchField {
           this.boundField.value = kw.value;
         }
       });
+      observeStoreByKey(this.reduxStore, 'autocomplete', (ac) => this.onAutocompleteUpdateBoundField(ac));
+    } else if (validateContainer(conf.containerId)) {
+      observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
+        if (kw.searchFieldContainerId === this.conf.containerId || kw.searchFieldContainerId === null) {
+          this.render(kw.value);
+        }
+      });
+      observeStoreByKey(this.reduxStore, 'autocomplete', (ac) => this.onAutocompleteUpdate(ac));
     }
   }
 
@@ -72,6 +71,19 @@ export default class SearchField {
       // Revert to original typed keyword
       else if (state.activeSuggestionIndex === null) {
         this.render(this.reduxStore.getState().keyword.value);
+      }
+    }
+  }
+
+  onAutocompleteUpdateBoundField(state) {
+    if ((state.suggestions.length > 0 || state.customFields.length > 0) && state.setSuggestionToSearchField) {
+      if (state.activeSuggestionIndex !== null && state.setSuggestionToSearchField) {
+        const suggestionObj = state.suggestions[state.activeSuggestionIndex] || state.customFields[state.activeSuggestionIndex];
+        const suggestion = suggestionObj.value;
+        this.boundField.value = suggestion;
+      }
+      else if (state.activeSuggestionIndex === null) {
+        this.boundField.value = null;
       }
     }
   }
