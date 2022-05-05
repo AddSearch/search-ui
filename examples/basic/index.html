@@ -1,75 +1,52 @@
 <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <title>AddSearch Search UI: Basic example</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.3/dist/addsearch-js-client.min.js"></script>
-    <script src="../../dist/addsearch-search-ui.min.js"></script>
-    <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+<html lang="en">
+<head>
+  <title>AddSearch Search UI: Basic example</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.3/dist/addsearch-js-client.min.js"></script>
+  <script src="../../dist/addsearch-search-ui.min.js"></script>
+  <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
 
-    <style type="text/css">
-      body {
-        font-family: 'Lato', sans-serif;
-        min-width: 320px;
-      }
-    </style>
-  </head>
-  <body>
+  <style type="text/css">
+    body {
+      font-family: 'Lato', sans-serif;
+      min-width: 320px;
+    }
+  </style>
+</head>
+<body>
 
-    <!-- Containers. Search UI components will be added inside these divs -->
-    <div id="searchfields"></div>
+<!-- Containers. Search UI components will be added inside these divs -->
+<div id="searchfield"></div>
+<div id="results"></div>
+<div id="pagination"></div>
 
-    <section>
-      <form>
-        <input class="addsearch"/>
-        <input class="addsearch-button" type="button" value="search.." />
-      </form>
-    </section>
-    <div id="results"></div>
-    <div id="pagination"></div>
+<script>
+  // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+  var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
 
-    <style>
-      .addsearch {
-        display: flex;
-        height: 44px;
-        background: #fff;
-        border: 1px solid #dfe1e5;
-        border-radius: 24px;
-        width: 500px !important;
-        padding-left: 25px;
-        font-size: 18px;
-      }
-    </style>
+  // Search UI instance
+  var searchui = new AddSearchUI(client);
 
-    <script>
-      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
-      var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+  // Add components
+  searchui.searchField({
+    containerId: 'searchfield',
+    placeholder: 'Keyword..',
+    button: 'Search',
+    searchAsYouType: true
+  });
+  searchui.searchResults({
+    containerId: 'results'
+  });
+  searchui.pagination({
+    containerId: 'pagination'
+  });
 
-      // Search UI instance
-      var searchui = new AddSearchUI(client, {matchAllQuery: true});
+  // All components added. Start
+  searchui.start();
+</script>
 
-      // Add components
-      searchui.searchField({
-        selectorToBind: '.addsearch',
-        buttonSelector:'.addsearch-button',
-        autofocus: true,
-        containerId: 'searchfield',
-        placeholder: 'Keyword..',
-        button: 'Search',
-        searchAsYouType: false
-      });
-      searchui.searchResults({
-        containerId: 'results'
-      });
-      searchui.pagination({
-        containerId: 'pagination'
-      });
-
-      // All components added. Start
-      searchui.start();
-    </script>
-
-  </body>
+</body>
 </html>
