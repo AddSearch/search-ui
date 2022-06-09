@@ -105,9 +105,8 @@ export default class AddSearchUI {
     this.reduxStore.dispatch(recommend(this.client, {
       container: recoSetting.containerId,
       type: recoSetting.type,
-      dataset: recoSetting.dataset,
-      itemId: recoSetting.getProductIdFunction.call(),
-      itemIdPath: recoSetting.itemIdPath === 'id' ? 'docid' : recoSetting.itemIdPath
+      configurationKey: recoSetting.configurationKey,
+      itemId: recoSetting.getProductIdFunction.call(undefined, undefined)
     }));
   }
 

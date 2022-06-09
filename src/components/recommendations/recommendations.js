@@ -18,11 +18,6 @@ export default class Recommendations {
       window.console.log('+++ item', item);
       return item;
     });
-    handlebars.registerHelper('getImg', (item) => {
-      if (item) {
-       return 'url( data:image/jpeg;base64,' + item.m_b64 + ' )';
-      }
-    });
 
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'recommendation', (res) => {

@@ -108,7 +108,7 @@
 <script>
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
   // var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
-  var client = new AddSearchClient('80b604de66911aa0de5f44623e28f8a2');
+  var client = new AddSearchClient('9c69b46347dab6517af933e4081fc7dc');
   client.setPaging(1, 5, 'relevance', 'desc');
 
   // Search UI
@@ -120,9 +120,7 @@
   searchui.recommendations({
     containerId: 'recommendation-container',
     type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
-    datasetzzz: '8b4abf3d3dc9425a9329dc9ec9945a6f',
-    dataset: '5a2724ae95f54deb9385e3565463dbb4',
-    itemIdPath: 'custom_fields.SKU',
+    configurationKey: 'config1',
     getProductIdFunction: function() {
       return new URLSearchParams(window.location.search).get('prod');
     },
@@ -132,12 +130,11 @@
   // searchui.recommendations({
   //   containerId: 'recommendation-container-2',
   //   type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
-  //   dataset: 'test',
-  //   itemIdPath: 'custom_fields.sku',
+  //   configurationKey: 'config1',
   //   getProductIdFunction: function() {
-  //     return 'abc123';
+  //     return new URLSearchParams(window.location.search).get('prod');
   //   },
-  //   ignoreFetchOnStart: true
+  //   ignoreFetchOnStart: false
   // });
 
   searchui.start();
