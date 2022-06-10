@@ -5,6 +5,7 @@ import ActiveFilters from './components/activefilters';
 import Autocomplete from './components/autocomplete';
 import Facets from './components/facets';
 import HierarchicalFacets from './components/hierarchicalfacets';
+import RangeFacets from './components/rangefacets';
 import Filters from './components/filters';
 import FilterStateObserver, { createFilterObject } from './components/filters/filterstateobserver';
 import LoadMore from './components/loadmore';
@@ -157,6 +158,10 @@ export default class AddSearchUI {
 
   hierarchicalFacets(conf) {
     new HierarchicalFacets(this.client, this.reduxStore, conf, this.settings.baseFilters);
+  }
+
+  rangeFacets(conf) {
+    new RangeFacets(this.client, this.reduxStore, conf, this.settings.baseFilters);
   }
 
   filters(conf) {
