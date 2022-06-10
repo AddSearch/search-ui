@@ -5,6 +5,7 @@ import {
   SET_ACTIVE_FILTERS,
   SET_ACTIVE_FACETS,
   TOGGLE_FACET_FILTER,
+  TOGGLE_RANGE_FACET_FILTER,
   CLEAR_SELECTED_FILTERS_AND_FACETS, TOGGLE_HIERARCHICAL_FACET_FILTER
 } from '../actions/filters';
 import { FILTER_TYPE } from '../components/filters';
@@ -225,6 +226,14 @@ export default function filters(state = initialState, action) {
         refreshSearch: action.refreshSearch === false ? false : true,
         targetFacetGroup: action.field
       });
+
+    case TOGGLE_RANGE_FACET_FILTER:
+
+      return Object.assign({}, state, {
+        refreshSearch: action.refreshSearch === false ? false : true,
+        targetFacetGroup: action.field
+      });
+
 
     default:
       return state

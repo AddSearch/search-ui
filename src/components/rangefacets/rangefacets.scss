@@ -1,0 +1,44 @@
+.addsearch-facets {
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li {
+      white-space: nowrap;
+      overflow: hidden;
+      display: block;
+
+      label {
+        padding: 2px 0;
+        display: block;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 100%;
+
+        @media all and (max-width: 960px) {
+          padding: 4px 0;
+        }
+
+        > span {
+          text-overflow: ellipsis;
+          display: inline-block;
+          max-width: 80%;
+          overflow: hidden;
+          position: relative;
+          padding-right: 3px;
+        }
+      }
+      input[type="checkbox"] {
+        margin-right: 7px;
+      }
+    }
+  }
+
+  em {
+    font-style: normal;
+    color: #666;
+    font-size: 80%;
+  }
+}
