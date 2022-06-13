@@ -1,7 +1,7 @@
 .addsearch-recommendations {
   display: flex;
   padding: 30px;
-  justify-content: space-around;
+  gap: 11px;
   max-width: 970px;
 }
 
@@ -10,6 +10,10 @@
   min-height: 100px;
   background-repeat: no-repeat;
   background-size: contain;
+
+  img {
+    width: 100%;
+  }
 }
 
 .addsearch-recommendations .hit {
