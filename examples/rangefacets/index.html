@@ -30,6 +30,7 @@
   <section>
     <div>
       <div id="searchfield-container"></div>
+      <div id="autocomplete-container"></div>
     </div>
   </section>
 </header>
@@ -44,6 +45,16 @@
   </section>
 
   <section>
+    Facets:
+    <div id="facets-container"></div>
+  </section>
+
+  <section>
+    Filters:
+    <div id="area-container"></div>
+  </section>
+
+  <section>
     Range facets:
     <div id="range-facets-container"></div>
   </section>
@@ -52,6 +63,11 @@
 </aside>
 
 <main>
+  <section id="sort">
+    Sort by:
+    <div id="sortby-container"></div>
+  </section>
+
   <section>
     Search results
     <div id="results-container"></div>
@@ -100,45 +116,6 @@
 
   // Get min and max prices from results
   client.addStatsField('custom_fields.price');
-  // client.addStatsField('custom_fields.cal');
-
-  // Define buckets for calorie filters
-  var ranges = [
-    {'to': 400},
-    {'from': 400, 'to': 500},
-    {'from': 500, 'to': 600},
-    {'from': 600}
-  ];
-  // client.addRangeFacet('custom_fields.cal', ranges);
-  // client.setNumberOfFacets(20);
-
-  // Special diets as facets
-  // client.addFacetField('custom_fields.price');
-
-  // client.addRangeFacet('custom_fields.price', [
-  //   {
-  //     "from": 1000,
-  //     "to": 1200
-  //   },
-  //   {
-  //     "from": 1200,
-  //     "to": 1400
-  //   },
-  //   {
-  //     "from": 1400,
-  //     "to": 1600
-  //   },
-  //   {
-  //     "from": 1600,
-  //     "to": 1800
-  //   },
-  //   {
-  //     "from": 1800,
-  //     "to": 2000
-  //   }
-  // ]);
-  // client.addFacetField('custom_fields.strIngredient1');
-
 
   // Search UI
   var conf = {
@@ -152,7 +129,8 @@
     containerId: 'searchfield-container',
     autofocus: true,
     placeholder: 'Keyword..',
-    button: 'Search'
+    button: 'Search',
+    searchAsYouType: false
   });
 
   searchui.searchResults({
@@ -164,12 +142,59 @@
     containerId: 'active-filters-container'
   });
 
+  searchui.sortBy({
+    containerId: 'sortby-container',
+    options: [
+      {
+        label: 'Date: Oldest first',
+        sortBy: 'date',
+        order: 'asc'
+      },
+      {
+        label: 'Most relevant first',
+        sortBy: 'relevance',
+        order: 'desc'
+      },
+      {
+        label: 'Date: Newest first',
+        sortBy: 'date',
+        order: 'desc'
+      }
+    ]
+  });
+
+  client.addFacetField('custom_fields.cal');
+  searchui.facets({
+    containerId: 'facets-container',
+    field: 'custom_fields.cal',
+    advancedSticky: true
+  });
+
+  searchui.filters({
+    containerId: 'area-container',
+    type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
+    options: {
+      american: {
+        label: 'American',
+        filter: {"custom_fields.strArea": "American"}
+      },
+      british: {
+        label: 'British',
+        filter: {"custom_fields.strArea": "British"}
+      },
+      french: {
+        label: 'French',
+        filter: {"custom_fields.strArea": "French"}
+      }
+    }
+  });
+
   var client_range_facets = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
 
   searchui.rangeFacets({
     containerId: 'range-facets-container',
     field: 'custom_fields.price',
-    sticky: true,
+    maxNumberOfRangeBuckets: 7,
     client: client_range_facets
   });
 

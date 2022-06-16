@@ -17,6 +17,7 @@ import { observeStoreByKey } from '../../store';
 import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { validateContainer } from '../../util/dom';
+import {clearSelected, clearSelectedRangeFacets} from "../../actions/filters";
 
 const KEYCODES = {
   ARROW_DOWN: 40,
@@ -76,6 +77,8 @@ export default class SearchField {
     if (kw.indexOf(WARMUP_QUERY_PREFIX) !== 0) {
       this.reduxStore.dispatch(setPage(client, 1, null, this.reduxStore));
     }
+
+    this.reduxStore.dispatch(clearSelectedRangeFacets(false, true));
 
     this.onSearch(kw, false, searchAsYouType, this.conf.fieldForInstantRedirect,
       this.reduxStore.getState().configuration.fieldForInstantRedirect);

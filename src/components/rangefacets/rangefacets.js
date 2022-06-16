@@ -1,10 +1,12 @@
 import './rangefacets.scss';
 import handlebars from 'handlebars';
 import { FACETS_TEMPLATE } from './templates';
-import {toggleFacetFilter, toggleRangeFacetFilter} from '../../actions/filters';
+import { toggleRangeFacetFilter} from '../../actions/filters';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
-import {createFilterObject} from "../filters/filterstateobserver";
+import { createFilterObject } from "../filters/filterstateobserver";
+import {setFieldStats} from "../../actions/fieldstats";
+import { roundDownToNearestTenth, roundUpToNearestTenth } from "../../util/maths";
 
 
 export default class RangeFacets {
@@ -13,15 +15,20 @@ export default class RangeFacets {
     this.client = client;
     this.reduxStore = reduxStore;
     this.conf = conf;
+    this.maxNumberOfRangeBuckets = this.conf.maxNumberOfRangeBuckets || 5;
 
-    function _isEmpty(obj) {
-      return !obj ? true : Object.keys(obj).length === 0;
-    }
+    var IGNORE_RENDERING_ON_REQUEST_BY = [
+      'component.loadMore',
+      'component.pagination',
+      'component.sortby'
+    ];
 
     function _buildRanges(min, max, numberOfBuckets) {
+      var minTransformed =  roundDownToNearestTenth(min);
+      var maxTransformed = roundUpToNearestTenth(max);
       var ranges = [];
-      var current = min;
-      var step = Math.round((max - min) / numberOfBuckets / 100) * 100;
+      var current = minTransformed;
+      var step = Math.round((maxTransformed - minTransformed) / numberOfBuckets / 100) * 100;
       for (var i = 0; i < numberOfBuckets; i++) {
         ranges.push({
           from: current,
@@ -35,84 +42,120 @@ export default class RangeFacets {
     if (validateContainer(conf.containerId)) {
 
       observeStoreByKey(this.reduxStore, 'search', (search) => {
-        // this.render(search);
-        if (search.started && !search.loading) {
-          var fieldStats = search.results.fieldStats[this.conf.field];
-          var ranges = _buildRanges(fieldStats.min, fieldStats.max, 5);
-          var rangeFacetsOptions = {
-            field: this.conf.field,
-            ranges: ranges
-          };
-
-          // this.client.addRangeFacet(this.conf.field, ranges);
-
-          this.client.fetchRangeFacets(rangeFacetsOptions, res => {
-            this.render(res);
-          });
-
-          // var filterObjectCustom = createFilterObject(
-          //   this.reduxStore.getState().filters, baseFilters, this.conf.field);
-          //
-          // rangeFacetClient.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
-          //   this.render(res);
-          // })
+        if (search.callBy === 'component.activeFilters') {
+          this.handleCheckboxStates(true);
+          return;
         }
+        if (!search.started || search.loading || search.callBy === this.conf.field ||
+          IGNORE_RENDERING_ON_REQUEST_BY.indexOf(search.callBy) > -1) {
+          return;
+        }
+
+        const isActive = !!this.reduxStore.getState().filters.activeRangeFacets[this.conf.field];
+        if (isActive) {
+          const filterObjectCustom = createFilterObject(
+            this.reduxStore.getState().filters,
+            this.reduxStore.getState().configuration.baseFilters,
+            this.conf.field
+          );
+          this.client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
+            this.reduxStore.dispatch(setFieldStats(res.fieldStats));
+          });
+        } else {
+          this.reduxStore.dispatch(setFieldStats(search.results.fieldStats));
+        }
+
+      });
+
+      observeStoreByKey(this.reduxStore, 'fieldstats', (state) => {
+        var fieldStats = state.fieldStats[this.conf.field];
+        if (!fieldStats) {
+          return;
+        }
+        if (!this.rangeMin || fieldStats.min < this.rangeMin) {
+          this.rangeMin = fieldStats.min;
+        }
+        if (!this.rangeMax || fieldStats.max > this.rangeMax) {
+          this.rangeMax = fieldStats.max;
+        }
+
+        var ranges = _buildRanges(this.rangeMin, this.rangeMax, this.maxNumberOfRangeBuckets);
+        var rangeFacetsOptions = {
+          field: this.conf.field,
+          ranges: ranges
+        };
+        const filterObjectCustom = createFilterObject(
+          this.reduxStore.getState().filters,
+          this.reduxStore.getState().configuration.baseFilters,
+          this.conf.field
+        );
+
+        this.client.fetchRangeFacets(rangeFacetsOptions, filterObjectCustom, res => {
+          this.render(res);
+        });
       });
     }
   }
 
 
-  setRangeFilter(valueMin, valueMax) {
+  setRangeFilter(key, valueMin, valueMax) {
     // Dispatch facet and refresh search
-    console.log(valueMin, valueMax);
     const values = {
       min: valueMin,
       max: valueMax
     };
-    this.reduxStore.dispatch(toggleRangeFacetFilter(this.conf.field, values, true));
+    this.reduxStore.dispatch(toggleRangeFacetFilter(this.conf.field, values, key, true));
   }
 
 
   render(results) {
 
-    // Render
-    const data = {
-      conf: this.conf,
-      rangeFacets: results.rangeFacets[this.conf.field]
-    };
-
-    // Compile HTML and inject to element if changed
-    const html = handlebars.compile(this.conf.template || FACETS_TEMPLATE)(data);
-
     const container = document.getElementById(this.conf.containerId);
-    container.innerHTML = html;
-    this.renderedHtml = html;
 
-
-    // Attach events
-    const options = container.getElementsByTagName('input');
-    for (let i=0; i<options.length; i++) {
-      let checkbox = options[i];
-      // checkbox.checked = activeFacets.indexOf(checkbox.value) !== -1;
-
-      checkbox.onchange = (e) => {
-        this.setRangeFilter(e.target.getAttribute('data-value-min'),
-          e.target.getAttribute('data-value-max'));
+    if (results) {
+      // render data
+      const data = {
+        conf: this.conf,
+        rangeFacets: results.rangeFacets[this.conf.field]
       };
+      const html = handlebars.compile(this.conf.template || FACETS_TEMPLATE)(data);
+      container.innerHTML = html;
+      this.renderedHtml = html;
     }
+    this.handleCheckboxStates(true);
 
   }
 
+  handleCheckboxStates(attachEvent) {
+    const container = document.getElementById(this.conf.containerId);
+    const activeRangeFacets = this.getActiveRangeFacets(this.conf.field);
+    const options = container.getElementsByTagName('input');
+    for (let i=0; i<options.length; i++) {
+      let checkbox = options[i];
+      checkbox.checked = activeRangeFacets.indexOf(checkbox.value) !== -1;
 
-  getActiveFacets(facetField) {
-    // Read active facets from redux state
-    let activeFacets = [];
-    const activeFacetState = this.reduxStore.getState().filters.activeFacets;
-    if (activeFacetState[facetField]) {
-      for (let value in activeFacetState[facetField]) {
-        activeFacets.push(value);
+      if (attachEvent) {
+        checkbox.onchange = (e) => {
+          this.setRangeFilter(
+            e.target.value,
+            e.target.getAttribute('data-value-min'),
+            e.target.getAttribute('data-value-max')
+          );
+        };
       }
     }
-    return activeFacets;
+  }
+
+
+  getActiveRangeFacets(facetField) {
+    // Read active facets from redux state
+    let activeRangeFacets = [];
+    const activeRangeFacetState = this.reduxStore.getState().filters.activeRangeFacets;
+    if (activeRangeFacetState[facetField]) {
+      for (let value in activeRangeFacetState[facetField]) {
+        activeRangeFacets.push(value);
+      }
+    }
+    return activeRangeFacets;
   }
 }

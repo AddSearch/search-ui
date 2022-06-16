@@ -3,7 +3,7 @@ import { WARMUP_QUERY_PREFIX, MATCH_ALL_QUERY } from '../index';
 import { search } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
-import { setActiveFilters, setActiveFacets } from '../actions/filters';
+import {setActiveFilters, setActiveFacets, setActiveRangeFacets} from '../actions/filters';
 import {sortBy} from "../actions/sortby";
 
 export const HISTORY_PARAMETERS = {
@@ -11,7 +11,8 @@ export const HISTORY_PARAMETERS = {
   FILTERS: 'search_filters',
   FACETS: 'search_facets',
   PAGE: 'search_page',
-  SORTBY: 'search_sort'
+  SORTBY: 'search_sort',
+  RANGE_FACETS: 'range_facets'
 };
 
 const SET_HISTORY_DEBOUNCE_TIME = 1500;
@@ -135,6 +136,11 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
     hasFacetsOrFilters = true;
   }
 
+  if (qs[HISTORY_PARAMETERS.RANGE_FACETS]) {
+    const rangeFacetsJson = urlParamToJSON(qs[HISTORY_PARAMETERS.RANGE_FACETS]);
+    store.dispatch(setActiveRangeFacets(rangeFacetsJson));
+  }
+
   // Has facets or filters. Update client state
   if (hasFacetsOrFilters) {
     const filterState = store.getState().filters;
@@ -252,9 +258,23 @@ export function urlParamToJSON(urlParameter) {
  */
 export function jsonToUrlParam(json) {
   if (Object.keys(json).length > 0) {
+    delete json['v'];
     return JSON.stringify(json);
   }
   return null;
+}
+
+export function rangeFacetsJsonToUrlParam(json) {
+  const fieldKeysList = {};
+  for (let field in json) {
+    if (field !== 'v') {
+      fieldKeysList[field] = [];
+      for (let key in json[field]) {
+        fieldKeysList[field].push(key);
+      }
+    }
+  }
+  return JSON.stringify(fieldKeysList);
 }
 
 /**
