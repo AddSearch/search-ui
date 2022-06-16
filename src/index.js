@@ -85,7 +85,7 @@ export default class AddSearchUI {
 
   executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal) {
     this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, false, searchAsYouType,
-      this.reduxStore, fieldForInstantRedirect, null, fieldForInstantRedirectGlobal));
+      this.reduxStore, fieldForInstantRedirect, 'executeSearch', fieldForInstantRedirectGlobal));
 
     for (let key in this.segmentedSearchClients) {
       this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key].client, key, keyword));

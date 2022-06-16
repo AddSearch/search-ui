@@ -4,6 +4,8 @@ export const ACTIVE_FILTERS_TEMPLATE = `
       <div class="item">
         <span>{{label}}</span>
         <button data-type="{{type}}" data-name="{{name}}" data-value="{{value}}" 
+                {{#if rangeMin}}data-range-min="{{rangeMin}}"{{/if}} 
+                {{#if rangeMax}}data-range-max="{{rangeMax}}"{{/if}} 
                 {{#if container}}data-container="{{container}}"{{/if}} 
                 {{#if confFields}}data-conf-fields="{{confFields}}"{{/if}} >&#215;</button>
       </div>

@@ -4,9 +4,10 @@ import {
   REGISTER_FILTER,
   SET_ACTIVE_FILTERS,
   SET_ACTIVE_FACETS,
+  SET_ACTIVE_RANGE_FACETS,
   TOGGLE_FACET_FILTER,
   TOGGLE_RANGE_FACET_FILTER,
-  CLEAR_SELECTED_FILTERS_AND_FACETS, TOGGLE_HIERARCHICAL_FACET_FILTER
+  CLEAR_SELECTED_FILTERS_AND_FACETS, TOGGLE_HIERARCHICAL_FACET_FILTER, CLEAR_SELECTED_RANGE_FACETS
 } from '../actions/filters';
 import { FILTER_TYPE } from '../components/filters';
 
@@ -14,6 +15,7 @@ const initialState = {
   allAvailableFilters: [],
   activeFilters: {},
   activeFacets: {},
+  activeRangeFacets: {},
   activeHierarchicalFacets: {},
   indeterminateHierarchicalFacets: [],
   openedHierarchicalFacetGroups: [],
@@ -169,7 +171,17 @@ export default function filters(state = initialState, action) {
         activeHierarchicalFacets: {},
         indeterminateHierarchicalFacets: [],
         activeRangeFilters: {},
-        refreshSearch: action.refreshSearch === false ? false : true
+        activeRangeFacets: {},
+        refreshSearch: action.refreshSearch === false ? false : true,
+        targetFacetGroup: action.byActiveFilterComponent ? 'component.activeFilters' : null
+      });
+
+
+    case CLEAR_SELECTED_RANGE_FACETS:
+      return Object.assign({}, state, {
+        activeRangeFacets: {},
+        refreshSearch: action.refreshSearch === false ? false : true,
+        setHistory: action.setHistory
       });
 
 
@@ -183,6 +195,12 @@ export default function filters(state = initialState, action) {
     case SET_ACTIVE_FACETS:
       return Object.assign({}, state, {
         activeFacets: action.json || {},
+        refreshSearch: false
+      });
+
+    case SET_ACTIVE_RANGE_FACETS:
+      return Object.assign({}, state, {
+        activeRangeFacets: action.json || {},
         refreshSearch: false
       });
 
@@ -228,10 +246,29 @@ export default function filters(state = initialState, action) {
       });
 
     case TOGGLE_RANGE_FACET_FILTER:
+      let nextActiveRangeFacets = Object.assign({}, state.activeRangeFacets);
+
+      if (!nextActiveRangeFacets[action.field]) {
+        nextActiveRangeFacets[action.field] = {};
+      }
+
+      // Remove range facet
+      if (nextActiveRangeFacets[action.field][action.key]) {
+        delete nextActiveRangeFacets[action.field][action.key];
+      }
+      // Add range facet
+      else {
+        nextActiveRangeFacets[action.field][action.key] = {
+          gte: action.values.min,
+          lt: action.values.max
+        };
+      }
+      nextActiveRangeFacets['v'] = !nextActiveRangeFacets['v'] ? 1 : nextActiveRangeFacets['v']+1;
 
       return Object.assign({}, state, {
+        activeRangeFacets: nextActiveRangeFacets,
         refreshSearch: action.refreshSearch === false ? false : true,
-        targetFacetGroup: action.field
+        targetFacetGroup: action.byActiveFilterComponent ? 'component.activeFilters' : action.field
       });
 
 

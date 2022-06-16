@@ -78,11 +78,31 @@ export function createFilterObject(state, baseFilters, excludedFacetGroup) {
     }
   }
 
+  // Iterate active range facets. Create OR filter group of active filters.
+  for (let rangeFacetField in state.activeRangeFacets) {
+    let facetGroupOR = {or: []};
+
+    for (let rangeFacetKey in state.activeRangeFacets[rangeFacetField]) {
+      if (rangeFacetField !== excludedFacetGroup) {
+        const rf = {
+          'range': {
+            [rangeFacetField]: state.activeRangeFacets[rangeFacetField][rangeFacetKey]
+          }
+        };
+        facetGroupOR.or.push(rf);
+      }
+    }
+
+    if (facetGroupOR.or.length > 0) {
+      filterObject.and.push(facetGroupOR);
+    }
+  }
+
   // Filter object ready
   if (filterObject.and.length > 0) {
     return filterObject;
   }
-  return null;
+  return {};
 }
 
 
@@ -106,6 +126,7 @@ export default class FilterStateObserver {
     if (state.refreshSearch) {
       setHistory(HISTORY_PARAMETERS.FILTERS, jsonToUrlParam(state.activeFilters), null, this.reduxStore);
       setHistory(HISTORY_PARAMETERS.FACETS, jsonToUrlParam(state.activeFacets), null, this.reduxStore);
+      setHistory(HISTORY_PARAMETERS.RANGE_FACETS, jsonToUrlParam(state.activeRangeFacets), null, this.reduxStore);
 
       const filterObject = this.createFilterObjectFunction(state, baseFilters);
       this.client.setFilterObject(filterObject);
@@ -119,7 +140,10 @@ export default class FilterStateObserver {
         this.segmentedSearchClients[key].client.setFilterObject(segmentFilters);
         this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key].client, key, keyword));
       }
+    } else if (state.setHistory) {
+      setHistory(HISTORY_PARAMETERS.RANGE_FACETS, jsonToUrlParam(state.activeRangeFacets), null, this.reduxStore);
     }
+
 
     // Custom function to control conditional visibility (e.g. show a component only when a certain filter is active)
     if (this.onFilterChange) {
