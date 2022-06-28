@@ -1,4 +1,4 @@
-import { SET_FIELD_STATS } from "../actions/fieldstats";
+import { CLEAR_FIELD_STATS, SET_FIELD_STATS } from "../actions/fieldstats";
 
 const initialState = {
   fieldStats: {}
@@ -9,6 +9,11 @@ export default function fieldstats(state = initialState, action) {
     case SET_FIELD_STATS:
       return Object.assign({}, state, {
         fieldStats: action.fieldStats
+      });
+
+    case CLEAR_FIELD_STATS:
+      return Object.assign({}, state, {
+        fieldStats: {}
       });
 
     default:

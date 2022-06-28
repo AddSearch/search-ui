@@ -141,6 +141,8 @@ export default class FilterStateObserver {
         this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key].client, key, keyword));
       }
     } else if (state.setHistory) {
+      const filterObject = this.createFilterObjectFunction(state, baseFilters);
+      this.client.setFilterObject(filterObject);
       setHistory(HISTORY_PARAMETERS.RANGE_FACETS, jsonToUrlParam(state.activeRangeFacets), null, this.reduxStore);
     }
 
