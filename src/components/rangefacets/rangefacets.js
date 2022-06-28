@@ -5,17 +5,19 @@ import { toggleRangeFacetFilter} from '../../actions/filters';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import { createFilterObject } from "../filters/filterstateobserver";
-import {setFieldStats} from "../../actions/fieldstats";
+import { clearFieldStats, setFieldStats } from "../../actions/fieldstats";
 import { roundDownToNearestTenth, roundUpToNearestTenth } from "../../util/maths";
+import { isEmpty } from "../../util/objects";
 
 
 export default class RangeFacets {
 
-  constructor(client, reduxStore, conf, baseFilters) {
+  constructor(client, reduxStore, conf) {
     this.client = client;
     this.reduxStore = reduxStore;
     this.conf = conf;
     this.maxNumberOfRangeBuckets = this.conf.maxNumberOfRangeBuckets || 5;
+    this.ranges = [];
 
     var IGNORE_RENDERING_ON_REQUEST_BY = [
       'component.loadMore',
@@ -23,12 +25,21 @@ export default class RangeFacets {
       'component.sortby'
     ];
 
+    function _hasActiveFacet() {
+      var activeRangeFacets = reduxStore.getState().filters.activeRangeFacets[conf.field];
+      if (activeRangeFacets) {
+        return !isEmpty(activeRangeFacets);
+      } else {
+        return false;
+      }
+    }
+
     function _buildRanges(min, max, numberOfBuckets) {
-      var minTransformed =  roundDownToNearestTenth(min);
-      var maxTransformed = roundUpToNearestTenth(max);
-      var ranges = [];
-      var current = minTransformed;
-      var step = Math.round((maxTransformed - minTransformed) / numberOfBuckets / 100) * 100;
+      const minTransformed =  roundDownToNearestTenth(min);
+      const maxTransformed = roundUpToNearestTenth(max);
+      const ranges = [];
+      let current = minTransformed;
+      const step = roundUpToNearestTenth((maxTransformed - minTransformed) / numberOfBuckets);
       for (var i = 0; i < numberOfBuckets; i++) {
         ranges.push({
           from: current,
@@ -39,19 +50,28 @@ export default class RangeFacets {
       return ranges;
     }
 
+    function _buildActiveRanges(activeRangeFacets) {
+      const ranges = [];
+      for (const key in activeRangeFacets) {
+        ranges.push({
+          from: activeRangeFacets[key].gte,
+          to: activeRangeFacets[key].lt
+        });
+      }
+      return ranges;
+    }
+
     if (validateContainer(conf.containerId)) {
 
       observeStoreByKey(this.reduxStore, 'search', (search) => {
-        if (search.callBy === 'component.activeFilters') {
-          this.handleCheckboxStates(true);
-          return;
-        }
-        if (!search.started || search.loading || search.callBy === this.conf.field ||
+        const isActive = _hasActiveFacet();
+
+        if (!search.started || search.loading ||
+          (search.callBy === this.conf.field && isActive) ||
           IGNORE_RENDERING_ON_REQUEST_BY.indexOf(search.callBy) > -1) {
           return;
         }
 
-        const isActive = !!this.reduxStore.getState().filters.activeRangeFacets[this.conf.field];
         if (isActive) {
           const filterObjectCustom = createFilterObject(
             this.reduxStore.getState().filters,
@@ -72,17 +92,16 @@ export default class RangeFacets {
         if (!fieldStats) {
           return;
         }
-        if (!this.rangeMin || fieldStats.min < this.rangeMin) {
-          this.rangeMin = fieldStats.min;
-        }
-        if (!this.rangeMax || fieldStats.max > this.rangeMax) {
-          this.rangeMax = fieldStats.max;
+
+        if (!_hasActiveFacet()) {
+          this.ranges = _buildRanges(fieldStats.min, fieldStats.max, this.maxNumberOfRangeBuckets);
+        } else {
+          this.ranges = _buildActiveRanges(this.reduxStore.getState().filters.activeRangeFacets[this.conf.field]);
         }
 
-        var ranges = _buildRanges(this.rangeMin, this.rangeMax, this.maxNumberOfRangeBuckets);
         var rangeFacetsOptions = {
           field: this.conf.field,
-          ranges: ranges
+          ranges: this.ranges
         };
         const filterObjectCustom = createFilterObject(
           this.reduxStore.getState().filters,
@@ -109,6 +128,7 @@ export default class RangeFacets {
 
 
   render(results) {
+    this.reduxStore.dispatch(clearFieldStats());
 
     const container = document.getElementById(this.conf.containerId);
 
