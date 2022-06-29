@@ -127,16 +127,6 @@
     ignoreFetchOnStart: false
   });
 
-  // searchui.recommendations({
-  //   containerId: 'recommendation-container-2',
-  //   type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
-  //   configurationKey: 'config1',
-  //   getProductIdFunction: function() {
-  //     return new URLSearchParams(window.location.search).get('prod');
-  //   },
-  //   ignoreFetchOnStart: false
-  // });
-
   searchui.start();
 
   var productTitleEl = document.querySelector('.product-title > span');
