@@ -3,6 +3,7 @@
   padding: 30px;
   gap: 11px;
   max-width: 970px;
+  overflow: scroll;
 }
 
 .addsearch-recommendations .hit .main-image {
@@ -19,10 +20,12 @@
 .addsearch-recommendations .hit {
   display: flex;
   flex-direction: column;
+  flex: 1 1 0px;
   justify-content: space-between;
   padding: 20px;
   border: solid 1px #d6d0d0;
   max-width: calc(100% / 3 - 30px);
+  min-width: 200px;
 
   &:hover {
     background-color: #f7f7f7;
