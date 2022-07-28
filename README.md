@@ -388,6 +388,30 @@ Settings that can be passed to the ```facets``` function:
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/hierarchicalfacets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 
 
+### Range Facets
+Display range facets of a given custom field and let the user filter results by different range buckets.
+By default, range facet is sticky.
+This feature uses extra search queries to fetch min-max values of the custom field.
+
+```js
+  searchui.rangeFacets({
+    containerId: 'rangeFacetsContainer',
+    field: 'custom_fields.price',
+    maxNumberOfRangeBuckets: 7
+  });
+```
+
+Settings that can be passed to the ```rangeFacets``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML element that will act as a container for facets |
+| field | String | n/a | A numeric custom field to use as a facet. E.g. custom_fields.price |
+| maxNumberOfRangeBuckets | integer | 5 | Maximum number of buckets that will be displayed. If a bucket is empty, it will be hidden |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/rangefacets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+
+![alt text](https://demo.addsearch.com/search-ui-examples/components/range-facets-buckets.png)
+
 ### Active filters
 Show active filters and facets. Let user remove specific filters or clear everything,
 
