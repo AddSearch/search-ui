@@ -114,9 +114,6 @@
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
   var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
 
-  // Get min and max prices from results
-  client.addStatsField('custom_fields.price');
-
   // Search UI
   var conf = {
     matchAllQuery: true,
@@ -189,13 +186,10 @@
     }
   });
 
-  var client_range_facets = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
-
   searchui.rangeFacets({
     containerId: 'range-facets-container',
     field: 'custom_fields.price',
-    maxNumberOfRangeBuckets: 7,
-    client: client_range_facets
+    maxNumberOfRangeBuckets: 7
   });
 
   searchui.loadMore({
