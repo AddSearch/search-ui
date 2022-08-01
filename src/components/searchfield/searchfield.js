@@ -39,12 +39,9 @@ export default class SearchField {
     this.onSearch = onSearch;
 
     if (conf.selectorToBind) {
+      this.bindContainer();
       observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
-        if (!this.firstSelectorBindDone) {
-          this.firstSelectorBindDone = true;
-          this.bindContainer();
-        }
-        if (kw.setByUrlParam) {
+        if (kw.setSearchFieldValue) {
           this.boundField.value = kw.value;
         }
       });
@@ -76,15 +73,16 @@ export default class SearchField {
   }
 
   onAutocompleteUpdateBoundField(state) {
-    if ((state.suggestions.length > 0 || state.customFields.length > 0) && state.setSuggestionToSearchField) {
-      if (state.activeSuggestionIndex !== null && state.setSuggestionToSearchField) {
-        const suggestionObj = state.suggestions[state.activeSuggestionIndex] || state.customFields[state.activeSuggestionIndex];
-        const suggestion = suggestionObj.value;
-        this.boundField.value = suggestion;
-      }
-      else if (state.activeSuggestionIndex === null) {
-        this.boundField.value = null;
-      }
+    if (!state.setSuggestionToSearchField) {
+      return;
+    }
+    if (state.activeSuggestionIndex !== null) {
+      const suggestionObj = state.suggestions[state.activeSuggestionIndex] || state.customFields[state.activeSuggestionIndex];
+      if (!suggestionObj) return;
+      const suggestion = suggestionObj.value
+      this.boundField.value = suggestion;
+    } else {
+      this.boundField.value = this.reduxStore.getState().keyword.value;
     }
   }
 
@@ -144,7 +142,7 @@ export default class SearchField {
     if (keyword === '' && this.matchAllQuery) {
       keyword = MATCH_ALL_QUERY;
     }
-    store.dispatch(setKeyword(keyword, true));
+    store.dispatch(setKeyword(keyword, true, null, false));
     store.dispatch(autocompleteHide());
     this.redirectOrSearch(keyword);
   }

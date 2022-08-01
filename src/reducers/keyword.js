@@ -6,7 +6,7 @@ const initialState = {
   value: '',
   skipAutocomplete: false,
   searchFieldContainerId: null,
-  setByUrlParam: null
+  setSearchFieldValue: null
 };
 
 export default function keyword(state = initialState, action) {
@@ -17,7 +17,7 @@ export default function keyword(state = initialState, action) {
         value: action.value,
         skipAutocomplete: action.skipAutocomplete === true,
         searchFieldContainerId: action.searchFieldContainerId,
-        setByUrlParam: action.setByUrlParam
+        setSearchFieldValue: action.setSearchFieldValue
       });
 
     default:

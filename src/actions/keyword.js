@@ -1,11 +1,11 @@
 export const KEYWORD = 'KEYWORD';
 
-export function setKeyword(value, skipAutocomplete, searchFieldContainerId, setByUrlParam) {
+export function setKeyword(value, skipAutocomplete, searchFieldContainerId, setSearchFieldValue) {
   return {
     type: KEYWORD,
     value,
     skipAutocomplete,
     searchFieldContainerId: searchFieldContainerId || null,
-    setByUrlParam: setByUrlParam || false
+    setSearchFieldValue: setSearchFieldValue || false
   }
 }
