@@ -170,11 +170,11 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
     const keyword = decodeURIComponent(qs[HISTORY_PARAMETERS.SEARCH]);
-    store.dispatch(setKeyword(keyword, true));
+    store.dispatch(setKeyword(keyword, true, null, true));
     searchFunction(keyword);
   }
   else if (hasMatchAllQuery === true) {
-    store.dispatch(setKeyword(MATCH_ALL_QUERY, true));
+    store.dispatch(setKeyword(MATCH_ALL_QUERY, true, null, true));
     searchFunction(MATCH_ALL_QUERY);
   }
 }

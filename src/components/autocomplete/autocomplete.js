@@ -203,7 +203,7 @@ export default class Autocomplete {
   suggestionMouseDown(e) {
     const keyword = e.target.getAttribute('data-keyword');
     const store = this.reduxStore;
-    store.dispatch(setKeyword(keyword, true));
+    store.dispatch(setKeyword(keyword, true, null, true));
 
     // Redirect to search results page
     const searchResultsPageUrl = store.getState().search.searchResultsPageUrl;

@@ -43,7 +43,7 @@
   "license": "MIT",
   "dependencies": {
     "es6-object-assign": "^1.1.0",
-    "handlebars": "^4.7.6",
+    "handlebars": "^4.7.7",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0"
   },

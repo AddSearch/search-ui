@@ -19,23 +19,53 @@
 <body>
 
 <!-- Containers. Search UI components will be added inside these divs -->
-<div id="searchfield"></div>
+<div id="searchfields"></div>
+
+<section>
+  <form>
+    <input class="addsearch"/>
+    <div id="autocomplete-container" class="addsRp-autocomplete-container-class"></div>
+    <input class="addsearch-button" type="button" value="search.." />
+  </form>
+</section>
 <div id="results"></div>
 <div id="pagination"></div>
+
+<style>
+  .addsearch {
+    display: flex;
+    height: 44px;
+    background: #fff;
+    border: 1px solid #dfe1e5;
+    border-radius: 24px;
+    width: 500px !important;
+    padding-left: 25px;
+    font-size: 18px;
+  }
+</style>
 
 <script>
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
   var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
 
   // Search UI instance
-  var searchui = new AddSearchUI(client);
+  var searchui = new AddSearchUI(client, {matchAllQuery: true});
 
   // Add components
   searchui.searchField({
-    containerId: 'searchfield',
-    placeholder: 'Keyword..',
-    button: 'Search',
-    searchAsYouType: true
+    selectorToBind: '.addsearch',
+    buttonSelector:'.addsearch-button',
+    autofocus: true,
+    searchAsYouType: false
+  });
+  searchui.autocomplete({
+    containerId: 'autocomplete-container',
+    hideAutomatically: false,
+    sources: [
+      {
+        type: AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS
+      }
+    ]
   });
   searchui.searchResults({
     containerId: 'results'
