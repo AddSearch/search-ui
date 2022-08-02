@@ -122,7 +122,7 @@ Settings that can be passed to the ```searchField``` function:
 | onfocusAutocompleteMatchAllQuery | boolean | false | If true, execute match all query for autocomplete box when this field is empty and focused |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | fieldForInstantRedirect | String | n/a | *This setting is deprecated, use it in Search UI Configuration instead* |
-| selectorToBind | String | n/a | CSS selector of the existing search input field to be used. If this setting is defined, Search UI won't be creating a search input field, instead will bind all relating functionalities to the input field which is defined here |
+| selectorToBind | String | n/a | CSS selector of the existing search input field to be used. If this setting is defined, Search UI won't be creating a search input field, instead it will bind all relating functionalities to the input field defined by this selector. |
 | buttonSelector | String | n/a | CSS selector of the existing search button. This setting is applicable only when "selectorToBind" is defined |
 
 ### Autocomplete
