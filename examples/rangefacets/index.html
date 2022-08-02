@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, user-scalable=no" />
+  <meta charset="UTF-8">
+  <title>AddSearch Search UI: Range facets demo</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+<!--  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.6/dist/addsearch-js-client.min.js"></script>-->
+  <script src="../../dist/dev-js-client.js"></script>
+  <script src="../../dist/addsearch-search-ui.min.js"></script>
+  <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <script>
+    // Responsive menu
+    function toggleMobileMenu() {
+      var style = document.querySelector('aside').style;
+      style.display = style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+</head>
+
+
+<body>
+<header>
+  <div class="mobilemenu" onclick="toggleMobileMenu();">&#9776;</div>
+
+  <section>
+    <div>
+      <div id="searchfield-container"></div>
+      <div id="autocomplete-container"></div>
+    </div>
+  </section>
+</header>
+
+
+<aside>
+  <div class="mobilemenu close" onclick="toggleMobileMenu();">&#x2716;</div>
+
+  <section>
+    Active filters:
+    <div id="active-filters-container"></div>
+  </section>
+
+  <section>
+    Facets:
+    <div id="facets-container"></div>
+  </section>
+
+  <section>
+    Filters:
+    <div id="area-container"></div>
+  </section>
+
+  <section>
+    Range facets:
+    <div id="range-facets-container"></div>
+  </section>
+
+
+</aside>
+
+<main>
+  <section id="sort">
+    Sort by:
+    <div id="sortby-container"></div>
+  </section>
+
+  <section>
+    Search results
+    <div id="results-container"></div>
+  </section>
+
+  <section>
+    Load more results:
+    <div id="loadmore-container"></div>
+  </section>
+</main>
+
+
+<script id="search-results-template" type="text/x-handlebars-template">
+  <div class="addsearch-searchresults">
+    {{#if resultcount}}
+    {{> numberOfResultsTemplate }}
+    {{/if}}
+
+    {{#each hits}}
+    <div class="item">
+            <span class="main-image">
+              <img src="https://demo-cdn.addsearch.com/fooddemo-1cfa4d/imgs/thumb-{{id}}.jpg" alt="{{custom_fields.strMeal}}" />
+            </span>
+      <span>
+              <h3>
+               {{custom_fields.strMeal}}
+              </h3>
+              Price: {{formatPrice custom_fields.price "en-US" "USD"}}<br />
+              Calories: {{custom_fields.cal}}<br />
+
+              Special diets:
+              {{#each custom_fields.diets}}
+                <b>{{this}}</b>
+              {{/each}}
+              {{#unless custom_fields.diets}}n/a{{/unless}}
+            </span>
+    </div>
+    {{/each}}
+  </div>
+</script>
+
+
+<script>
+  // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+  var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+
+  // Search UI
+  var conf = {
+    matchAllQuery: true,
+    fieldForInstantRedirect: 'custom_fields.idMeal'
+  };
+  var searchui = new AddSearchUI(client, conf);
+
+
+  searchui.searchField({
+    containerId: 'searchfield-container',
+    autofocus: true,
+    placeholder: 'Keyword..',
+    button: 'Search',
+    searchAsYouType: false
+  });
+
+  searchui.searchResults({
+    containerId: 'results-container',
+    template: document.querySelector('#search-results-template').innerHTML
+  });
+
+  searchui.activeFilters({
+    containerId: 'active-filters-container'
+  });
+
+  searchui.sortBy({
+    containerId: 'sortby-container',
+    options: [
+      {
+        label: 'Date: Oldest first',
+        sortBy: 'date',
+        order: 'asc'
+      },
+      {
+        label: 'Most relevant first',
+        sortBy: 'relevance',
+        order: 'desc'
+      },
+      {
+        label: 'Date: Newest first',
+        sortBy: 'date',
+        order: 'desc'
+      }
+    ]
+  });
+
+  client.addFacetField('custom_fields.cal');
+  searchui.facets({
+    containerId: 'facets-container',
+    field: 'custom_fields.cal',
+    advancedSticky: true
+  });
+
+  searchui.filters({
+    containerId: 'area-container',
+    type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
+    options: {
+      american: {
+        label: 'American',
+        filter: {"custom_fields.strArea": "American"}
+      },
+      british: {
+        label: 'British',
+        filter: {"custom_fields.strArea": "British"}
+      },
+      french: {
+        label: 'French',
+        filter: {"custom_fields.strArea": "French"}
+      }
+    }
+  });
+
+  searchui.rangeFacets({
+    containerId: 'range-facets-container',
+    field: 'custom_fields.price',
+    maxNumberOfRangeBuckets: 7
+  });
+
+  searchui.loadMore({
+    containerId: 'loadmore-container',
+    type: AddSearchUI.LOAD_MORE_TYPE.BUTTON
+  });
+
+  searchui.start();
+</script>
+
+</body>
+</html>
