@@ -94,6 +94,8 @@ export default function searchsuggestions(state = initialState, action) {
 
     case AUTOCOMPLETE_SEARCH_CLEAR:
       return Object.assign({}, state, {
+        keyword: '',
+        pendingRequests: [],
         searchResults: {},
         searchResultsStats: {}
       });
