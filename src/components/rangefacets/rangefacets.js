@@ -72,6 +72,11 @@ export default class RangeFacets {
           return;
         }
 
+        if (!search.results.hits.length) {
+          this.render();
+          return;
+        }
+
         if (isActive) {
           const filterObjectCustom = createFilterObject(
             this.reduxStore.getState().filters,
@@ -140,7 +145,8 @@ export default class RangeFacets {
       };
       const html = handlebars.compile(this.conf.template || FACETS_TEMPLATE)(data);
       container.innerHTML = html;
-      this.renderedHtml = html;
+    } else {
+      container.innerHTML = '';
     }
     this.handleCheckboxStates(true);
 
