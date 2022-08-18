@@ -52,7 +52,7 @@ export default class HierarchicalFacets {
         if (search.loading || IGNORE_RENDERING_ON_REQUEST_BY.indexOf(search.callBy) > -1) {
           return;
         }
-        if (_isAllEmpty(activeFacets, this.conf.fields)) {
+        if (_isAllEmpty(activeFacets, this.conf.fields) || !search.results.hits.length) {
           this.render(search);
         } else {
           var filterObjectCustom = createFilterObject(
