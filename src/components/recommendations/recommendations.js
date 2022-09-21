@@ -14,11 +14,6 @@ export default class Recommendations {
     this.reduxStore = reduxStore;
     recommendationSettings.push(conf);
 
-    handlebars.registerHelper('test', (item) => {
-      window.console.log('+++ item', item);
-      return item;
-    });
-
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'recommendation', (res) => {
         if (res.container === conf.containerId) {

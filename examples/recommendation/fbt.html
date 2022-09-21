@@ -71,6 +71,7 @@
   <section>
     Frequently Bought Together Items
     <div id="recommendation-container"></div>
+    <div id="search-results-container"></div>
   </section>
 </main>
 
@@ -113,18 +114,46 @@
 
   // Search UI
   var conf = {
-    matchAllQuery: false
+    matchAllQuery: true
   };
   var searchui = new AddSearchUI(client, conf);
+  var recoTemplate = `
+    <div class="addsearch-recommendations">
+      {{#each hits}}
+       <div class="hit">
+          <div class="hit-top">
+            <span class="main-image" style="background-image: url(data:image/jpeg;base64,{{custom_fields.image_link_b64}})">
+              <a href="{{url}}">
+                <img src="https://localpharma.be{{custom_fields.image}}" alt="{{title}}" />
+              </a>
+            </span>
+            <h3>
+              <a href="{{url}}">{{title}}</a>
+            </h3>
+          </div>
+          <div class="hit-bottom">
+            <span class="company">{{custom_fields.brand}}</span>
+            <span class="actual-price">{{custom_fields.price}}<span>€</span></span>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  `;
 
   searchui.recommendations({
     containerId: 'recommendation-container',
     type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
     configurationKey: 'config1',
     getProductIdFunction: function() {
-      return new URLSearchParams(window.location.search).get('prod');
+      return '150691';
+      // return new URLSearchParams(window.location.search).get('prod');
     },
+    template: recoTemplate,
     ignoreFetchOnStart: false
+  });
+
+  searchui.searchResults({
+    containerId: 'search-results-container'
   });
 
   searchui.start();

@@ -1,5 +1,5 @@
 const initialState = {};
 
-export default function configurationzzz(state = initialState) {
+export default function configuration(state = initialState) {
   return state;
 }
