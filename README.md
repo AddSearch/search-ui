@@ -396,6 +396,7 @@ By default, range facet is sticky.
 This feature uses extra search queries to fetch min-max values of the custom field.
 
 ```js
+  client.addStatsField('custom_fields.price');
   searchui.rangeFacets({
     containerId: 'rangeFacetsContainer',
     field: 'custom_fields.price',
@@ -448,6 +449,30 @@ Settings that can be passed to the ```segmentedSearchResults``` function:
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML element that will act as a container for this component |
 | client | AddSearch JS Client instance | n/a | Client with appropriate filters/settings for this segment |
+| template | String | n/a | [Handlebars](https://handlebarsjs.com/) template for this segment |
+
+### Frequently bought together
+Show frequently bought together items given the product ID.
+
+```js
+  searchui.recommendations({
+    containerId: 'recommendation-container',
+    type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
+    configurationKey: 'config1',
+    getProductIdFunction: function() {
+      return new URLSearchParams(window.location.search).get('prod');
+    },
+    ignoreFetchOnStart: false
+  });
+```
+
+Settings that can be passed to the ```segmentedSearchResults``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML element that will act as a container for this component |
+| type | AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER | n/a | Type of recommendation |
+| ignoreFetchOnStart | boolean | false | If enabled, recommendation won't be fetched unless call ```searchui.fetchRecommendation(<containerId>)``` |
 | template | String | n/a | [Handlebars](https://handlebarsjs.com/) template for this segment |
 
 ## General functions

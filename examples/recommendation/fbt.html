@@ -108,8 +108,7 @@
 
 <script>
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
-  // var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
-  var client = new AddSearchClient('9c69b46347dab6517af933e4081fc7dc');
+  var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
   client.setPaging(1, 5, 'relevance', 'desc');
 
   // Search UI
@@ -145,11 +144,12 @@
     type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
     configurationKey: 'config1',
     getProductIdFunction: function() {
-      return '150691';
-      // return new URLSearchParams(window.location.search).get('prod');
+      // function that return product ID
+      // return '150691';
+      return new URLSearchParams(window.location.search).get('prod');
     },
     template: recoTemplate,
-    ignoreFetchOnStart: false
+    ignoreFetchOnStart: true
   });
 
   searchui.searchResults({
@@ -161,6 +161,8 @@
   var productTitleEl = document.querySelector('.product-title > span');
   var productId = new URLSearchParams(window.location.search).get('prod');
   productTitleEl.textContent = productId;
+
+  searchui.fetchRecommendation('recommendation-container');
 </script>
 
 </body>
