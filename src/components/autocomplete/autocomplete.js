@@ -7,7 +7,7 @@ import {
   autocompleteSuggestions,
   autocompleteSearch,
   setActiveSuggestion,
-  autocompleteCustomFields
+  autocompleteCustomFields, autocompleteHideAndDropRendering
 } from '../../actions/autocomplete';
 import { search } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
@@ -86,6 +86,10 @@ export default class Autocomplete {
   keywordChanged(kw) {
     // Fetch suggestions if keyword was typed, not externally set (e.g. by browser's back button)
     const keyword = kw.skipAutocomplete === false ? kw.value : null;
+
+    if (keyword === '') {
+      this.reduxStore.dispatch(autocompleteHideAndDropRendering());
+    }
 
     this.conf.sources.forEach(v => {
       const client = v.client || this.client;
@@ -203,7 +207,7 @@ export default class Autocomplete {
   suggestionMouseDown(e) {
     const keyword = e.target.getAttribute('data-keyword');
     const store = this.reduxStore;
-    store.dispatch(setKeyword(keyword, true));
+    store.dispatch(setKeyword(keyword, true, null, true));
 
     // Redirect to search results page
     const searchResultsPageUrl = store.getState().search.searchResultsPageUrl;

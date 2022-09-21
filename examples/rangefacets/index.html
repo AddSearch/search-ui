@@ -4,10 +4,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="viewport" content="width=device-width, user-scalable=no" />
   <meta charset="UTF-8">
-  <title>AddSearch Search UI: Range filters demo</title>
+  <title>AddSearch Search UI: Range facets demo</title>
 
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.6/dist/addsearch-js-client.min.js"></script>
+<!--  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.6/dist/addsearch-js-client.min.js"></script>-->
+  <script src="../../dist/dev-js-client.js"></script>
   <script src="../../dist/addsearch-search-ui.min.js"></script>
   <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
   <link rel="stylesheet" href="styles.css" />
@@ -17,11 +18,6 @@
     function toggleMobileMenu() {
       var style = document.querySelector('aside').style;
       style.display = style.display === 'block' ? 'none' : 'block';
-    }
-    if (window) {
-      window.onresize = function () {
-        alignAutocomplete(document.querySelector('#autocomplete-container'));
-      };
     }
   </script>
 </head>
@@ -34,10 +30,7 @@
   <section>
     <div>
       <div id="searchfield-container"></div>
-    </div>
-    <div>
-      Sort by:
-      <div id="sortby-container"></div>
+      <div id="autocomplete-container"></div>
     </div>
   </section>
 </header>
@@ -52,34 +45,29 @@
   </section>
 
   <section>
-    Range filter:
-    <div id="range-filters-container"></div>
+    Facets:
+    <div id="facets-container"></div>
   </section>
 
   <section>
-    Filter:
-    <div id="strMeal-filters-container"></div>
+    Filters:
+    <div id="area-container"></div>
   </section>
 
   <section>
-    Area:
-    <div id="area-facets-container"></div>
-  </section>
-
-  <section>
-    Main ingredient:
-    <div id="ingredient-facets-container"></div>
-  </section>
-
-  <section>
-    Category:
-    <div id="category-facets-container"></div>
+    Range facets:
+    <div id="range-facets-container"></div>
   </section>
 
 
 </aside>
 
 <main>
+  <section id="sort">
+    Sort by:
+    <div id="sortby-container"></div>
+  </section>
+
   <section>
     Search results
     <div id="results-container"></div>
@@ -88,11 +76,6 @@
   <section>
     Load more results:
     <div id="loadmore-container"></div>
-  </section>
-
-  <section>
-    Pagination:
-    <div id="pagination-container"></div>
   </section>
 </main>
 
@@ -130,58 +113,21 @@
 <script>
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
   var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
-  // client.setNumberOfFacets(20);
-
-  // Get min and max prices from results
-  client.addStatsField('custom_fields.price');
-  client.addStatsField('custom_fields.cal');
-
-  // Define buckets for calorie filters
-  var ranges = [
-    {'to': 400},
-    {'from': 400, 'to': 500},
-    {'from': 500, 'to': 600},
-    {'from': 600}
-  ];
-  client.addRangeFacet('custom_fields.cal', ranges);
-
-  // Special diets as facets
-  client.addFacetField('custom_fields.strArea');
-  client.addFacetField('custom_fields.strIngredient1');
-  client.addFacetField('custom_fields.strCategory')
-
 
   // Search UI
   var conf = {
-    matchAllQuery: true
+    matchAllQuery: true,
+    fieldForInstantRedirect: 'custom_fields.idMeal'
   };
   var searchui = new AddSearchUI(client, conf);
-
-  searchui.filters({
-    containerId: 'strMeal-filters-container',
-    type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
-    options: {
-      op1: {
-        label: 'Mince Pies',
-        filter: {'custom_fields.strMeal': 'Mince Pies'}
-      },
-      op2: {
-        label: 'Beef Sunday Roast',
-        filter: {'custom_fields.strMeal': 'Beef Sunday Roast'}
-      },
-      op3: {
-        label: 'Beef and Oyster pie',
-        filter: {'custom_fields.strMeal': 'Beef and Oyster pie'}
-      }
-    }
-  });
 
 
   searchui.searchField({
     containerId: 'searchfield-container',
     autofocus: true,
     placeholder: 'Keyword..',
-    button: 'Search'
+    button: 'Search',
+    searchAsYouType: false
   });
 
   searchui.searchResults({
@@ -193,62 +139,62 @@
     containerId: 'active-filters-container'
   });
 
-  searchui.filters({
-    containerId: 'range-filters-container',
-    type: AddSearchUI.FILTER_TYPE.RANGE,
-    label: 'Calorie range',
-    labelShort: 'Calories',
-    field: 'custom_fields.cal',
-    validator: '^[\\d]*$'
-  });
-
-  searchui.facets({
-    containerId: 'area-facets-container',
-    field: 'custom_fields.strArea',
-    advancedSticky: true
-  });
-
-  searchui.facets({
-    containerId: 'ingredient-facets-container',
-    field: 'custom_fields.strIngredient1',
-    advancedSticky: true
-  });
-
-  searchui.facets({
-    containerId: 'category-facets-container',
-    field: 'custom_fields.strCategory',
-    advancedSticky: true
-  });
-
-
-  searchui.loadMore({
-    containerId: 'loadmore-container',
-    type: AddSearchUI.LOAD_MORE_TYPE.BUTTON
-  });
-
-  searchui.pagination({
-    containerId: 'pagination-container'
-  });
-
   searchui.sortBy({
     containerId: 'sortby-container',
     options: [
       {
-        label: 'Sort by relevance',
-        sortBy: 'relevance',
-        order: 'desc'
-      },
-      {
-        label: 'Oldest first',
+        label: 'Date: Oldest first',
         sortBy: 'date',
         order: 'asc'
       },
       {
-        label: 'Most expensive first',
-        sortBy: 'custom_fields.price',
+        label: 'Most relevant first',
+        sortBy: 'relevance',
+        order: 'desc'
+      },
+      {
+        label: 'Date: Newest first',
+        sortBy: 'date',
         order: 'desc'
       }
     ]
+  });
+
+  client.addFacetField('custom_fields.cal');
+  searchui.facets({
+    containerId: 'facets-container',
+    field: 'custom_fields.cal',
+    advancedSticky: true
+  });
+
+  searchui.filters({
+    containerId: 'area-container',
+    type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
+    options: {
+      american: {
+        label: 'American',
+        filter: {"custom_fields.strArea": "American"}
+      },
+      british: {
+        label: 'British',
+        filter: {"custom_fields.strArea": "British"}
+      },
+      french: {
+        label: 'French',
+        filter: {"custom_fields.strArea": "French"}
+      }
+    }
+  });
+
+  searchui.rangeFacets({
+    containerId: 'range-facets-container',
+    field: 'custom_fields.price',
+    maxNumberOfRangeBuckets: 7
+  });
+
+  searchui.loadMore({
+    containerId: 'loadmore-container',
+    type: AddSearchUI.LOAD_MORE_TYPE.BUTTON
   });
 
   searchui.start();

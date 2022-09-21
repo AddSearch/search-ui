@@ -16,7 +16,25 @@ export function start() {
   }
 }
 
-export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, store, fieldForInstantRedirect, requestBy) {
+function _matchKeywordToCustomFieldValue(keyword, hits, field) {
+  return hits.find((hit) => {
+    if (!hit.custom_fields || !hit.custom_fields[field]) {
+      return false;
+    }
+    if (typeof hit.custom_fields[field] === 'string') {
+      return keyword.toLowerCase() === hit.custom_fields[field].toLowerCase();
+    }
+    if (typeof hit.custom_fields[field] === 'object' && hit.custom_fields[field].length) {
+      const customFieldsInLowerCase = hit.custom_fields[field].map(val => val.toLowerCase());
+      const keywordInLowerCase = keyword.toLowerCase();
+      return customFieldsInLowerCase.indexOf(keywordInLowerCase) > -1;
+    }
+    return false;
+  });
+}
+
+export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, store,
+                       fieldForInstantRedirect, requestBy, fieldForInstantRedirectGlobal) {
   // Update browser history
   setHistory(HISTORY_PARAMETERS.SEARCH, keyword, isHistoryDebounced, store);
 
@@ -29,12 +47,14 @@ export function search(client, keyword, onResultsScrollTo, appendResults, isHist
   return dispatch => {
     dispatch(searchFetchStart());
     client.search(keyword, (res) => {
-      if (fieldForInstantRedirect && res && res.hits && res.hits.length) {
-        var customFieldName = fieldForInstantRedirect.replace('custom_fields.', '');
-        var matchedHit = res.hits.find((hit) => hit.custom_fields && hit.custom_fields[customFieldName] &&
-          keyword.toLowerCase() === hit.custom_fields[customFieldName].toLowerCase());
-        if (matchedHit) {
-          window.location.href = matchedHit.url;
+      if ((fieldForInstantRedirectGlobal || fieldForInstantRedirect) && res && res.hits && res.hits.length) {
+        var field = fieldForInstantRedirectGlobal || fieldForInstantRedirect;
+        var customFieldName = field.replace('custom_fields.', '');
+        var matchedHit = _matchKeywordToCustomFieldValue(keyword, res.hits, customFieldName);
+
+        if (matchedHit && !isHistoryDebounced) {
+          window.location.replace(matchedHit.url);
+          return;
         }
       }
       dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults, requestBy));

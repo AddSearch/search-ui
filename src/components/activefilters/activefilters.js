@@ -1,14 +1,22 @@
 import './activefilters.scss';
 import handlebars from 'handlebars';
 import { ACTIVE_FILTERS_TEMPLATE } from './templates';
-import { toggleFacetFilter, toggleFilter, setRangeFilter, clearSelected } from '../../actions/filters';
+import {
+  toggleFacetFilter,
+  toggleFilter,
+  setRangeFilter,
+  clearSelected,
+  toggleHierarchicalFacetFilter, toggleRangeFacetFilter
+} from '../../actions/filters';
 import { validateContainer } from '../../util/dom';
 import { observeStoreByKey } from '../../store';
 
 const TYPE = {
   FILTER: 'FILTER',
   RANGE_FILTER: 'RANGE_FILTER',
-  FACET: 'FACET'
+  FACET: 'FACET',
+  RANGE_FACET: 'RANGE_FACET',
+  HIERARCHICAL_FACET: 'HIERARCHICAL_FACET'
 }
 
 export default class ActiveFilters {
@@ -79,6 +87,35 @@ export default class ActiveFilters {
       }
     }
 
+    // Hierarchical facets
+    for (let container in filterState.activeHierarchicalFacets) {
+      for (let field in filterState.activeHierarchicalFacets[container]) {
+        for (let facetValue in filterState.activeHierarchicalFacets[container][field]) {
+          active.push({
+            name: field,
+            type: TYPE.HIERARCHICAL_FACET,
+            container: container,
+            value: facetValue,
+            label: facetValue
+          });
+        }
+      }
+    }
+
+    // Range facets
+    for (let field in filterState.activeRangeFacets) {
+      for (let key in filterState.activeRangeFacets[field]) {
+        active.push({
+          name: field,
+          type: TYPE.RANGE_FACET,
+          value: key,
+          label: key,
+          rangeMin: filterState.activeRangeFacets[field][key].gte,
+          rangeMax: filterState.activeRangeFacets[field][key].lt
+        });
+      }
+    }
+
     const data = {
       active,
       clearAll: this.conf.clearAll !== false
@@ -103,7 +140,7 @@ export default class ActiveFilters {
 
     const clearAll = container.querySelector('[data-clearall]');
     if (clearAll) {
-      clearAll.addEventListener('click', (e) => this.reduxStore.dispatch(clearSelected(true)));
+      clearAll.addEventListener('click', (e) => this.reduxStore.dispatch(clearSelected(true, true)));
     }
   }
 
@@ -112,6 +149,10 @@ export default class ActiveFilters {
     const type = e.target.getAttribute('data-type');
     const name = e.target.getAttribute('data-name');
     const value = e.target.getAttribute('data-value');
+    const container = e.target.getAttribute('data-container');
+    const confFields = e.target.getAttribute('data-conf-fields') ? e.target.getAttribute('data-conf-fields').split(',') : [];
+    const rangeMin = e.target.getAttribute('data-range-min');
+    const rangeMax = e.target.getAttribute('data-range-max');
 
     if (type === TYPE.FILTER) {
       this.reduxStore.dispatch(toggleFilter(name, value, true));
@@ -121,6 +162,16 @@ export default class ActiveFilters {
     }
     else if (type === TYPE.FACET) {
       this.reduxStore.dispatch(toggleFacetFilter(name, value));
+    }
+    else if (type === TYPE.HIERARCHICAL_FACET) {
+      this.reduxStore.dispatch(toggleHierarchicalFacetFilter(name, container, confFields, value, true))
+    }
+    else if (type === TYPE.RANGE_FACET) {
+      const values = {
+        min: rangeMin,
+        max: rangeMax
+      };
+      this.reduxStore.dispatch(toggleRangeFacetFilter(name, values, value, true, true))
     }
   }
 }

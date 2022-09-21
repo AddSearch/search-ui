@@ -87,6 +87,7 @@ The configuration object can contain following values:
 | searchResultsPageUrl | String | null | Redirect the user to a separate search results page, instead of showing search results on the current page |
 | searchParameter | String | "search" | Name of the search parameter which is added to the URL, by default the library adds "?search=" |
 | updateBrowserHistory | boolean | true | Set this value to false for a second/third searchui's instance to prevent conflict in browser's URL |
+| fieldForInstantRedirect | String | n/a | Checking if the search keyword is matching with any search result's custom field's value, then redirect users to the matched page. E.g. custom_fields.sku |
 
 After all UI components have been added to the SearchUI object, the start function must be called:
 
@@ -120,7 +121,9 @@ Settings that can be passed to the ```searchField``` function:
 | ignoreSearchResultsPageUrl | boolean | false | Don't redirect the user to a search results page from this field (in case you have multiple fields) |
 | onfocusAutocompleteMatchAllQuery | boolean | false | If true, execute match all query for autocomplete box when this field is empty and focused |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
-| fieldForInstantRedirect | String | n/a | Checking if the search keyword is matching with any search result's custom field's value, then redirect users to the matched page. E.g. *custom_fields.sku* |
+| fieldForInstantRedirect | String | n/a | *This setting is deprecated, use it in Search UI Configuration instead* |
+| selectorToBind | String | n/a | CSS selector of the existing search input field to be used. If this setting is defined, Search UI won't be creating a search input field, instead it will bind all relating functionalities to the input field defined by this selector. |
+| buttonSelector | String | n/a | CSS selector of the existing search button. This setting is applicable only when "selectorToBind" is defined |
 
 ### Autocomplete
 Show suggested keyword, search results, or both under the search field.
@@ -343,6 +346,73 @@ Settings that can be passed to the ```facets``` function:
 | sticky | boolean | false | Show all options even if a facet is selected. Options are reset on keyword change |
 | advancedSticky | boolean | false | Similar to sticky, extra search queries are made to update other facet groups. Enabling this setting would use quite an amount of search query usage in your subscription plan |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+
+
+### Hierarchical Facets
+Display hierarchical facets and let the user filter results by facets. In addition, user can drill down each facets and select more specific values. (i.e. dynamic property filters).
+By default, hierarchical facet is sticky.
+Currently, this component does not support historical URL, refreshing the page will lose the current state of the facet group.
+
+```js
+  searchui.hierarchicalFacets({
+    containerId: 'hierarchical-facets-container',
+    fields: [
+      'custom_fields.nested_facet_lvl_0',
+      'custom_fields.nested_facet_lvl_1',
+      'custom_fields.nested_facet_lvl_2',
+      'custom_fields.nested_facet_lvl_3'
+    ]
+  });
+```
+Before using this component, add appropriate hierarchical facets to your client instance so the information is fetched from the
+search index:
+
+```js
+  client.addHierarchicalFacetSetting([
+    {
+      "fields": [
+       "custom_fields.nested_facet_lvl_0",
+        "custom_fields.nested_facet_lvl_1",
+       "custom_fields.nested_facet_lvl_2",
+        "custom_fields.nested_facet_lvl_3"
+      ],
+      "sortOrder": "COUNT_DESC_NAME_ASC"
+    }
+  ]);
+```
+
+Settings that can be passed to the ```facets``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML element that will act as a container for facets |
+| fields | String | n/a | Define a list of custom fields in hierarchical order (top level facet is placed first). |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/hierarchicalfacets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+
+
+### Range Facets
+Display range facets of a given custom field and let the user filter results by different range buckets.
+By default, range facet is sticky.
+This feature uses extra search queries to fetch min-max values of the custom field.
+
+```js
+  searchui.rangeFacets({
+    containerId: 'rangeFacetsContainer',
+    field: 'custom_fields.price',
+    maxNumberOfRangeBuckets: 7
+  });
+```
+
+Settings that can be passed to the ```rangeFacets``` function:
+
+| Key | Possible values | Default value | Description |
+| --- | --- | --- | --- |
+| containerId | String | n/a | ID of the HTML element that will act as a container for facets |
+| field | String | n/a | A numeric custom field to use as a facet. E.g. custom_fields.price |
+| maxNumberOfRangeBuckets | integer | 5 | Maximum number of buckets that will be displayed. If a bucket is empty, it will be hidden |
+| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/rangefacets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+
+![alt text](https://demo.addsearch.com/search-ui-examples/components/range-facets-buckets.png)
 
 ### Active filters
 Show active filters and facets. Let user remove specific filters or clear everything,

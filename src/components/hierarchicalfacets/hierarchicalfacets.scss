@@ -1,0 +1,106 @@
+.addsearch-hierarchical-facets {
+  list-style-type: none;
+  padding: 0;
+
+  .adds-facet-wrap {
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .adds-facet-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  li {
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+    position: relative;
+    padding-left: 5px;
+
+    label {
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 100%;
+      width: 100%;
+      padding-left: 5px!important;
+
+      @media all and (max-width: 960px) {
+        padding: 4px 0;
+      }
+
+      > span {
+        text-overflow: ellipsis;
+        display: inline-block;
+        max-width: 80%;
+        overflow: hidden;
+        position: relative;
+        padding-right: 3px;
+      }
+    }
+    input[type="checkbox"] {
+      margin: 0 7px 0 2px;
+    }
+    .addsearch-facet-group-expansion-arrow {
+      position: relative;
+      top: -2px;
+      width: 14px;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      &.adds-visibility-hidden {
+        visibility: hidden;
+        display: none;
+      }
+    }
+    .addsearch-facet-group-expansion-arrow::after {
+      content: "";
+      border: solid #000;
+      border-width: 0 2px 2px 0;
+      display: inline-block;
+      transform: rotate(45deg);
+      position: relative;
+      width: 6px;
+      height: 6px;
+    }
+    .addsearch-facet-child-container {
+      padding-left: 14px;
+      width: 100%;
+      &:before {
+        height: 100%;
+        content: '';
+        border-left: 1px solid #dcdcdc;
+        position: absolute;
+        left: 11px;
+      }
+    }
+  }
+
+  .shrink {
+    .addsearch-facet-group-expansion-arrow {
+      top:0;
+      left: -1px;
+    }
+    .addsearch-facet-group-expansion-arrow::after {
+      transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+    }
+    .addsearch-facet-child-container {
+      display: none;
+    }
+  }
+
+  em {
+    font-style: normal;
+    color: #666;
+    font-size: 80%;
+  }
+
+}

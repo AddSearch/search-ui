@@ -5,7 +5,7 @@ import { toggleFacetFilter } from '../../actions/filters';
 import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
-import { createFilterObjectWithoutFacetGroup } from "../filters/customfilters";
+import {createFilterObject} from "../filters/filterstateobserver";
 
 
 export default class Facets {
@@ -35,7 +35,7 @@ export default class Facets {
         if (_isEmpty(activeFacets[this.conf.field]) || !this.conf.advancedSticky) {
           this.render(search);
         } else {
-          var filterObjectCustom = createFilterObjectWithoutFacetGroup(
+          var filterObjectCustom = createFilterObject(
             this.reduxStore.getState().filters, baseFilters, this.conf.field);
 
           if (search.callBy !== this.conf.field) {
@@ -72,7 +72,6 @@ export default class Facets {
 
     // Read active facets from redux state
     const activeFacets = this.getActiveFacets(facetField);
-
 
     // Sticky facets (i.e. not updating if keyword is unchanged)
     if (this.conf.sticky === true && !this.conf.advancedSticky) {
