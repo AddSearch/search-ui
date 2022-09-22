@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, user-scalable=no" />
+  <meta charset="UTF-8">
+  <title>AddSearch Search UI: Recommendation - frequently bought together</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.7/dist/addsearch-js-client.min.js"></script>
+  <script src="../../dist/addsearch-search-ui.min.js"></script>
+  <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+
+<body>
+
+<header>
+  <a href="index.html">Home page</a>
+</header>
+
+
+<aside>
+  <div class="mobilemenu close" onclick="toggleMobileMenu();">&#x2716;</div>
+
+  <section>
+    Active filters:
+    <div id="active-filters-container"></div>
+  </section>
+
+  <section>
+    Range filter:
+    <div id="range-filters-container"></div>
+  </section>
+
+  <section>
+    Filter:
+    <div id="strMeal-filters-container"></div>
+  </section>
+
+  <section>
+    Area:
+    <div id="area-facets-container"></div>
+  </section>
+
+  <section>
+    Main ingredient:
+    <div id="ingredient-facets-container"></div>
+  </section>
+
+  <section>
+    Category:
+    <div id="category-facets-container"></div>
+  </section>
+</aside>
+
+<main>
+  <h1 class="product-title">
+    Product
+    <span></span>
+  </h1>
+  <div class="content-wrapper">
+    <div class="product-image">Product image</div>
+    <div class="product-description">Product details</div>
+  </div>
+</main>
+
+<main>
+  <section>
+    Frequently Bought Together Items
+    <div id="recommendation-container"></div>
+    <div id="search-results-container"></div>
+  </section>
+</main>
+
+
+<script id="search-results-template" type="text/x-handlebars-template">
+  <div class="addsearch-searchresults">
+    {{#if resultcount}}
+    {{> numberOfResultsTemplate }}
+    {{/if}}
+
+    {{#each hits}}
+    <div class="item">
+            <span class="main-image">
+              <img src="https://demo-cdn.addsearch.com/fooddemo-1cfa4d/imgs/thumb-{{id}}.jpg" alt="{{custom_fields.strMeal}}" />
+            </span>
+      <span>
+              <h3>
+               {{custom_fields.strMeal}}
+              </h3>
+              Price: {{formatPrice custom_fields.price "en-US" "USD"}}<br />
+              Calories: {{custom_fields.cal}}<br />
+
+              Special diets:
+              {{#each custom_fields.diets}}
+                <b>{{this}}</b>
+              {{/each}}
+              {{#unless custom_fields.diets}}n/a{{/unless}}
+            </span>
+    </div>
+    {{/each}}
+  </div>
+</script>
+
+
+<script>
+  // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+  var client = new AddSearchClient('5c05678877cce33062c1dce9e1819ed0');
+  client.setPaging(1, 5, 'relevance', 'desc');
+
+  // Search UI
+  var conf = {
+    matchAllQuery: true
+  };
+  var searchui = new AddSearchUI(client, conf);
+  var recoTemplate = `
+    <div class="addsearch-recommendations">
+      {{#each hits}}
+       <div class="hit">
+          <div class="hit-top">
+            <span class="main-image" style="background-image: url(data:image/jpeg;base64,{{custom_fields.image_link_b64}})">
+              <a href="{{url}}">
+                <img src="https://localpharma.be{{custom_fields.image}}" alt="{{title}}" />
+              </a>
+            </span>
+            <h3>
+              <a href="{{url}}">{{title}}</a>
+            </h3>
+          </div>
+          <div class="hit-bottom">
+            <span class="company">{{custom_fields.brand}}</span>
+            <span class="actual-price">{{custom_fields.price}}<span>€</span></span>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  `;
+
+  searchui.recommendations({
+    containerId: 'recommendation-container',
+    type: AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER,
+    configurationKey: 'config1',
+    getProductIdFunction: function() {
+      // function that return product ID
+      // return '150691';
+      return new URLSearchParams(window.location.search).get('prod');
+    },
+    template: recoTemplate,
+    ignoreFetchOnStart: true
+  });
+
+  searchui.searchResults({
+    containerId: 'search-results-container'
+  });
+
+  searchui.start();
+
+  var productTitleEl = document.querySelector('.product-title > span');
+  var productId = new URLSearchParams(window.location.search).get('prod');
+  productTitleEl.textContent = productId;
+
+  searchui.fetchRecommendation('recommendation-container');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+.addsearch-recommendations {
+  display: flex;
+  padding: 30px;
+  gap: 11px;
+  max-width: 970px;
+  overflow: scroll;
+}
+
+.addsearch-recommendations .hit .main-image {
+  width: 100%;
+  min-height: 100px;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  img {
+    width: 100%;
+  }
+}
+
+.addsearch-recommendations .hit {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0px;
+  justify-content: space-between;
+  padding: 20px;
+  border: solid 1px #d6d0d0;
+  max-width: calc(100% / 3 - 30px);
+  min-width: 200px;
+
+  &:hover {
+    background-color: #f7f7f7;
+  }
+}
+
+

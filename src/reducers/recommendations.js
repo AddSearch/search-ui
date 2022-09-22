@@ -1,0 +1,28 @@
+import {
+  CLEAR_RECOMMENDATION,
+  FETCH_RECO_FBT
+} from '../actions/recommendations';
+
+const initialState = {
+  container: null,
+  recommendType: null,
+  results: null
+};
+
+export default function recommendation(state = initialState, action) {
+  switch (action.type) {
+
+    case FETCH_RECO_FBT:
+      return Object.assign({}, state, {
+        container: action.container,
+        recommendType: action.recommendType,
+        results: action.results
+      });
+
+    case CLEAR_RECOMMENDATION:
+      return Object.assign({}, initialState);
+
+    default:
+      return state;
+  }
+}
