@@ -43,6 +43,7 @@ export default class AddSearchUI {
     this.recommendationsSettings = [];
     this.settings = settings || {};
     HISTORY_PARAMETERS.SEARCH = this.settings.searchParameter || HISTORY_PARAMETERS.SEARCH;
+    HISTORY_PARAMETERS.FACETS = this.settings.facetsParameter || HISTORY_PARAMETERS.FACETS;
     this.hasSearchResultsComponent = false;
     this.reduxStore = initRedux(this.settings);
   }
