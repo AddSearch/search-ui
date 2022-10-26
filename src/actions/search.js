@@ -69,7 +69,12 @@ export function searchFetchStart(keyword) {
 }
 
 export function searchResults(client, keyword, results, onResultsScrollTo, appendResults, requestBy) {
-  if (onResultsScrollTo === 'top') {
+  if (/top-delay-\d*$/.test(onResultsScrollTo)) {
+    var delayInMs = parseInt(onResultsScrollTo.replace('top-delay-', ''), 10);
+    window.setTimeout(function() {
+      window.scrollTo(0, 0);
+    }, delayInMs);
+  } else if (onResultsScrollTo === 'top') {
     window.scrollTo(0, 0);
   }
 
