@@ -168,6 +168,11 @@
             label: 'Date: Oldest first',
             sortBy: 'date',
             order: 'asc'
+          },
+          {
+            label: 'Most recently relevant',
+            sortBy: ['relevance', 'date'],
+            order: ['desc', 'desc']
           }
         ]
       });
