@@ -250,6 +250,11 @@ Component to change the order of search results.
         label: 'Most expensive first',
         sortBy: 'custom_fields.price',
         order: 'desc'
+      },
+      {
+        label: 'Multiple sorting parameters',
+        sortBy: ['custom_fields.plan_name', 'date'],
+        order: ['desc', 'desc']
       }
     ]
   });
@@ -267,7 +272,7 @@ The ```options``` array can contain objects with following fields:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
-| label | String | n/a | Label text to show |
+| label | String, Array | n/a | Label text to show |
 | sortBy | relevance, date, custom_field | n/a | The field to sort the search results by |
 | order | desc, asc | desc | Ascending order (a-z or 1-9) or descending order (z-a, 9-1) |
 
