@@ -168,6 +168,11 @@
             label: 'Date: Oldest first',
             sortBy: 'date',
             order: 'asc'
+          },
+          {
+            label: 'Multiple sorting parameters',
+            sortBy: ['custom_fields.plan_name', 'date'],
+            order: ['desc', 'desc']
           }
         ]
       });

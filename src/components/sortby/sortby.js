@@ -31,15 +31,17 @@ export default class SortBy {
 
 
   onChangeRadio(e) {
-    const field = e.target.getAttribute('data-field');
-    const order = e.target.getAttribute('data-order');
-    this.dispatchAndRefresh(field, order);
+    const fields = e.target.getAttribute('data-field');
+    const orders = e.target.getAttribute('data-order');
+    this.dispatchAndRefresh(fields, orders);
   }
 
 
-  dispatchAndRefresh(field, order) {
+  dispatchAndRefresh(stringFields, stringOrders) {
+    const fields = stringFields.split(',');
+    const orders = stringOrders.split(',');
     // Dispatch sortby
-    this.reduxStore.dispatch(sortBy(this.client, field, order, this.reduxStore));
+    this.reduxStore.dispatch(sortBy(this.client, fields, orders, this.reduxStore));
 
     // Reset paging
     this.reduxStore.dispatch(setPage(this.client, 1, null, this.reduxStore));
