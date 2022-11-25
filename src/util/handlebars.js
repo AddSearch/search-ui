@@ -1,4 +1,5 @@
 import handlebars from 'handlebars';
+import { toLowerKeys } from './objects';
 
 export function defaultCategorySelectionFunction(hit, categoryAliases) {
   const categories = hit.categories || [] ;
@@ -6,12 +7,14 @@ export function defaultCategorySelectionFunction(hit, categoryAliases) {
   let category = '';
   let position = 1;
 
+  categoryAliases = toLowerKeys(categoryAliases);
+
   do {
     // categories[0] is the domain
     category = categories.length > position ? categories[position] : '';
 
     // Remove the index prefix (e.g. 2x)
-    category = category.replace(/^[0-9]+[x]{1}/, '');
+    category = category.replace(/^[0-9]+[x]{1}/, '').toLowerCase();
     position++;
 
   } while (category.length < 3 && categories.length > position);
