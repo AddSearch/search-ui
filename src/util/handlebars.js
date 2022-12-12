@@ -1,5 +1,5 @@
 import handlebars from 'handlebars';
-import { toLowerKeys } from './objects';
+import { convertMapKeysToLowerCase } from './objects';
 
 export function defaultCategorySelectionFunction(hit, categoryAliases) {
   const categories = hit.categories || [] ;
@@ -7,7 +7,7 @@ export function defaultCategorySelectionFunction(hit, categoryAliases) {
   let category = '';
   let position = 1;
 
-  categoryAliases = toLowerKeys(categoryAliases);
+  categoryAliases = convertMapKeysToLowerCase(categoryAliases);
 
   do {
     // categories[0] is the domain
