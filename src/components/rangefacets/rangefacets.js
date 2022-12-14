@@ -72,7 +72,7 @@ export default class RangeFacets {
           return;
         }
 
-        if (!search.results.hits.length) {
+        if (!search.results.hits || !search.results.hits.length) {
           this.render();
           return;
         }
