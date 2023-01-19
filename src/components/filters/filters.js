@@ -103,7 +103,12 @@ export default class Filters {
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(this.conf.template || template)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else {
+      html = handlebars.compile(this.conf.template || template)(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }

@@ -41,7 +41,12 @@ export default class LoadMore {
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(this.conf.template || LOAD_MORE_TEMPLATE)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else {
+      html = handlebars.compile(this.conf.template || LOAD_MORE_TEMPLATE)(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }

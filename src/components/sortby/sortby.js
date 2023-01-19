@@ -80,7 +80,12 @@ export default class SortBy {
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(template)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else {
+      html = handlebars.compile(template)(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }

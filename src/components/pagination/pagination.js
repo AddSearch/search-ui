@@ -39,7 +39,12 @@ export default class Pagination {
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(this.conf.template || PAGINATION_TEMPLATE)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else {
+      html = handlebars.compile(this.conf.template || PAGINATION_TEMPLATE)(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }

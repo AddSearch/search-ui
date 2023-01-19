@@ -143,7 +143,12 @@ export default class RangeFacets {
         conf: this.conf,
         rangeFacets: results.rangeFacets[this.conf.field]
       };
-      const html = handlebars.compile(this.conf.template || FACETS_TEMPLATE)(data);
+      let html;
+      if (this.conf.precompiledTemplate) {
+        html = this.conf.precompiledTemplate(data);
+      } else {
+        html = handlebars.compile(this.conf.template || FACETS_TEMPLATE)(data);
+      }
       container.innerHTML = html;
     } else {
       container.innerHTML = '';

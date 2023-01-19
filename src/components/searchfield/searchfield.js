@@ -164,7 +164,11 @@ export default class SearchField {
     }
 
     // New field. Render
-    container.innerHTML = handlebars.compile(this.conf.template || SEARCHFIELD_TEMPLATE)(this.conf);
+    if (this.conf.precompiledTemplate) {
+      container.innerHTML = this.conf.precompiledTemplate(this.conf);
+    } else {
+      container.innerHTML = handlebars.compile(this.conf.template || SEARCHFIELD_TEMPLATE)(this.conf);
+    }
     this.field = container.querySelector('input');
 
     // Set value. Don't pass with data to handlebars to get the keyboard caret position right on all browsers

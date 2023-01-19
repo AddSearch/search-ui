@@ -45,7 +45,14 @@ export default class SearchResults {
     }
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(template)(data);
+    let html;
+    if (this.conf.precompiledTemplate && data.hits && data.hits.length === 0) {
+      html = this.conf.template_noresults(data);
+    } else if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else {
+      html = handlebars.compile(template)(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }
