@@ -4,6 +4,7 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const webpack = require('webpack');
 const PACKAGE = require('./package.json');
 const banner = PACKAGE.name + ' ' + PACKAGE.version;
+const path = require('path');
 
 module.exports = {
   entry: './index.js',
@@ -59,6 +60,16 @@ module.exports = {
           },
           { loader: "sass-loader", options: {} }
         ],
+      },
+
+      {
+        test: /\.handlebars$/,
+        loader: "handlebars-loader",
+        options: {
+          precompileOptions: {
+            knownHelpersOnly: false,
+          },
+        }
       }
     ]
   }

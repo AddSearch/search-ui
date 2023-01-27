@@ -1,6 +1,5 @@
 import './activefilters.scss';
 import handlebars from 'handlebars';
-import { ACTIVE_FILTERS_TEMPLATE } from './templates';
 import {
   toggleFacetFilter,
   toggleFilter,
@@ -10,6 +9,7 @@ import {
 } from '../../actions/filters';
 import { validateContainer } from '../../util/dom';
 import { observeStoreByKey } from '../../store';
+import PRECOMPILED_ACTIVE_FILTERS_TEMPLATE from './precompile-templates/activefilters.handlebars';
 
 const TYPE = {
   FILTER: 'FILTER',
@@ -126,9 +126,12 @@ export default class ActiveFilters {
     let html;
     if (this.conf.precompiledTemplate) {
       html = this.conf.precompiledTemplate(data);
+    } else if (this.conf.template) {
+      html = handlebars.compile(this.conf.template)(data);
     } else {
-      html = handlebars.compile(this.conf.template || ACTIVE_FILTERS_TEMPLATE)(data);
+      html = PRECOMPILED_ACTIVE_FILTERS_TEMPLATE(data);
     }
+
     if (this.renderedHtml === html) {
       return;
     }

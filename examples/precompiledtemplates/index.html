@@ -2,101 +2,39 @@
 <html lang="en">
 <head>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="viewport" content="width=device-width, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, user-scalable=no"/>
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="img-src * 'self' data:;default-src http: 'unsafe-inline'" />
 
-  <title>AddSearch Search UI: Components demo</title>
+  <title>AddSearch Search UI: Pre-compiled templates demo</title>
 
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.8/dist/addsearch-js-client.min.js"></script>
   <script src="../../dist/addsearch-search-ui.min.js"></script>
 
+  <!-- load Handlebars Runtime & pre-compiled templates  -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.runtime.min.js"></script>
   <script src="templates/allPrecompiledTemplates.js"></script>
-  <script src="handlebars-helpers.js"></script>
 
-  <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
-  <link rel="stylesheet" href="styles.css" />
-
-  <script>
-    // Responsive menu
-    function toggleMobileMenu() {
-      var style = document.querySelector('aside').style;
-      style.display = style.display === 'block' ? 'none' : 'block';
-    }
-    if (window) {
-      window.onresize = function () {
-        if (alignAutocomplete) { alignAutocomplete(document.querySelector('#autocomplete-container')); }
-      };
-    }
-  </script>
+  <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css"/>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 
 
 <body>
 <header>
-  <div class="mobilemenu" onclick="toggleMobileMenu();">&#9776;</div>
-
   <section>
     Search field and autocomplete:
     <div>
       <div id="searchfield-container"></div>
-      <div id="autocomplete-container"></div>
     </div>
   </section>
 </header>
 
-
-<aside>
-  <div class="mobilemenu close" onclick="toggleMobileMenu();">&#x2716;</div>
-
-  <section>
-    Active filters:
-    <div id="active-filters-container"></div>
-  </section>
-
-  <section>
-    Radio group filters:
-    <div id="radio-filters-container"></div>
-  </section>
-
-  <section>
-    Facets:
-    <div id="facets-container"></div>
-  </section>
-
-  <section>
-    Tags:
-    <div id="tags-container"></div>
-  </section>
-
-  <section>
-    Checkbox group:
-    <div id="checkbox-container"></div>
-  </section>
-
-  <section>
-    Sort by:
-    <div id="sortby-radio-container"></div>
-  </section>
-</aside>
-
 <main>
-  <section id="sort">
-    Sort by:
-    <div id="sortby-container"></div>
-  </section>
-
-  <section id="tabs">
-    Tab filters:
-    <div id="tabs-container"></div>
-  </section>
-
   <section>
     Search results
     <div id="results-container"></div>
-    <div id="loadMore"></div>
   </section>
 
   <section>
@@ -108,10 +46,9 @@
 
 <script>
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+
   var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
   client.addFacetField('category');
-  var precompiledTemplates = Handlebars.templates;
-  window.console.log('+++ index', precompiledTemplates);
 
   // Search UI
   var conf = {
@@ -119,6 +56,25 @@
   };
   var searchui = new AddSearchUI(client, conf);
 
+  var precompiledTemplates = Handlebars.templates;
+
+  Handlebars.registerHelper('not', (arg1, arg2, options) => {
+    return ((arg1+'') !== (arg2+'')) ? options.fn(this) : options.inverse(this);
+  });
+  Handlebars.registerHelper('test_helper', (item) => {
+    if (item) {
+      return 'testzzz-' + item;
+    }
+  });
+  Handlebars.registerHelper('gt', (arg1, arg2, options) => {
+    return arg1 > arg2 ? options.fn(this) : options.inverse(this);
+  });
+  Handlebars.registerHelper('lt', (arg1, arg2, options) => {
+    return arg1 < arg2 ? options.fn(this) : options.inverse(this);
+  });
+  Handlebars.registerHelper('equals', (arg1, arg2, options) => {
+    return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
+  });
 
   searchui.searchField({
     containerId: 'searchfield-container',
@@ -129,186 +85,12 @@
     searchAsYouType: false
   });
 
-
-  // Align autocomplete with search field
-  function alignAutocomplete(container) {
-    var autocomplete = container.querySelector('.addsearch-autocomplete');
-    var searchfield = document.querySelector('#searchfield-container input');
-
-    if (autocomplete && searchfield) {
-      autocomplete.style.left = searchfield.getBoundingClientRect().left + 'px';
-      autocomplete.style.width = searchfield.getBoundingClientRect().width + 'px';
-    }
-  }
-
-  searchui.autocomplete({
-    containerId: 'autocomplete-container',
-    onShow: alignAutocomplete,
-    precompiledTemplate: precompiledTemplates['autocomplete'],
-    sources: [
-      {
-        type: AddSearchUI.AUTOCOMPLETE_TYPE.SUGGESTIONS
-      }
-    ]
-  });
-
-
-
   Handlebars.registerPartial('numberOfResultsTemplate', precompiledTemplates['numberOfResults']);
   Handlebars.registerPartial('searchResultImageTemplate', precompiledTemplates['searchResultImage']);
   searchui.searchResults({
     containerId: 'results-container',
     precompiledTemplate: precompiledTemplates['searchResults'],
-    template_noresults: precompiledTemplates['noResults']
-  });
-
-
-  searchui.activeFilters({
-    containerId: 'active-filters-container',
-    precompiledTemplate: precompiledTemplates['activeFilters']
-  });
-
-
-  searchui.sortBy({
-    containerId: 'sortby-container',
-    precompiledTemplate: precompiledTemplates['sortBySelect'],
-    options: [
-      {
-        label: 'Most relevant first',
-        sortBy: 'relevance',
-        order: 'desc'
-      },
-      {
-        label: 'Date: Newest first',
-        sortBy: 'date',
-        order: 'desc'
-      },
-      {
-        label: 'Date: Oldest first',
-        sortBy: 'date',
-        order: 'asc'
-      },
-      {
-        label: 'Multiple sorting parameters',
-        sortBy: ['custom_fields.plan_name', 'date'],
-        order: ['desc', 'desc']
-      }
-    ]
-  });
-
-
-  searchui.sortBy({
-    containerId: 'sortby-radio-container',
-    type: AddSearchUI.SORTBY_TYPE.RADIO_GROUP,
-    precompiledTemplate: precompiledTemplates['sortByRadioGroup'],
-    options: [
-      {
-        label: 'Most relevant first',
-        sortBy: 'relevance',
-        order: 'desc'
-      },
-      {
-        label: 'Date: Newest first',
-        sortBy: 'date',
-        order: 'desc'
-      },
-      {
-        label: 'Date: Oldest first',
-        sortBy: 'date',
-        order: 'asc'
-      }
-    ]
-  });
-
-
-  searchui.filters({
-    containerId: 'radio-filters-container',
-    type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
-    precompiledTemplate: precompiledTemplates['filtersRadioGroup'],
-    options: {
-      nofilter: {
-        label: 'All results'
-      },
-      blog: {
-        label: 'Blog',
-        filter: {"category": "1xblog"}
-      },
-      docs: {
-        label: 'Documentation',
-        filter: {"category": "1xdocs"}
-      },
-      notblog: {
-        label: 'Not blog',
-        filter: {"not": {"category": "1xblog"}}
-      }
-    }
-  });
-
-
-  searchui.filters({
-    containerId: 'tabs-container',
-    type: AddSearchUI.FILTER_TYPE.TABS,
-    precompiledTemplate: precompiledTemplates['filtersTabs'],
-    clearOtherFilters: true,
-    setSorting: {
-      field: 'relevance',
-      order: 'desc'
-    },
-    options: {
-      nofilter: {
-        label: 'All results'
-      },
-      blog: {
-        label: 'Blog',
-        filter: {"category": "1xblog"}
-      },
-      docs: {
-        label: 'Documentation',
-        filter: {"category": "1xdocs"}
-      }
-    }
-  });
-
-
-  searchui.filters({
-    containerId: 'tags-container',
-    type: AddSearchUI.FILTER_TYPE.TAGS,
-    precompiledTemplate: precompiledTemplates['filtersTags'],
-    options: {
-      pricing: {
-        label: 'Pricing',
-        filter: {"category": "1xpricing"}
-      },
-      partners  : {
-        label: 'Partners',
-        filter: {"category": "1xpartners"}
-      },
-      customers: {
-        label: 'Customers',
-        filter: {"category": "1xcustomers"}
-      }
-    }
-  });
-
-
-  searchui.filters({
-    containerId: 'checkbox-container',
-    precompiledTemplate: precompiledTemplates['filtersCheckBoxGroup'],
-    type: AddSearchUI.FILTER_TYPE.CHECKBOX_GROUP,
-    options: {
-      pricing: {
-        label: 'Pricing',
-        filter: {"category": "1xpricing"}
-      },
-      partners  : {
-        label: 'Partners',
-        filter: {"category": "1xpartners"}
-      },
-      customers: {
-        label: 'Customers',
-        filter: {"category": "1xcustomers"}
-      }
-    }
+    precompiledTemplateNoResults: precompiledTemplates['noResults'],
   });
 
 
@@ -317,34 +99,6 @@
     precompiledTemplate: precompiledTemplates['pagination']
   });
 
-
-  // Custom filter to return categories with 1x or 2x prefix
-  function facetsFilter(facets) {
-    var filtered = [];
-    for (var i=0; i<facets.length; i++) {
-      if (facets[i].value.match(/^[1-2]{1}[x]{1}/)) {
-        filtered.push(facets[i]);
-      }
-    }
-    return filtered;
-  }
-
-  searchui.facets({
-    containerId: 'facets-container',
-    field: 'category',
-    precompiledTemplate: precompiledTemplates['facets'],
-    facetsFilter: facetsFilter,
-    advancedSticky: true,
-  });
-
-  // disable Pagination when trying out LoadMore component
-  // searchui.loadMore({
-  //   containerId: 'loadMore',
-  //   // type: AddSearchUI.LOAD_MORE_TYPE.BUTTON,
-  //   type: AddSearchUI.LOAD_MORE_TYPE.INFINITE_SCROLL,
-  //   infiniteScrollElement: window,
-  //   precompiledTemplate: precompiledTemplates['loadMore']
-  // });
 
   searchui.start();
 </script>

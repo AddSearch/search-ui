@@ -1,6 +1,8 @@
+{{!-- If you are customising the default search result template, make sure your links still include the data-analytics-click="{{id}}" attribute, --}}
+{{!-- Otherwise your analytics will not report clicks or CTR correctly. --}}
 <div class="addsearch-searchresults">
   {{#if resultcount}}
-    {{> numberOfResultsTemplate }}
+    {{> number_of_results_partials }}
   {{/if}}
 
   {{#each hits}}
@@ -9,9 +11,14 @@
         <a href="{{url}}" data-analytics-click="{{id}}">{{#if title}} {{title}} {{else}} {{removeTrailingQueriesFromUrl url}} {{/if}}</a>
       </h3>
       <div class="highlight">
-        {{> searchResultImageTemplate}}
+        {{> searchresult_image_partials}}
         {{{highlight}}}{{#not type "PROMOTED"}}&#8230;{{/not}}
       </div>
+      {{#gt categories.length 1}}
+        <div class="category">
+          {{selectCategory ..}}
+        </div>
+      {{/gt}}
     </div>
   {{/each}}
 </div>

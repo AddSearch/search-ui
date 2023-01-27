@@ -3,7 +3,7 @@ export const FACETS_TEMPLATE = `
     {{#each facets}}
       {{> subHierarchicalFacetsTemplate this }}
     {{/each}}
-  </div>
+  </ul>
 `;
 
 export const SUB_HIERARCHICAL_FACETS_TEMPLATE = `
