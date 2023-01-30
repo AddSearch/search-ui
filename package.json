@@ -5,7 +5,7 @@
   "main": "./dist/addsearch-search-ui.min.js",
   "jsdelivr": "./dist/addsearch-search-ui.min.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --recursive --require @babel/register --require ignore-styles",
+    "test": "node node_modules/.bin/mocha --recursive --require @babel/register --require ignore-styles",
     "build": "npm run test && ./node_modules/webpack-cli/bin/cli.js",
     "watch": "./node_modules/webpack-cli/bin/cli.js --watch"
   },
@@ -60,9 +60,10 @@
     "esm": "^3.2.22",
     "ignore-styles": "^5.0.1",
     "mini-css-extract-plugin": "^0.9.0",
-    "mocha": "^7.2.0",
-    "optimize-css-assets-webpack-plugin": "^5.0.4",
-    "postcss-loader": "^3.0.0",
+    "mocha": "^10.2.0",
+    "optimize-css-assets-webpack-plugin": "^6.0.1",
+    "postcss": "^8.4.21",
+    "postcss-loader": "^4.0.3",
     "sass": "^1.49.7",
     "sass-loader": "^10.2.1",
     "terser-webpack-plugin": "^3.0.2",
