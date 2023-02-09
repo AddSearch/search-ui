@@ -61,11 +61,6 @@
   Handlebars.registerHelper('not', (arg1, arg2, options) => {
     return ((arg1+'') !== (arg2+'')) ? options.fn(this) : options.inverse(this);
   });
-  Handlebars.registerHelper('test_helper', (item) => {
-    if (item) {
-      return 'testzzz-' + item;
-    }
-  });
   Handlebars.registerHelper('gt', (arg1, arg2, options) => {
     return arg1 > arg2 ? options.fn(this) : options.inverse(this);
   });

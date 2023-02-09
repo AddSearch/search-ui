@@ -7,6 +7,9 @@ effortlessly.
 
 [Open the demo](https://demo.addsearch.com/search-ui-examples/components/)
 
+| :exclamation:  Starting from v0.8.0, Search UI Library will support Websites that have Content Security Policy header which restricts the use of eval() method. [See more](#support-content-security-policy)  |
+| ---------- |
+
 ## Quick example
 ```html
 <!-- Libraries -->
@@ -493,6 +496,16 @@ Settings that can be passed to the ```segmentedSearchResults``` function:
 | ignoreFetchOnStart | boolean | false | If enabled, recommendation won't be fetched unless call ```searchui.fetchRecommendation(<containerId>)``` |
 | template | String | n/a | [Handlebars](https://handlebarsjs.com/) template for this segment |
 
+## Support Content Security Policy
+The Content Security Policy (CSP) is a protection standard that helps secure websites and applications against various attacks, including data injection, click-jacking, and cross-site scripting attacks.
+[See documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP).
+
+It is recommended to remove unsafe-eval directive in your CSP header for better protection.
+
+So far, Search UI Library is compiling dynamic template with [Handlebars](https://handlebarsjs.com/), the compilation process invokes the method eval(). Therefore, we now provide ability to pre-compile your templates. [See handlebarsjs precompiling](https://handlebarsjs.com/installation/precompilation.html). Default templates are all precompiled for now, you can also precompile your own templates and feed them to the `precompiledTemplate` setting which is available for each Search UI Components. 
+
+[How to use precompiled templates](#using-handlebars-pre-compiled-templates)
+
 ## General functions
 ### Execute search
 Execute a search query with a specific keyword. Common use cases include links of most popular keywords:
@@ -540,7 +553,44 @@ Read more at [handlebarsjs.js](https://handlebarsjs.com/guide/partials.html#basi
 ### Using Handlebars pre-compiled templates
 Each Search UI Library's component provided a setting to pass your own pre-compiled template.
 
-To precompile templates: read more at [handlebarsjs precompiling templates](https://handlebarsjs.com/installation/precompilation.html)
+To get started, install Handlebars npm package, which contains the precompiler:
+```js
+  npm install -g handlebars
+```
+Create a file name `example.handlebars` containing your template:
+```js
+  <div>My example {{contextVariable}}</div>
+```
+Run the precompiler on your template file:
+```js
+  handlebars example.handlebars -f example.precompiled.js
+```
+Or precompile the whole directory
+```js
+  handlebars your-dir/all-templates/> output-dir/all-precompiled-templates-srp.js -c handlebars/runtime
+```
+`-c` flag creates a `require` statement for Handlebars-runtime in your precompiled template file. 
+Use the precompiled template inside a component, for example:
+```js
+  // Handlebars must be available globally, by loading it via CDN
+  // Or installing it through npm package
+  // for instance: import Handlebars from 'handlebars/runtime';
+  // Below code will use your precompiled template of the file name "searchfield.handlebars"
+
+  var precompiledTemplates = Handlebars.templates;
+  searchui.searchField({
+    containerId: 'searchfield-container',
+    precompiledTemplate: precompiledTemplates['searchfield'],
+    autofocus: true,
+    placeholder: 'Keyword..',
+    button: 'Search',
+    searchAsYouType: false
+  });
+```
+
+
+
+Read more at [handlebarsjs precompiling templates](https://handlebarsjs.com/installation/precompilation.html)
 
 See our [example](https://demo.addsearch.com/search-ui-examples/precompiledtemplates/).
 
