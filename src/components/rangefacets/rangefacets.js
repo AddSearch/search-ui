@@ -35,8 +35,8 @@ export default class RangeFacets {
     }
 
     function _buildRanges(min, max, numberOfBuckets) {
-      const minTransformed =  roundDownToNearestTenth(min);
-      const maxTransformed = roundUpToNearestTenth(max);
+      const minTransformed = min >= 0 ? roundDownToNearestTenth(min) : roundUpToNearestTenth(min * -1) * -1;
+      const maxTransformed = max >= 0 ? roundUpToNearestTenth(max) : roundDownToNearestTenth(max * -1) * -1;
       const ranges = [];
       let current = minTransformed;
       const step = roundUpToNearestTenth((maxTransformed - minTransformed) / numberOfBuckets);
