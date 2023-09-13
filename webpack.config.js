@@ -6,7 +6,6 @@ const PACKAGE = require('./package.json');
 const banner = PACKAGE.name + ' ' + PACKAGE.version;
 
 module.exports = (env) => {
-  console.log('environment:', env);
 
   return {
     entry: './index.js',
@@ -16,7 +15,7 @@ module.exports = (env) => {
       libraryTarget: 'umd',
       globalObject: 'this'
     },
-    mode: env.development ? 'development' : 'production',
+    mode: 'production',
     optimization: {
       minimize: true,
       minimizer: [
@@ -41,7 +40,7 @@ module.exports = (env) => {
     ],
     resolve: {
       alias: {
-        handlebars: 'handlebars/dist/handlebars.min.js'
+        handlebars$: 'handlebars/dist/handlebars.min.js'
       }
     },
     module: {
@@ -81,6 +80,16 @@ module.exports = (env) => {
             },
             { loader: "sass-loader", options: {} }
           ],
+        },
+
+        {
+          test: /\.handlebars$/,
+          loader: "handlebars-loader",
+          options: {
+            precompileOptions: {
+              knownHelpersOnly: false,
+            },
+          }
         }
       ]
     }

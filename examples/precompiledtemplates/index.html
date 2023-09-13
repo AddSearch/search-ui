@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, user-scalable=no"/>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="img-src * 'self' data:;default-src http: 'unsafe-inline'" />
+
+  <title>AddSearch Search UI: Pre-compiled templates demo</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.8/dist/addsearch-js-client.min.js"></script>
+  <script src="../../dist/addsearch-search-ui.min.js"></script>
+
+  <!-- load Handlebars Runtime & pre-compiled templates  -->
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.runtime.min.js"></script>-->
+  <script src="templates/allPrecompiledTemplates.js"></script>
+
+  <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+
+
+<body>
+<header>
+  <section>
+    Search field and autocomplete:
+    <div>
+      <div id="searchfield-container"></div>
+    </div>
+  </section>
+</header>
+
+<main>
+  <section>
+    Search results
+    <div id="results-container"></div>
+  </section>
+
+  <section>
+    Pagination:
+    <div id="pagination-container"></div>
+  </section>
+</main>
+
+
+<script>
+  // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+
+  var client = new AddSearchClient('2c32bf3eb06b30af5f8208481aea3e8b');
+  client.addFacetField('category');
+
+  // Search UI
+  var conf = {
+    matchAllQuery: true
+  };
+  var searchui = new AddSearchUI(client, conf);
+
+  var precompiledTemplates = Handlebars.templates;
+
+  Handlebars.registerHelper('not', (arg1, arg2, options) => {
+    return ((arg1+'') !== (arg2+'')) ? options.fn(this) : options.inverse(this);
+  });
+  Handlebars.registerHelper('gt', (arg1, arg2, options) => {
+    return arg1 > arg2 ? options.fn(this) : options.inverse(this);
+  });
+  Handlebars.registerHelper('lt', (arg1, arg2, options) => {
+    return arg1 < arg2 ? options.fn(this) : options.inverse(this);
+  });
+  Handlebars.registerHelper('equals', (arg1, arg2, options) => {
+    return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
+  });
+
+  searchui.searchField({
+    containerId: 'searchfield-container',
+    precompiledTemplate: precompiledTemplates['searchField'],
+    autofocus: true,
+    placeholder: 'Keyword..',
+    button: 'Search',
+    searchAsYouType: false
+  });
+
+  Handlebars.registerPartial('numberOfResultsTemplate', precompiledTemplates['numberOfResults']);
+  Handlebars.registerPartial('searchResultImageTemplate', precompiledTemplates['searchResultImage']);
+  searchui.searchResults({
+    containerId: 'results-container',
+    precompiledTemplate: precompiledTemplates['searchResults'],
+    precompiledTemplateNoResults: precompiledTemplates['noResults'],
+  });
+
+
+  searchui.pagination({
+    containerId: 'pagination-container',
+    precompiledTemplate: precompiledTemplates['pagination']
+  });
+
+
+  searchui.start();
+</script>
+
+</body>
+</html>

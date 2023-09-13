@@ -13,6 +13,12 @@ import { observeStoreByKey } from '../../store';
 import { toggleFilter, setRangeFilter, registerFilter, clearSelected } from '../../actions/filters';
 import { sortBy } from '../../actions/sortby';
 import { attachEventListeners, validateContainer } from '../../util/dom';
+import PRECOMPILED_FILTERS_CHECKBOXGROUP_TEMPLATE from './precompile-templates/filters_checkboxgroup.handlebars';
+import PRECOMPILED_FILTERS_RADIOGROUP_TEMPLATE from './precompile-templates/filters_radiogroup.handlebars';
+import PRECOMPILED_FILTERS_TAGS_TEMPLATE from './precompile-templates/filters_tags.handlebars';
+import PRECOMPILED_FILTERS_TABS_TEMPLATE from './precompile-templates/filters_tabs.handlebars';
+import PRECOMPILED_FILTERS_SELECTLIST_TEMPLATE from './precompile-templates/filters_selectlist.handlebars';
+import PRECOMPILED_FILTERS_RANGE_TEMPLATE from './precompile-templates/filters_range.handlebars';
 
 export const NO_FILTER_NAME = 'nofilter';
 
@@ -71,21 +77,18 @@ export default class Filters {
 
 
     // Template
-    let template = null;
+    let templateDefault = null;
     if (this.conf.type === FILTER_TYPE.TABS) {
-      template = FILTERS_TABS_TEMPLATE;
+      templateDefault = PRECOMPILED_FILTERS_TABS_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.TAGS) {
-      template = FILTERS_TAGS_TEMPLATE;
+      templateDefault = PRECOMPILED_FILTERS_TAGS_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.CHECKBOX_GROUP) {
-      template = FILTERS_CHECKBOXGROUP_TEMPLATE;
+      templateDefault = PRECOMPILED_FILTERS_CHECKBOXGROUP_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.RADIO_GROUP) {
-      template = FILTERS_RADIOGROUP_TEMPLATE;
-    }
-    else if (this.conf.type === FILTER_TYPE.SELECT_LIST) {
-      template = FILTERS_SELECTLIST_TEMPLATE;
+      templateDefault = PRECOMPILED_FILTERS_RADIOGROUP_TEMPLATE;
     }
     else if (this.conf.type === FILTER_TYPE.RANGE) {
       if (state.activeRangeFilters[this.conf.field]) {
@@ -98,12 +101,21 @@ export default class Filters {
         data.fromPlaceholder = min === 'Infinity' ? '' : min;
         data.toPlaceholder = max === '-Infinity' ? '' : max;
       }
-      template = FILTERS_RANGE_TEMPLATE;
+      templateDefault = PRECOMPILED_FILTERS_RANGE_TEMPLATE;
+    } else {
+      templateDefault = PRECOMPILED_FILTERS_SELECTLIST_TEMPLATE;
     }
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(this.conf.template || template)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else if (this.conf.template) {
+      html = handlebars.compile(this.conf.template)(data);
+    } else {
+      html = templateDefault(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }

@@ -1,7 +1,8 @@
 /* global window */
 import './searchfield.scss';
-import { SEARCHFIELD_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
+import PRECOMPILED_SEARCHFIELD_TEMPLATE from './precompile-templates/searchfield.handlebars';
+
 import {
   autocompleteHide,
   autocompleteShow,
@@ -164,7 +165,13 @@ export default class SearchField {
     }
 
     // New field. Render
-    container.innerHTML = handlebars.compile(this.conf.template || SEARCHFIELD_TEMPLATE)(this.conf);
+    if (this.conf.precompiledTemplate) {
+      container.innerHTML = this.conf.precompiledTemplate(this.conf);
+    } else if (this.conf.template) {
+      container.innerHTML = handlebars.compile(this.conf.template)(this.conf);
+    } else {
+      container.innerHTML = PRECOMPILED_SEARCHFIELD_TEMPLATE(this.conf);
+    }
     this.field = container.querySelector('input');
 
     // Set value. Don't pass with data to handlebars to get the keyboard caret position right on all browsers

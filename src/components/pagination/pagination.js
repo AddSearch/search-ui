@@ -1,11 +1,12 @@
 import './pagination.scss';
 import handlebars from 'handlebars';
-import { PAGINATION_TEMPLATE } from './templates';
 import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
+import HandlebarsRuntime from 'handlebars/runtime';
+import PRECOMPILED_PAGINATION_TEMPLATE from './precompile-templates/pagination.handlebars';
 
 
 export default class Pagination {
@@ -39,7 +40,14 @@ export default class Pagination {
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(this.conf.template || PAGINATION_TEMPLATE)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else if (this.conf.template) {
+      html = handlebars.compile(this.conf.template)(data);
+    } else {
+      html = PRECOMPILED_PAGINATION_TEMPLATE(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }

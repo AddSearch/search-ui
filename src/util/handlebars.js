@@ -1,4 +1,5 @@
 import handlebars from 'handlebars';
+import HandlebarsRuntime from 'handlebars/runtime';
 import { convertMapKeysToLowerCase } from './objects';
 
 export function defaultCategorySelectionFunction(hit, categoryAliases) {
@@ -78,6 +79,7 @@ export function registerDefaultHelpers() {
 
 export function registerHelper(helperName, helperFunction) {
   handlebars.registerHelper(helperName, helperFunction);
+  HandlebarsRuntime.registerHelper(helperName, helperFunction);
 }
 export function registerPartial(partialName, partialTemplate) {
   handlebars.registerPartial(partialName, partialTemplate);

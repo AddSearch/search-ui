@@ -8,6 +8,7 @@ import { createFilterObject } from "../filters/filterstateobserver";
 import { clearFieldStats, setFieldStats } from "../../actions/fieldstats";
 import { roundDownToNearestTenth, roundUpToNearestTenth } from "../../util/maths";
 import { isEmpty } from "../../util/objects";
+import PRECOMPILED_RANGE_FACETS_TEMPLATE from './precompile-templates/rangefacets.handlebars';
 
 
 export default class RangeFacets {
@@ -143,7 +144,14 @@ export default class RangeFacets {
         conf: this.conf,
         rangeFacets: results.rangeFacets[this.conf.field]
       };
-      const html = handlebars.compile(this.conf.template || FACETS_TEMPLATE)(data);
+      let html;
+      if (this.conf.precompiledTemplate) {
+        html = this.conf.precompiledTemplate(data);
+      } else if (this.conf.template) {
+        html = handlebars.compile(this.conf.template)(data);
+      } else {
+        html = PRECOMPILED_RANGE_FACETS_TEMPLATE(data);
+      }
       container.innerHTML = html;
     } else {
       container.innerHTML = '';

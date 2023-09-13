@@ -1,0 +1,17 @@
+<div class="addsearch-searchresults">
+  {{#if resultcount}}
+    {{> numberOfResultsTemplate }}
+  {{/if}}
+
+  {{#each hits}}
+    <div class="hit{{#equals type "PROMOTED"}} promoted{{/equals}}">
+      <h3>
+        <a href="{{url}}" data-analytics-click="{{id}}">{{#if title}} {{title}} {{else}} {{removeTrailingQueriesFromUrl url}} {{/if}}</a>
+      </h3>
+      <div class="highlight">
+        {{> searchResultImageTemplate}}
+        {{{highlight}}}{{#not type "PROMOTED"}}&#8230;{{/not}}
+      </div>
+    </div>
+  {{/each}}
+</div>

@@ -6,6 +6,7 @@ import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
+import PRECOMPILED_LOAD_MORE_TEMPLATE from './precompile-templates/loadmore.handlebars';
 
 
 export default class LoadMore {
@@ -41,7 +42,14 @@ export default class LoadMore {
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(this.conf.template || LOAD_MORE_TEMPLATE)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else if (this.conf.template) {
+      html = handlebars.compile(this.conf.template)(data);
+    } else {
+      html = PRECOMPILED_LOAD_MORE_TEMPLATE(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }

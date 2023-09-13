@@ -2,10 +2,11 @@ import './hierarchicalfacets.scss';
 import handlebars from 'handlebars';
 import { FACETS_TEMPLATE, SUB_HIERARCHICAL_FACETS_TEMPLATE } from './templates';
 import { toggleHierarchicalFacetFilter } from '../../actions/filters';
-import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import {createFilterObject} from "../filters/filterstateobserver";
+import PRECOMPILED_HIERARCHICAL_FACETS_TEMPLATE from './precompile-templates/hierarchical_facets.handlebars';
+import { registerHelper } from "../../util/handlebars";
 
 
 export default class HierarchicalFacets {
@@ -41,7 +42,7 @@ export default class HierarchicalFacets {
 
     handlebars.registerPartial('subHierarchicalFacetsTemplate',
       this.conf.template_subHierarchicalFacetsTemplate || SUB_HIERARCHICAL_FACETS_TEMPLATE);
-    handlebars.registerHelper('validateOpenState', function(value) {
+    registerHelper('validateOpenState', function(value) {
       return reduxStore.getState().filters.openedHierarchicalFacetGroups.indexOf(value) === -1;
     });
 
@@ -118,7 +119,14 @@ export default class HierarchicalFacets {
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(this.conf.template || FACETS_TEMPLATE)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else if (this.conf.template) {
+      html = handlebars.compile(this.conf.template)(data);
+    } else {
+      html = PRECOMPILED_HIERARCHICAL_FACETS_TEMPLATE(data);
+    }
     if (this.renderedHtml === html && activeFacets === this.renderedActiveFacets) {
       return;
     }

@@ -7,6 +7,8 @@ import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
+import PRECOMPILED_SORTBY_RADIOGROUP_TEMPLATE from './precompile-templates/sortby_radiogroup.handlebars';
+import PRECOMPILED_SORTBY_SELECT_TEMPLATE from './precompile-templates/sortby_select.handlebars';
 
 
 export default class SortBy {
@@ -56,15 +58,11 @@ export default class SortBy {
     const { field, order } = sortbyState;
 
     // Template
-    let template = null;
-    if (this.conf.template) {
-      template = this.conf.template;
-    }
-    else if (this.conf.type === SORTBY_TYPE.RADIO_GROUP) {
-      template = SORTBY_RADIOGROUP_TEMPLATE;
-    }
-    else {
-      template = SORTBY_SELECT_TEMPLATE;
+    let templateDefault = null;
+    if (this.conf.type === SORTBY_TYPE.RADIO_GROUP) {
+      templateDefault = PRECOMPILED_SORTBY_RADIOGROUP_TEMPLATE;
+    } else {
+      templateDefault = PRECOMPILED_SORTBY_SELECT_TEMPLATE;
     }
 
     // Data
@@ -80,7 +78,14 @@ export default class SortBy {
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(template)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else if (this.conf.template) {
+      html = handlebars.compile(this.conf.template)(data);
+    } else {
+      html = templateDefault(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }

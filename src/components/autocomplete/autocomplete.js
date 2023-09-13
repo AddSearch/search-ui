@@ -1,5 +1,4 @@
 import './autocomplete.scss';
-import { AUTOCOMPLETE_TEMPLATE } from './templates';
 import handlebars from 'handlebars';
 import { AUTOCOMPLETE_TYPE } from './index';
 import {
@@ -16,6 +15,8 @@ import { validateContainer } from '../../util/dom';
 import { addClickTrackers, sendAutocompleteStats } from '../../util/analytics';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
+import PRECOMPILED_AUTOCOMPLETE_TEMPLATE from './precompile-templates/autocomplete.handlebars';
+import { registerHelper } from '../../util/handlebars';
 
 
 export default class Autocomplete {
@@ -31,7 +32,7 @@ export default class Autocomplete {
     }
 
     const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
-    handlebars.registerHelper('selectSearchResultCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
+    registerHelper('selectSearchResultCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
 
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'autocomplete', (state) => this.autocompleteResultsChanged(state));
@@ -151,7 +152,14 @@ export default class Autocomplete {
 
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(this.conf.template || AUTOCOMPLETE_TEMPLATE)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else if (this.conf.template) {
+      html = handlebars.compile(this.conf.template)(data);
+    } else {
+      html = PRECOMPILED_AUTOCOMPLETE_TEMPLATE(data);
+    }
     if (this.renderedHtml === html) {
       return;
     }
