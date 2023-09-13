@@ -404,6 +404,7 @@ Settings that can be passed to the ```facets``` function:
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML element that will act as a container for facets |
 | fields | String | n/a | Define a list of custom fields in hierarchical order (top level facet is placed first). |
+| sortOrder | String | n/a | Define a sorting method: by counts of facets (COUNT_DESC_NAME_ASC) or by alphabetical order (NAME_ASC). |
 | template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/hierarchicalfacets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
