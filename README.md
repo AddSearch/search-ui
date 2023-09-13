@@ -563,7 +563,7 @@ Create a file name `example.handlebars` containing your template:
 ```
 Run the precompiler on your template file:
 ```js
-  handlebars example.handlebars -f example.precompiled.js
+  handlebars searchfield.handlebars -f searchfield.precompiled.js
 ```
 Or precompile the whole directory
 ```js
