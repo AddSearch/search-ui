@@ -573,9 +573,8 @@ Or precompile the whole directory
 `-c` flag creates a `require` statement for Handlebars-runtime in your precompiled template file. 
 Use the precompiled template inside a component, for example:
 ```js
-  // Handlebars must be available globally, by loading it via CDN
-  // Or installing it through npm package
-  // for instance: import Handlebars from 'handlebars/runtime';
+  // Handlebars are exposed globally when loading Search UI Library
+  // You can also install handlebars runtime package and import it
   // Below code will use your precompiled template of the file name "searchfield.handlebars"
 
   var precompiledTemplates = Handlebars.templates;
@@ -596,7 +595,7 @@ Read more at [handlebarsjs precompiling templates](https://handlebarsjs.com/inst
 See our [example](https://demo.addsearch.com/search-ui-examples/precompiledtemplates/).
 
 Notes:
-- Your pre-compiled templates requires Handlebars Runtime to be loaded on your site: [Handlebars's CDN](https://cdnjs.com/libraries/handlebars.js)
+- Handlebars are exposed globally, so you can access it with `Handlebars` variable.
 - All your pre-compiled templates can be accessed with `Handlebars.templates` after loading the template js function on your site.
 - Custom helpers are registered with `Handlebars.registerHelper(helperName, helperFunction)`
 - Custom partials are registered with `Handlebars.registerPartial(partialName, precompiledTemplates);`
