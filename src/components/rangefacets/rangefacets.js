@@ -1,13 +1,16 @@
 import './rangefacets.scss';
 import handlebars from 'handlebars';
-import { FACETS_TEMPLATE } from './templates';
-import { toggleRangeFacetFilter} from '../../actions/filters';
+import { FACETS_TEMPLATE, RANGE_SLIDER_TEMPLATE_1, RANGE_SLIDER_TEMPLATE_2 } from './templates';
+import { setActiveRangeFacets, toggleRangeFacetFilter } from '../../actions/filters';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import { createFilterObject } from "../filters/filterstateobserver";
 import { clearFieldStats, setFieldStats } from "../../actions/fieldstats";
 import { roundDownToNearestTenth, roundUpToNearestTenth } from "../../util/maths";
 import { isEmpty } from "../../util/objects";
+import { RANGE_FACETS_TYPE } from './index';
+import OmRangeSlider from "../../util/sliders";
+import DualRangeSlider from "../../util/dual_range_slider";
 
 
 export default class RangeFacets {
@@ -19,11 +22,24 @@ export default class RangeFacets {
     this.maxNumberOfRangeBuckets = this.conf.maxNumberOfRangeBuckets || 5;
     this.ranges = [];
 
+    this.RANGE_SLIDER_TEMPLATE = conf.sliderType === 1 ? RANGE_SLIDER_TEMPLATE_1 : RANGE_SLIDER_TEMPLATE_2;
+
     var IGNORE_RENDERING_ON_REQUEST_BY = [
       'component.loadMore',
       'component.pagination',
       'component.sortby'
     ];
+
+    // todo: remove this helper
+    handlebars.registerHelper('alterRangeFacetsResults', function (results) {
+      if (results) {
+        return results;
+      }
+    });
+
+    if (this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
+      this.maxNumberOfRangeBuckets = 1;
+    }
 
     function _hasActiveFacet() {
       var activeRangeFacets = reduxStore.getState().filters.activeRangeFacets[conf.field];
@@ -73,11 +89,19 @@ export default class RangeFacets {
         }
 
         if (!search.results.hits || !search.results.hits.length) {
-          this.render();
+          this.renderClear();
           return;
         }
 
-        if (isActive) {
+        if (isActive && this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
+          var activeSliderRangeArray = this.getActiveRangeFacets(this.conf.field)[0].split('-');
+          this.reduxStore.dispatch(setFieldStats({
+            [this.conf.field]: {
+              min: activeSliderRangeArray[0],
+              max: activeSliderRangeArray[1]
+            }
+          }));
+        } else if (isActive) {
           const filterObjectCustom = createFilterObject(
             this.reduxStore.getState().filters,
             this.reduxStore.getState().configuration.baseFilters,
@@ -102,6 +126,11 @@ export default class RangeFacets {
           this.ranges = _buildRanges(fieldStats.min, fieldStats.max, this.maxNumberOfRangeBuckets);
         } else {
           this.ranges = _buildActiveRanges(this.reduxStore.getState().filters.activeRangeFacets[this.conf.field]);
+        }
+
+        if (this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
+          this.renderRangeSlider(state);
+          return;
         }
 
         var rangeFacetsOptions = {
@@ -131,6 +160,16 @@ export default class RangeFacets {
     this.reduxStore.dispatch(toggleRangeFacetFilter(this.conf.field, values, key, true));
   }
 
+  setRangeSlider(activeRange) {
+    this.reduxStore.dispatch(setActiveRangeFacets(
+      buildRangeFacetsJson(this.conf.field, activeRange[0], activeRange[1]),
+      true,
+      this.conf.field
+      )
+    );
+  }
+
+
 
   render(results) {
     this.reduxStore.dispatch(clearFieldStats());
@@ -149,6 +188,50 @@ export default class RangeFacets {
       container.innerHTML = '';
     }
     this.handleCheckboxStates(true);
+  }
+
+  renderClear() {
+    this.reduxStore.dispatch(clearFieldStats());
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = '';
+  }
+
+  renderRangeSlider(results) {
+    const _this = this;
+    const container = document.getElementById(this.conf.containerId);
+    const data = {
+      conf: this.conf,
+    };
+
+    const activeRangeFacets = this.getActiveRangeFacets(this.conf.field);
+    data.sliderConfig = Object.assign({},
+      getSliderRange(results, this.conf.field),
+      getSelectedSliderRange(activeRangeFacets)
+    );
+    window.console.log('+++ render', data);
+    container.innerHTML = handlebars.compile(this.conf.template || this.RANGE_SLIDER_TEMPLATE)(data);
+
+    if (this.conf.sliderType === 1) {
+      OmRangeSlider.init(
+        {},
+        function (data) {
+          if (data.activeRange.length) {
+            _this.setRangeSlider(data.activeRange);
+          }
+        },
+        this.conf.containerId
+      );
+    } else {
+      DualRangeSlider.init(
+        this.conf.containerId,
+        function (data) {
+          // window.console.log('+++ callback', data);
+          if (data.activeRange.length) {
+            _this.setRangeSlider(data.activeRange);
+          }
+        }
+      );
+    }
 
   }
 
@@ -156,7 +239,7 @@ export default class RangeFacets {
     const container = document.getElementById(this.conf.containerId);
     const activeRangeFacets = this.getActiveRangeFacets(this.conf.field);
     const options = container.getElementsByTagName('input');
-    for (let i=0; i<options.length; i++) {
+    for (let i = 0; i < options.length; i++) {
       let checkbox = options[i];
       checkbox.checked = activeRangeFacets.indexOf(checkbox.value) !== -1;
 
@@ -172,7 +255,6 @@ export default class RangeFacets {
     }
   }
 
-
   getActiveRangeFacets(facetField) {
     // Read active facets from redux state
     let activeRangeFacets = [];
@@ -183,5 +265,50 @@ export default class RangeFacets {
       }
     }
     return activeRangeFacets;
+  }
+}
+
+export function getSliderRange(data, field) {
+  if (!data.fieldStats && !data.fieldStats[field]) {
+    return {min: null, max: null};
+  }
+
+  return {
+    min: data.fieldStats[field].min,
+    max: data.fieldStats[field].max
+  };
+}
+
+export function getSelectedSliderRange(selectedFacetsGroup) {
+  let min;
+  let max;
+
+  selectedFacetsGroup.forEach(strGroup => {
+    const arrayGroup = strGroup.split('-').map(Number);
+    const start = arrayGroup[0];
+    const end = arrayGroup[1];
+    if (min === undefined || start < min) {
+      min = start;
+    }
+    if (max === undefined || end > max) {
+      max = end;
+    }
+  });
+
+  return {
+    start: min,
+    end: max
+  };
+}
+
+export function buildRangeFacetsJson(field, valueStart, valueEnd) {
+  const facetKey = `${valueStart}-${valueEnd}`;
+  return {
+    [field]: {
+      [facetKey]: {
+        "gte": valueStart,
+        "lt": valueEnd
+      }
+    }
   }
 }

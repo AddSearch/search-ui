@@ -5,3 +5,4 @@ module.exports.FILTER_TYPE = require("./src/components/filters/index.js").FILTER
 module.exports.SORTBY_TYPE = require("./src/components/sortby/index.js").SORTBY_TYPE;
 module.exports.LOAD_MORE_TYPE = require("./src/components/loadmore/index.js").LOAD_MORE_TYPE;
 module.exports.RECOMMENDATION_TYPE = require("./src/components/recommendations/index.js").RECOMMENDATION_TYPE;
+module.exports.RANGE_FACETS_TYPE = require("./src/components/rangefacets/index.js").RANGE_FACETS_TYPE;

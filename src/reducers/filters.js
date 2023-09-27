@@ -201,7 +201,8 @@ export default function filters(state = initialState, action) {
     case SET_ACTIVE_RANGE_FACETS:
       return Object.assign({}, state, {
         activeRangeFacets: action.json || {},
-        refreshSearch: false
+        refreshSearch: !!action.refreshSearch,
+        targetFacetGroup: action.field
       });
 
 
