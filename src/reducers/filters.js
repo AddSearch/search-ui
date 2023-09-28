@@ -261,7 +261,8 @@ export default function filters(state = initialState, action) {
       else {
         nextActiveRangeFacets[action.field][action.key] = {
           gte: action.values.min,
-          lt: action.values.max
+          lte: action.values.max,
+          key: action.key
         };
       }
       nextActiveRangeFacets['v'] = !nextActiveRangeFacets['v'] ? 1 : nextActiveRangeFacets['v']+1;

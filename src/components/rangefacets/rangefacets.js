@@ -72,7 +72,7 @@ export default class RangeFacets {
       for (const key in activeRangeFacets) {
         ranges.push({
           from: activeRangeFacets[key].gte,
-          to: activeRangeFacets[key].lt
+          to: activeRangeFacets[key].lte
         });
       }
       return ranges;
@@ -95,13 +95,13 @@ export default class RangeFacets {
         }
 
         if (isActive && this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
-          var activeSliderRangeArray = this.getActiveRangeFacets(this.conf.field)[0].split('-');
+          var activeSliderRange =  this.getActiveRangeFacets(this.conf.field)[0];
           this.reduxStore.dispatch(setFieldStats({
             [this.conf.field]: {
-              min: activeSliderRangeArray[0],
-              max: activeSliderRangeArray[1]
+              min: activeSliderRange.gte,
+              max: activeSliderRange.lte
             }
-          }));
+          }, this.conf.field));
         } else if (isActive) {
           const filterObjectCustom = createFilterObject(
             this.reduxStore.getState().filters,
@@ -109,10 +109,10 @@ export default class RangeFacets {
             this.conf.field
           );
           this.client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
-            this.reduxStore.dispatch(setFieldStats(res.fieldStats));
+            this.reduxStore.dispatch(setFieldStats(res.fieldStats, this.conf.field));
           });
         } else {
-          this.reduxStore.dispatch(setFieldStats(search.results.fieldStats));
+          this.reduxStore.dispatch(setFieldStats(search.results.fieldStats, this.conf.field));
         }
 
       });
@@ -120,6 +120,10 @@ export default class RangeFacets {
       observeStoreByKey(this.reduxStore, 'fieldstats', (state) => {
         var fieldStats = state.fieldStats[this.conf.field];
         if (!fieldStats) {
+          return;
+        }
+
+        if (state.callBy !== this.conf.field) {
           return;
         }
 
@@ -222,7 +226,8 @@ export default class RangeFacets {
         styles: {
           trackColor: this.conf.styles.trackColor,
           progressColor: this.conf.styles.progressColor
-        }
+        },
+        step: this.conf.step || 1
       }
     );
 
@@ -234,7 +239,9 @@ export default class RangeFacets {
     const options = container.getElementsByTagName('input');
     for (let i = 0; i < options.length; i++) {
       let checkbox = options[i];
-      checkbox.checked = activeRangeFacets.indexOf(checkbox.value) !== -1;
+      checkbox.checked = !!activeRangeFacets.find((facet) => {
+        return facet.key === checkbox.value;
+      });
 
       if (attachEvent) {
         checkbox.onchange = (e) => {
@@ -253,8 +260,8 @@ export default class RangeFacets {
     let activeRangeFacets = [];
     const activeRangeFacetState = this.reduxStore.getState().filters.activeRangeFacets;
     if (activeRangeFacetState[facetField]) {
-      for (let value in activeRangeFacetState[facetField]) {
-        activeRangeFacets.push(value);
+      for (let key in activeRangeFacetState[facetField]) {
+        activeRangeFacets.push(activeRangeFacetState[facetField][key]);
       }
     }
     return activeRangeFacets;
@@ -276,10 +283,9 @@ export function getSelectedSliderRange(selectedFacetsGroup) {
   let min;
   let max;
 
-  selectedFacetsGroup.forEach(strGroup => {
-    const arrayGroup = strGroup.split('-').map(Number);
-    const start = arrayGroup[0];
-    const end = arrayGroup[1];
+  selectedFacetsGroup.forEach(range => {
+    const start = range.gte;
+    const end = range.lte;
     if (min === undefined || start < min) {
       min = start;
     }
@@ -300,7 +306,7 @@ export function buildRangeFacetsJson(field, valueStart, valueEnd) {
     [field]: {
       [facetKey]: {
         "gte": valueStart,
-        "lt": valueEnd
+        "lte": valueEnd
       }
     }
   }

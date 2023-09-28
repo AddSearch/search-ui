@@ -63,6 +63,11 @@
     <div id="range-slider-container"></div>
   </section>
 
+  <section>
+    Rating slider:
+    <div id="rating-slider-container"></div>
+  </section>
+
 
 </aside>
 
@@ -207,6 +212,14 @@
       trackColor: 'cyan',
       progressColor: '#f23d5f'
     }
+  });
+
+  client.addStatsField('custom_fields.rating');
+  searchui.rangeFacets({
+    containerId: 'rating-slider-container',
+    field: 'custom_fields.rating',
+    type: AddSearchUI.RANGE_FACETS_TYPE.SLIDER,
+    step: 0.1
   });
 
   searchui.loadMore({

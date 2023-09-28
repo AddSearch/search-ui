@@ -26,10 +26,10 @@ export const RANGE_SLIDER_TEMPLATE = `
   
   <div class="adds-range-slider-display">
     <span>
-      <span data-id="adds-slider-display-start"></span><span> eur</span>
+      <span data-id="adds-slider-display-start"></span><span></span>
     </span>
     <span>
-      <span data-id="adds-slider-display-end"></span><span> eur</span>
+      <span data-id="adds-slider-display-end"></span><span></span>
     </span>
   </div>
 </div>

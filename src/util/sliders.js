@@ -62,22 +62,23 @@ function UiRangeSlider() {
   }
 
   function setToggleAccessible(currentTarget) {
+    const fromSlider = document.querySelector('#' + sliderId + ' [data-id=adds-slider-control-from]');
     const toSlider = document.querySelector('#' + sliderId + ' [data-id=adds-slider-control-to]');
-    if (Number(currentTarget.value) <= 0) {
+    if (Number(currentTarget.value) <= fromSlider.value) {
       toSlider.style.zIndex = "2";
     } else {
       toSlider.style.zIndex = "0";
     }
   }
 
-  function initVisuals(values) {
+  function initVisuals(values, step) {
     const rangeSliderContainer = document.querySelector('#' + sliderId + ' .adds-range-slider-container');
     const [min, max, start, end] = values;
 
     const template = `
       <div class="adds-range-slider-control">
-         <input data-id="adds-slider-control-from" type="range" value="${start || min}" min="${min}" max="${max}"/>
-         <input data-id="adds-slider-control-to" type="range" value="${end || max}" min="${min}" max="${max}"/>
+         <input data-id="adds-slider-control-from" type="range" value="${start || min}" min="${min}" max="${max}" step="${step}" />
+         <input data-id="adds-slider-control-to" type="range" value="${end || max}" min="${min}" max="${max}" step="${step}" />
       </div>
     `;
     rangeSliderContainer.innerHTML = template;
@@ -98,7 +99,7 @@ function UiRangeSlider() {
     sliderId = containerId;
 
     const [min, max, start, end] = getSliderValue();
-    initVisuals([min, max, start, end]);
+    initVisuals([min, max, start, end], settings.step);
 
     const rangeStyles = settings.styles;
     const fromSlider = document.querySelector('#' + containerId + ' [data-id=adds-slider-control-from]');
