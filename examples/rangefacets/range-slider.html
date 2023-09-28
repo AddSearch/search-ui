@@ -83,41 +83,9 @@
   </section>
 </main>
 
-
-<script id="search-results-template" type="text/x-handlebars-template">
-  <div class="addsearch-searchresults">
-    {{#if resultcount}}
-      {{> numberOfResultsTemplate }}
-    {{/if}}
-
-    {{#each hits}}
-      <div class="item">
-            <span class="main-image">
-              testzzz {{custom_fields.category}}
-              <img src="{{custom_fields.image_url}}" alt="{{custom_fields.strMeal}}"/>
-            </span>
-        <span>
-              <h3>
-                {{custom_fields.strMeal}}
-              </h3>
-              Price: {{formatPrice custom_fields.price "en-US" "USD"}}<br/>
-              Calories: {{custom_fields.cal}}<br/>
-
-              Special diets:
-          {{#each custom_fields.diets}}
-            <b>{{this}}</b>
-          {{/each}}
-          {{#unless custom_fields.diets}}n/a{{/unless}}
-          </span>
-      </div>
-    {{/each}}
-  </div>
-</script>
-
-
 <script>
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
-  var client = new AddSearchClient('3ae487bda4e2de3b198a68a22d5c09bd');
+  var client = new AddSearchClient('4f4ddc74e528f1546e39909b77133619');
 
 
   // Search UI
@@ -157,17 +125,12 @@
             </span>
             <span>
               <h3>
-               {{custom_fields.strMeal}}
+               {{custom_fields.title}}
               </h3>
-              Price: {{formatPrice custom_fields.price "en-US" "USD"}}<br />
-              Calories: {{custom_fields.cal}}<br />
-
-              Special diets:
-              {{#each custom_fields.diets}}
-                <b>{{this}}</b>
-              {{/each}}
-              {{#unless custom_fields.diets}}n/a{{/unless}}
-          </span>
+              <div>Price: {{custom_fields.price}} eur</div>
+              <div>Rating: {{custom_fields.rating}}</div>
+              <div>Random: {{custom_fields.random}}</div>
+            </span>
     </div>
     {{/each}}
   </div>
@@ -175,7 +138,6 @@
 
   searchui.searchResults({
     containerId: 'results-container',
-    // template: document.querySelector('#search-results-template').innerHTML,
     template: searchResultsTemplate
   });
 
@@ -211,37 +173,40 @@
     advancedSticky: true
   });
 
-  // searchui.filters({
-  //   containerId: 'area-container',
-  //   type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
-  //   options: {
-  //     american: {
-  //       label: 'American',
-  //       filter: {"custom_fields.strArea": "American"}
-  //     },
-  //     british: {
-  //       label: 'British',
-  //       filter: {"custom_fields.strArea": "British"}
-  //     },
-  //     french: {
-  //       label: 'French',
-  //       filter: {"custom_fields.strArea": "French"}
-  //     }
-  //   }
-  // });
+  searchui.filters({
+    containerId: 'area-container',
+    type: AddSearchUI.FILTER_TYPE.RADIO_GROUP,
+    options: {
+      american: {
+        label: 'Category 1',
+        filter: {"custom_fields.category": "category_1"}
+      },
+      british: {
+        label: 'Category 2',
+        filter: {"custom_fields.category": "category_2"}
+      },
+      french: {
+        label: 'Category 3',
+        filter: {"custom_fields.category": "category_3"}
+      }
+    }
+  });
 
   client.addStatsField('custom_fields.price');
-  // searchui.rangeFacets({
-  //   containerId: 'range-facets-container',
-  //   field: 'custom_fields.price',
-  //   maxNumberOfRangeBuckets: 7
-  // });
+  searchui.rangeFacets({
+    containerId: 'range-facets-container',
+    field: 'custom_fields.price',
+    maxNumberOfRangeBuckets: 7
+  });
 
   searchui.rangeFacets({
     containerId: 'range-slider-container',
     field: 'custom_fields.price',
     type: AddSearchUI.RANGE_FACETS_TYPE.SLIDER,
-    sliderType: 2
+    styles: {
+      trackColor: 'cyan',
+      progressColor: '#f23d5f'
+    }
   });
 
   searchui.loadMore({

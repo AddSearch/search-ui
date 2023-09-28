@@ -1,6 +1,6 @@
 import './rangefacets.scss';
 import handlebars from 'handlebars';
-import { FACETS_TEMPLATE, RANGE_SLIDER_TEMPLATE_1, RANGE_SLIDER_TEMPLATE_2 } from './templates';
+import { FACETS_TEMPLATE, RANGE_SLIDER_TEMPLATE } from './templates';
 import { setActiveRangeFacets, toggleRangeFacetFilter } from '../../actions/filters';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
@@ -9,8 +9,7 @@ import { clearFieldStats, setFieldStats } from "../../actions/fieldstats";
 import { roundDownToNearestTenth, roundUpToNearestTenth } from "../../util/maths";
 import { isEmpty } from "../../util/objects";
 import { RANGE_FACETS_TYPE } from './index';
-import OmRangeSlider from "../../util/sliders";
-import DualRangeSlider from "../../util/dual_range_slider";
+import UiRangeSlider from "../../util/sliders";
 
 
 export default class RangeFacets {
@@ -21,8 +20,6 @@ export default class RangeFacets {
     this.conf = conf;
     this.maxNumberOfRangeBuckets = this.conf.maxNumberOfRangeBuckets || 5;
     this.ranges = [];
-
-    this.RANGE_SLIDER_TEMPLATE = conf.sliderType === 1 ? RANGE_SLIDER_TEMPLATE_1 : RANGE_SLIDER_TEMPLATE_2;
 
     var IGNORE_RENDERING_ON_REQUEST_BY = [
       'component.loadMore',
@@ -39,6 +36,10 @@ export default class RangeFacets {
 
     if (this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
       this.maxNumberOfRangeBuckets = 1;
+      this.conf.styles = this.conf.styles || {
+        trackColor: '#C6C6C6',
+        progressColor: '#25daa5'
+      };
     }
 
     function _hasActiveFacet() {
@@ -208,30 +209,22 @@ export default class RangeFacets {
       getSliderRange(results, this.conf.field),
       getSelectedSliderRange(activeRangeFacets)
     );
-    window.console.log('+++ render', data);
-    container.innerHTML = handlebars.compile(this.conf.template || this.RANGE_SLIDER_TEMPLATE)(data);
+    container.innerHTML = handlebars.compile(this.conf.template || RANGE_SLIDER_TEMPLATE)(data);
 
-    if (this.conf.sliderType === 1) {
-      OmRangeSlider.init(
-        {},
-        function (data) {
-          if (data.activeRange.length) {
-            _this.setRangeSlider(data.activeRange);
-          }
-        },
-        this.conf.containerId
-      );
-    } else {
-      DualRangeSlider.init(
-        this.conf.containerId,
-        function (data) {
-          // window.console.log('+++ callback', data);
-          if (data.activeRange.length) {
-            _this.setRangeSlider(data.activeRange);
-          }
+    UiRangeSlider.init(
+      this.conf.containerId,
+      function (data) {
+        if (data.activeRange.length) {
+          _this.setRangeSlider(data.activeRange);
         }
-      );
-    }
+      },
+      {
+        styles: {
+          trackColor: this.conf.styles.trackColor,
+          progressColor: this.conf.styles.progressColor
+        }
+      }
+    );
 
   }
 
