@@ -14,3 +14,23 @@ export const FACETS_TEMPLATE = `
     </ul>
   </div>
 `;
+
+export const RANGE_SLIDER_TEMPLATE = `
+<div class="addsearch-range-slider">
+  <div class="adds-range-slider-container" 
+       data-slider-min="{{sliderConfig.min}}" 
+       data-slider-max="{{sliderConfig.max}}" 
+       data-slider-start="{{sliderConfig.start}}" 
+       data-slider-end="{{sliderConfig.end}}">
+  </div>
+  
+  <div class="adds-range-slider-display">
+    <span>
+      <span data-id="adds-slider-display-start"></span><span></span>
+    </span>
+    <span>
+      <span data-id="adds-slider-display-end"></span><span></span>
+    </span>
+  </div>
+</div>
+`;

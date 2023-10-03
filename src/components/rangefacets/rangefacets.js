@@ -1,13 +1,15 @@
 import './rangefacets.scss';
 import handlebars from 'handlebars';
-import { FACETS_TEMPLATE } from './templates';
-import { toggleRangeFacetFilter} from '../../actions/filters';
+import { FACETS_TEMPLATE, RANGE_SLIDER_TEMPLATE } from './templates';
+import { setActiveRangeFacets, toggleRangeFacetFilter } from '../../actions/filters';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import { createFilterObject } from "../filters/filterstateobserver";
 import { clearFieldStats, setFieldStats } from "../../actions/fieldstats";
 import { roundDownToNearestTenth, roundUpToNearestTenth } from "../../util/maths";
 import { isEmpty } from "../../util/objects";
+import { RANGE_FACETS_TYPE } from './index';
+import UiRangeSlider from "../../util/sliders";
 
 
 export default class RangeFacets {
@@ -24,6 +26,21 @@ export default class RangeFacets {
       'component.pagination',
       'component.sortby'
     ];
+
+    // todo: remove this helper
+    handlebars.registerHelper('alterRangeFacetsResults', function (results) {
+      if (results) {
+        return results;
+      }
+    });
+
+    if (this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
+      this.maxNumberOfRangeBuckets = 1;
+      this.conf.styles = this.conf.styles || {
+        trackColor: '#C6C6C6',
+        progressColor: '#25daa5'
+      };
+    }
 
     function _hasActiveFacet() {
       var activeRangeFacets = reduxStore.getState().filters.activeRangeFacets[conf.field];
@@ -55,7 +72,7 @@ export default class RangeFacets {
       for (const key in activeRangeFacets) {
         ranges.push({
           from: activeRangeFacets[key].gte,
-          to: activeRangeFacets[key].lt
+          to: activeRangeFacets[key].lte
         });
       }
       return ranges;
@@ -73,21 +90,29 @@ export default class RangeFacets {
         }
 
         if (!search.results.hits || !search.results.hits.length) {
-          this.render();
+          this.renderClear();
           return;
         }
 
-        if (isActive) {
+        if (isActive && this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
+          var activeSliderRange =  this.getActiveRangeFacets(this.conf.field)[0];
+          this.reduxStore.dispatch(setFieldStats({
+            [this.conf.field]: {
+              min: activeSliderRange.gte,
+              max: activeSliderRange.lte
+            }
+          }, this.conf.field));
+        } else if (isActive) {
           const filterObjectCustom = createFilterObject(
             this.reduxStore.getState().filters,
             this.reduxStore.getState().configuration.baseFilters,
             this.conf.field
           );
           this.client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
-            this.reduxStore.dispatch(setFieldStats(res.fieldStats));
+            this.reduxStore.dispatch(setFieldStats(res.fieldStats, this.conf.field));
           });
         } else {
-          this.reduxStore.dispatch(setFieldStats(search.results.fieldStats));
+          this.reduxStore.dispatch(setFieldStats(search.results.fieldStats, this.conf.field));
         }
 
       });
@@ -98,10 +123,19 @@ export default class RangeFacets {
           return;
         }
 
+        if (state.callBy !== this.conf.field) {
+          return;
+        }
+
         if (!_hasActiveFacet()) {
           this.ranges = _buildRanges(fieldStats.min, fieldStats.max, this.maxNumberOfRangeBuckets);
         } else {
           this.ranges = _buildActiveRanges(this.reduxStore.getState().filters.activeRangeFacets[this.conf.field]);
+        }
+
+        if (this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
+          this.renderRangeSlider(state);
+          return;
         }
 
         var rangeFacetsOptions = {
@@ -131,6 +165,16 @@ export default class RangeFacets {
     this.reduxStore.dispatch(toggleRangeFacetFilter(this.conf.field, values, key, true));
   }
 
+  setRangeSlider(activeRange) {
+    this.reduxStore.dispatch(setActiveRangeFacets(
+      buildRangeFacetsJson(this.conf.field, activeRange[0], activeRange[1]),
+      true,
+      this.conf.field
+      )
+    );
+  }
+
+
 
   render(results) {
     this.reduxStore.dispatch(clearFieldStats());
@@ -149,6 +193,43 @@ export default class RangeFacets {
       container.innerHTML = '';
     }
     this.handleCheckboxStates(true);
+  }
+
+  renderClear() {
+    this.reduxStore.dispatch(clearFieldStats());
+    const container = document.getElementById(this.conf.containerId);
+    container.innerHTML = '';
+  }
+
+  renderRangeSlider(results) {
+    const _this = this;
+    const container = document.getElementById(this.conf.containerId);
+    const data = {
+      conf: this.conf,
+    };
+
+    const activeRangeFacets = this.getActiveRangeFacets(this.conf.field);
+    data.sliderConfig = Object.assign({},
+      getSliderRange(results, this.conf.field),
+      getSelectedSliderRange(activeRangeFacets)
+    );
+    container.innerHTML = handlebars.compile(this.conf.template || RANGE_SLIDER_TEMPLATE)(data);
+
+    UiRangeSlider.init(
+      this.conf.containerId,
+      function (data) {
+        if (data.activeRange.length) {
+          _this.setRangeSlider(data.activeRange);
+        }
+      },
+      {
+        styles: {
+          trackColor: this.conf.styles.trackColor,
+          progressColor: this.conf.styles.progressColor
+        },
+        step: this.conf.step || 1
+      }
+    );
 
   }
 
@@ -156,9 +237,11 @@ export default class RangeFacets {
     const container = document.getElementById(this.conf.containerId);
     const activeRangeFacets = this.getActiveRangeFacets(this.conf.field);
     const options = container.getElementsByTagName('input');
-    for (let i=0; i<options.length; i++) {
+    for (let i = 0; i < options.length; i++) {
       let checkbox = options[i];
-      checkbox.checked = activeRangeFacets.indexOf(checkbox.value) !== -1;
+      checkbox.checked = !!activeRangeFacets.find((facet) => {
+        return facet.key === checkbox.value;
+      });
 
       if (attachEvent) {
         checkbox.onchange = (e) => {
@@ -172,16 +255,59 @@ export default class RangeFacets {
     }
   }
 
-
   getActiveRangeFacets(facetField) {
     // Read active facets from redux state
     let activeRangeFacets = [];
     const activeRangeFacetState = this.reduxStore.getState().filters.activeRangeFacets;
     if (activeRangeFacetState[facetField]) {
-      for (let value in activeRangeFacetState[facetField]) {
-        activeRangeFacets.push(value);
+      for (let key in activeRangeFacetState[facetField]) {
+        activeRangeFacets.push(activeRangeFacetState[facetField][key]);
       }
     }
     return activeRangeFacets;
+  }
+}
+
+export function getSliderRange(data, field) {
+  if (!data.fieldStats && !data.fieldStats[field]) {
+    return {min: null, max: null};
+  }
+
+  return {
+    min: data.fieldStats[field].min,
+    max: data.fieldStats[field].max
+  };
+}
+
+export function getSelectedSliderRange(selectedFacetsGroup) {
+  let min;
+  let max;
+
+  selectedFacetsGroup.forEach(range => {
+    const start = range.gte;
+    const end = range.lte;
+    if (min === undefined || start < min) {
+      min = start;
+    }
+    if (max === undefined || end > max) {
+      max = end;
+    }
+  });
+
+  return {
+    start: min,
+    end: max
+  };
+}
+
+export function buildRangeFacetsJson(field, valueStart, valueEnd) {
+  const facetKey = `${valueStart}-${valueEnd}`;
+  return {
+    [field]: {
+      [facetKey]: {
+        "gte": valueStart,
+        "lte": valueEnd
+      }
+    }
   }
 }
