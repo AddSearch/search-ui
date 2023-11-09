@@ -10,7 +10,7 @@ export default class SegmentedResults {
     this.reduxStore = reduxStore;
     this.conf = conf;
 
-    if (validateContainer(conf.containerId) && conf.template) {
+    if (validateContainer(conf.containerId) && (conf.template || conf.precompiledTemplate)) {
       observeStoreByKey(this.reduxStore, 'segmentedsearch', (data) => this.render(data));
     }
     this.client.setCollectAnalytics(false);

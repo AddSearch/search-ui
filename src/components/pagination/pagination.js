@@ -5,7 +5,6 @@ import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
-import HandlebarsRuntime from 'handlebars/runtime';
 import PRECOMPILED_PAGINATION_TEMPLATE from './precompile-templates/pagination.handlebars';
 
 

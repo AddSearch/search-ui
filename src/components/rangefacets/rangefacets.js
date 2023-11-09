@@ -1,6 +1,5 @@
 import './rangefacets.scss';
 import handlebars from 'handlebars';
-import { FACETS_TEMPLATE } from './templates';
 import { toggleRangeFacetFilter} from '../../actions/filters';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';

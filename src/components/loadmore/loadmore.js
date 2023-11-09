@@ -1,6 +1,5 @@
 import './loadmore.scss';
 import handlebars from 'handlebars';
-import { LOAD_MORE_TEMPLATE } from './templates';
 import { LOAD_MORE_TYPE } from './index';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';

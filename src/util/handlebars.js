@@ -83,4 +83,5 @@ export function registerHelper(helperName, helperFunction) {
 }
 export function registerPartial(partialName, partialTemplate) {
   handlebars.registerPartial(partialName, partialTemplate);
+  HandlebarsRuntime.registerPartial(partialName, partialTemplate);
 }
