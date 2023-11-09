@@ -123,11 +123,11 @@ Settings that can be passed to the ```searchField``` function:
 | ignoreAutocomplete| boolean | false | Don't show the autocomplete component if something is typed to this field (in case you have multiple fields) |
 | ignoreSearchResultsPageUrl | boolean | false | Don't redirect the user to a search results page from this field (in case you have multiple fields) |
 | onfocusAutocompleteMatchAllQuery | boolean | false | If true, execute match all query for autocomplete box when this field is empty and focused |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | fieldForInstantRedirect | String | n/a | *This setting is deprecated, use it in Search UI Configuration instead* |
 | selectorToBind | String | n/a | CSS selector of the existing search input field to be used. If this setting is defined, Search UI won't be creating a search input field, instead it will bind all relating functionalities to the input field defined by this selector. |
 | buttonSelector | String | n/a | CSS selector of the existing search button. This setting is applicable only when "selectorToBind" is defined |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/precompile-templates/searchfield.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 ### Autocomplete
 Show suggested keyword, search results, or both under the search field.
@@ -154,9 +154,9 @@ Settings that can be passed to the ```autocomplete``` function:
 | categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
 | hideAutomatically| boolean| true | Hide the autocomplete dropdown when the search field is blurred |
 | onShow | function | n/a | A function to call when the autocomplete is shown. Called as the container as parameter |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | infiniteScrollElement | object| n/a | A scrollable container with *overflow: auto;* around the autocomplete box (for AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH) |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/precompile-templates/autocomplete.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 | sources| Array | n/a | Array of data sources  |
 
 The ```sources``` array can contain objects with the following fields:
@@ -185,12 +185,12 @@ Settings that can be passed to the ```searchResults``` function:
 | containerId | String | n/a | ID of the HTML element that will act as a container for search results |
 | categoryAliases | Object | n/a | A map of category aliases used by the *categorySelectionFunction* |
 | categorySelectionFunction | Function | [defaultCategorySelectionFunction](https://github.com/AddSearch/search-ui/blob/master/src/util/handlebars.js) | A function to select and format the *category* information on the bottom of each search result |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for search results |
-| template_resultcount | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for "Number of results" |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for search results |
+| template_resultcount | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/precompile-templates/numberOfResultsTemplate.handlebars) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for "Number of results" |
 | template_noresults | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for "No search results found" |
-| template_image | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for the featured image shown with search results |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
-| precompiledTemplateNoResults | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template for "No search results found" |
+| template_image | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/precompile-templates/searchResultImageTemplate.handlebars) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for the featured image shown with search results |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/precompile-templates/searchresults.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| precompiledTemplateNoResults | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/precompile-templates/no_results.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template for "No search results found" |
 
 If you are customising the default search result template, make sure your links still include the ```data-analytics-click="{{id}}"``` attribute, 
 otherwise your analytics will not report clicks or CTR correctly.
@@ -209,9 +209,9 @@ Settings that can be passed to the ```pagination``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML element that will act as a container for the paging|
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | onResultsScrollTo | "top", "no scrolling" | "top" | Set a scrolling behavior when navigate to a new page of results |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/precompile-templates/pagination.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging)
 
@@ -230,10 +230,10 @@ Settings that can be passed to the ```loadMore``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML element that will act as a container for the component|
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/loadmore/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | type | AddSearchUI.LOAD_MORE_TYPE.BUTTON, AddSearchUI.LOAD_MORE_TYPE.INFINITE_SCROLL | n/a | Require user clicking "More results" button or load automatically on scroll bottom |
 | infiniteScrollElement | object | n/a | If the type is INFINITE_SCROLL, this is the scrollable element. Can be **window** or an HTML element with *overflow: auto;* |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/loadmore/precompile-templates/loadmore.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging).
 The same Search UI can have the *pagination* component for desktop view and *loadMore* for mobile.
@@ -274,9 +274,9 @@ Settings that can be passed to the ```sortBy``` function:
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML element that will act as a container for the paging|
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/sortby/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | type | AddSearchUI.SORTBY_TYPE.SELECT_LIST, AddSearchUI.SORTBY_TYPE.RADIO_GROUP | Select list | "Sort by" menu shown as select list or as a radio button group |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/tree/master/src/components/sortby/precompile-templates) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 The ```options``` array can contain objects with following fields:
 
@@ -308,10 +308,10 @@ Settings that can be passed to the ```filters``` function:
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML element that will act as a container for filters |
 | type | AddSearchUI.FILTER_TYPE.CHECKBOX_GROUP, AddSearchUI.FILTER_TYPE.RADIO_GROUP, AddSearchUI.FILTER_TYPE.SELECT_LIST, AddSearchUI.FILTER_TYPE.TABS, AddSearchUI.FILTER_TYPE.TAGS, AddSearchUI.FILTER_TYPE.RANGE | n/a | Component's type |
-| template | String | [Default templates](https://github.com/AddSearch/search-ui/blob/master/src/components/filters/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | clearOtherFilters | boolean | false | Clear all other filters when the value of this filter changes. Works with RADIO_GROUP, SELECT_LIST, and TABS filters |
 | setSorting | Object | n/a | Set sorting when the value of this filter changes. The object must contain *field* and *order*. Works with RADIO_GROUP, SELECT_LIST, and TABS filters. |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default templates](https://github.com/AddSearch/search-ui/tree/master/src/components/filters/precompile-templates) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 | options | Object | n/a | Object containing filtering options |
 
 The *options* object can contain multiple filtering options. If the type is *Tabs*, *Select list*, or *Radio group*, just one of the 
@@ -361,8 +361,8 @@ Settings that can be passed to the ```facets``` function:
 | field | String | n/a | Same field that you passed to the JS client. E.g. *custom_fields.brand* |
 | sticky | boolean | false | Show all options even if a facet is selected. Options are reset on keyword change |
 | advancedSticky | boolean | false | Similar to sticky, extra search queries are made to update other facet groups. Enabling this setting would use quite an amount of search query usage in your subscription plan |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/precompile-templates/facets.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 
 ### Hierarchical Facets
@@ -405,8 +405,8 @@ Settings that can be passed to the ```facets``` function:
 | containerId | String | n/a | ID of the HTML element that will act as a container for facets |
 | fields | String | n/a | Define a list of custom fields in hierarchical order (top level facet is placed first). |
 | sortOrder | String | n/a | Define a sorting method: by counts of facets (COUNT_DESC_NAME_ASC) or by alphabetical order (NAME_ASC). |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/hierarchicalfacets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/tree/master/src/components/hierarchicalfacets/precompile-templates) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 
 ### Range Facets
@@ -430,8 +430,8 @@ Settings that can be passed to the ```rangeFacets``` function:
 | containerId | String | n/a | ID of the HTML element that will act as a container for facets |
 | field | String | n/a | A numeric custom field to use as a facet. E.g. custom_fields.price |
 | maxNumberOfRangeBuckets | integer | 5 | Maximum number of buckets that will be displayed. If a bucket is empty, it will be hidden |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/rangefacets/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/rangefacets/precompile-templates/rangefacets.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 ![alt text](https://demo.addsearch.com/search-ui-examples/components/range-facets-buckets.png)
 
@@ -450,8 +450,8 @@ Settings that can be passed to the ```activeFilters``` function:
 | --- | --- | --- | --- |
 | containerId | String | n/a | ID of the HTML element that will act as a container for active filters list |
 | clearAll | boolean | true | Show "clear all filters" button if more than one filter is active |
-| template | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/activefilters/templates.js) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
-| precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
+| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/activefilters/precompile-templates/activefilters.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 ### Segmented search results
 Show multiple search results lists from several indices or with different filters.
