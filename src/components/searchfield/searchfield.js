@@ -44,7 +44,7 @@ export default class SearchField {
       this.bindContainer();
       observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
         if (kw.setSearchFieldValue) {
-          this.boundField.value = kw.value;
+          this.updateValueOnAllBoundFields(kw.value);
         }
       });
       observeStoreByKey(this.reduxStore, 'autocomplete', (ac) => this.onAutocompleteUpdateBoundField(ac));
@@ -58,6 +58,11 @@ export default class SearchField {
     }
   }
 
+  updateValueOnAllBoundFields(value) {
+    for (var i = 0; i < this.boundFields.length; i++) {
+      this.boundFields[i].value = value;
+    }
+  }
 
   onAutocompleteUpdate(state) {
     if ((state.suggestions.length > 0 || state.customFields.length > 0) && state.setSuggestionToSearchField) {
@@ -82,9 +87,9 @@ export default class SearchField {
       const suggestionObj = state.suggestions[state.activeSuggestionIndex] || state.customFields[state.activeSuggestionIndex];
       if (!suggestionObj) return;
       const suggestion = suggestionObj.value
-      this.boundField.value = suggestion;
+      this.updateValueOnAllBoundFields(suggestion);
     } else {
-      this.boundField.value = this.reduxStore.getState().keyword.value;
+      this.updateValueOnAllBoundFields(this.reduxStore.getState().keyword.value);
     }
   }
 
@@ -201,8 +206,16 @@ export default class SearchField {
   }
 
   bindContainer() {
-    this.boundField = document.querySelector(this.conf.selectorToBind);
-    this.addEventListenersToField(this.boundField);
+    this.boundFields = document.querySelectorAll(this.conf.selectorToBind);
+    for (var i = 0; i < this.boundFields.length; i++) {
+      this.addEventListenersToField(this.boundFields[i]);
+      // Event listeners to the form
+      if (this.boundFields[i].form) {
+        this.boundFields[i].form.onsubmit = (e) => {
+          e.preventDefault();
+        }
+      }
+    }
 
     // Event listeners to the possible search button
     if (this.conf.buttonSelector && document.querySelector(this.conf.buttonSelector)) {
@@ -211,20 +224,15 @@ export default class SearchField {
         boundButton.type = 'button';
       }
       boundButton.onclick = () => {
-        let keyword = this.boundField.value;
+        let keyword = this.boundFields[0].value;
         this.handleSubmitKeyword(keyword);
       }
     }
 
-    // Event listeners to the form
-    if (this.boundField.form) {
-      this.boundField.form.onsubmit = (e) => {
-        e.preventDefault();
-      }
-    }
-
     // Autofocus when loaded first time
-    this.handleAutoFocus(this.boundField);
+    if (this.boundFields.length === 1) {
+      this.handleAutoFocus(this.boundFields[0]);
+    }
   }
 
 

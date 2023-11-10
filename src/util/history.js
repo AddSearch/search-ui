@@ -139,6 +139,7 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
   if (qs[HISTORY_PARAMETERS.RANGE_FACETS]) {
     const rangeFacetsJson = urlParamToJSON(qs[HISTORY_PARAMETERS.RANGE_FACETS]);
     store.dispatch(setActiveRangeFacets(rangeFacetsJson));
+    hasFacetsOrFilters = true;
   }
 
   // Has facets or filters. Update client state

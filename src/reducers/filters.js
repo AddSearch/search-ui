@@ -200,8 +200,9 @@ export default function filters(state = initialState, action) {
 
     case SET_ACTIVE_RANGE_FACETS:
       return Object.assign({}, state, {
-        activeRangeFacets: action.json || {},
-        refreshSearch: false
+        activeRangeFacets: Object.assign({}, state.activeRangeFacets, action.json),
+        refreshSearch: !!action.refreshSearch,
+        targetFacetGroup: action.field
       });
 
 
@@ -260,7 +261,8 @@ export default function filters(state = initialState, action) {
       else {
         nextActiveRangeFacets[action.field][action.key] = {
           gte: action.values.min,
-          lt: action.values.max
+          lt: action.values.max,
+          key: action.key
         };
       }
       nextActiveRangeFacets['v'] = !nextActiveRangeFacets['v'] ? 1 : nextActiveRangeFacets['v']+1;

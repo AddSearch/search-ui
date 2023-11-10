@@ -49,10 +49,12 @@ export function setActiveFacets(json) {
   }
 }
 
-export function setActiveRangeFacets(json) {
+export function setActiveRangeFacets(json, refreshSearch, field) {
   return {
     type: SET_ACTIVE_RANGE_FACETS,
-    json
+    json,
+    refreshSearch,
+    field
   }
 }
 
