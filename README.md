@@ -129,6 +129,19 @@ Settings that can be passed to the ```searchField``` function:
 | buttonSelector | String | n/a | CSS selector of the existing search button. This setting is applicable only when "selectorToBind" is defined |
 | precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/precompile-templates/searchfield.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
+<details>
+  <summary>Data structure used in searchField component</summary>
+
+```json
+{
+  "autofocus": true,
+  "placeholder": "Keyword..",
+  "button": "Search",
+  "searchAsYouType": false
+}
+```
+</details>
+
 ### Autocomplete
 Show suggested keyword, search results, or both under the search field.
 The default autocomplete template supports search suggestions that must be enabled from the AddSearch Dashboard
@@ -169,6 +182,69 @@ The ```sources``` array can contain objects with the following fields:
 | jsonKey | String | n/a | If the type is *AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH*, the Handlebars template can access the results from the JSON object ```searchResults.<jsonKey>``` |
 | field | String | n/a | If the type is *AddSearchUI.AUTOCOMPLETE_TYPE.CUSTOM_FIELDS*, choose a custom field, then its value will be used to generate suggestion terms |
 
+<details>
+  <summary>Data structure used in autocomplete component</summary>
+
+```json
+{
+  "suggestions": [
+    {
+      "value": "a guide to google search appliance replacement"
+    },
+    {
+      "value": "a guide to site search for digital agencies"
+    },
+    {
+      "value": "adding another addsearch account"
+    }
+  ],
+  "customFields": [
+    {
+      "value": "A Guide to Site Search for Digital Agencies"
+    },
+    {
+      "value": "Account Settings"
+    },
+    {
+      "value": "Add content to the search"
+    }
+  ],
+  "searchResults": {
+    "results": [
+      {
+        "id": "c2b1fd3b884d80735139c07c17f66523",
+        "url": "https://www.addsearch.com/docs/account/adding-another-account/",
+        "title": "Adding Another AddSearch Account - AddSearch Documentation",
+        "meta_description": "AddSearch allows you to create multiple accounts linked to your existing account. Follow the instructions to set up a new account.",
+        "meta_categories": null,
+        "custom_fields": {
+          "documentation_category": "Dashboard#f76c6f",
+          "title_h2": "Instructions",
+          "title": "Adding Another AddSearch Account"
+        },
+        "highlight": "<em>Adding</em> <em>Another</em> <em>AddSearch</em> <em>Account</em> If you <em>already</em> have <em>an</em> <em>AddSearch</em> <em>account</em>, you can create other <em>accounts</em> from the <em>AddSearch</em> dashboard that link to",
+        "ts": "2020-01-22T20:24:22",
+        "categories": [
+          "0xwww.addsearch.com",
+          "1xdocs",
+          "2xaccount",
+          "3xadding-another-account"
+        ],
+        "document_type": "html",
+        "images": {
+          "main": "https://d20vwa69zln1wj.cloudfront.net/82b34461f88ea8d0f6c6e26ed89d07b1/main/ff045bb11712142681288bcf9cb9e6a1-20230222.jpg",
+          "main_b64": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wAARCABEAEQDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAECAwQF/8QAKxAAAQQABAQFBQEAAAAAAAAAAQACAxEEITFREhNhcRQiQYGRMlJTYqFj/8QAGAEAAwEBAAAAAAAAAAAAAAAAAAECAwT/xAAgEQACAgEEAwEAAAAAAAAAAAAAAQIREgMTIVEiMWFB/9oADAMBAAIRAxEAPwCTontbZAA7pmB40o75pBkjhoa6lBZIM8/lY18OzL6AhcQCCKIvsjkvJNUaNJxRSS5NsD1N5LQMJkAZHb5ZJqNhKePtmbkP6fKOQ8kaLQ7B/bK73VL8PM3S3DoU8aEtRP8ASvlO4C4kAAWpeHf0vuqzxDymx0KlwTfa/wCCkaO+xtge4WK1rVCQZMNGyD2KECt9knSuOhrspRSSOeGjO91o8C38v8V0WHZGPKcz6qkpXyYuenVJCb5TXoppvZQtMMsA2tDnIoUuX1/ipneYS0AcVpNpDSt0iTmNeKc0HurTdrH4h95Rg+6RxEn4UskXtyNmfVCxjESnSEfKEZIW3I2Za+VMeyQcTsnZ6JkCcbyypMGhqEZbhF/sEAFncKnExGUts1V6K8HPUKEn1BDSfDGm07Rl8KdeYVE4f/Ry0ONmkwzdLBFbkuzOMGSLEjvhC0eIijHCXgEIRSKy1CgY83nGK7rUJeIAgAg9VyVbDO6I1q3ZRGfZpPSVeJ0eYdgjmHYKuOVkg8rs9vVTWpztNex8w7BIkuIJFUhVS4iOPU2dgj0CTfCAu4Lcc6zWKXEPk9eFuwVjcSXuPHQvRTZho5X+oHRS/JcG0a035IxoXVbBh4xwkNv9tUKcS95dHMSQhZGwKYlkGj3fKEJhSYnSPd9T3H3UEITCqBAJGhI7IQgYFCEIA//Z",
+          "capture": "https://d20vwa69zln1wj.cloudfront.net/82b34461f88ea8d0f6c6e26ed89d07b1/capture/c2b1fd3b884d80735139c07c17f66523-20221020.jpg"
+        },
+        "score": 311.9153
+      },
+      {} ...
+    ]
+  }
+}
+```
+</details>
+
 ### Search results
 Actual search results.
 
@@ -195,6 +271,46 @@ Settings that can be passed to the ```searchResults``` function:
 If you are customising the default search result template, make sure your links still include the ```data-analytics-click="{{id}}"``` attribute, 
 otherwise your analytics will not report clicks or CTR correctly.
 
+<details>
+  <summary>Data structure used in searchResults component</summary>
+
+```json
+{
+  "page": 3,
+  "total_hits": 338,
+  "hits": [
+    {
+      "id": "aee487c44aff2b393aa3db218b0effcc",
+      "url": "https://www.addsearch.com/docs/api/",
+      "title": "REST API - Overview - AddSearch Documentation",
+      "meta_description": "The AddSearch REST API provides programmatic access the search index. You can add, update and retrieve data from the index with the AddSearch Rest API.",
+      "meta_categories": null,
+      "custom_fields": {
+          "documentation_category": "API Reference#fe0201",
+          "title_h2": "Overview"
+      },
+      "highlight": "REST API Reference Welcome to AddSearch API reference. The AddSearch REST API provides access to request data from the index. It also allows you to update the data in the index as ",
+      "ts": "2020-01-23T20:03:25",
+      "categories": [
+          "0xwww.addsearch.com",
+          "1xdocs",
+          "2xapi"
+      ],
+      "document_type": "html",
+      "images": {
+          "main": "https://d20vwa69zln1wj.cloudfront.net/82b34461f88ea8d0f6c6e26ed89d07b1/main/ff045bb11712142681288bcf9cb9e6a1-20230222.jpg",
+          "main_b64": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDACgcHiMeGSgjISMtKygwPGRBPDc3PHtYXUlkkYCZlo+AjIqgtObDoKrarYqMyP/L2u71////m8H////6/+b9//j/2wBDASstLTw1PHZBQXb4pYyl+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj4+Pj/wAARCABEAEQDASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAECAwQF/8QAKxAAAQQABAQFBQEAAAAAAAAAAQACAxEEITFREhNhcRQiQYGRMlJTYqFj/8QAGAEAAwEBAAAAAAAAAAAAAAAAAAECAwT/xAAgEQACAgEEAwEAAAAAAAAAAAAAAQIREgMTIVEiMWFB/9oADAMBAAIRAxEAPwCTontbZAA7pmB40o75pBkjhoa6lBZIM8/lY18OzL6AhcQCCKIvsjkvJNUaNJxRSS5NsD1N5LQMJkAZHb5ZJqNhKePtmbkP6fKOQ8kaLQ7B/bK73VL8PM3S3DoU8aEtRP8ASvlO4C4kAAWpeHf0vuqzxDymx0KlwTfa/wCCkaO+xtge4WK1rVCQZMNGyD2KECt9knSuOhrspRSSOeGjO91o8C38v8V0WHZGPKcz6qkpXyYuenVJCb5TXoppvZQtMMsA2tDnIoUuX1/ipneYS0AcVpNpDSt0iTmNeKc0HurTdrH4h95Rg+6RxEn4UskXtyNmfVCxjESnSEfKEZIW3I2Za+VMeyQcTsnZ6JkCcbyypMGhqEZbhF/sEAFncKnExGUts1V6K8HPUKEn1BDSfDGm07Rl8KdeYVE4f/Ry0ONmkwzdLBFbkuzOMGSLEjvhC0eIijHCXgEIRSKy1CgY83nGK7rUJeIAgAg9VyVbDO6I1q3ZRGfZpPSVeJ0eYdgjmHYKuOVkg8rs9vVTWpztNex8w7BIkuIJFUhVS4iOPU2dgj0CTfCAu4Lcc6zWKXEPk9eFuwVjcSXuPHQvRTZho5X+oHRS/JcG0a035IxoXVbBh4xwkNv9tUKcS95dHMSQhZGwKYlkGj3fKEJhSYnSPd9T3H3UEITCqBAJGhI7IQgYFCEIA//Z",
+          "capture": "https://d20vwa69zln1wj.cloudfront.net/82b34461f88ea8d0f6c6e26ed89d07b1/capture/aee487c44aff2b393aa3db218b0effcc-20220929.jpg"
+      },
+      "score": 49.877094
+    },
+    {} ...
+  ],
+  "keyword": "*"
+}
+```
+</details>
+
 ### Pagination
 Pagination. Typically below search results.
 
@@ -214,6 +330,21 @@ Settings that can be passed to the ```pagination``` function:
 | precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/pagination/precompile-templates/pagination.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging)
+
+<details>
+  <summary>Data structure used in pagination component</summary>
+
+```json
+{
+  "currentPage": 3,
+  "lastPage": 9,
+  "totalPages": 34,
+  "pages": [
+    1, 2, 3, 4, 5, 6, 7, 8, 9
+  ]
+}
+```
+</details>
 
 ### Load more results
 Button to load more results or an infinite scroll implementation.
@@ -237,6 +368,19 @@ Settings that can be passed to the ```loadMore``` function:
 
 To change the number of results shown per page, use AddSearch JS client's [setPaging function](https://github.com/AddSearch/js-client-library#manage-paging).
 The same Search UI can have the *pagination* component for desktop view and *loadMore* for mobile.
+
+<details>
+  <summary>Data structure used in loadMore component</summary>
+
+```json
+{
+  "type": "INFINITE_SCROLL",
+  "hasMorePages": true,
+  "isLoading": false,
+  "totalHits": 337
+}
+```
+</details>
 
 ### Sort by
 Component to change the order of search results.
@@ -285,6 +429,35 @@ The ```options``` array can contain objects with following fields:
 | label | String, Array | n/a | Label text to show |
 | sortBy | relevance, date, custom_field | n/a | The field to sort the search results by |
 | order | desc, asc | desc | Ascending order (a-z or 1-9) or descending order (z-a, 9-1) |
+
+<details>
+  <summary>Data structure used in sortBy component</summary>
+
+```json
+{
+  "options": [
+    {
+      "label": "Most relevant first",
+      "sortBy": "relevance",
+      "order": "desc",
+      "active": false
+    },
+    {
+      "label": "Date: Newest first",
+      "sortBy": "date",
+      "order": "desc",
+      "active": false
+    },
+    {
+      "label": "Date: Oldest first",
+      "sortBy": "date",
+      "order": "asc",
+      "active": false
+    }
+  ]
+}
+```
+</details>
 
 ### Filters
 Components to let the user filter search results by URL patterns or custom field values.
@@ -336,6 +509,36 @@ passed to the ```filters``` function:
 | labelShort | String | n/a | Short label shown in the activeFilters component. For example, "Price" |
 | validator | String | n/a | Regular expression to validate the input. For example, ```^[\\d]*$``` for numeric field |
 
+<details>
+  <summary>Data structure used in filters component</summary>
+
+```json
+{
+  "options": {
+    "nofilter": {
+      "label": "All results",
+      "active": true
+    },
+    "blog": {
+      "label": "Blog",
+      "filter": {
+        "category": "1xblog"
+      },
+      "active": false
+    },
+    "notblog": {
+      "label": "Not blog",
+      "filter": {
+        "not": {
+          "category": "1xblog"
+        }
+      },
+      "active": false
+    }
+  }
+}
+```
+</details>
 
 ### Facets
 Display facets and let the user filter results by facets (i.e. dynamic property filters).
@@ -363,6 +566,29 @@ Settings that can be passed to the ```facets``` function:
 | advancedSticky | boolean | false | Similar to sticky, extra search queries are made to update other facet groups. Enabling this setting would use quite an amount of search query usage in your subscription plan |
 | template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/facets/precompile-templates/facets.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+
+<details>
+  <summary>Data structure used in facets component</summary>
+
+```json
+{
+  "facets": [
+    {
+      "value": "1xabout",
+      "count": 1
+    },
+    {
+      "value": "1xan-update-on-recent-log4j-vulnerabilities",
+      "count": 1
+    },
+    {
+      "value": "1xblog",
+      "count": 130
+    }
+  ]
+}
+```
+</details>
 
 
 ### Hierarchical Facets
@@ -398,7 +624,7 @@ search index:
   ]);
 ```
 
-Settings that can be passed to the ```facets``` function:
+Settings that can be passed to the ```hierarchicalFacets``` function:
 
 | Key | Possible values | Default value | Description |
 | --- | --- | --- | --- |
@@ -453,6 +679,36 @@ Settings that can be passed to the ```activeFilters``` function:
 | template | String | n/a | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template |
 | precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/activefilters/precompile-templates/activefilters.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
+<details>
+  <summary>Data structure used in activeFilters component</summary>
+
+```json
+{
+  "active": [
+    {
+      "type": "FILTER",
+      "name": "blog",
+      "value": 1,
+      "label": "Blog"
+    },
+    {
+      "type": "FACET",
+      "name": "category",
+      "value": "2x10-strategic-considerations-for-enterprises-selecting-a-site-search-solution",
+      "label": "10-strategic-considerations-for-enterprises-selecting-a-site-search-solution"
+    },
+    {
+      "type": "HIERARCHICAL_FACET",
+      "name": "custom_fields.nested_facet_lvl_1",
+      "value": "background > photo",
+      "label": "background > photo"
+    }
+  ],
+  "clearAll": true
+}
+```
+</details>
+
 ### Segmented search results
 Show multiple search results lists from several indices or with different filters.
 
@@ -472,6 +728,105 @@ Settings that can be passed to the ```segmentedSearchResults``` function:
 | client | AddSearch JS Client instance | n/a | Client with appropriate filters/settings for this segment |
 | template | String | n/a | [Handlebars](https://handlebarsjs.com/) template for this segment |
 | precompiledTemplate | Handlebars precompiled template function | n/a | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+
+<details>
+  <summary>Data structure used in segmentedSearchResults component</summary>
+
+```json
+{
+  "all-results": {
+    "page": 1,
+    "total_hits": 337,
+    "hits": [
+      {
+        "id": "c2b1fd3b884d80735139c07c17f66523",
+        "url": "https://www.addsearch.com/docs/account/adding-another-account/",
+        "title": "Adding Another AddSearch Account - AddSearch Documentation",
+        "meta_description": "AddSearch allows you to create multiple accounts linked to your existing account. Follow the instructions to set up a new account.",
+        "meta_categories": null,
+        "custom_fields": {
+          "documentation_category": "Dashboard#f76c6f"
+        },
+        "highlight": "if you have clients who need <em>an</em> <em>account</em> with <em>a</em> separate index, settings, <em>and</em> billing. Instructions To create <em>a</em> new <em>AddSearch</em> <em>account</em>, follow these",
+        "ts": "2020-01-22T21:50:52",
+        "categories": [
+          "0xwww.addsearch.com",
+          "1xdocs",
+          "2xaccount",
+          "3xadding-another-account"
+        ],
+        "document_type": "html",
+        "images": {
+          "main": "https://d20vwa69zln1wj.cloudfront.net/2c32bf3eb06b30af5f8208481aea3e8b/main/76decf697e944b9a7d4d79a66e5c2b46-20220208.jpg",
+          "capture": "https://d20vwa69zln1wj.cloudfront.net/2c32bf3eb06b30af5f8208481aea3e8b/capture/c2b1fd3b884d80735139c07c17f66523-20211116.jpg"
+        },
+        "score": 340.188
+      }
+    ]
+  },
+  "docs-results": {
+    "page": 1,
+    "total_hits": 145,
+    "hits": [
+      {
+        "id": "c2b1fd3b884d80735139c07c17f66523",
+        "url": "https://www.addsearch.com/docs/account/adding-another-account/",
+        "title": "Adding Another AddSearch Account - AddSearch Documentation",
+        "meta_description": "AddSearch allows you to create multiple accounts linked to your existing account. Follow the instructions to set up a new account.",
+        "meta_categories": null,
+        "custom_fields": {
+          "documentation_category": "Dashboard#f76c6f"
+        },
+        "highlight": "if you have clients who need <em>an</em> <em>account</em> with <em>a</em> separate index, settings, <em>and</em> billing. Instructions To create <em>a</em> new <em>AddSearch</em> <em>account</em>, follow these",
+        "ts": "2020-01-22T21:50:52",
+        "categories": [
+          "0xwww.addsearch.com",
+          "1xdocs",
+          "2xaccount",
+          "3xadding-another-account"
+        ],
+        "document_type": "html",
+        "images": {
+          "main": "https://d20vwa69zln1wj.cloudfront.net/2c32bf3eb06b30af5f8208481aea3e8b/main/76decf697e944b9a7d4d79a66e5c2b46-20220208.jpg",
+          "capture": "https://d20vwa69zln1wj.cloudfront.net/2c32bf3eb06b30af5f8208481aea3e8b/capture/c2b1fd3b884d80735139c07c17f66523-20211116.jpg"
+        },
+        "score": 340.188
+      }
+    ]
+  },
+  "blog-results": {
+    "page": 1,
+    "total_hits": 130,
+    "hits": [
+      {
+        "id": "c2b1fd3b884d80735139c07c17f66523",
+        "url": "https://www.addsearch.com/docs/account/adding-another-account/",
+        "title": "Adding Another AddSearch Account - AddSearch Documentation",
+        "meta_description": "AddSearch allows you to create multiple accounts linked to your existing account. Follow the instructions to set up a new account.",
+        "meta_categories": null,
+        "custom_fields": {
+          "documentation_category": "Dashboard#f76c6f"
+        },
+        "highlight": "if you have clients who need <em>an</em> <em>account</em> with <em>a</em> separate index, settings, <em>and</em> billing. Instructions To create <em>a</em> new <em>AddSearch</em> <em>account</em>, follow these",
+        "ts": "2020-01-22T21:50:52",
+        "categories": [
+          "0xwww.addsearch.com",
+          "1xdocs",
+          "2xaccount",
+          "3xadding-another-account"
+        ],
+        "document_type": "html",
+        "images": {
+          "main": "https://d20vwa69zln1wj.cloudfront.net/2c32bf3eb06b30af5f8208481aea3e8b/main/76decf697e944b9a7d4d79a66e5c2b46-20220208.jpg",
+          "capture": "https://d20vwa69zln1wj.cloudfront.net/2c32bf3eb06b30af5f8208481aea3e8b/capture/c2b1fd3b884d80735139c07c17f66523-20211116.jpg"
+        },
+        "score": 340.188
+      }
+    ]
+  }
+}
+```
+</details>
 
 ### Frequently bought together
 Show frequently bought together items given the product ID.
