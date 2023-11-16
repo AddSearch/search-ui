@@ -1,12 +1,12 @@
 import './hierarchicalfacets.scss';
 import handlebars from 'handlebars';
-import { FACETS_TEMPLATE, SUB_HIERARCHICAL_FACETS_TEMPLATE } from './templates';
 import { toggleHierarchicalFacetFilter } from '../../actions/filters';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import {createFilterObject} from "../filters/filterstateobserver";
 import PRECOMPILED_HIERARCHICAL_FACETS_TEMPLATE from './precompile-templates/hierarchical_facets.handlebars';
-import { registerHelper } from "../../util/handlebars";
+import { registerHelper, registerPartial } from "../../util/handlebars";
+import SUB_HIERARCHICAL_FACETS_TEMPLATE from './precompile-templates/subHierarchicalFacetsTemplate.handlebars';
 
 
 export default class HierarchicalFacets {
@@ -40,8 +40,9 @@ export default class HierarchicalFacets {
       'component.sortby'
     ];
 
-    handlebars.registerPartial('subHierarchicalFacetsTemplate',
-      this.conf.template_subHierarchicalFacetsTemplate || SUB_HIERARCHICAL_FACETS_TEMPLATE);
+    const subHierarchicalFacetsTemplate = this.conf.template_subHierarchicalFacetsTemplate || SUB_HIERARCHICAL_FACETS_TEMPLATE;
+    registerPartial('subHierarchicalFacetsTemplate', subHierarchicalFacetsTemplate);
+
     registerHelper('validateOpenState', function(value) {
       return reduxStore.getState().filters.openedHierarchicalFacetGroups.indexOf(value) === -1;
     });

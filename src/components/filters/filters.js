@@ -1,13 +1,5 @@
 import './filters.scss';
 import handlebars from 'handlebars';
-import {
-  FILTERS_CHECKBOXGROUP_TEMPLATE,
-  FILTERS_RADIOGROUP_TEMPLATE,
-  FILTERS_SELECTLIST_TEMPLATE,
-  FILTERS_TABS_TEMPLATE,
-  FILTERS_TAGS_TEMPLATE,
-  FILTERS_RANGE_TEMPLATE
-} from './templates';
 import { FILTER_TYPE } from './index';
 import { observeStoreByKey } from '../../store';
 import { toggleFilter, setRangeFilter, registerFilter, clearSelected } from '../../actions/filters';

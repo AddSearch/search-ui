@@ -111,7 +111,7 @@ export default class ActiveFilters {
           value: key,
           label: key,
           rangeMin: filterState.activeRangeFacets[field][key].gte,
-          rangeMax: filterState.activeRangeFacets[field][key].lt
+          rangeMax: filterState.activeRangeFacets[field][key].lte
         });
       }
     }

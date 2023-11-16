@@ -1,5 +1,4 @@
 import './searchresults.scss';
-import { SEARCHRESULTS_TEMPLATE, NO_RESULTS_TEMPLATE,SEARCHRESULT_IMAGE_TEMPLATE, NUMBER_OF_RESULTS_TEMPLATE} from './templates';
 import handlebars from 'handlebars';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
@@ -7,7 +6,9 @@ import { addClickTrackers } from '../../util/analytics';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 import PRECOMPILED_SEARCHRESULTS_TEMPLATE from './precompile-templates/searchresults.handlebars';
 import PRECOMPILED_NO_RESULTS_TEMPLATE from './precompile-templates/no_results.handlebars';
-import { registerHelper } from '../../util/handlebars';
+import { registerHelper, registerPartial } from '../../util/handlebars';
+import NUMBER_OF_RESULTS_TEMPLATE from './precompile-templates/numberOfResultsTemplate.handlebars';
+import SEARCHRESULT_IMAGE_TEMPLATE from './precompile-templates/searchResultImageTemplate.handlebars';
 
 
 export default class SearchResults {
@@ -17,8 +18,10 @@ export default class SearchResults {
     this.conf = conf;
     this.reduxStore = reduxStore;
 
-    handlebars.registerPartial('numberOfResultsTemplate', this.conf.template_resultcount || NUMBER_OF_RESULTS_TEMPLATE);
-    handlebars.registerPartial('searchResultImageTemplate', this.conf.template_image || SEARCHRESULT_IMAGE_TEMPLATE);
+    const numberOfResultsTemplate = this.conf.template_resultcount || NUMBER_OF_RESULTS_TEMPLATE;
+    const searchResultImageTemplate = this.conf.template_image || SEARCHRESULT_IMAGE_TEMPLATE;
+    registerPartial('numberOfResultsTemplate', numberOfResultsTemplate);
+    registerPartial('searchResultImageTemplate', searchResultImageTemplate);
 
     registerHelper('removeTrailingQueriesFromUrl', (url) => {
       if (url) {

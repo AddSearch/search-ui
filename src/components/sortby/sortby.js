@@ -1,7 +1,6 @@
 import './sortby.scss';
 import handlebars from 'handlebars';
 import { SORTBY_TYPE } from './index';
-import { SORTBY_RADIOGROUP_TEMPLATE, SORTBY_SELECT_TEMPLATE} from './templates';
 import { sortBy } from '../../actions/sortby';
 import { search } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
