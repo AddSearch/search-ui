@@ -114,6 +114,7 @@ export default class RangeFacets {
       observeStoreByKey(this.reduxStore, 'fieldstats', (state) => {
         var fieldStats = state.fieldStats[this.conf.field];
         if (!fieldStats) {
+          this.renderRangeSlider();
           return;
         }
 
@@ -208,6 +209,11 @@ export default class RangeFacets {
     const data = {
       conf: this.conf,
     };
+
+    if (!results) {
+      container.innerHTML = '';
+      return;
+    }
 
     const activeRangeFacets = this.getActiveRangeFacets(this.conf.field);
     data.sliderConfig = Object.assign({},
