@@ -17,6 +17,11 @@ export default class SortBy {
     this.conf = conf;
     this.reduxStore = reduxStore;
 
+    this.conf.options.forEach((option) => {
+      option.sortBy = typeof option.sortBy === 'string' ? option.sortBy.split(',') : option.sortBy;
+      option.order = typeof option.order === 'string' ? option.order.split(',') : option.order;
+    });
+
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'sortby', (state) => this.render(state));
     }
@@ -52,6 +57,12 @@ export default class SortBy {
     this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore, null, 'component.sortby'));
   }
 
+  arraysMatch(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+    return arr1.every((element, index) => element === arr2[index]);
+  }
 
   render(sortbyState) {
     const { field, order } = sortbyState;
@@ -67,7 +78,7 @@ export default class SortBy {
     // Data
     let data = Object.assign({}, this.conf);
     data.options.forEach(option => {
-      if (option.sortBy === field && option.order === order) {
+      if (this.arraysMatch(option.sortBy, field) && this.arraysMatch(option.order, order)) {
         option.active = true;
       }
       else {
@@ -91,7 +102,6 @@ export default class SortBy {
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
     this.renderedHtml = html;
-
 
     // Attach listeners
     if (this.conf.type === SORTBY_TYPE.RADIO_GROUP) {

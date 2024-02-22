@@ -3,8 +3,8 @@ import {
 } from '../actions/sortby';
 
 const initialState = {
-  field: 'relevance',
-  order: DESC
+  field: ['relevance'],
+  order: [DESC]
 };
 
 export default function sortby(state = initialState, action) {
@@ -12,8 +12,8 @@ export default function sortby(state = initialState, action) {
   switch (action.type) {
     case SORTBY:
       return Object.assign({}, state, {
-        field: action.field,
-        order: action.order
+        field: typeof action.field === 'string' ? action.field.split(',') : action.field,
+        order: typeof action.order === 'string' ? action.order.split(',') : action.order
       });
 
     default:
