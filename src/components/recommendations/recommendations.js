@@ -4,8 +4,10 @@ import handlebars from 'handlebars';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import { clearRecommendation } from "../../actions/recommendations";
+import { RECOMMENDATION_TYPE } from "./index";
 
-export const TYPE_FREQUENTLY_BOUGHT_TOGETHER = 'FREQUENTLY_BOUGHT_TOGETHER';
+export const TYPE_FREQUENTLY_BOUGHT_TOGETHER = RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER;
+export const TYPE_RELATED_ITEMS = RECOMMENDATION_TYPE.RELATED_ITEMS;
 export default class Recommendations {
 
   constructor(client, reduxStore, conf, recommendationSettings) {
