@@ -167,6 +167,10 @@ export default class Autocomplete {
     container.innerHTML = html;
     this.renderedHtml = html;
 
+    if (this.conf.renderCompleteCallback && typeof this.conf.renderCompleteCallback === 'function') {
+      this.conf.renderCompleteCallback();
+    }
+
 
     // Attach events to suggestions only for keyboard accessibility
     const lis = container.querySelector('.suggestions') ? container.querySelectorAll('.suggestions > li') : [];
