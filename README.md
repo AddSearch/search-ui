@@ -171,6 +171,7 @@ Settings that can be passed to the ```autocomplete``` function:
 | infiniteScrollElement | object| n/a | A scrollable container with *overflow: auto;* around the autocomplete box (for AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH) |
 | precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/autocomplete/precompile-templates/autocomplete.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 | sources| Array | n/a | Array of data sources  |
+ | renderCompleteCallback | function | n/a | A function to call when the autocomplete is rendered. Called as the container as parameter |
 
 The ```sources``` array can contain objects with the following fields:
 
@@ -267,6 +268,7 @@ Settings that can be passed to the ```searchResults``` function:
 | template_image | String | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/precompile-templates/searchResultImageTemplate.handlebars) | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template for the featured image shown with search results |
 | precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/precompile-templates/searchresults.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 | precompiledTemplateNoResults | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchresults/precompile-templates/no_results.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template for "No search results found" |
+ | renderCompleteCallback | function | n/a | A function to call when the search results are rendered. Called as the container as parameter |
 
 If you are customising the default search result template, make sure your links still include the ```data-analytics-click="{{id}}"``` attribute, 
 otherwise your analytics will not report clicks or CTR correctly.
@@ -274,7 +276,7 @@ otherwise your analytics will not report clicks or CTR correctly.
 <details>
   <summary>Data structure used in searchResults component</summary>
 
-```json
+```json~~~~
 {
   "page": 3,
   "total_hits": 338,
