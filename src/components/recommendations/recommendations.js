@@ -5,6 +5,7 @@ import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import { clearRecommendation } from "../../actions/recommendations";
 import { RECOMMENDATION_TYPE } from "./index";
+import PRECOMPILED_PAGINATION_TEMPLATE from "../pagination/precompile-templates/pagination.handlebars";
 
 export const TYPE_FREQUENTLY_BOUGHT_TOGETHER = RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER;
 export const TYPE_RELATED_ITEMS = RECOMMENDATION_TYPE.RELATED_ITEMS;
@@ -30,7 +31,14 @@ export default class Recommendations {
     let template = this.conf.template || RECO_FBT_TEMPLATE;
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(template)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else {
+      template = this.conf.template || RECO_FBT_TEMPLATE
+      html = handlebars.compile(template)(data);
+    }
+
     if (this.renderedHtml === html) {
       return;
     }
