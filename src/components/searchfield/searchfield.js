@@ -36,6 +36,7 @@ export default class SearchField {
     this.reduxStore = reduxStore;
     this.conf = conf;
     this.matchAllQuery = matchAllQueryWhenSearchFieldEmpty;
+    this.minLengthToShowResults = conf.minLengthToShowResults || 1;
     this.firstRenderDone = false;
     this.firstSelectorBindDone = false;
     this.onSearch = onSearch;
@@ -255,7 +256,7 @@ export default class SearchField {
 
     const skipAutocomplete = this.conf.ignoreAutocomplete === true;
     store.dispatch(setKeyword(keyword, skipAutocomplete, this.conf.containerId));
-    if (this.conf.searchAsYouType === true) {
+    if (this.conf.searchAsYouType === true && keyword.length >= this.minLengthToShowResults) {
       this.executeSearch(this.client, keyword, true);
     }
   }
