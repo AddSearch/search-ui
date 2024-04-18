@@ -111,7 +111,6 @@ export default class AddSearchUI {
       type: recoSetting.type,
       blockId: recoSetting.blockId,
       configurationKey: recoSetting.configurationKey,
-      itemIdPath: recoSetting.itemIdPath,
       itemId: !recoSetting.getProductIdFunction ? null : recoSetting.getProductIdFunction.call(undefined, undefined)
     }));
   }
