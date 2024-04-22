@@ -128,6 +128,7 @@ Settings that can be passed to the ```searchField``` function:
 | selectorToBind | String | n/a | CSS selector of the existing search input field to be used. If this setting is defined, Search UI won't be creating a search input field, instead it will bind all relating functionalities to the input field defined by this selector. |
 | buttonSelector | String | n/a | CSS selector of the existing search button. This setting is applicable only when "selectorToBind" is defined |
 | precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/searchfield/precompile-templates/searchfield.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+| minLengthToShowResults | integer | 1 | Minimum length of the search term to show search results |
 
 <details>
   <summary>Data structure used in searchField component</summary>
