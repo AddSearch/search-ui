@@ -4,8 +4,10 @@ import handlebars from 'handlebars';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import { clearRecommendation } from "../../actions/recommendations";
+import { RECOMMENDATION_TYPE } from "./index";
 
-export const TYPE_FREQUENTLY_BOUGHT_TOGETHER = 'FREQUENTLY_BOUGHT_TOGETHER';
+export const TYPE_FREQUENTLY_BOUGHT_TOGETHER = RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER;
+export const TYPE_RELATED_ITEMS = RECOMMENDATION_TYPE.RELATED_ITEMS;
 export default class Recommendations {
 
   constructor(client, reduxStore, conf, recommendationSettings) {
@@ -25,10 +27,18 @@ export default class Recommendations {
 
   render(state) {
     const data = state.results || {};
+    data.blockId = this.conf.blockId;
     let template = this.conf.template || RECO_FBT_TEMPLATE;
 
     // Compile HTML and inject to element if changed
-    const html = handlebars.compile(template)(data);
+    let html;
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else {
+      template = this.conf.template || RECO_FBT_TEMPLATE
+      html = handlebars.compile(template)(data);
+    }
+
     if (this.renderedHtml === html) {
       return;
     }
