@@ -51,9 +51,9 @@ describe('history', () => {
     });
 
     it('return a bunch of query parameter', () => {
-      const url = 'https://addsearch.com/test?search=b%C3%B6&search_page=3&foo=bar';
+      const url = 'https://addsearch.com/test?search=b%C3%B6&search_page=3&foo=bar&foo=bar2';
       const expectedValue = {
-        addsearchUnrelatedParams: 'foo=bar',
+        addsearchUnrelatedParams: 'foo=bar,foo=bar2',
         search: 'bö',
         search_page: '3',
       };
