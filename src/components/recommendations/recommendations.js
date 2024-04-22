@@ -5,7 +5,6 @@ import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import { clearRecommendation } from "../../actions/recommendations";
 import { RECOMMENDATION_TYPE } from "./index";
-import PRECOMPILED_PAGINATION_TEMPLATE from "../pagination/precompile-templates/pagination.handlebars";
 
 export const TYPE_FREQUENTLY_BOUGHT_TOGETHER = RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER;
 export const TYPE_RELATED_ITEMS = RECOMMENDATION_TYPE.RELATED_ITEMS;
@@ -28,6 +27,7 @@ export default class Recommendations {
 
   render(state) {
     const data = state.results || {};
+    data.blockId = this.conf.blockId;
     let template = this.conf.template || RECO_FBT_TEMPLATE;
 
     // Compile HTML and inject to element if changed
