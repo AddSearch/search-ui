@@ -35,27 +35,27 @@ describe('history', () => {
     });
 
     it('return a single query parameter', () => {
-      const url = 'https://addsearch.com/test?foo=bar';
+      const url = 'https://addsearch.com/test?search=foo';
       const expectedValue = {
-        foo: 'bar'
+        search: 'foo'
       };
       assert.deepEqual(queryParamsToObject(url), expectedValue);
     });
 
     it('return a single query parameter with space', () => {
-      const url = 'https://addsearch.com/test?foo=bar+bar';
+      const url = 'https://addsearch.com/test?search=foo+bar';
       const expectedValue = {
-        foo: 'bar bar'
+        search: 'foo bar'
       };
       assert.deepEqual(queryParamsToObject(url), expectedValue);
     });
 
     it('return a bunch of query parameter', () => {
-      const url = 'https://addsearch.com/test?foo=bar&a=b&bar=b%C3%B6';
+      const url = 'https://addsearch.com/test?search=b%C3%B6&search_page=3&foo=bar&foo=bar2';
       const expectedValue = {
-        foo: 'bar',
-        bar: 'bö',
-        a: 'b'
+        addsearchUnrelatedParams: 'foo=bar,foo=bar2',
+        search: 'bö',
+        search_page: '3',
       };
       assert.deepEqual(queryParamsToObject(url), expectedValue);
     });

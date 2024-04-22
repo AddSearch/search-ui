@@ -203,8 +203,20 @@ export function queryParamsToObject(url) {
 
   let obj = {};
   const qsArr = qs.split('&');
+  const qsArrUnrelated = qsArr.filter(v =>
+    v.indexOf(HISTORY_PARAMETERS.SEARCH) === -1 &&
+    v.indexOf(HISTORY_PARAMETERS.PAGE) === -1 &&
+    v.indexOf(HISTORY_PARAMETERS.SORTBY) === -1 &&
+    v.indexOf(HISTORY_PARAMETERS.FILTERS) === -1 &&
+    v.indexOf(HISTORY_PARAMETERS.FACETS) === -1 &&
+    v.indexOf(HISTORY_PARAMETERS.RANGE_FACETS) === -1);
+  const qsArrUsedInSearch = qsArr.filter(v => !qsArrUnrelated.includes(v));
 
-  qsArr.forEach(v => {
+  if (qsArrUnrelated.length) {
+    obj['addsearchUnrelatedParams'] = qsArrUnrelated.join(',');
+  }
+
+  qsArrUsedInSearch.forEach(v => {
     const kv = v.split('=');
     if (kv[0] && kv[0].length > 0) {
       let value = null;
@@ -233,7 +245,12 @@ export function objectToQueryParams(obj) {
         qs = qs + '&';
       }
       let value = '';
-      if (obj[key] !== null && obj[key] !== undefined) {
+      if (key === 'addsearchUnrelatedParams') {
+        const unrelatedParams = obj[key].split(',');
+        qs = qs + unrelatedParams.join('&');
+        continue;
+      }
+      if (obj[key] !== null && obj[key] !== undefined && key !== 'addsearchUnrelatedParams') {
         value = '=' + encodeURIComponent(obj[key]);
       }
       qs = qs + key + value;
