@@ -255,8 +255,11 @@ export default class SearchField {
     }
 
     const skipAutocomplete = this.conf.ignoreAutocomplete === true;
+    if (keyword.length < this.minLengthToShowResults) {
+      return;
+    }
     store.dispatch(setKeyword(keyword, skipAutocomplete, this.conf.containerId));
-    if (this.conf.searchAsYouType === true && keyword.length >= this.minLengthToShowResults) {
+    if (this.conf.searchAsYouType === true) {
       this.executeSearch(this.client, keyword, true);
     }
   }
