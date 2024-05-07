@@ -7,7 +7,7 @@ export function sortBy(client, field, order, store) {
     setHistory(HISTORY_PARAMETERS.SORTBY, JSON.stringify({field: field, order: order}), null, store);
   }
   const paging = client.getSettings().paging;
-  client.setPaging(1, paging.pageSize, field, order);
+  client.setPaging(paging.page, paging.pageSize, field, order);
 
   return {
     type: SORTBY,
