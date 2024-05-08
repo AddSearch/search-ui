@@ -166,7 +166,8 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
     store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10), null, store));
   }
   else {
-    store.dispatch(setPage(client, 1, null, store));
+    const paging = client.getSettings().paging;
+    store.dispatch(setPage(client, paging.page, null, store));
   }
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
