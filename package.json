@@ -1,6 +1,6 @@
 {
   "name": "addsearch-search-ui",
-  "version": "0.8.7",
+  "version": "0.8.8",
   "description": "JavaScript library to develop Search UIs for the web",
   "main": "./dist/addsearch-search-ui.min.js",
   "jsdelivr": "./dist/addsearch-search-ui.min.js",
@@ -61,7 +61,7 @@
     "esm": "^3.2.22",
     "ignore-styles": "^5.0.1",
     "mini-css-extract-plugin": "^2.7.2",
-    "mocha": "^10.2.0",
+    "mocha": "^10.4.0",
     "postcss-loader": "^8.1.0",
     "sass": "^1.49.7",
     "sass-loader": "^10.2.1",
@@ -69,5 +69,8 @@
     "uglify-js": "^3.11.5",
     "webpack": "^5.76.1",
     "webpack-cli": "^5.0.1"
+  },
+  "overrides": {
+    "braces": "3.0.3"
   }
 }
