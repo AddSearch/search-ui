@@ -19,6 +19,7 @@ import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { validateContainer } from '../../util/dom';
 import {clearSelected, clearSelectedRangeFacets} from "../../actions/filters";
+import { askQuestion, setQuestion } from "../../actions/answergenerator";
 
 const KEYCODES = {
   ARROW_DOWN: 40,
@@ -40,6 +41,7 @@ export default class SearchField {
     this.firstRenderDone = false;
     this.firstSelectorBindDone = false;
     this.onSearch = onSearch;
+    this.minLengthToGenerateAnswer = this.conf.minLengthToGenerateAnswer || 1;
 
     if (conf.selectorToBind) {
       this.bindContainer();
@@ -114,6 +116,10 @@ export default class SearchField {
       this.reduxStore.getState().configuration.fieldForInstantRedirect);
   }
 
+  // executeGenerateAnswer(client, question) {
+  //   this.reduxStore.dispatch(askQuestion(client, question, this.reduxStore));
+  // }
+
 
   redirectOrSearch(keyword) {
     const searchResultsPageUrl = this.reduxStore.getState().search.searchResultsPageUrl;
@@ -157,6 +163,14 @@ export default class SearchField {
     this.redirectOrSearch(keyword);
   }
 
+  handleSubmitQuestion(question) {
+    const store = this.reduxStore;
+    if (question.length >= this.minLengthToGenerateAnswer) {
+      store.dispatch(setQuestion(question));
+      // this.executeGenerateAnswer(this.client, question);
+    }
+  }
+
   render(preDefinedKeyword) {
     const container = document.getElementById(this.conf.containerId);
 
@@ -193,6 +207,7 @@ export default class SearchField {
       container.querySelector('button').onclick = () => {
         let keyword = this.field.value;
         this.handleSubmitKeyword(keyword);
+        this.handleSubmitQuestion(keyword);
       }
     }
 
@@ -227,6 +242,7 @@ export default class SearchField {
       boundButton.onclick = () => {
         let keyword = this.boundFields[0].value;
         this.handleSubmitKeyword(keyword);
+        this.handleSubmitQuestion(keyword);
       }
     }
 
@@ -280,6 +296,7 @@ export default class SearchField {
     if (e.keyCode === KEYCODES.ENTER) {
       const keyword = e.target.value;
       this.handleSubmitKeyword(keyword);
+      this.handleSubmitQuestion(keyword);
     }
   }
 

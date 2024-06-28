@@ -1,0 +1,20 @@
+.addsearch-answer-generator {
+  background-color: #f5fbff;
+  padding: 2em;
+  border: 1px solid #dae8f2;
+
+  .adds-question {
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  .adds-answer-text {
+    display: contents;
+  }
+
+  .adds-answer-caret {
+    display: inline-block;
+    transform: translateX(-5px);
+  }
+}

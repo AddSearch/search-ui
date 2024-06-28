@@ -1,4 +1,5 @@
 export const KEYWORD = 'KEYWORD';
+export const QUESTION = 'QUESTION';
 
 export function setKeyword(value, skipAutocomplete, searchFieldContainerId, setSearchFieldValue) {
   return {
@@ -9,3 +10,10 @@ export function setKeyword(value, skipAutocomplete, searchFieldContainerId, setS
     setSearchFieldValue: setSearchFieldValue || false
   }
 }
+
+// export function setQuestion(value) {
+//   return {
+//     type: QUESTION,
+//     value
+//   }
+// }
