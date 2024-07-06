@@ -113,12 +113,13 @@ export default class RangeFacets {
 
       observeStoreByKey(this.reduxStore, 'fieldstats', (state) => {
         var fieldStats = state.fieldStats[this.conf.field];
-        if (!fieldStats) {
-          this.renderRangeSlider();
+
+        if (state.callBy !== this.conf.field || fieldStats === undefined) {
           return;
         }
 
-        if (state.callBy !== this.conf.field) {
+        if (fieldStats === null) {
+          this.renderRangeSlider();
           return;
         }
 
