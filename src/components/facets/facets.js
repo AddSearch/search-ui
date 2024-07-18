@@ -40,6 +40,9 @@ export default class Facets {
             client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
               this.render(res, true);
             })
+          } else {
+            const activeFacets = this.getActiveFacets(this.conf.field);
+            this.updateCheckboxStates(activeFacets);
           }
         }
       });
@@ -66,7 +69,6 @@ export default class Facets {
     if (results && results.facets && results.facets[facetField]) {
       facets = results.facets[facetField];
     }
-
 
     // Read active facets from redux state
     const activeFacets = this.getActiveFacets(facetField);
@@ -139,5 +141,14 @@ export default class Facets {
       }
     }
     return activeFacets;
+  }
+
+  updateCheckboxStates(activeFacets) {
+    const container = document.getElementById(this.conf.containerId);
+    const options = container.getElementsByTagName('input');
+    for (let i=0; i < options.length; i++) {
+      let checkbox = options[i];
+      checkbox.checked = activeFacets.indexOf(checkbox.value) !== -1;
+    }
   }
 }
