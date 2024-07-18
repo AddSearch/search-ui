@@ -99,7 +99,9 @@ function UiRangeSlider() {
     sliderId = containerId;
 
     const [min, max, start, end] = getSliderValue();
-    initVisuals([min, max, start, end], settings.step);
+    const maxRounded = Math.ceil(parseFloat(max));
+    const minRounded = Math.floor(parseFloat(min));
+    initVisuals([minRounded, maxRounded, start, end], settings.step);
 
     const rangeStyles = settings.styles;
     const fromSlider = document.querySelector('#' + containerId + ' [data-id=adds-slider-control-from]');
