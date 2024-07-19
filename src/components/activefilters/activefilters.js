@@ -104,7 +104,13 @@ export default class ActiveFilters {
 
     // Range facets
     for (let field in filterState.activeRangeFacets) {
+      if (!filterState.activeRangeFacets.hasOwnProperty(field)) {
+        continue;
+      }
       for (let key in filterState.activeRangeFacets[field]) {
+        if (!filterState.activeRangeFacets[field].hasOwnProperty(key)) {
+          continue;
+        }
         active.push({
           name: field,
           type: TYPE.RANGE_FACET,

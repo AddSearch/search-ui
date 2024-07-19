@@ -106,7 +106,9 @@ export default class RangeFacets {
             this.reduxStore.dispatch(setFieldStats(res.fieldStats, this.conf.field));
           });
         } else {
-          this.reduxStore.dispatch(setFieldStats(search.results.fieldStats, this.conf.field));
+          this.renderRangeSlider({
+            fieldStats: search.results.fieldStats
+          })
         }
 
       });
