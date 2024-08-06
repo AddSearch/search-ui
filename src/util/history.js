@@ -214,7 +214,7 @@ export function queryParamsToObject(url) {
   const qsArrUsedInSearch = qsArr.filter(v => !qsArrUnrelated.includes(v));
 
   if (qsArrUnrelated.length) {
-    obj['addsearchUnrelatedParams'] = qsArrUnrelated.join(',');
+    obj['addsearchUnrelatedParams'] = qsArrUnrelated.join('&');
   }
 
   qsArrUsedInSearch.forEach(v => {
@@ -247,7 +247,7 @@ export function objectToQueryParams(obj) {
       }
       let value = '';
       if (key === 'addsearchUnrelatedParams') {
-        const unrelatedParams = obj[key].split(',');
+        const unrelatedParams = obj[key].split('&');
         qs = qs + unrelatedParams.join('&');
         continue;
       }
