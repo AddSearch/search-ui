@@ -14,8 +14,8 @@ effortlessly.
 ```html
 <!-- Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@0.8/dist/addsearch-js-client.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/addsearch-search-ui@0.7/dist/addsearch-search-ui.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/addsearch-search-ui@0.7/dist/addsearch-search-ui.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/addsearch-search-ui@0.8/dist/addsearch-search-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/addsearch-search-ui@0.8/dist/addsearch-search-ui.min.css" />
 
 <!-- Containers for UI components-->
 <div id="searchfield-container"></div>
