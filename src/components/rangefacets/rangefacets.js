@@ -34,6 +34,8 @@ export default class RangeFacets {
         trackColor: '#C6C6C6',
         progressColor: '#25daa5'
       };
+    } else {
+      this.conf.type = RANGE_FACETS_TYPE.CHECKBOX;
     }
 
     function _hasActiveFacet() {
@@ -66,7 +68,7 @@ export default class RangeFacets {
       for (const key in activeRangeFacets) {
         ranges.push({
           from: activeRangeFacets[key].gte,
-          to: activeRangeFacets[key].lte
+          to: activeRangeFacets[key].lt
         });
       }
       return ranges;
@@ -96,7 +98,8 @@ export default class RangeFacets {
               max: activeSliderRange.lte
             }
           }, this.conf.field));
-        } else if (isActive) {
+
+        } else if (isActive && this.conf.type === RANGE_FACETS_TYPE.CHECKBOX) {
           const filterObjectCustom = createFilterObject(
             this.reduxStore.getState().filters,
             this.reduxStore.getState().configuration.baseFilters,
@@ -105,11 +108,16 @@ export default class RangeFacets {
           this.client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
             this.reduxStore.dispatch(setFieldStats(res.fieldStats, this.conf.field));
           });
+
+        } else if (search.callBy === 'component.activeFilters') {
+          this.reduxStore.dispatch(clearFieldStats());
+          this.reduxStore.dispatch(setFieldStats(search.results.fieldStats, this.conf.field));
+
         } else {
-          this.renderRangeSlider({
-            fieldStats: search.results.fieldStats
-          })
+          this.reduxStore.dispatch(setFieldStats(search.results.fieldStats, this.conf.field));
         }
+
+        this.handleCheckboxStates(false);
 
       });
 
@@ -175,8 +183,6 @@ export default class RangeFacets {
 
 
   render(results) {
-    this.reduxStore.dispatch(clearFieldStats());
-
     const container = document.getElementById(this.conf.containerId);
 
     if (results) {
