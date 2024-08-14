@@ -12,6 +12,7 @@ export default class Facets {
     this.client = client;
     this.reduxStore = reduxStore;
     this.conf = conf;
+    this.onInteractionComplete = typeof conf.onInteractionComplete === 'function' ? conf.onInteractionComplete : function() {};
 
     function _isEmpty(obj) {
       return !obj ? true : Object.keys(obj).length === 0;
@@ -126,6 +127,7 @@ export default class Facets {
 
       checkbox.onchange = (e) => {
         this.setFilter(e.target.value, e.target.checked);
+        this.onInteractionComplete(e.target.value, e.target.checked);
       };
     }
   }

@@ -21,10 +21,15 @@ export default class Filters {
     this.reduxStore = reduxStore;
     this.conf = conf;
     this.activeFilter = null; // For select list and tab filters with a single selectable value
+    this.onInteractionComplete = typeof conf.onInteractionComplete === 'function' ? conf.onInteractionComplete : function() {};
 
     if (validateContainer(conf.containerId)) {
       this.reduxStore.dispatch(registerFilter(this.conf));
-      observeStoreByKey(this.reduxStore, 'filters', (state) => this.render(state));
+      // observeStoreByKey(this.reduxStore, 'filters', (state) => this.render(state));
+
+      observeStoreByKey(this.reduxStore, 'filters', (state) => {
+        this.render(state)
+      });
 
       // Observe fieldStats from search results for range filters' min/max values
       if (this.conf.type === FILTER_TYPE.RANGE) {
@@ -115,7 +120,6 @@ export default class Filters {
     container.innerHTML = html;
     this.renderedHtml = html;
 
-
     // Attach event listeners to select list
     if (this.conf.type === FILTER_TYPE.SELECT_LIST) {
       container.querySelector('select').addEventListener('change', (e) =>  this.singleActiveChangeEvent(e.target.value));
@@ -146,7 +150,10 @@ export default class Filters {
     // Attach event listeners to other filter types
     else {
       attachEventListeners(container, 'data-filter', 'click', (filterKey) => {
+        const checkboxInput = container.querySelector('input[data-filter="' + filterKey + '"]');
+        const isChecked = checkboxInput ? checkboxInput.checked : null;
         this.reduxStore.dispatch(toggleFilter(filterKey, 1));
+        this.onInteractionComplete(filterKey, isChecked);
       });
     }
   }
@@ -183,6 +190,7 @@ export default class Filters {
       this.activeFilter = filterKey;
       store.dispatch(toggleFilter(filterKey, 1, true));
     }
+    this.onInteractionComplete(filterKey);
   }
 
 
@@ -202,6 +210,7 @@ export default class Filters {
             container.querySelector('input[name="from"]').value,
             container.querySelector('input[name="to"]').value)
         }
+        this.onInteractionComplete(this.conf.field);
       });
     }
     // Clear button

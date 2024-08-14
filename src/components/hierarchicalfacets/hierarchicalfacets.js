@@ -15,6 +15,7 @@ export default class HierarchicalFacets {
     this.client = client;
     this.reduxStore = reduxStore;
     this.conf = conf;
+    this.onInteractionComplete = typeof conf.onInteractionComplete === 'function' ? conf.onInteractionComplete : function() {};
 
     function _isEmpty(obj) {
       return !obj ? true : Object.keys(obj).length === 0;
@@ -184,6 +185,7 @@ export default class HierarchicalFacets {
       if (onChangeSet) {
         checkbox.onchange = (e) => {
           this.setFilter(e.target.value, e.target.getAttribute('data-field'));
+          this.onInteractionComplete(e.target.value, e.target.checked);
         };
       }
     }

@@ -105,7 +105,7 @@ export default class RangeFacets {
           this.client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
             this.reduxStore.dispatch(setFieldStats(res.fieldStats, this.conf.field));
           });
-        } else {
+        } else if (this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
           this.renderRangeSlider({
             fieldStats: search.results.fieldStats
           })
