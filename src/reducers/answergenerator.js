@@ -2,7 +2,8 @@ import { SET_GENERATED_ANSWER, SET_QUESTION } from "../actions/answergenerator";
 
 const initialState = {
   question: null,
-  generatorResponse: null
+  generatorResponse: null,
+  relatedResults: null
 };
 
 export default function answergenerator(state = initialState, action) {

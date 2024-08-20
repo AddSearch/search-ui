@@ -4,6 +4,7 @@ import handlebars from "handlebars";
 import { ANSWER_GENERATOR_TEMPLATE } from "./templates";
 import './answergenerator.scss';
 import { askQuestion } from "../../actions/answergenerator";
+import { registerHelper } from "../../util/handlebars";
 
 export default class AnswerGenerator {
 
@@ -46,6 +47,7 @@ export default class AnswerGenerator {
 
   typeWriterEffect() {
     let i = 0;
+    const containerId = this.conf.containerId;
     const answerEl = document.querySelector('#' + this.conf.containerId + ' .adds-answer');
     const answerTextEl = document.querySelector('#' + this.conf.containerId + ' .adds-answer-text');
     const answerCaretEl = document.querySelector('#' + this.conf.containerId + ' .adds-answer-caret');
@@ -53,16 +55,25 @@ export default class AnswerGenerator {
       return;
     }
     const text = answerEl.getAttribute('data-answer');
+    const textFormatted = text.replace(/\n/g, '<br>');
     const typingSpeed = 30;
     const step = 3;
 
+    function showRelatedResults() {
+      const relatedResultsEl = document.querySelector('#' + containerId + ' .adds-related-results');
+      if (relatedResultsEl) {
+        relatedResultsEl.classList.remove('hidden');
+      }
+    }
+
     function printCharacter() {
-      if (i < text.length + step) {
-        answerTextEl.innerHTML = text.slice(0, i);
+      if (i < textFormatted.length + step) {
+        answerTextEl.innerHTML = textFormatted.slice(0, i);
         i += step;
         setTimeout(printCharacter, typingSpeed);
       } else {
         answerCaretEl.style.display = 'none';
+        showRelatedResults();
       }
     }
 
@@ -72,7 +83,8 @@ export default class AnswerGenerator {
   render(answerGenerator) {
     const data = {
       question: answerGenerator.question,
-      generatorResponse: answerGenerator.generatorResponse
+      generatorResponse: answerGenerator.generatorResponse,
+      relatedResults: answerGenerator.relatedResults
     };
 
 

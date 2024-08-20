@@ -41,6 +41,7 @@ export function setGeneratedAnswer(question, answer) {
   return {
     type: SET_GENERATED_ANSWER,
     question,
-    generatorResponse: answer.response
+    generatorResponse: answer.response,
+    relatedResults: answer.hits
   }
 }
