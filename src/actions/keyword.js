@@ -10,10 +10,3 @@ export function setKeyword(value, skipAutocomplete, searchFieldContainerId, setS
     setSearchFieldValue: setSearchFieldValue || false
   }
 }
-
-// export function setQuestion(value) {
-//   return {
-//     type: QUESTION,
-//     value
-//   }
-// }

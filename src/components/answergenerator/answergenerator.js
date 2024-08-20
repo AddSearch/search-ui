@@ -1,10 +1,9 @@
 import { validateContainer } from "../../util/dom";
 import { observeStoreByKey } from "../../store";
 import handlebars from "handlebars";
-import { ANSWER_GENERATOR_TEMPLATE } from "./templates";
 import './answergenerator.scss';
 import { askQuestion } from "../../actions/answergenerator";
-import { registerHelper } from "../../util/handlebars";
+import PRECOMPILED_ANSWERGENERATOR_TEMPLATE from "./precompile-templates/answergenerator.handlebars";
 
 export default class AnswerGenerator {
 
@@ -90,8 +89,13 @@ export default class AnswerGenerator {
 
     // Compile HTML and inject to element if changed
     let html;
-    const template = this.conf.template || ANSWER_GENERATOR_TEMPLATE;
-    html = handlebars.compile(template)(data);
+    if (this.conf.precompiledTemplate) {
+      html = this.conf.precompiledTemplate(data);
+    } else if (this.conf.template) {
+      html = handlebars.compile(this.conf.template)(data);
+    } else {
+      html = PRECOMPILED_ANSWERGENERATOR_TEMPLATE(data);
+    }
 
     if (this.renderedHtml === html) {
       return;

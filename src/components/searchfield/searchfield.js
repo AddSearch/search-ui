@@ -116,10 +116,6 @@ export default class SearchField {
       this.reduxStore.getState().configuration.fieldForInstantRedirect);
   }
 
-  // executeGenerateAnswer(client, question) {
-  //   this.reduxStore.dispatch(askQuestion(client, question, this.reduxStore));
-  // }
-
 
   redirectOrSearch(keyword) {
     const searchResultsPageUrl = this.reduxStore.getState().search.searchResultsPageUrl;
