@@ -79,11 +79,9 @@ export function registerDefaultHelpers() {
 
 export function registerHelper(helperName, helperFunction) {
   handlebars.registerHelper(helperName, helperFunction);
-  const HandlebarsRunTime = (typeof window !== 'undefined' && window.Handlebars) ? window.Handlebars : HandlebarsRuntime;
-  HandlebarsRunTime.registerHelper(helperName, helperFunction);
+  HandlebarsRuntime.registerHelper(helperName, helperFunction);
 }
 export function registerPartial(partialName, partialTemplate) {
   handlebars.registerPartial(partialName, partialTemplate);
-  const HandlebarsRunTime = (typeof window !== 'undefined' && window.Handlebars) ? window.Handlebars : HandlebarsRuntime;
-  HandlebarsRunTime.registerPartial(partialName, partialTemplate);
+  HandlebarsRuntime.registerPartial(partialName, partialTemplate);
 }
