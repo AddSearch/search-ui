@@ -928,13 +928,15 @@ Or precompile the whole directory
 ```js
   handlebars your-dir/all-templates/> output-dir/all-precompiled-templates-srp.js -c handlebars/runtime
 ```
-`-c` flag creates a `require` statement for Handlebars-runtime in your precompiled template file. 
+`-c` flag creates a `require` statement for Handlebars-runtime in your precompiled template file. Please note that -c will build your templates into a CommonJS module, which is not supported in the browser.
+
 Use the precompiled template inside a component, for example:
 ```js
-  // Handlebars are exposed globally when loading Search UI Library
+  // Handlebars are exported within Search UI Library's module as Handlebars_runtime
   // You can also install handlebars runtime package and import it
   // Below code will use your precompiled template of the file name "searchfield.handlebars"
 
+  var Handlebars = AddSearchUI.Handlebars_runtime;
   var precompiledTemplates = Handlebars.templates;
   searchui.searchField({
     containerId: 'searchfield-container',
