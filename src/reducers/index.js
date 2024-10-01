@@ -9,6 +9,7 @@ import sortby from './sortby';
 import configuration from "./configuration";
 import fieldstats from "./fieldstats";
 import recommendation from "./recommendations";
+import answergenerator from "./answergenerator";
 
 const reducer = combineReducers({
   autocomplete,
@@ -20,7 +21,8 @@ const reducer = combineReducers({
   sortby,
   fieldstats,
   recommendation,
-  configuration
+  configuration,
+  answergenerator
 });
 
 export default reducer;

@@ -27,6 +27,8 @@ import { clearSelected } from './actions/filters';
 import { HISTORY_PARAMETERS } from "./util/history";
 import Recommendations from "./components/recommendations";
 import { recommend } from "./actions/recommendations";
+import AnswerGenerator from "./components/answergenerator";
+import { askQuestion } from "./actions/answergenerator";
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 export const MATCH_ALL_QUERY = '*';
@@ -150,6 +152,7 @@ export default class AddSearchUI {
     }
     const onSearch = (keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal) =>
       this.executeSearch(keyword, onResultsScrollTo, searchAsYouType, fieldForInstantRedirect, fieldForInstantRedirectGlobal);
+
     new SearchField(this.client, this.reduxStore, conf, this.settings.matchAllQuery === true, onSearch);
   }
 
@@ -208,6 +211,10 @@ export default class AddSearchUI {
 
   recommendations(conf) {
     new Recommendations(this.client, this.reduxStore, conf, this.recommendationsSettings);
+  }
+
+  answerGenerator(conf) {
+    new AnswerGenerator(this.client, this.reduxStore, conf);
   }
 
   /*
