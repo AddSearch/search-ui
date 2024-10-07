@@ -111,11 +111,12 @@ export function createFilterObject(state, baseFilters, excludedFacetGroup) {
  */
 export default class FilterStateObserver {
 
-  constructor(client, reduxStore, createFilterObjectFunction, onFilterChange, baseFilters, segmentedSearchClients) {
+  constructor(client, reduxStore, createFilterObjectFunction, onFilterChange, baseFilters, segmentedSearchClients, onFilteredSearchRefresh) {
     this.client = client;
     this.reduxStore = reduxStore;
     this.createFilterObjectFunction = createFilterObjectFunction;
     this.onFilterChange = onFilterChange;
+    this.onFilteredSearchRefresh = onFilteredSearchRefresh;
     this.segmentedSearchClients = segmentedSearchClients;
 
     observeStoreByKey(this.reduxStore, 'filters', state => this.onFilterStateChange(state, baseFilters));
@@ -139,6 +140,9 @@ export default class FilterStateObserver {
         const segmentFilters = this.createFilterObjectFunction(state, this.segmentedSearchClients[key].originalFilters);
         this.segmentedSearchClients[key].client.setFilterObject(segmentFilters);
         this.reduxStore.dispatch(segmentedSearch(this.segmentedSearchClients[key].client, key, keyword));
+      }
+      if (this.onFilteredSearchRefresh) {
+        this.onFilteredSearchRefresh();
       }
     } else if (state.setHistory) {
       const filterObject = this.createFilterObjectFunction(state, baseFilters);

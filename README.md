@@ -87,6 +87,7 @@ The configuration object can contain following values:
 | collectAnalytics | boolean | true | Control if analytics events are collected at all |
 | matchAllQuery | boolean | false | Execute "match all" query when the Search UI is started |
 | onFilterChange | function | n/a | Function to call when active filters are changed (for conditional visibility) |
+| onFilteredSearchRefresh | function | n/a | Function to call when search results are refreshed due to changes in filters or facets |
 | searchResultsPageUrl | String | null | Redirect the user to a separate search results page, instead of showing search results on the current page |
 | searchParameter | String | "search" | Name of the search parameter which is added to the URL, by default the library adds "?search=" |
 | updateBrowserHistory | boolean | true | Set this value to false for a second/third searchui's instance to prevent conflict in browser's URL |
