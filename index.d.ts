@@ -1,5 +1,5 @@
 declare module "addsearch-search-ui" {
-  export default class AddSearchUI {
+  class AddSearchUI {
     constructor(client: any, settings?: any);
     start(): void;
     executeSearch(
@@ -30,40 +30,44 @@ declare module "addsearch-search-ui" {
     registerHandlebarsPartial(name: string, partial: string): void;
   }
 
-  export const AUTOCOMPLETE_TYPE: {
-    SEARCH: string;
-    SUGGESTIONS: string;
-    CUSTOM_FIELDS: string;
-  };
+  namespace AddSearchUI {
+    const AUTOCOMPLETE_TYPE: {
+      SEARCH: string;
+      SUGGESTIONS: string;
+      CUSTOM_FIELDS: string;
+    };
 
-  export const FILTER_TYPE: {
-    CHECKBOX_GROUP: string;
-    RADIO_GROUP: string;
-    SELECT_LIST: string;
-    RANGE: string;
-    TABS: string;
-    TAGS: string;
-  };
+    const FILTER_TYPE: {
+      CHECKBOX_GROUP: string;
+      RADIO_GROUP: string;
+      SELECT_LIST: string;
+      RANGE: string;
+      TABS: string;
+      TAGS: string;
+    };
 
-  export const SORTBY_TYPE: {
-    SELECT_LIST: string;
-    RADIO_GROUP: string;
-  };
+    const SORTBY_TYPE: {
+      SELECT_LIST: string;
+      RADIO_GROUP: string;
+    };
 
-  export const LOAD_MORE_TYPE: {
-    BUTTON: string;
-    INFINITE_SCROLL: string;
-  };
+    const LOAD_MORE_TYPE: {
+      BUTTON: string;
+      INFINITE_SCROLL: string;
+    };
 
-  export const RECOMMENDATION_TYPE: {
-    FREQUENTLY_BOUGHT_TOGETHER: string;
-    RELATED_ITEMS: string;
-  };
+    const RECOMMENDATION_TYPE: {
+      FREQUENTLY_BOUGHT_TOGETHER: string;
+      RELATED_ITEMS: string;
+    };
 
-  export const RANGE_FACETS_TYPE: {
-    CHECKBOX: string;
-    SLIDER: string;
-  };
+    const RANGE_FACETS_TYPE: {
+      CHECKBOX: string;
+      SLIDER: string;
+    };
 
-  export const Handlebars_runtime: any;
+    const Handlebars_runtime: any;
+  }
+
+  export = AddSearchUI;
 }
