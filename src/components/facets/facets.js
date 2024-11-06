@@ -3,11 +3,10 @@ import handlebars from 'handlebars';
 import { toggleFacetFilter } from '../../actions/filters';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
-import {createFilterObject} from "../filters/filterstateobserver";
+import { createFilterObject } from '../filters/filterstateobserver';
 import PRECOMPILED_FACETS_TEMPLATE from './precompile-templates/facets.handlebars';
 
 export default class Facets {
-
   constructor(client, reduxStore, conf, baseFilters) {
     this.client = client;
     this.reduxStore = reduxStore;
@@ -24,7 +23,6 @@ export default class Facets {
     ];
 
     if (validateContainer(conf.containerId)) {
-
       observeStoreByKey(this.reduxStore, 'search', (search) => {
         var activeFacets = this.reduxStore.getState().filters.activeFacets;
         if (search.loading || IGNORE_RENDERING_ON_REQUEST_BY.indexOf(search.callBy) > -1) {
@@ -34,12 +32,15 @@ export default class Facets {
           this.render(search);
         } else {
           var filterObjectCustom = createFilterObject(
-            this.reduxStore.getState().filters, baseFilters, this.conf.field);
+            this.reduxStore.getState().filters,
+            baseFilters,
+            this.conf.field
+          );
 
           if (search.callBy !== this.conf.field) {
-            client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
+            client.fetchCustomApi(this.conf.field, filterObjectCustom, (res) => {
               this.render(res, true);
-            })
+            });
           } else {
             const activeFacets = this.getActiveFacets(this.conf.field);
             this.updateCheckboxStates(activeFacets);
@@ -49,12 +50,10 @@ export default class Facets {
     }
   }
 
-
   setFilter(value) {
     // Dispatch facet and refresh search
     this.reduxStore.dispatch(toggleFacetFilter(this.conf.field, value, true));
   }
-
 
   render(search, isStickyFacetsRenderer) {
     if (search.loading) {
@@ -91,13 +90,11 @@ export default class Facets {
       facets = this.conf.facetsFilter(facets);
     }
 
-
     // Render
     const data = {
       conf: this.conf,
       facets: facets
     };
-
 
     // Compile HTML and inject to element if changed
     let html;
@@ -117,10 +114,9 @@ export default class Facets {
     container.innerHTML = html;
     this.renderedHtml = html;
 
-
     // Attach events
     const options = container.getElementsByTagName('input');
-    for (let i=0; i<options.length; i++) {
+    for (let i = 0; i < options.length; i++) {
       let checkbox = options[i];
       checkbox.checked = activeFacets.indexOf(checkbox.value) !== -1;
 
@@ -129,7 +125,6 @@ export default class Facets {
       };
     }
   }
-
 
   getActiveFacets(facetField) {
     // Read active facets from redux state
@@ -146,7 +141,7 @@ export default class Facets {
   updateCheckboxStates(activeFacets) {
     const container = document.getElementById(this.conf.containerId);
     const options = container.getElementsByTagName('input');
-    for (let i=0; i < options.length; i++) {
+    for (let i = 0; i < options.length; i++) {
       let checkbox = options[i];
       checkbox.checked = activeFacets.indexOf(checkbox.value) !== -1;
     }

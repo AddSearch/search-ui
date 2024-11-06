@@ -1,10 +1,8 @@
 import assert from 'assert';
-import { getQueryParam, queryParamsToObject, objectToQueryParams } from '../../src/util/history';
+import { getQueryParam, queryParamsToObject, objectToQueryParams } from '../../src/util/history';
 
 describe('history', () => {
-
   describe('getQueryParam', () => {
-
     it('return null if no query parameters exist', () => {
       const url = 'https://addsearch.com/test';
       assert.equal(getQueryParam(url, 'foo'), null);
@@ -21,9 +19,7 @@ describe('history', () => {
     });
   });
 
-
   describe('queryParamsToObject', () => {
-
     it('return an empty object if no query parameters exist', () => {
       const url = 'https://addsearch.com/test';
       assert.deepEqual(queryParamsToObject(url), {});
@@ -55,15 +51,13 @@ describe('history', () => {
       const expectedValue = {
         addsearchUnrelatedParams: 'foo=bar&foo=bar2',
         search: 'bö',
-        search_page: '3',
+        search_page: '3'
       };
       assert.deepEqual(queryParamsToObject(url), expectedValue);
     });
   });
 
-
   describe('objectToQueryParams', () => {
-
     it('return an empty string if no query parameters exist', () => {
       assert.equal(objectToQueryParams({}), '');
     });
@@ -86,5 +80,5 @@ describe('history', () => {
       const url = 'foo=bar&a=f%C3%B6&z&g=';
       assert.deepEqual(objectToQueryParams(obj), url);
     });
-  })
+  });
 });

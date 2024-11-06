@@ -1,4 +1,4 @@
-import { CLEAR_FIELD_STATS, SET_FIELD_STATS } from "../actions/fieldstats";
+import { CLEAR_FIELD_STATS, SET_FIELD_STATS } from '../actions/fieldstats';
 
 const initialState = {
   fieldStats: {}
@@ -18,6 +18,6 @@ export default function fieldstats(state = initialState, action) {
       });
 
     default:
-      return state
+      return state;
   }
 }

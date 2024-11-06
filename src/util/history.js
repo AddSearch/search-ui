@@ -3,8 +3,8 @@ import { WARMUP_QUERY_PREFIX, MATCH_ALL_QUERY } from '../index';
 import { search } from '../actions/search';
 import { setKeyword } from '../actions/keyword';
 import { setPage } from '../actions/pagination';
-import {setActiveFilters, setActiveFacets, setActiveRangeFacets} from '../actions/filters';
-import {sortBy} from "../actions/sortby";
+import { setActiveFilters, setActiveFacets, setActiveRangeFacets } from '../actions/filters';
+import { sortBy } from '../actions/sortby';
 
 export const HISTORY_PARAMETERS = {
   SEARCH: 'search',
@@ -41,12 +41,14 @@ export function setHistory(parameter, value, debounce, store) {
   }
 }
 
-
 // Set the actual history state
 function doSetHistory(parameter, value) {
   // ignore warmup search query
-  if (parameter === HISTORY_PARAMETERS.SEARCH &&
-      value && value.indexOf(WARMUP_QUERY_PREFIX) === 0) {
+  if (
+    parameter === HISTORY_PARAMETERS.SEARCH &&
+    value &&
+    value.indexOf(WARMUP_QUERY_PREFIX) === 0
+  ) {
     return;
   }
 
@@ -95,32 +97,60 @@ function doSetHistory(parameter, value) {
   }
 }
 
-
 export function getQueryParam(url, param) {
-  const name = param.replace(/[\[\]]/g, "\\$&");
-  const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+  const name = param.replace(/[\[\]]/g, '\\$&');
+  const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
   const results = regex.exec(url);
   if (!results) return null;
   if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-
-export function initFromURL(client, reduxStore, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters) {
+export function initFromURL(
+  client,
+  reduxStore,
+  createFilterObjectFunction,
+  searchFunction,
+  hasMatchAllQuery,
+  baseFilters
+) {
   // Initial load
   const url = window.location.href;
   const qs = queryParamsToObject(url);
-  handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, false, baseFilters);
+  handleURLParams(
+    client,
+    reduxStore,
+    qs,
+    createFilterObjectFunction,
+    searchFunction,
+    false,
+    baseFilters
+  );
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
     const qs = queryParamsToObject(window.location.href);
-    handleURLParams(client, reduxStore, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters);
-  }
+    handleURLParams(
+      client,
+      reduxStore,
+      qs,
+      createFilterObjectFunction,
+      searchFunction,
+      hasMatchAllQuery,
+      baseFilters
+    );
+  };
 }
 
-
-function handleURLParams(client, store, qs, createFilterObjectFunction, searchFunction, hasMatchAllQuery, baseFilters) {
+function handleURLParams(
+  client,
+  store,
+  qs,
+  createFilterObjectFunction,
+  searchFunction,
+  hasMatchAllQuery,
+  baseFilters
+) {
   let hasFacetsOrFilters = false;
   if (qs[HISTORY_PARAMETERS.FILTERS]) {
     // Take active filters from URL
@@ -164,8 +194,7 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
 
   if (qs[HISTORY_PARAMETERS.PAGE]) {
     store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10), null, store));
-  }
-  else {
+  } else {
     const paging = client.getSettings().paging;
     store.dispatch(setPage(client, paging.page, null, store));
   }
@@ -174,14 +203,11 @@ function handleURLParams(client, store, qs, createFilterObjectFunction, searchFu
     const keyword = decodeURIComponent(qs[HISTORY_PARAMETERS.SEARCH]);
     store.dispatch(setKeyword(keyword, true, null, true));
     searchFunction(keyword);
-  }
-  else if (hasMatchAllQuery === true) {
+  } else if (hasMatchAllQuery === true) {
     store.dispatch(setKeyword(MATCH_ALL_QUERY, true, null, true));
     searchFunction(MATCH_ALL_QUERY);
   }
 }
-
-
 
 /**
  * Pick up query parameters from an URL and return them as a JSON object
@@ -204,20 +230,22 @@ export function queryParamsToObject(url) {
 
   let obj = {};
   const qsArr = qs.split('&');
-  const qsArrUnrelated = qsArr.filter(v =>
-    v.indexOf(HISTORY_PARAMETERS.SEARCH) === -1 &&
-    v.indexOf(HISTORY_PARAMETERS.PAGE) === -1 &&
-    v.indexOf(HISTORY_PARAMETERS.SORTBY) === -1 &&
-    v.indexOf(HISTORY_PARAMETERS.FILTERS) === -1 &&
-    v.indexOf(HISTORY_PARAMETERS.FACETS) === -1 &&
-    v.indexOf(HISTORY_PARAMETERS.RANGE_FACETS) === -1);
-  const qsArrUsedInSearch = qsArr.filter(v => !qsArrUnrelated.includes(v));
+  const qsArrUnrelated = qsArr.filter(
+    (v) =>
+      v.indexOf(HISTORY_PARAMETERS.SEARCH) === -1 &&
+      v.indexOf(HISTORY_PARAMETERS.PAGE) === -1 &&
+      v.indexOf(HISTORY_PARAMETERS.SORTBY) === -1 &&
+      v.indexOf(HISTORY_PARAMETERS.FILTERS) === -1 &&
+      v.indexOf(HISTORY_PARAMETERS.FACETS) === -1 &&
+      v.indexOf(HISTORY_PARAMETERS.RANGE_FACETS) === -1
+  );
+  const qsArrUsedInSearch = qsArr.filter((v) => !qsArrUnrelated.includes(v));
 
   if (qsArrUnrelated.length) {
     obj['addsearchUnrelatedParams'] = qsArrUnrelated.join('&');
   }
 
-  qsArrUsedInSearch.forEach(v => {
+  qsArrUsedInSearch.forEach((v) => {
     const kv = v.split('=');
     if (kv[0] && kv[0].length > 0) {
       let value = null;
@@ -267,8 +295,7 @@ export function objectToQueryParams(obj) {
 export function urlParamToJSON(urlParameter) {
   try {
     return JSON.parse(urlParameter);
-  }
-  catch(error) {}
+  } catch (error) {}
   return null;
 }
 
@@ -301,9 +328,10 @@ export function rangeFacetsJsonToUrlParam(json) {
  */
 export function redirectToSearchResultsPage(url, keyword) {
   if (url.indexOf('?') === -1) {
-    window.location.href = url + '?' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
-  }
-  else {
-    window.location.href = url + '&' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
+    window.location.href =
+      url + '?' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
+  } else {
+    window.location.href =
+      url + '&' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);
   }
 }

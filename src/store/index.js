@@ -13,7 +13,6 @@ export function initRedux(settings) {
   return createStore(reducers, preloadedstate, composeEnhancers(applyMiddleware(thunk)));
 }
 
-
 export function observeStoreByKey(store, jsonKey, onChange) {
   let currentState = {};
 

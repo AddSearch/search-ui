@@ -4,7 +4,6 @@ import { validateContainer } from '../../util/dom';
 import { addClickTrackers } from '../../util/analytics';
 
 export default class SegmentedResults {
-
   constructor(client, reduxStore, conf) {
     this.client = client;
     this.reduxStore = reduxStore;
@@ -16,13 +15,11 @@ export default class SegmentedResults {
     this.client.setCollectAnalytics(false);
   }
 
-
   render(data) {
     // Don't re-render while API requests are pending
     if (data.pendingSegments.length !== 0) {
       return;
     }
-
 
     // Compile HTML and inject to element if changed
     let html;
@@ -37,7 +34,6 @@ export default class SegmentedResults {
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
     this.renderedHtml = html;
-
 
     // Send result clicks to analytics
     const links = container.querySelectorAll('[data-analytics-click]');

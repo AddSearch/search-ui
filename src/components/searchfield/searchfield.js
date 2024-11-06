@@ -18,7 +18,7 @@ import { observeStoreByKey } from '../../store';
 import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { validateContainer } from '../../util/dom';
-import {clearSelected, clearSelectedRangeFacets} from "../../actions/filters";
+import { clearSelected, clearSelectedRangeFacets } from '../../actions/filters';
 
 const KEYCODES = {
   ARROW_DOWN: 40,
@@ -28,9 +28,7 @@ const KEYCODES = {
   DELETE: 46
 };
 
-
 export default class SearchField {
-
   constructor(client, reduxStore, conf, matchAllQueryWhenSearchFieldEmpty, onSearch) {
     this.client = client;
     this.reduxStore = reduxStore;
@@ -48,10 +46,15 @@ export default class SearchField {
           this.updateValueOnAllBoundFields(kw.value);
         }
       });
-      observeStoreByKey(this.reduxStore, 'autocomplete', (ac) => this.onAutocompleteUpdateBoundField(ac));
+      observeStoreByKey(this.reduxStore, 'autocomplete', (ac) =>
+        this.onAutocompleteUpdateBoundField(ac)
+      );
     } else if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'keyword', (kw) => {
-        if (kw.searchFieldContainerId === this.conf.containerId || kw.searchFieldContainerId === null) {
+        if (
+          kw.searchFieldContainerId === this.conf.containerId ||
+          kw.searchFieldContainerId === null
+        ) {
           this.render(kw.value);
         }
       });
@@ -66,10 +69,15 @@ export default class SearchField {
   }
 
   onAutocompleteUpdate(state) {
-    if ((state.suggestions.length > 0 || state.customFields.length > 0) && state.setSuggestionToSearchField) {
+    if (
+      (state.suggestions.length > 0 || state.customFields.length > 0) &&
+      state.setSuggestionToSearchField
+    ) {
       // Set field value
       if (state.activeSuggestionIndex !== null && state.setSuggestionToSearchField) {
-        const suggestionObj = state.suggestions[state.activeSuggestionIndex] || state.customFields[state.activeSuggestionIndex];
+        const suggestionObj =
+          state.suggestions[state.activeSuggestionIndex] ||
+          state.customFields[state.activeSuggestionIndex];
         const suggestion = suggestionObj.value;
         this.render(suggestion);
       }
@@ -85,15 +93,16 @@ export default class SearchField {
       return;
     }
     if (state.activeSuggestionIndex !== null) {
-      const suggestionObj = state.suggestions[state.activeSuggestionIndex] || state.customFields[state.activeSuggestionIndex];
+      const suggestionObj =
+        state.suggestions[state.activeSuggestionIndex] ||
+        state.customFields[state.activeSuggestionIndex];
       if (!suggestionObj) return;
-      const suggestion = suggestionObj.value
+      const suggestion = suggestionObj.value;
       this.updateValueOnAllBoundFields(suggestion);
     } else {
       this.updateValueOnAllBoundFields(this.reduxStore.getState().keyword.value);
     }
   }
-
 
   executeSearch(client, keyword, searchAsYouType) {
     if (!searchAsYouType) {
@@ -110,18 +119,25 @@ export default class SearchField {
 
     this.reduxStore.dispatch(clearSelectedRangeFacets(false, true));
 
-    this.onSearch(kw, false, searchAsYouType, this.conf.fieldForInstantRedirect,
-      this.reduxStore.getState().configuration.fieldForInstantRedirect);
+    this.onSearch(
+      kw,
+      false,
+      searchAsYouType,
+      this.conf.fieldForInstantRedirect,
+      this.reduxStore.getState().configuration.fieldForInstantRedirect
+    );
   }
-
 
   redirectOrSearch(keyword) {
     const searchResultsPageUrl = this.reduxStore.getState().search.searchResultsPageUrl;
 
     // Redirect to results page
-    if (searchResultsPageUrl &&
-        this.conf.ignoreSearchResultsPageUrl !== true &&
-        keyword && keyword.length > 0) {
+    if (
+      searchResultsPageUrl &&
+      this.conf.ignoreSearchResultsPageUrl !== true &&
+      keyword &&
+      keyword.length > 0
+    ) {
       redirectToSearchResultsPage(searchResultsPageUrl, keyword);
     }
 
@@ -140,8 +156,7 @@ export default class SearchField {
   }
 
   handleAutoFocus(field) {
-    if (this.conf.autofocus !== false &&
-      this.firstRenderDone === false) {
+    if (this.conf.autofocus !== false && this.firstRenderDone === false) {
       field.focus();
       this.firstRenderDone = true;
     }
@@ -162,9 +177,11 @@ export default class SearchField {
 
     // Field already exists. Don't re-render
     if (container.querySelector('input')) {
-      if (preDefinedKeyword !== null &&
-          preDefinedKeyword !== MATCH_ALL_QUERY &&
-          container.querySelector('input').value !== preDefinedKeyword) {
+      if (
+        preDefinedKeyword !== null &&
+        preDefinedKeyword !== MATCH_ALL_QUERY &&
+        container.querySelector('input').value !== preDefinedKeyword
+      ) {
         container.querySelector('input').value = preDefinedKeyword;
       }
       return;
@@ -193,14 +210,13 @@ export default class SearchField {
       container.querySelector('button').onclick = () => {
         let keyword = this.field.value;
         this.handleSubmitKeyword(keyword);
-      }
+      };
     }
 
     // Event listeners to the form
     if (container.querySelector('form')) {
       container.querySelector('form').onsubmit = (e) => e.preventDefault();
     }
-
 
     // Autofocus when loaded first time
     this.handleAutoFocus(this.field);
@@ -214,20 +230,20 @@ export default class SearchField {
       if (this.boundFields[i].form) {
         this.boundFields[i].form.onsubmit = (e) => {
           e.preventDefault();
-        }
+        };
       }
     }
 
     // Event listeners to the possible search button
     if (this.conf.buttonSelector && document.querySelector(this.conf.buttonSelector)) {
-      const boundButton =  document.querySelector(this.conf.buttonSelector);
+      const boundButton = document.querySelector(this.conf.buttonSelector);
       if (boundButton.type === 'submit') {
         boundButton.type = 'button';
       }
       boundButton.onclick = () => {
         let keyword = this.boundFields[0].value;
         this.handleSubmitKeyword(keyword);
-      }
+      };
     }
 
     // Autofocus when loaded first time
@@ -235,7 +251,6 @@ export default class SearchField {
       this.handleAutoFocus(this.boundFields[0]);
     }
   }
-
 
   /**
    * Input field events
@@ -269,8 +284,7 @@ export default class SearchField {
     const store = this.reduxStore;
     if (e.keyCode === KEYCODES.ARROW_DOWN) {
       store.dispatch(keyboardEvent(ARROW_DOWN));
-    }
-    else if (e.keyCode === KEYCODES.ARROW_UP) {
+    } else if (e.keyCode === KEYCODES.ARROW_UP) {
       store.dispatch(keyboardEvent(ARROW_UP));
     }
   }
@@ -282,7 +296,6 @@ export default class SearchField {
       this.handleSubmitKeyword(keyword);
     }
   }
-
 
   onfocus(e) {
     if (e.target.value === '') {
@@ -299,7 +312,6 @@ export default class SearchField {
     }
     this.reduxStore.dispatch(autocompleteShow());
   }
-
 
   onblur() {
     if (this.reduxStore.getState().autocomplete.hideAutomatically) {

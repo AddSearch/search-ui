@@ -1,6 +1,7 @@
 import {
   CLEAR_RECOMMENDATION,
-  FETCH_RECO_FBT, FETCH_RELATED_ITEMS
+  FETCH_RECO_FBT,
+  FETCH_RELATED_ITEMS
 } from '../actions/recommendations';
 
 const initialState = {
@@ -11,7 +12,6 @@ const initialState = {
 
 export default function recommendation(state = initialState, action) {
   switch (action.type) {
-
     case FETCH_RECO_FBT:
       return Object.assign({}, state, {
         container: action.container,

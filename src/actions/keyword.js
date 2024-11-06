@@ -7,5 +7,5 @@ export function setKeyword(value, skipAutocomplete, searchFieldContainerId, setS
     skipAutocomplete,
     searchFieldContainerId: searchFieldContainerId || null,
     setSearchFieldValue: setSearchFieldValue || false
-  }
+  };
 }

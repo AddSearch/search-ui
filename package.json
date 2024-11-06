@@ -2,13 +2,6 @@
   "name": "addsearch-search-ui",
   "version": "0.8.15",
   "description": "JavaScript library to develop Search UIs for the web",
-  "main": "./dist/addsearch-search-ui.min.js",
-  "jsdelivr": "./dist/addsearch-search-ui.min.js",
-  "scripts": {
-    "test": "node node_modules/.bin/mocha --recursive --require @babel/register --require ignore-styles",
-    "build": "npm run test && ./node_modules/webpack-cli/bin/cli.js",
-    "watch": "./node_modules/webpack-cli/bin/cli.js --watch  --env development"
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/AddSearch/search-ui.git"
@@ -34,6 +27,19 @@
       "url": "https://www.addsearch.com"
     }
   ],
+  "main": "./dist/addsearch-search-ui.min.js",
+  "jsdelivr": "./dist/addsearch-search-ui.min.js",
+  "types": "index.d.ts",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "build": "npm run test && ./node_modules/webpack-cli/bin/cli.js",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "test": "node node_modules/.bin/mocha --recursive --require @babel/register --require ignore-styles",
+    "watch": "./node_modules/webpack-cli/bin/cli.js --watch  --env development"
+  },
   "browserslist": [
     "> 0.1%",
     "IE 9",
@@ -63,6 +69,7 @@
     "mini-css-extract-plugin": "^2.7.2",
     "mocha": "^10.4.0",
     "postcss-loader": "^8.1.0",
+    "prettier": "^3.3.3",
     "sass": "^1.49.7",
     "sass-loader": "^10.2.1",
     "terser-webpack-plugin": "^5.3.6",

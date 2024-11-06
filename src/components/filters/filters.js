@@ -1,6 +1,6 @@
 import './filters.scss';
 import handlebars from 'handlebars';
-import { FILTER_TYPE } from './index';
+import { FILTER_TYPE } from './index';
 import { observeStoreByKey } from '../../store';
 import { toggleFilter, setRangeFilter, registerFilter, clearSelected } from '../../actions/filters';
 import { sortBy } from '../../actions/sortby';
@@ -15,7 +15,6 @@ import PRECOMPILED_FILTERS_RANGE_TEMPLATE from './precompile-templates/filters_r
 export const NO_FILTER_NAME = 'nofilter';
 
 export default class Filters {
-
   constructor(client, reduxStore, conf) {
     this.client = client;
     this.reduxStore = reduxStore;
@@ -33,14 +32,12 @@ export default class Filters {
     }
   }
 
-
   searchResultsChanged(state) {
     // Re-render if fieldStats of this field change
     if (!state.loading && state.results.fieldStats && state.results.fieldStats[this.conf.field]) {
       this.render(this.reduxStore.getState().filters);
     }
   }
-
 
   render(state) {
     // Data is configuration object with information of activity status
@@ -56,8 +53,7 @@ export default class Filters {
         data.options[key].active = true;
         this.activeFilter = key;
         hasActiveFilter = true;
-      }
-      else {
+      } else {
         data.options[key].active = false;
       }
     }
@@ -67,29 +63,24 @@ export default class Filters {
       data.options[NO_FILTER_NAME].active = true;
     }
 
-
     // Template
     let templateDefault = null;
     if (this.conf.type === FILTER_TYPE.TABS) {
       templateDefault = PRECOMPILED_FILTERS_TABS_TEMPLATE;
-    }
-    else if (this.conf.type === FILTER_TYPE.TAGS) {
+    } else if (this.conf.type === FILTER_TYPE.TAGS) {
       templateDefault = PRECOMPILED_FILTERS_TAGS_TEMPLATE;
-    }
-    else if (this.conf.type === FILTER_TYPE.CHECKBOX_GROUP) {
+    } else if (this.conf.type === FILTER_TYPE.CHECKBOX_GROUP) {
       templateDefault = PRECOMPILED_FILTERS_CHECKBOXGROUP_TEMPLATE;
-    }
-    else if (this.conf.type === FILTER_TYPE.RADIO_GROUP) {
+    } else if (this.conf.type === FILTER_TYPE.RADIO_GROUP) {
       templateDefault = PRECOMPILED_FILTERS_RADIOGROUP_TEMPLATE;
-    }
-    else if (this.conf.type === FILTER_TYPE.RANGE) {
+    } else if (this.conf.type === FILTER_TYPE.RANGE) {
       if (state.activeRangeFilters[this.conf.field]) {
         data.from = state.activeRangeFilters[this.conf.field].gte;
         data.to = state.activeRangeFilters[this.conf.field].lte;
       }
       const res = this.reduxStore.getState().search.results;
       if (res && res.fieldStats && res.fieldStats[this.conf.field]) {
-        const { min, max } = res.fieldStats[this.conf.field];
+        const { min, max } = res.fieldStats[this.conf.field];
         data.fromPlaceholder = min === 'Infinity' ? '' : min;
         data.toPlaceholder = max === '-Infinity' ? '' : max;
       }
@@ -97,7 +88,6 @@ export default class Filters {
     } else {
       templateDefault = PRECOMPILED_FILTERS_SELECTLIST_TEMPLATE;
     }
-
 
     // Compile HTML and inject to element if changed
     let html;
@@ -115,25 +105,28 @@ export default class Filters {
     container.innerHTML = html;
     this.renderedHtml = html;
 
-
     // Attach event listeners to select list
     if (this.conf.type === FILTER_TYPE.SELECT_LIST) {
-      container.querySelector('select').addEventListener('change', (e) =>  this.singleActiveChangeEvent(e.target.value));
+      container
+        .querySelector('select')
+        .addEventListener('change', (e) => this.singleActiveChangeEvent(e.target.value));
     }
 
     // Attach event listeners to tabs
     else if (this.conf.type === FILTER_TYPE.TABS) {
       const tabs = container.querySelectorAll('[data-filter]');
 
-      for (let i=0; i<tabs.length; i++) {
-        tabs[i].addEventListener('click', (e) =>  this.singleActiveChangeEvent(e.target.getAttribute('data-filter')));
+      for (let i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener('click', (e) =>
+          this.singleActiveChangeEvent(e.target.getAttribute('data-filter'))
+        );
       }
     }
 
     // Radio group
     else if (this.conf.type === FILTER_TYPE.RADIO_GROUP) {
       const radios = container.querySelectorAll('input');
-      for (let i=0; i<radios.length; i++) {
+      for (let i = 0; i < radios.length; i++) {
         radios[i].addEventListener('click', (e) => this.singleActiveChangeEvent(e.target.value));
       }
     }
@@ -151,7 +144,6 @@ export default class Filters {
     }
   }
 
-
   singleActiveChangeEvent(filterKey) {
     const isNoFilter = filterKey === NO_FILTER_NAME;
     const store = this.reduxStore;
@@ -162,7 +154,9 @@ export default class Filters {
     }
 
     if (this.conf.setSorting) {
-      store.dispatch(sortBy(this.client, this.conf.setSorting.field, this.conf.setSorting.order, this.reduxStore));
+      store.dispatch(
+        sortBy(this.client, this.conf.setSorting.field, this.conf.setSorting.order, this.reduxStore)
+      );
     }
 
     // Remove all other filters. Refresh results if there is no next filter
@@ -185,32 +179,33 @@ export default class Filters {
     }
   }
 
-
   attachRangeFilterEvents(container) {
     const inputs = container.querySelectorAll('input');
-    for (let i=0; i<inputs.length; i++) {
+    for (let i = 0; i < inputs.length; i++) {
       inputs[i].addEventListener('change', (e) => {
-
         // Validate with the regex rule given in conf
-        if (this.conf.validator && !(new RegExp(this.conf.validator)).test(e.target.value)) {
+        if (this.conf.validator && !new RegExp(this.conf.validator).test(e.target.value)) {
           e.target.setAttribute('data-valid', 'false');
         }
         // Value valid (or no validator)
         else {
           e.target.setAttribute('data-valid', 'true');
-          this.rangeChangeEvent(this.conf.field,
+          this.rangeChangeEvent(
+            this.conf.field,
             container.querySelector('input[name="from"]').value,
-            container.querySelector('input[name="to"]').value)
+            container.querySelector('input[name="to"]').value
+          );
         }
       });
     }
     // Clear button
     const button = container.querySelector('button');
     if (button) {
-      button.addEventListener('click', (e) => this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null)));
+      button.addEventListener('click', (e) =>
+        this.reduxStore.dispatch(setRangeFilter(this.conf.field, null, null))
+      );
     }
   }
-
 
   rangeChangeEvent(field, from, to) {
     const fromVal = from !== '' ? from : null;
