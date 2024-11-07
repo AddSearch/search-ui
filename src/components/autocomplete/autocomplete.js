@@ -9,7 +9,7 @@ import {
   autocompleteCustomFields,
   autocompleteHideAndDropRendering
 } from '../../actions/autocomplete';
-import { search } from '../../actions/search';
+import { fetchSearchResultsStory } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
@@ -20,9 +20,10 @@ import PRECOMPILED_AUTOCOMPLETE_TEMPLATE from './precompile-templates/autocomple
 import { registerHelper } from '../../util/handlebars';
 
 export default class Autocomplete {
-  constructor(client, reduxStore, conf) {
+  constructor(client, reduxStore, hasConversationalSearch, conf) {
     this.client = client;
     this.reduxStore = reduxStore;
+    this.hasConversationalSearch = hasConversationalSearch;
     this.conf = conf;
     this.lastOnmouseOver = null;
 
@@ -32,6 +33,7 @@ export default class Autocomplete {
 
     const categorySelectionFunction =
       this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
+
     registerHelper('selectSearchResultCategory', (categories) =>
       categorySelectionFunction(categories, this.conf.categoryAliases)
     );
@@ -104,7 +106,9 @@ export default class Autocomplete {
       } else if (v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         const currentPaging = client.getSettings().paging;
         client.setPaging(1, currentPaging.pageSize, currentPaging.sortBy, currentPaging.sortOrder);
-        this.reduxStore.dispatch(autocompleteSearch(client, v.jsonKey, keyword));
+        this.reduxStore.dispatch(
+          autocompleteSearch(client, v.jsonKey, keyword, this.hasConversationalSearch)
+        );
       }
     });
   }
@@ -114,7 +118,10 @@ export default class Autocomplete {
       const client = v.client;
       if (client && v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         client.nextPage();
-        this.reduxStore.dispatch(autocompleteSearch(client, v.jsonKey, keyword, true));
+        // TODO handle conversational search with autocomplete
+        this.reduxStore.dispatch(
+          autocompleteSearch(client, v.jsonKey, keyword, this.hasConversationalSearch, true)
+        );
       }
     });
   }
@@ -229,7 +236,7 @@ export default class Autocomplete {
     }
     // Search on this page
     else {
-      store.dispatch(search(this.client, keyword, null, null, null, store));
+      store.dispatch(fetchSearchResultsStory(this.client, keyword, null, null, null, store));
     }
   }
 

@@ -2,7 +2,7 @@ import './pagination.scss';
 import handlebars from 'handlebars';
 import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
-import { search } from '../../actions/search';
+import { fetchSearchResultsStory } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import PRECOMPILED_PAGINATION_TEMPLATE from './precompile-templates/pagination.handlebars';
@@ -84,7 +84,7 @@ export default class Pagination {
     const keyword = this.reduxStore.getState().keyword.value;
     const onResultsScrollTo = this.conf.onResultsScrollTo || 'top';
     this.reduxStore.dispatch(
-      search(
+      fetchSearchResultsStory(
         this.client,
         keyword,
         onResultsScrollTo,

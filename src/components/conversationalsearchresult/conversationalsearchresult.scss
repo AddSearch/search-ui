@@ -1,0 +1,102 @@
+@import "../../variables";
+
+.addsearch-conversational-search-result {
+  padding: 24px;
+  background-color: #f4f9ff;
+  border: 1px solid #c0dcff;
+  border-radius: 12px;
+
+  .header {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+  }
+
+  .main-headline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .main-headline-text {
+    font-size: 110%;
+    font-weight: 700;
+
+    @media all and (max-width: 480px) {
+      font-size: 90%;
+    }
+  }
+
+  .ai-explanation-text {
+    font-size: 80%;
+    font-weight: 400;
+    color: #587293;
+
+    @media all and (max-width: 480px) {
+      font-size: 70%;
+    }
+  }
+
+  .sub-headline {
+    font-size: 90%;
+    font-weight: 700;
+    margin-top: 24px;
+
+    @media all and (max-width: 480px) {
+      font-size: 80%;
+    }
+  }
+
+  .answer {
+    margin-top: 16px;
+    font-size: 80%;
+
+    @media all and (max-width: 480px) {
+      font-size: 70%;
+    }
+  }
+
+  .action-buttons-group {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 24px;
+  }
+
+  .sources {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .sources-headline {
+    font-size: 80%;
+    font-weight: 700;
+    margin-top: 0;
+
+    @media all and (max-width: 480px) {
+      font-size: 70%;
+    }
+  }
+
+  .sources-list {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 80%;
+
+    @media all and (max-width: 480px) {
+      font-size: 70%;
+    }
+  }
+
+  .source {
+    color: #177fff;
+    background-color: #e7f2ff;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+}

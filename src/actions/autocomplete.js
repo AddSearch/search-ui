@@ -57,7 +57,13 @@ export function autocompleteCustomFieldsResults(results) {
   };
 }
 
-export function autocompleteSearch(client, jsonKey, keyword, appendResults) {
+export function autocompleteSearch(
+  client,
+  jsonKey,
+  keyword,
+  hasConversationalSearch,
+  appendResults
+) {
   if (!keyword || keyword === '') {
     return {
       type: AUTOCOMPLETE_SEARCH_CLEAR

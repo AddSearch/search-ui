@@ -12,6 +12,7 @@ import LoadMore from './components/loadmore';
 import Pagination from './components/pagination';
 import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
+import ConversationalSearchResult from './components/conversationalsearchresult';
 import SegmentedResults from './components/segmentedresults';
 import SortBy from './components/sortby';
 import { initRedux } from './store';
@@ -19,7 +20,13 @@ import { setExternalAnalyticsCallback, setCollectAnalytics } from './util/analyt
 import { registerDefaultHelpers, registerHelper, registerPartial } from './util/handlebars';
 import { initFromURL } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
-import { start, search, setSearchResultsPageUrl, clearSearchResults } from './actions/search';
+import {
+  START,
+  fetchSearchResultsStory,
+  setSearchResultsPageUrl,
+  clearSearchResults
+} from './actions/search';
+import { fetchConversationalSearchResultStory } from './actions/conversationalsearch';
 import { segmentedSearch } from './actions/segmentedsearch';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
@@ -43,7 +50,7 @@ export default class AddSearchUI {
     this.settings = settings || {};
     HISTORY_PARAMETERS.SEARCH = this.settings.searchParameter || HISTORY_PARAMETERS.SEARCH;
     HISTORY_PARAMETERS.FACETS = this.settings.facetsParameter || HISTORY_PARAMETERS.FACETS;
-    this.hasSearchResultsComponent = false;
+    this.shouldInitializeFromBrowserHistory = false;
     this.reduxStore = initRedux(this.settings);
   }
 
@@ -64,19 +71,25 @@ export default class AddSearchUI {
         : createFilterObject;
 
     // Handle browser history if the user is on a results page (i,e. not just a search field on any page)
-    if (this.hasSearchResultsComponent) {
+    if (this.shouldInitializeFromBrowserHistory) {
       initFromURL(
         this.client,
         this.reduxStore,
         createFilterObjectFunction,
-        (keyword, onResultsScrollTo) =>
+        (keyword, onResultsScrollTo) => {
           this.executeSearch(
             keyword,
             onResultsScrollTo,
             false,
             null,
             this.settings.fieldForInstantRedirect
-          ),
+          );
+
+          // Execute conversational search if enabled
+          keyword &&
+            this.settings.hasConversationalSearch &&
+            this.executeConversationalSearch(keyword, false);
+        },
         this.settings.matchAllQuery,
         this.settings.baseFilters
       );
@@ -105,7 +118,9 @@ export default class AddSearchUI {
       }
     }
 
-    this.reduxStore.dispatch(start());
+    this.reduxStore.dispatch({
+      type: START
+    });
   }
 
   executeSearch(
@@ -116,7 +131,7 @@ export default class AddSearchUI {
     fieldForInstantRedirectGlobal
   ) {
     this.reduxStore.dispatch(
-      search(
+      fetchSearchResultsStory(
         this.client,
         keyword,
         onResultsScrollTo,
@@ -134,6 +149,11 @@ export default class AddSearchUI {
         segmentedSearch(this.segmentedSearchClients[key].client, key, keyword)
       );
     }
+  }
+
+  executeConversationalSearch(keyword) {
+    console.log('executeConversationalSearch', keyword);
+    this.reduxStore.dispatch(fetchConversationalSearchResultStory(this.client, keyword));
   }
 
   fetchRecommendation(containerId) {
@@ -188,13 +208,14 @@ export default class AddSearchUI {
           'in Search UI configuration object instead.'
       );
     }
+
     const onSearch = (
       keyword,
       onResultsScrollTo,
       searchAsYouType,
       fieldForInstantRedirect,
       fieldForInstantRedirectGlobal
-    ) =>
+    ) => {
       this.executeSearch(
         keyword,
         onResultsScrollTo,
@@ -202,6 +223,13 @@ export default class AddSearchUI {
         fieldForInstantRedirect,
         fieldForInstantRedirectGlobal
       );
+
+      // Do not fetch conversational search for warmup queries.
+      !keyword.startsWith(WARMUP_QUERY_PREFIX) &&
+        this.settings.hasConversationalSearch &&
+        this.executeConversationalSearch(keyword, searchAsYouType);
+    };
+
     new SearchField(
       this.client,
       this.reduxStore,
@@ -212,11 +240,18 @@ export default class AddSearchUI {
   }
 
   autocomplete(conf) {
-    new Autocomplete(this.client, this.reduxStore, conf);
+    new Autocomplete(this.client, this.reduxStore, this.settings.hasConversationalSearch, conf);
+  }
+
+  conversationalSearchResult(conf) {
+    this.shouldInitializeFromBrowserHistory = true;
+
+    new ConversationalSearchResult(this.client, this.reduxStore, conf);
   }
 
   searchResults(conf) {
-    this.hasSearchResultsComponent = true;
+    this.shouldInitializeFromBrowserHistory = true;
+
     new SearchResults(this.client, this.reduxStore, conf);
   }
 
@@ -225,7 +260,8 @@ export default class AddSearchUI {
       console.log('WARNING: segmentedResults component must have a client instance');
       return;
     }
-    this.hasSearchResultsComponent = true;
+    this.shouldInitializeFromBrowserHistory = true;
+
     this.segmentedSearchClients[conf.containerId] = {};
     this.segmentedSearchClients[conf.containerId].client = conf.client;
     this.segmentedSearchClients[conf.containerId].originalFilters = Object.assign(
