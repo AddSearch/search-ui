@@ -7,7 +7,7 @@ import {
   SET_SEARCH_RESULTS_PAGE_URL
 } from '../actions/search';
 import {
-  CONVERSATIONAL_SEARCH_FETCH_START,
+  IS_LOADING_CONVERSATIONAL_SEARCH,
   CONVERSATIONAL_SEARCH_RESULT
 } from '../actions/conversationalsearch';
 
@@ -74,9 +74,9 @@ export default function search(state = initialState, action) {
         callBy: action.requestBy
       });
 
-    case CONVERSATIONAL_SEARCH_FETCH_START:
+    case IS_LOADING_CONVERSATIONAL_SEARCH:
       return Object.assign({}, state, {
-        loadingConversationalSearchResult: true
+        loadingConversationalSearchResult: action.payload
       });
 
     case CONVERSATIONAL_SEARCH_RESULT:
