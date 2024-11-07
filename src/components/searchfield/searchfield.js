@@ -274,6 +274,7 @@ export default class SearchField {
       return;
     }
     store.dispatch(setKeyword(keyword, skipAutocomplete, this.conf.containerId));
+
     if (this.conf.searchAsYouType === true) {
       this.executeSearch(this.client, keyword, true);
     }

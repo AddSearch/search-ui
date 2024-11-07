@@ -1,4 +1,4 @@
-@import "../../variables";
+@import '../../variables';
 
 .addsearch-conversational-search-result {
   padding: 24px;
@@ -38,21 +38,39 @@
   }
 
   .sub-headline {
-    font-size: 90%;
+    font-size: 100%;
     font-weight: 700;
     margin-top: 24px;
 
     @media all and (max-width: 480px) {
-      font-size: 80%;
+      font-size: 90%;
     }
   }
 
   .answer {
     margin-top: 16px;
-    font-size: 80%;
+    font-size: 90%;
 
     @media all and (max-width: 480px) {
-      font-size: 70%;
+      font-size: 80%;
+    }
+
+    ol {
+      margin-top: 4px;
+    }
+
+    ul {
+      margin-top: 4px;
+    }
+
+    ol > * {
+      margin-left: 4px;
+      margin-bottom: 4px;
+    }
+
+    ul > * {
+      margin-left: 4px;
+      margin-bottom: 4px;
     }
   }
 

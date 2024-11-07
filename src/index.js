@@ -152,7 +152,6 @@ export default class AddSearchUI {
   }
 
   executeConversationalSearch(keyword) {
-    console.log('executeConversationalSearch', keyword);
     this.reduxStore.dispatch(fetchConversationalSearchResultStory(this.client, keyword));
   }
 
@@ -227,6 +226,7 @@ export default class AddSearchUI {
       // Do not fetch conversational search for warmup queries.
       !keyword.startsWith(WARMUP_QUERY_PREFIX) &&
         this.settings.hasConversationalSearch &&
+        !searchAsYouType && // TODO revisit whether conversational search should be executed on search as you type
         this.executeConversationalSearch(keyword, searchAsYouType);
     };
 
@@ -314,6 +314,10 @@ export default class AddSearchUI {
   search(keyword) {
     this.reduxStore.dispatch(setKeyword(keyword, true));
     this.executeSearch(keyword, null, false);
+
+    if (this.settings.hasConversationalSearch) {
+      this.executeConversationalSearch(keyword);
+    }
   }
 
   hideAutocomplete() {

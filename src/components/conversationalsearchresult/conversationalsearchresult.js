@@ -17,7 +17,7 @@ export default class ConversationalSearchResult {
         return '';
       }
 
-      return new handlebars.SafeString(marked(text));
+      return new handlebars.SafeString(marked.parse(text, { breaks: true, gfm: true }));
     });
 
     if (validateContainer(conf.containerId)) {
