@@ -14,7 +14,7 @@ export function registerFilter(filterObj) {
   return {
     type: REGISTER_FILTER,
     filterObj
-  }
+  };
 }
 
 export function toggleFilter(filterName, value, refreshSearch) {
@@ -23,7 +23,7 @@ export function toggleFilter(filterName, value, refreshSearch) {
     filterName,
     value,
     refreshSearch
-  }
+  };
 }
 
 export function setRangeFilter(field, from, to) {
@@ -32,21 +32,21 @@ export function setRangeFilter(field, from, to) {
     field,
     from,
     to
-  }
+  };
 }
 
 export function setActiveFilters(json) {
   return {
     type: SET_ACTIVE_FILTERS,
     json
-  }
+  };
 }
 
 export function setActiveFacets(json) {
   return {
     type: SET_ACTIVE_FACETS,
     json
-  }
+  };
 }
 
 export function setActiveRangeFacets(json, refreshSearch, field) {
@@ -55,7 +55,7 @@ export function setActiveRangeFacets(json, refreshSearch, field) {
     json,
     refreshSearch,
     field
-  }
+  };
 }
 
 export function toggleFacetFilter(field, value, refreshSearch) {
@@ -64,7 +64,7 @@ export function toggleFacetFilter(field, value, refreshSearch) {
     field,
     value,
     refreshSearch
-  }
+  };
 }
 
 export function toggleHierarchicalFacetFilter(field, container, confFields, value, refreshSearch) {
@@ -75,7 +75,7 @@ export function toggleHierarchicalFacetFilter(field, container, confFields, valu
     confFields,
     value,
     refreshSearch
-  }
+  };
 }
 
 export function toggleRangeFacetFilter(field, values, key, refreshSearch, byActiveFilterComponent) {
@@ -86,7 +86,7 @@ export function toggleRangeFacetFilter(field, values, key, refreshSearch, byActi
     key,
     refreshSearch,
     byActiveFilterComponent
-  }
+  };
 }
 
 export function clearSelectedRangeFacets(refreshSearch, setHistory) {
@@ -94,7 +94,7 @@ export function clearSelectedRangeFacets(refreshSearch, setHistory) {
     type: CLEAR_SELECTED_RANGE_FACETS,
     refreshSearch,
     setHistory
-  }
+  };
 }
 
 export function clearSelected(refreshSearch, byActiveFilterComponent) {
@@ -102,5 +102,5 @@ export function clearSelected(refreshSearch, byActiveFilterComponent) {
     type: CLEAR_SELECTED_FILTERS_AND_FACETS,
     refreshSearch,
     byActiveFilterComponent
-  }
+  };
 }

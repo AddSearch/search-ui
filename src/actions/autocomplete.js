@@ -22,25 +22,24 @@ export function autocompleteSuggestions(client, keyword) {
   if (!keyword || keyword === '') {
     return {
       type: AUTOCOMPLETE_SUGGESTIONS_CLEAR
-    }
+    };
   }
-  return dispatch => {
+  return (dispatch) => {
     dispatch(autocompleteFetchStart(SUGGESTIONS_JSON_KEY));
     client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(keyword, res)));
-  }
+  };
 }
 
 export function autocompleteCustomFields(client, keyword, field) {
   if (!keyword || keyword === '') {
     return {
       type: AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR
-    }
+    };
   }
-  return dispatch => {
+  return (dispatch) => {
     dispatch(autocompleteFetchStart(CUSTOM_FIELDS_JSON_KEY));
     client.autocomplete(field, keyword, (res) => dispatch(autocompleteCustomFieldsResults(res)));
-
-  }
+  };
 }
 
 export function autocompleteSuggestionsResults(keyword, results) {
@@ -48,26 +47,28 @@ export function autocompleteSuggestionsResults(keyword, results) {
     type: AUTOCOMPLETE_SUGGESTIONS_RESULTS,
     keyword,
     results
-  }
+  };
 }
 
 export function autocompleteCustomFieldsResults(results) {
   return {
     type: AUTOCOMPLETE_CUSTOM_FIELDS_RESULTS,
     results
-  }
+  };
 }
 
 export function autocompleteSearch(client, jsonKey, keyword, appendResults) {
   if (!keyword || keyword === '') {
     return {
       type: AUTOCOMPLETE_SEARCH_CLEAR
-    }
+    };
   }
-  return dispatch => {
+  return (dispatch) => {
     dispatch(autocompleteFetchStart(jsonKey));
-    client.search(keyword, (res) => dispatch(autocompleteSearchResults(keyword, res, jsonKey, appendResults)));
-  }
+    client.search(keyword, (res) =>
+      dispatch(autocompleteSearchResults(keyword, res, jsonKey, appendResults))
+    );
+  };
 }
 
 export function autocompleteSearchResults(keyword, results, jsonKey, appendResults) {
@@ -77,39 +78,39 @@ export function autocompleteSearchResults(keyword, results, jsonKey, appendResul
     results,
     jsonKey,
     appendResults
-  }
+  };
 }
 
 export function autocompleteFetchStart(jsonKey) {
   return {
     type: AUTOCOMPLETE_FETCH_START,
     jsonKey
-  }
+  };
 }
 
 export function autocompleteShow() {
   return {
     type: AUTOCOMPLETE_SHOW
-  }
+  };
 }
 
 export function autocompleteHide() {
   return {
     type: AUTOCOMPLETE_HIDE
-  }
+  };
 }
 
 export function autocompleteHideAndDropRendering() {
   return {
     type: AUTOCOMPLETE_HIDE_AND_DROP_RENDERING
-  }
+  };
 }
 
 export function keyboardEvent(direction) {
   return {
     type: KEYBOARD_EVENT,
     direction
-  }
+  };
 }
 
 export function setActiveSuggestion(index, setSuggestionToSearchField) {
@@ -117,12 +118,12 @@ export function setActiveSuggestion(index, setSuggestionToSearchField) {
     type: SET_ACTIVE_SUGGESTION,
     index,
     setSuggestionToSearchField
-  }
+  };
 }
 
 export function setHideAutomatically(hideAutomatically) {
   return {
     type: HIDE_AUTOMATICALLY,
     hideAutomatically
-  }
+  };
 }

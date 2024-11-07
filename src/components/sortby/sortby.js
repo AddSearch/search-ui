@@ -9,9 +9,7 @@ import { validateContainer } from '../../util/dom';
 import PRECOMPILED_SORTBY_RADIOGROUP_TEMPLATE from './precompile-templates/sortby_radiogroup.handlebars';
 import PRECOMPILED_SORTBY_SELECT_TEMPLATE from './precompile-templates/sortby_select.handlebars';
 
-
 export default class SortBy {
-
   constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
@@ -27,7 +25,6 @@ export default class SortBy {
     }
   }
 
-
   onChangeSelect(select) {
     const selectedOption = select.options[select.selectedIndex];
     const field = selectedOption.getAttribute('data-field');
@@ -35,13 +32,11 @@ export default class SortBy {
     this.dispatchAndRefresh(field, order);
   }
 
-
   onChangeRadio(e) {
     const fields = e.target.getAttribute('data-field');
     const orders = e.target.getAttribute('data-order');
     this.dispatchAndRefresh(fields, orders);
   }
-
 
   dispatchAndRefresh(stringFields, stringOrders) {
     const fields = stringFields.split(',');
@@ -54,7 +49,9 @@ export default class SortBy {
 
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
-    this.reduxStore.dispatch(search(this.client, keyword, null, null, null, this.reduxStore, null, 'component.sortby'));
+    this.reduxStore.dispatch(
+      search(this.client, keyword, null, null, null, this.reduxStore, null, 'component.sortby')
+    );
   }
 
   arraysMatch(arr1, arr2) {
@@ -77,15 +74,13 @@ export default class SortBy {
 
     // Data
     let data = Object.assign({}, this.conf);
-    data.options.forEach(option => {
+    data.options.forEach((option) => {
       if (this.arraysMatch(option.sortBy, field) && this.arraysMatch(option.order, order)) {
         option.active = true;
-      }
-      else {
+      } else {
         option.active = false;
       }
     });
-
 
     // Compile HTML and inject to element if changed
     let html;
@@ -106,21 +101,21 @@ export default class SortBy {
     // Attach listeners
     if (this.conf.type === SORTBY_TYPE.RADIO_GROUP) {
       const radioButtons = container.querySelectorAll('input');
-      for (let i=0; i<radioButtons.length; i++) {
+      for (let i = 0; i < radioButtons.length; i++) {
         radioButtons[i].onclick = (e) => this.onChangeRadio(e);
       }
-    }
-
-    else {
+    } else {
       container.querySelector('select').onchange = (e) => this.onChangeSelect(e.target);
 
       // Pre-selected option
       if (sortbyState) {
         const options = container.getElementsByTagName('option');
 
-        for (let i=0; i<options.length; i++) {
-          if (options[i].getAttribute('data-field') === field &&
-              options[i].getAttribute('data-order') === order) {
+        for (let i = 0; i < options.length; i++) {
+          if (
+            options[i].getAttribute('data-field') === field &&
+            options[i].getAttribute('data-order') === order
+          ) {
             container.querySelector('select').value = options[i].text;
             break;
           }

@@ -1,6 +1,4 @@
-import {
-  KEYWORD
-} from '../actions/keyword';
+import { KEYWORD } from '../actions/keyword';
 
 const initialState = {
   value: '',
@@ -10,7 +8,6 @@ const initialState = {
 };
 
 export default function keyword(state = initialState, action) {
-
   switch (action.type) {
     case KEYWORD:
       return Object.assign({}, state, {
@@ -21,6 +18,6 @@ export default function keyword(state = initialState, action) {
       });
 
     default:
-      return state
+      return state;
   }
 }

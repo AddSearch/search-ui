@@ -1,6 +1,6 @@
 /* global window */
 import { WARMUP_QUERY_PREFIX } from '../index';
-import { setHistory, HISTORY_PARAMETERS } from '../util/history';
+import { setHistory, HISTORY_PARAMETERS } from '../util/history';
 import { sendSearchStats } from '../util/analytics';
 
 export const START = 'START';
@@ -13,7 +13,7 @@ export const SEARCH_BY_COMPONENT = 'SEARCH_BY_COMPONENT';
 export function start() {
   return {
     type: START
-  }
+  };
 }
 
 function _matchKeywordToCustomFieldValue(keyword, hits, field) {
@@ -25,7 +25,7 @@ function _matchKeywordToCustomFieldValue(keyword, hits, field) {
       return keyword.toLowerCase() === hit.custom_fields[field].toLowerCase();
     }
     if (typeof hit.custom_fields[field] === 'object' && hit.custom_fields[field].length) {
-      const customFieldsInLowerCase = hit.custom_fields[field].map(val => val.toLowerCase());
+      const customFieldsInLowerCase = hit.custom_fields[field].map((val) => val.toLowerCase());
       const keywordInLowerCase = keyword.toLowerCase();
       return customFieldsInLowerCase.indexOf(keywordInLowerCase) > -1;
     }
@@ -33,8 +33,17 @@ function _matchKeywordToCustomFieldValue(keyword, hits, field) {
   });
 }
 
-export function search(client, keyword, onResultsScrollTo, appendResults, isHistoryDebounced, store,
-                       fieldForInstantRedirect, requestBy, fieldForInstantRedirectGlobal) {
+export function search(
+  client,
+  keyword,
+  onResultsScrollTo,
+  appendResults,
+  isHistoryDebounced,
+  store,
+  fieldForInstantRedirect,
+  requestBy,
+  fieldForInstantRedirectGlobal
+) {
   // Update browser history
   setHistory(HISTORY_PARAMETERS.SEARCH, keyword, isHistoryDebounced, store);
 
@@ -42,12 +51,17 @@ export function search(client, keyword, onResultsScrollTo, appendResults, isHist
   if (!keyword || keyword === '') {
     return {
       type: CLEAR_SEARCH_RESULTS
-    }
+    };
   }
-  return dispatch => {
+  return (dispatch) => {
     dispatch(searchFetchStart());
     client.search(keyword, (res) => {
-      if ((fieldForInstantRedirectGlobal || fieldForInstantRedirect) && res && res.hits && res.hits.length) {
+      if (
+        (fieldForInstantRedirectGlobal || fieldForInstantRedirect) &&
+        res &&
+        res.hits &&
+        res.hits.length
+      ) {
         var field = fieldForInstantRedirectGlobal || fieldForInstantRedirect;
         var customFieldName = field.replace('custom_fields.', '');
         var matchedHit = _matchKeywordToCustomFieldValue(keyword, res.hits, customFieldName);
@@ -59,19 +73,26 @@ export function search(client, keyword, onResultsScrollTo, appendResults, isHist
       }
       dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults, requestBy));
     });
-  }
+  };
 }
 
 export function searchFetchStart(keyword) {
   return {
     type: SEARCH_FETCH_START
-  }
+  };
 }
 
-export function searchResults(client, keyword, results, onResultsScrollTo, appendResults, requestBy) {
+export function searchResults(
+  client,
+  keyword,
+  results,
+  onResultsScrollTo,
+  appendResults,
+  requestBy
+) {
   if (/top-delay-\d*$/.test(onResultsScrollTo)) {
     var delayInMs = parseInt(onResultsScrollTo.replace('top-delay-', ''), 10);
-    window.setTimeout(function() {
+    window.setTimeout(function () {
       window.scrollTo(0, 0);
     }, delayInMs);
   } else if (onResultsScrollTo === 'top') {
@@ -91,7 +112,7 @@ export function searchResults(client, keyword, results, onResultsScrollTo, appen
     results,
     appendResults,
     requestBy
-  }
+  };
 }
 
 export function clearSearchResults(scrollTo) {
@@ -101,12 +122,12 @@ export function clearSearchResults(scrollTo) {
 
   return {
     type: CLEAR_SEARCH_RESULTS
-  }
+  };
 }
 
 export function setSearchResultsPageUrl(url) {
   return {
     type: SET_SEARCH_RESULTS_PAGE_URL,
     url
-  }
+  };
 }

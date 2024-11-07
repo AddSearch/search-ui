@@ -9,7 +9,7 @@ let externalAnalyticsCallback = null;
 export function setExternalAnalyticsCallback(cb) {
   externalAnalyticsCallback = cb;
 }
-function callExternalAnalyticsCallback(data) {
+function callExternalAnalyticsCallback(data) {
   if (externalAnalyticsCallback) {
     externalAnalyticsCallback(data);
   }
@@ -40,8 +40,8 @@ export function sendSearchStats(client, keyword, numberOfResults, processingTime
   sendSearchStatsTimeout = setTimeout(() => {
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== previousKeyword) {
-      client.sendStatsEvent(action, keyword, {numberOfResults});
-      callExternalAnalyticsCallback({action, keyword, numberOfResults, processingTimeMs});
+      client.sendStatsEvent(action, keyword, { numberOfResults });
+      callExternalAnalyticsCallback({ action, keyword, numberOfResults, processingTimeMs });
       previousKeyword = keyword;
       searchStatsSent = true;
     }
@@ -64,7 +64,9 @@ export function sendAutocompleteStats(keyword, statsArray) {
   autocompleteStatsTimeout = setTimeout(() => {
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== autocompletePreviousKeyword) {
-      statsArray.forEach(c => (c.client).sendStatsEvent(action, keyword, {numberOfResults: c.numberOfResults}))
+      statsArray.forEach((c) =>
+        c.client.sendStatsEvent(action, keyword, { numberOfResults: c.numberOfResults })
+      );
       autocompletePreviousKeyword = keyword;
       searchStatsSent = true;
     }
@@ -76,8 +78,7 @@ export function sendAutocompleteStats(keyword, statsArray) {
  */
 export function addClickTrackers(client, linkArray, searchResults) {
   if (linkArray && linkArray.length > 0) {
-    for (let i=0; i<linkArray.length; i++) {
-
+    for (let i = 0; i < linkArray.length; i++) {
       // Enter pressed when link is active
       linkArray[i].addEventListener('keyup', (e) => {
         if (e.keyCode === 13) {
@@ -93,7 +94,6 @@ export function addClickTrackers(client, linkArray, searchResults) {
         }
         onLinkClick(e, client, searchResults);
       });
-
     }
   }
 }
@@ -114,33 +114,35 @@ function onLinkClick(e, client, searchResults) {
 
   // Support data attributes in parent and grandparent elements
   const documentId = findDocId(e.target);
-  const position = getDocumentPosition(client.getSettings().paging.pageSize, searchResults, documentId);
+  const position = getDocumentPosition(
+    client.getSettings().paging.pageSize,
+    searchResults,
+    documentId
+  );
   const keyword = client.getSettings().keyword;
 
-  client.sendStatsEvent('click', keyword, {documentId, position});
-  callExternalAnalyticsCallback({action: 'click', keyword, documentId, position});
+  client.sendStatsEvent('click', keyword, { documentId, position });
+  callExternalAnalyticsCallback({ action: 'click', keyword, documentId, position });
 
   // Search stats were not sent within SEARCH_ANALYTICS_DEBOUNCE_TIME
   if (searchStatsSent === false) {
     const numberOfResults = searchResults ? searchResults.total_hits : 0;
     const processingTimeMs = searchResults ? searchResults.processing_time_ms : 0;
-    client.sendStatsEvent('search', keyword, {numberOfResults});
-    callExternalAnalyticsCallback({action: 'search', keyword, numberOfResults, processingTimeMs});
+    client.sendStatsEvent('search', keyword, { numberOfResults });
+    callExternalAnalyticsCallback({ action: 'search', keyword, numberOfResults, processingTimeMs });
   }
 }
 
-
 export function getDocumentPosition(pageSize, searchResults, docid) {
-
   if (searchResults && searchResults.hits) {
     // Calculate offset if the user is not on results page 1
     const currentPage = searchResults.page || 1;
     const offset = (currentPage - 1) * pageSize;
 
     // Find document's position in results array
-    for (let i=0; i<searchResults.hits.length; i++) {
+    for (let i = 0; i < searchResults.hits.length; i++) {
       if (searchResults.hits[i].id === docid) {
-        return offset + (i+1);
+        return offset + (i + 1);
       }
     }
   }

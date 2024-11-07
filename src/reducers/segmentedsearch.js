@@ -21,9 +21,11 @@ export default function segmentedsearch(state = initialState, action) {
         dropReturningResults: false
       });
 
-
     case SEGMENTED_SEARCH_RESULTS:
-      if (action.keyword.indexOf(WARMUP_QUERY_PREFIX) === 0 || state.dropReturningResults === true) {
+      if (
+        action.keyword.indexOf(WARMUP_QUERY_PREFIX) === 0 ||
+        state.dropReturningResults === true
+      ) {
         return state;
       }
 
@@ -42,10 +44,13 @@ export default function segmentedsearch(state = initialState, action) {
       });
 
     case CLEAR_SEGMENTED_SEARCH_RESULTS:
-      return Object.assign({}, {
-        pendingSegments: [],
-        dropReturningResults: true // Don't render pending results returning after clear
-      });
+      return Object.assign(
+        {},
+        {
+          pendingSegments: [],
+          dropReturningResults: true // Don't render pending results returning after clear
+        }
+      );
 
     default:
       return state;

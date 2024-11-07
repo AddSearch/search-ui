@@ -6,7 +6,7 @@ function UiRangeSlider() {
     if (element) {
       element.textContent = value;
     }
-  };
+  }
 
   function controlFromSlider(fromSlider, toSlider, fromInput, rangeStyles) {
     const [from, to] = getParsed(fromSlider, toSlider);
@@ -54,25 +54,29 @@ function UiRangeSlider() {
     controlSlider.style.background = `linear-gradient(
       to right,
       ${sliderColor} 0%,
-      ${sliderColor} ${(fromPosition) / (rangeDistance) * 100}%,
-      ${rangeColor} ${((fromPosition) / (rangeDistance)) * 100}%,
-      ${rangeColor} ${(toPosition) / (rangeDistance) * 100}%, 
-      ${sliderColor} ${(toPosition) / (rangeDistance) * 100}%, 
+      ${sliderColor} ${(fromPosition / rangeDistance) * 100}%,
+      ${rangeColor} ${(fromPosition / rangeDistance) * 100}%,
+      ${rangeColor} ${(toPosition / rangeDistance) * 100}%, 
+      ${sliderColor} ${(toPosition / rangeDistance) * 100}%, 
       ${sliderColor} 100%)`;
   }
 
   function setToggleAccessible(currentTarget) {
-    const fromSlider = document.querySelector('#' + sliderId + ' [data-id=adds-slider-control-from]');
+    const fromSlider = document.querySelector(
+      '#' + sliderId + ' [data-id=adds-slider-control-from]'
+    );
     const toSlider = document.querySelector('#' + sliderId + ' [data-id=adds-slider-control-to]');
     if (Number(currentTarget.value) <= fromSlider.value) {
-      toSlider.style.zIndex = "2";
+      toSlider.style.zIndex = '2';
     } else {
-      toSlider.style.zIndex = "0";
+      toSlider.style.zIndex = '0';
     }
   }
 
   function initVisuals(values, step) {
-    const rangeSliderContainer = document.querySelector('#' + sliderId + ' .adds-range-slider-container');
+    const rangeSliderContainer = document.querySelector(
+      '#' + sliderId + ' .adds-range-slider-container'
+    );
     const [min, max, start, end] = values;
 
     const template = `
@@ -82,17 +86,19 @@ function UiRangeSlider() {
       </div>
     `;
     rangeSliderContainer.innerHTML = template;
-  };
+  }
 
   function getSliderValue() {
-    const rangeSliderContainer = document.querySelector('#' + sliderId + ' .adds-range-slider-container');
+    const rangeSliderContainer = document.querySelector(
+      '#' + sliderId + ' .adds-range-slider-container'
+    );
     const min = rangeSliderContainer.getAttribute('data-slider-min');
     const max = rangeSliderContainer.getAttribute('data-slider-max');
     const start = rangeSliderContainer.getAttribute('data-slider-start');
     const end = rangeSliderContainer.getAttribute('data-slider-end');
 
     return [min, max, start, end];
-  };
+  }
 
   this.initialize = function (containerId, callback, settings) {
     buttonReleaseCallback = callback;
@@ -104,10 +110,18 @@ function UiRangeSlider() {
     initVisuals([minRounded, maxRounded, start, end], settings.step);
 
     const rangeStyles = settings.styles;
-    const fromSlider = document.querySelector('#' + containerId + ' [data-id=adds-slider-control-from]');
-    const toSlider = document.querySelector('#' + containerId + ' [data-id=adds-slider-control-to]');
-    const fromInput = document.querySelector('#' + containerId + ' [data-id=adds-slider-display-start]');
-    const toInput = document.querySelector('#' + containerId + ' [data-id=adds-slider-display-end]');
+    const fromSlider = document.querySelector(
+      '#' + containerId + ' [data-id=adds-slider-control-from]'
+    );
+    const toSlider = document.querySelector(
+      '#' + containerId + ' [data-id=adds-slider-control-to]'
+    );
+    const fromInput = document.querySelector(
+      '#' + containerId + ' [data-id=adds-slider-display-start]'
+    );
+    const toInput = document.querySelector(
+      '#' + containerId + ' [data-id=adds-slider-display-end]'
+    );
 
     fillSlider(fromSlider, toSlider, rangeStyles.trackColor, rangeStyles.progressColor, toSlider);
     setToggleAccessible(toSlider);
@@ -120,11 +134,11 @@ function UiRangeSlider() {
 
     fromSlider.onchange = () => handleInputChanged(fromSlider, toSlider);
     toSlider.onchange = () => handleInputChanged(fromSlider, toSlider);
-  }
+  };
 }
 
 UiRangeSlider.init = function (containerId, callback, settings) {
-  (new UiRangeSlider()).initialize(containerId, callback, settings);
-}
+  new UiRangeSlider().initialize(containerId, callback, settings);
+};
 
 export default UiRangeSlider;

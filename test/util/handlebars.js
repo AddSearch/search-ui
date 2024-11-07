@@ -1,66 +1,49 @@
 import assert from 'assert';
-import { defaultCategorySelectionFunction } from '../../src/util/handlebars';
+import { defaultCategorySelectionFunction } from '../../src/util/handlebars';
 
 describe('handlebars', () => {
-
   describe('defaultCategorySelectionFunction', () => {
-
     it('return empty String if no categories', () => {
       const hit = {};
-      const expect = ''
+      const expect = '';
       assert.equal(defaultCategorySelectionFunction(hit), expect);
     });
 
     it('return empty string if just one category', () => {
       const hit = {
-        categories: [
-          'foo'
-        ]
+        categories: ['foo']
       };
-      const expect = ''
+      const expect = '';
       assert.equal(defaultCategorySelectionFunction(hit), expect);
     });
 
     it('return category', () => {
       const hit = {
-        categories: [
-          'foo',
-          'bar'
-        ]
+        categories: ['foo', 'bar']
       };
-      const expect = 'bar'
+      const expect = 'bar';
       assert.equal(defaultCategorySelectionFunction(hit), expect);
     });
 
     it('return category and remove index prefix', () => {
       const hit = {
-        categories: [
-          '0xfoo',
-          '1xbaz'
-        ]
+        categories: ['0xfoo', '1xbaz']
       };
-      const expect = 'baz'
+      const expect = 'baz';
       assert.equal(defaultCategorySelectionFunction(hit), expect);
     });
 
     it('return category even if short', () => {
       const hit = {
-        categories: [
-          '0xfoo',
-          '1xb'
-        ]
+        categories: ['0xfoo', '1xb']
       };
-      const expect = 'b'
+      const expect = 'b';
       assert.equal(defaultCategorySelectionFunction(hit), expect);
     });
 
     it('return longer category if the first one is short', () => {
       const hit = {
-        categories: [
-          '0xfoo',
-          '1xb',
-          '2xbar'
-        ]
+        categories: ['0xfoo', '1xb', '2xbar']
       };
       const expect = 'bar';
       assert.equal(defaultCategorySelectionFunction(hit), expect);
@@ -68,14 +51,7 @@ describe('handlebars', () => {
 
     it('return longer category if first few ones are short', () => {
       const hit = {
-        categories: [
-          '0xfoo',
-          '1xb',
-          '2xa',
-          '3xr',
-          '4xcat',
-          '5xbar'
-        ]
+        categories: ['0xfoo', '1xb', '2xa', '3xr', '4xcat', '5xbar']
       };
       const expect = 'cat';
       assert.equal(defaultCategorySelectionFunction(hit), expect);
@@ -83,10 +59,7 @@ describe('handlebars', () => {
 
     it('replace special characters with space', () => {
       const hit = {
-        categories: [
-          '0xfoo',
-          '1xfoo-bar_baz--_ok'
-        ]
+        categories: ['0xfoo', '1xfoo-bar_baz--_ok']
       };
       const expect = 'foo bar baz ok';
       assert.equal(defaultCategorySelectionFunction(hit), expect);
@@ -94,10 +67,7 @@ describe('handlebars', () => {
 
     it('return category alias', () => {
       const hit = {
-        categories: [
-          '0xfoo',
-          '1xfoo-bar'
-        ]
+        categories: ['0xfoo', '1xfoo-bar']
       };
       const aliases = {
         'foo-bar': 'baz'
@@ -105,8 +75,5 @@ describe('handlebars', () => {
       const expect = 'baz';
       assert.equal(defaultCategorySelectionFunction(hit, aliases), expect);
     });
-
-
   });
-
 });

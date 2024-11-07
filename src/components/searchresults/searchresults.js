@@ -10,9 +10,7 @@ import { registerHelper, registerPartial } from '../../util/handlebars';
 import NUMBER_OF_RESULTS_TEMPLATE from './precompile-templates/numberOfResultsTemplate.handlebars';
 import SEARCHRESULT_IMAGE_TEMPLATE from './precompile-templates/searchResultImageTemplate.handlebars';
 
-
 export default class SearchResults {
-
   constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
@@ -25,18 +23,20 @@ export default class SearchResults {
 
     registerHelper('removeTrailingQueriesFromUrl', (url) => {
       if (url) {
-        return url.replace(/\?.*$/, '')
+        return url.replace(/\?.*$/, '');
       }
     });
 
-    const categorySelectionFunction = this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
-    registerHelper('selectCategory', (categories) => categorySelectionFunction(categories, this.conf.categoryAliases));
+    const categorySelectionFunction =
+      this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
+    registerHelper('selectCategory', (categories) =>
+      categorySelectionFunction(categories, this.conf.categoryAliases)
+    );
 
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'search', () => this.render());
     }
   }
-
 
   render() {
     const search = this.reduxStore.getState().search;
@@ -44,10 +44,9 @@ export default class SearchResults {
     data.resultcount = data.hits && this.conf.showNumberOfResults !== false;
     data.keyword = search.keyword;
 
-
     // Compile HTML and inject to element if changed
     let html;
-    if (data.hits && data.hits.length === 0) {
+    if (data.hits && data.hits.length === 0) {
       if (this.conf.precompiledTemplateNoResults) {
         html = this.conf.precompiledTemplateNoResults(data);
       } else if (this.conf.template_noresults) {
@@ -72,7 +71,10 @@ export default class SearchResults {
     container.innerHTML = html;
     this.renderedHtml = html;
 
-    if (this.conf.renderCompleteCallback && typeof this.conf.renderCompleteCallback === 'function') {
+    if (
+      this.conf.renderCompleteCallback &&
+      typeof this.conf.renderCompleteCallback === 'function'
+    ) {
       this.conf.renderCompleteCallback();
     }
 

@@ -1,6 +1,4 @@
-import {
-  SORTBY, DESC
-} from '../actions/sortby';
+import { SORTBY, DESC } from '../actions/sortby';
 
 const initialState = {
   field: ['relevance'],
@@ -8,7 +6,6 @@ const initialState = {
 };
 
 export default function sortby(state = initialState, action) {
-
   switch (action.type) {
     case SORTBY:
       return Object.assign({}, state, {
@@ -17,6 +14,6 @@ export default function sortby(state = initialState, action) {
       });
 
     default:
-      return state
+      return state;
   }
 }

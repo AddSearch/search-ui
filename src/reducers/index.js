@@ -6,9 +6,9 @@ import pagination from './pagination';
 import search from './search';
 import segmentedsearch from './segmentedsearch';
 import sortby from './sortby';
-import configuration from "./configuration";
-import fieldstats from "./fieldstats";
-import recommendation from "./recommendations";
+import configuration from './configuration';
+import fieldstats from './fieldstats';
+import recommendation from './recommendations';
 
 const reducer = combineReducers({
   autocomplete,

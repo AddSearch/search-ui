@@ -1,15 +1,13 @@
 import './pagination.scss';
 import handlebars from 'handlebars';
-import { getPageNumbers } from '../../util/pagination';
+import { getPageNumbers } from '../../util/pagination';
 import { setPage } from '../../actions/pagination';
 import { search } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import PRECOMPILED_PAGINATION_TEMPLATE from './precompile-templates/pagination.handlebars';
 
-
 export default class Pagination {
-
   constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
@@ -19,7 +17,6 @@ export default class Pagination {
       observeStoreByKey(this.reduxStore, 'search', () => this.render());
     }
   }
-
 
   render() {
     const state = this.reduxStore.getState();
@@ -32,11 +29,10 @@ export default class Pagination {
 
     const data = {
       currentPage,
-      lastPage: pageArr ? pageArr[pageArr.length-1] : 0,
+      lastPage: pageArr ? pageArr[pageArr.length - 1] : 0,
       totalPages,
       pages: pageArr
     };
-
 
     // Compile HTML and inject to element if changed
     let html;
@@ -54,15 +50,13 @@ export default class Pagination {
     container.innerHTML = html;
     this.renderedHtml = html;
 
-
     // Attach events
     const buttons = container.getElementsByTagName('button');
-    for (let i=0; i<buttons.length; i++) {
+    for (let i = 0; i < buttons.length; i++) {
       const button = buttons[i];
       button.onclick = (e) => this.handleOnclick(e);
     }
   }
-
 
   handleOnclick(e) {
     const button = e.target;
@@ -89,6 +83,17 @@ export default class Pagination {
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
     const onResultsScrollTo = this.conf.onResultsScrollTo || 'top';
-    this.reduxStore.dispatch(search(this.client, keyword, onResultsScrollTo, null, null, this.reduxStore, null, 'component.pagination'));
+    this.reduxStore.dispatch(
+      search(
+        this.client,
+        keyword,
+        onResultsScrollTo,
+        null,
+        null,
+        this.reduxStore,
+        null,
+        'component.pagination'
+      )
+    );
   }
 }

@@ -7,7 +7,9 @@ import {
   SET_ACTIVE_RANGE_FACETS,
   TOGGLE_FACET_FILTER,
   TOGGLE_RANGE_FACET_FILTER,
-  CLEAR_SELECTED_FILTERS_AND_FACETS, TOGGLE_HIERARCHICAL_FACET_FILTER, CLEAR_SELECTED_RANGE_FACETS
+  CLEAR_SELECTED_FILTERS_AND_FACETS,
+  TOGGLE_HIERARCHICAL_FACET_FILTER,
+  CLEAR_SELECTED_RANGE_FACETS
 } from '../actions/filters';
 import { FILTER_TYPE } from '../components/filters';
 
@@ -23,15 +25,19 @@ const initialState = {
   refreshSearch: true
 };
 
-const hasActiveSelection = function(activeGroups, parentFacet) {
+const hasActiveSelection = function (activeGroups, parentFacet) {
+  return (
+    Object.keys(activeGroups).filter(function (key) {
+      return key.indexOf(parentFacet + ' >') > -1;
+    }).length > 0
+  );
+};
 
-  return Object.keys(activeGroups).filter(function(key) {
-    return key.indexOf(parentFacet + ' >') > -1;
-  }).length > 0;
-}
-
-const updateHierarchicalFacetState = function(activeHierarchicalFacetState, indeterminateHierarchicalFacets, action) {
-
+const updateHierarchicalFacetState = function (
+  activeHierarchicalFacetState,
+  indeterminateHierarchicalFacets,
+  action
+) {
   if (!activeHierarchicalFacetState[action.container]) {
     activeHierarchicalFacetState[action.container] = {};
   }
@@ -43,10 +49,17 @@ const updateHierarchicalFacetState = function(activeHierarchicalFacetState, inde
   // Remove filter
   if (activeHierarchicalFacetState[action.container][action.field][action.value]) {
     const lastSeparatorPos = action.value.lastIndexOf('>');
-    const parentFacetValue = lastSeparatorPos > -1 ? action.value.slice(0, lastSeparatorPos - 1) : null;
+    const parentFacetValue =
+      lastSeparatorPos > -1 ? action.value.slice(0, lastSeparatorPos - 1) : null;
 
     delete activeHierarchicalFacetState[action.container][action.field][action.value];
-    if (parentFacetValue && !hasActiveSelection(activeHierarchicalFacetState[action.container][action.field], parentFacetValue)) {
+    if (
+      parentFacetValue &&
+      !hasActiveSelection(
+        activeHierarchicalFacetState[action.container][action.field],
+        parentFacetValue
+      )
+    ) {
       const j = indeterminateHierarchicalFacets.indexOf(parentFacetValue);
       if (j > -1) {
         indeterminateHierarchicalFacets.splice(j, 1);
@@ -65,14 +78,16 @@ const updateHierarchicalFacetState = function(activeHierarchicalFacetState, inde
         }
       }
     }
-    indeterminateHierarchicalFacets = indeterminateHierarchicalFacets.filter(facet => facet.indexOf(action.value + ' > ') !== 0);
+    indeterminateHierarchicalFacets = indeterminateHierarchicalFacets.filter(
+      (facet) => facet.indexOf(action.value + ' > ') !== 0
+    );
 
     // Remove all relating parent facets
     const removingFacetList = action.value.split(' > ').reduce((prev, curr) => {
       const l = prev[prev.length - 1];
       const f = l ? l + ' > ' + curr : curr;
       if (f !== action.value) {
-        prev.push(f)
+        prev.push(f);
       }
       return prev;
     }, []);
@@ -86,7 +101,7 @@ const updateHierarchicalFacetState = function(activeHierarchicalFacetState, inde
     }
 
     indeterminateHierarchicalFacets = indeterminateHierarchicalFacets
-      .filter(f => removingFacetList.indexOf(f) === -1)
+      .filter((f) => removingFacetList.indexOf(f) === -1)
       .concat(removingFacetList);
   }
 
@@ -103,7 +118,6 @@ const updateHierarchicalFacetState = function(activeHierarchicalFacetState, inde
 };
 
 export default function filters(state = initialState, action) {
-
   switch (action.type) {
     case REGISTER_FILTER:
       let nextAllAvailableFilters = state.allAvailableFilters.slice();
@@ -125,7 +139,6 @@ export default function filters(state = initialState, action) {
         allAvailableFilters: nextAllAvailableFilters
       });
 
-
     case TOGGLE_FILTER:
       let nextActive = Object.assign({}, state.activeFilters);
 
@@ -144,7 +157,6 @@ export default function filters(state = initialState, action) {
         targetFacetGroup: null
       });
 
-
     case SET_RANGE_FILTER:
       let nextActiveRanges = Object.assign({}, state.activeRangeFilters);
       nextActiveRanges[action.field] = {};
@@ -162,8 +174,6 @@ export default function filters(state = initialState, action) {
         refreshSearch: true
       });
 
-
-
     case CLEAR_SELECTED_FILTERS_AND_FACETS:
       return Object.assign({}, state, {
         activeFacets: {},
@@ -176,7 +186,6 @@ export default function filters(state = initialState, action) {
         targetFacetGroup: action.byActiveFilterComponent ? 'component.activeFilters' : null
       });
 
-
     case CLEAR_SELECTED_RANGE_FACETS:
       return Object.assign({}, state, {
         activeRangeFacets: {},
@@ -184,13 +193,11 @@ export default function filters(state = initialState, action) {
         setHistory: action.setHistory
       });
 
-
     case SET_ACTIVE_FILTERS:
       return Object.assign({}, state, {
         activeFilters: action.json || {},
         refreshSearch: false
       });
-
 
     case SET_ACTIVE_FACETS:
       return Object.assign({}, state, {
@@ -204,7 +211,6 @@ export default function filters(state = initialState, action) {
         refreshSearch: !!action.refreshSearch,
         targetFacetGroup: action.field
       });
-
 
     case TOGGLE_FACET_FILTER:
       let nextActiveFacets = Object.assign({}, state.activeFacets);
@@ -221,7 +227,7 @@ export default function filters(state = initialState, action) {
       else {
         nextActiveFacets[action.field][action.value] = 'true';
       }
-      nextActiveFacets['v'] = !nextActiveFacets['v'] ? 1 : nextActiveFacets['v']+1;
+      nextActiveFacets['v'] = !nextActiveFacets['v'] ? 1 : nextActiveFacets['v'] + 1;
 
       return Object.assign({}, state, {
         activeFacets: nextActiveFacets,
@@ -229,15 +235,20 @@ export default function filters(state = initialState, action) {
         targetFacetGroup: action.field
       });
 
-
     case TOGGLE_HIERARCHICAL_FACET_FILTER:
       let nextActiveHierarchicalFacets = Object.assign({}, state.activeHierarchicalFacets);
       let nextIndeterminateHierarchicalFacets = state.indeterminateHierarchicalFacets.slice();
-      const newFacetStates = updateHierarchicalFacetState(nextActiveHierarchicalFacets, nextIndeterminateHierarchicalFacets, action);
+      const newFacetStates = updateHierarchicalFacetState(
+        nextActiveHierarchicalFacets,
+        nextIndeterminateHierarchicalFacets,
+        action
+      );
 
       nextActiveHierarchicalFacets = newFacetStates.activeHierarchicalFacetState;
       nextIndeterminateHierarchicalFacets = newFacetStates.indeterminateHierarchicalFacets;
-      nextActiveHierarchicalFacets['v'] = !nextActiveHierarchicalFacets['v'] ? 1 : nextActiveHierarchicalFacets['v']+1;
+      nextActiveHierarchicalFacets['v'] = !nextActiveHierarchicalFacets['v']
+        ? 1
+        : nextActiveHierarchicalFacets['v'] + 1;
 
       return Object.assign({}, state, {
         activeHierarchicalFacets: nextActiveHierarchicalFacets,
@@ -265,7 +276,7 @@ export default function filters(state = initialState, action) {
           key: action.key
         };
       }
-      nextActiveRangeFacets['v'] = !nextActiveRangeFacets['v'] ? 1 : nextActiveRangeFacets['v']+1;
+      nextActiveRangeFacets['v'] = !nextActiveRangeFacets['v'] ? 1 : nextActiveRangeFacets['v'] + 1;
 
       return Object.assign({}, state, {
         activeRangeFacets: nextActiveRangeFacets,
@@ -273,8 +284,7 @@ export default function filters(state = initialState, action) {
         targetFacetGroup: action.byActiveFilterComponent ? 'component.activeFilters' : action.field
       });
 
-
     default:
-      return state
+      return state;
   }
 }

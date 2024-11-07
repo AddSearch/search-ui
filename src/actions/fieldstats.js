@@ -6,11 +6,11 @@ export function setFieldStats(json, callBy) {
     type: SET_FIELD_STATS,
     fieldStats: json,
     callBy
-  }
+  };
 }
 
 export function clearFieldStats() {
   return {
     type: CLEAR_FIELD_STATS
-  }
+  };
 }

@@ -5,7 +5,8 @@ import {
   toggleFilter,
   setRangeFilter,
   clearSelected,
-  toggleHierarchicalFacetFilter, toggleRangeFacetFilter
+  toggleHierarchicalFacetFilter,
+  toggleRangeFacetFilter
 } from '../../actions/filters';
 import { validateContainer } from '../../util/dom';
 import { observeStoreByKey } from '../../store';
@@ -17,10 +18,9 @@ const TYPE = {
   FACET: 'FACET',
   RANGE_FACET: 'RANGE_FACET',
   HIERARCHICAL_FACET: 'HIERARCHICAL_FACET'
-}
+};
 
 export default class ActiveFilters {
-
   constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
@@ -31,15 +31,13 @@ export default class ActiveFilters {
     }
   }
 
-
   getFilterLabel(filterName, allAvailableFilters) {
-    for (let i=0; i<allAvailableFilters.length; i++) {
+    for (let i = 0; i < allAvailableFilters.length; i++) {
       if (allAvailableFilters[i][filterName]) {
         return allAvailableFilters[i][filterName].label;
       }
     }
   }
-
 
   emptyIfNull(val) {
     if (val === null || val === undefined) {
@@ -47,7 +45,6 @@ export default class ActiveFilters {
     }
     return val;
   }
-
 
   render(filterState) {
     let active = [];
@@ -68,7 +65,12 @@ export default class ActiveFilters {
       active.push({
         type: TYPE.RANGE_FILTER,
         name: key,
-        label: this.getFilterLabel(key, filterState.allAvailableFilters) + ': ' + this.emptyIfNull(rangeVal.gte) + '-' + this.emptyIfNull(rangeVal.lte)
+        label:
+          this.getFilterLabel(key, filterState.allAvailableFilters) +
+          ': ' +
+          this.emptyIfNull(rangeVal.gte) +
+          '-' +
+          this.emptyIfNull(rangeVal.lte)
       });
     }
 
@@ -127,7 +129,6 @@ export default class ActiveFilters {
       clearAll: this.conf.clearAll !== false
     };
 
-
     // Compile HTML and inject to element if changed
     let html;
     if (this.conf.precompiledTemplate) {
@@ -145,7 +146,6 @@ export default class ActiveFilters {
     container.innerHTML = html;
     this.renderedHtml = html;
 
-
     // Attach events
     const elems = container.querySelectorAll('[data-type]');
     for (let i = 0; i < elems.length; i++) {
@@ -154,38 +154,39 @@ export default class ActiveFilters {
 
     const clearAll = container.querySelector('[data-clearall]');
     if (clearAll) {
-      clearAll.addEventListener('click', (e) => this.reduxStore.dispatch(clearSelected(true, true)));
+      clearAll.addEventListener('click', (e) =>
+        this.reduxStore.dispatch(clearSelected(true, true))
+      );
     }
   }
-
 
   handleFilterClick(e) {
     const type = e.target.getAttribute('data-type');
     const name = e.target.getAttribute('data-name');
     const value = e.target.getAttribute('data-value');
     const container = e.target.getAttribute('data-container');
-    const confFields = e.target.getAttribute('data-conf-fields') ? e.target.getAttribute('data-conf-fields').split(',') : [];
+    const confFields = e.target.getAttribute('data-conf-fields')
+      ? e.target.getAttribute('data-conf-fields').split(',')
+      : [];
     const rangeMin = e.target.getAttribute('data-range-min');
     const rangeMax = e.target.getAttribute('data-range-max');
 
     if (type === TYPE.FILTER) {
       this.reduxStore.dispatch(toggleFilter(name, value, true));
-    }
-    else if (type === TYPE.RANGE_FILTER) {
+    } else if (type === TYPE.RANGE_FILTER) {
       this.reduxStore.dispatch(setRangeFilter(name, null, null));
-    }
-    else if (type === TYPE.FACET) {
+    } else if (type === TYPE.FACET) {
       this.reduxStore.dispatch(toggleFacetFilter(name, value));
-    }
-    else if (type === TYPE.HIERARCHICAL_FACET) {
-      this.reduxStore.dispatch(toggleHierarchicalFacetFilter(name, container, confFields, value, true))
-    }
-    else if (type === TYPE.RANGE_FACET) {
+    } else if (type === TYPE.HIERARCHICAL_FACET) {
+      this.reduxStore.dispatch(
+        toggleHierarchicalFacetFilter(name, container, confFields, value, true)
+      );
+    } else if (type === TYPE.RANGE_FACET) {
       const values = {
         min: rangeMin,
         max: rangeMax
       };
-      this.reduxStore.dispatch(toggleRangeFacetFilter(name, values, value, true, true))
+      this.reduxStore.dispatch(toggleRangeFacetFilter(name, values, value, true, true));
     }
   }
 }

@@ -3,18 +3,16 @@ import handlebars from 'handlebars';
 import { setActiveRangeFacets, toggleRangeFacetFilter } from '../../actions/filters';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
-import { createFilterObject } from "../filters/filterstateobserver";
-import { clearFieldStats, setFieldStats } from "../../actions/fieldstats";
-import { roundDownToNearestTenth, roundUpToNearestTenth } from "../../util/maths";
-import { isEmpty } from "../../util/objects";
+import { createFilterObject } from '../filters/filterstateobserver';
+import { clearFieldStats, setFieldStats } from '../../actions/fieldstats';
+import { roundDownToNearestTenth, roundUpToNearestTenth } from '../../util/maths';
+import { isEmpty } from '../../util/objects';
 import PRECOMPILED_RANGE_FACETS_TEMPLATE from './precompile-templates/rangefacets.handlebars';
 import PRECOMPILED_SLIDER_RANGE_FACETS_TEMPLATE from './precompile-templates/sliderrangefacets.handlebars';
 import { RANGE_FACETS_TYPE } from './index';
-import UiRangeSlider from "../../util/sliders";
-
+import UiRangeSlider from '../../util/sliders';
 
 export default class RangeFacets {
-
   constructor(client, reduxStore, conf) {
     this.client = client;
     this.reduxStore = reduxStore;
@@ -48,8 +46,10 @@ export default class RangeFacets {
     }
 
     function _buildRanges(min, max, numberOfBuckets) {
-      const minTransformed = min >= 0 ? roundDownToNearestTenth(min) : roundUpToNearestTenth(min * -1) * -1;
-      const maxTransformed = max >= 0 ? roundUpToNearestTenth(max) : roundDownToNearestTenth(max * -1) * -1;
+      const minTransformed =
+        min >= 0 ? roundDownToNearestTenth(min) : roundUpToNearestTenth(min * -1) * -1;
+      const maxTransformed =
+        max >= 0 ? roundUpToNearestTenth(max) : roundDownToNearestTenth(max * -1) * -1;
       const ranges = [];
       let current = minTransformed;
       const step = roundUpToNearestTenth((maxTransformed - minTransformed) / numberOfBuckets);
@@ -75,13 +75,15 @@ export default class RangeFacets {
     }
 
     if (validateContainer(conf.containerId)) {
-
       observeStoreByKey(this.reduxStore, 'search', (search) => {
         const isActive = _hasActiveFacet();
 
-        if (!search.started || search.loading ||
+        if (
+          !search.started ||
+          search.loading ||
           (search.callBy === this.conf.field && isActive) ||
-          IGNORE_RENDERING_ON_REQUEST_BY.indexOf(search.callBy) > -1) {
+          IGNORE_RENDERING_ON_REQUEST_BY.indexOf(search.callBy) > -1
+        ) {
           return;
         }
 
@@ -91,34 +93,35 @@ export default class RangeFacets {
         }
 
         if (isActive && this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
-          var activeSliderRange =  this.getActiveRangeFacets(this.conf.field)[0];
-          this.reduxStore.dispatch(setFieldStats({
-            [this.conf.field]: {
-              min: activeSliderRange.gte,
-              max: activeSliderRange.lte
-            }
-          }, this.conf.field));
-
+          var activeSliderRange = this.getActiveRangeFacets(this.conf.field)[0];
+          this.reduxStore.dispatch(
+            setFieldStats(
+              {
+                [this.conf.field]: {
+                  min: activeSliderRange.gte,
+                  max: activeSliderRange.lte
+                }
+              },
+              this.conf.field
+            )
+          );
         } else if (isActive && this.conf.type === RANGE_FACETS_TYPE.CHECKBOX) {
           const filterObjectCustom = createFilterObject(
             this.reduxStore.getState().filters,
             this.reduxStore.getState().configuration.baseFilters,
             this.conf.field
           );
-          this.client.fetchCustomApi(this.conf.field, filterObjectCustom, res => {
+          this.client.fetchCustomApi(this.conf.field, filterObjectCustom, (res) => {
             this.reduxStore.dispatch(setFieldStats(res.fieldStats, this.conf.field));
           });
-
         } else if (search.callBy === 'component.activeFilters') {
           this.reduxStore.dispatch(clearFieldStats());
           this.reduxStore.dispatch(setFieldStats(search.results.fieldStats, this.conf.field));
-
         } else {
           this.reduxStore.dispatch(setFieldStats(search.results.fieldStats, this.conf.field));
         }
 
         this.handleCheckboxStates(false);
-
       });
 
       observeStoreByKey(this.reduxStore, 'fieldstats', (state) => {
@@ -136,7 +139,9 @@ export default class RangeFacets {
         if (!_hasActiveFacet()) {
           this.ranges = _buildRanges(fieldStats.min, fieldStats.max, this.maxNumberOfRangeBuckets);
         } else {
-          this.ranges = _buildActiveRanges(this.reduxStore.getState().filters.activeRangeFacets[this.conf.field]);
+          this.ranges = _buildActiveRanges(
+            this.reduxStore.getState().filters.activeRangeFacets[this.conf.field]
+          );
         }
 
         if (this.conf.type === RANGE_FACETS_TYPE.SLIDER) {
@@ -154,13 +159,12 @@ export default class RangeFacets {
           this.conf.field
         );
 
-        this.client.fetchRangeFacets(rangeFacetsOptions, filterObjectCustom, res => {
+        this.client.fetchRangeFacets(rangeFacetsOptions, filterObjectCustom, (res) => {
           this.render(res);
         });
       });
     }
   }
-
 
   setRangeFilter(key, valueMin, valueMax) {
     // Dispatch facet and refresh search
@@ -172,15 +176,14 @@ export default class RangeFacets {
   }
 
   setRangeSlider(activeRange) {
-    this.reduxStore.dispatch(setActiveRangeFacets(
-      buildRangeFacetsJson(this.conf.field, activeRange[0], activeRange[1]),
-      true,
-      this.conf.field
+    this.reduxStore.dispatch(
+      setActiveRangeFacets(
+        buildRangeFacetsJson(this.conf.field, activeRange[0], activeRange[1]),
+        true,
+        this.conf.field
       )
     );
   }
-
-
 
   render(results) {
     const container = document.getElementById(this.conf.containerId);
@@ -216,7 +219,7 @@ export default class RangeFacets {
     const _this = this;
     const container = document.getElementById(this.conf.containerId);
     const data = {
-      conf: this.conf,
+      conf: this.conf
     };
 
     if (!results) {
@@ -225,11 +228,12 @@ export default class RangeFacets {
     }
 
     const activeRangeFacets = this.getActiveRangeFacets(this.conf.field);
-    data.sliderConfig = Object.assign({},
+    data.sliderConfig = Object.assign(
+      {},
       getSliderRange(results, this.conf.field),
       getSelectedSliderRange(activeRangeFacets)
     );
-    
+
     let html;
     if (this.conf.precompiledTemplate) {
       html = this.conf.precompiledTemplate(data);
@@ -255,7 +259,6 @@ export default class RangeFacets {
         step: this.conf.step || 1
       }
     );
-
   }
 
   handleCheckboxStates(attachEvent) {
@@ -295,7 +298,7 @@ export default class RangeFacets {
 
 export function getSliderRange(data, field) {
   if (!data.fieldStats && !data.fieldStats[field]) {
-    return {min: null, max: null};
+    return { min: null, max: null };
   }
 
   return {
@@ -308,7 +311,7 @@ export function getSelectedSliderRange(selectedFacetsGroup) {
   let min;
   let max;
 
-  selectedFacetsGroup.forEach(range => {
+  selectedFacetsGroup.forEach((range) => {
     const start = range.gte;
     const end = range.lte;
     if (min === undefined || start < min) {
@@ -330,9 +333,9 @@ export function buildRangeFacetsJson(field, valueStart, valueEnd) {
   return {
     [field]: {
       [facetKey]: {
-        "gte": valueStart,
-        "lte": valueEnd
+        gte: valueStart,
+        lte: valueEnd
       }
     }
-  }
+  };
 }

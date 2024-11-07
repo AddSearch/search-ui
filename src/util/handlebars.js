@@ -3,7 +3,7 @@ import HandlebarsRuntime from 'handlebars/runtime';
 import { convertMapKeysToLowerCase } from './objects';
 
 export function defaultCategorySelectionFunction(hit, categoryAliases) {
-  const categories = hit.categories || [] ;
+  const categories = hit.categories || [];
 
   let category = '';
   let position = 1;
@@ -17,7 +17,6 @@ export function defaultCategorySelectionFunction(hit, categoryAliases) {
     // Remove the index prefix (e.g. 2x)
     category = category.replace(/^[0-9]+[x]{1}/, '').toLowerCase();
     position++;
-
   } while (category.length < 3 && categories.length > position);
 
   // Possible alias
@@ -28,15 +27,14 @@ export function defaultCategorySelectionFunction(hit, categoryAliases) {
   return category.replace(/[-_]+/g, ' ');
 }
 
-
 let currencyFormatter = null;
 export function registerDefaultHelpers() {
   registerHelper('equals', (arg1, arg2, options) => {
-    return ((arg1+'') === (arg2+'')) ? options.fn(this) : options.inverse(this);
+    return arg1 + '' === arg2 + '' ? options.fn(this) : options.inverse(this);
   });
 
   registerHelper('not', (arg1, arg2, options) => {
-    return ((arg1+'') !== (arg2+'')) ? options.fn(this) : options.inverse(this);
+    return arg1 + '' !== arg2 + '' ? options.fn(this) : options.inverse(this);
   });
 
   registerHelper('gt', (arg1, arg2, options) => {
@@ -48,7 +46,7 @@ export function registerDefaultHelpers() {
   });
 
   registerHelper('or', (arg1, arg2, options) => {
-    return arg1 ||  arg2 ? options.fn(this) : options.inverse(this);
+    return arg1 || arg2 ? options.fn(this) : options.inverse(this);
   });
 
   registerHelper('formatPrice', (price, locale, currency) => {
@@ -70,10 +68,9 @@ export function registerDefaultHelpers() {
       if (currencyFormatter) {
         return currencyFormatter.format(price);
       }
-    }
-    catch(err) {}
+    } catch (err) {}
 
-    return (price/100) + ' ' + currency;
+    return price / 100 + ' ' + currency;
   });
 }
 
