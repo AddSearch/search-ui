@@ -2,7 +2,7 @@ import './sortby.scss';
 import handlebars from 'handlebars';
 import { SORTBY_TYPE } from './index';
 import { sortBy } from '../../actions/sortby';
-import { search } from '../../actions/search';
+import { fetchSearchResultsStory } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
@@ -50,7 +50,16 @@ export default class SortBy {
     // Refresh search
     const keyword = this.reduxStore.getState().keyword.value;
     this.reduxStore.dispatch(
-      search(this.client, keyword, null, null, null, this.reduxStore, null, 'component.sortby')
+      fetchSearchResultsStory(
+        this.client,
+        keyword,
+        null,
+        null,
+        null,
+        this.reduxStore,
+        null,
+        'component.sortby'
+      )
     );
   }
 

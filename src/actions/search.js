@@ -5,10 +5,10 @@ import { sendSearchStats } from '../util/analytics';
 
 export const START = 'START';
 export const SET_SEARCH_RESULTS_PAGE_URL = 'SET_SEARCH_RESULTS_PAGE_URL';
+
 export const SEARCH_FETCH_START = 'SEARCH_FETCH_START';
 export const SEARCH_RESULTS = 'SEARCH_RESULTS';
 export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
-export const SEARCH_BY_COMPONENT = 'SEARCH_BY_COMPONENT';
 
 export function start() {
   return {
@@ -33,7 +33,7 @@ function _matchKeywordToCustomFieldValue(keyword, hits, field) {
   });
 }
 
-export function search(
+export function fetchSearchResultsStory(
   client,
   keyword,
   onResultsScrollTo,
@@ -54,7 +54,10 @@ export function search(
     };
   }
   return (dispatch) => {
-    dispatch(searchFetchStart());
+    dispatch({
+      type: SEARCH_FETCH_START
+    });
+
     client.search(keyword, (res) => {
       if (
         (fieldForInstantRedirectGlobal || fieldForInstantRedirect) &&
@@ -73,12 +76,6 @@ export function search(
       }
       dispatch(searchResults(client, keyword, res, onResultsScrollTo, appendResults, requestBy));
     });
-  };
-}
-
-export function searchFetchStart(keyword) {
-  return {
-    type: SEARCH_FETCH_START
   };
 }
 

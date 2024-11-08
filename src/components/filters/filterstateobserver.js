@@ -1,5 +1,5 @@
 import './filters.scss';
-import { search } from '../../actions/search';
+import { fetchSearchResultsStory } from '../../actions/search';
 import { setPage } from '../../actions/pagination';
 import { observeStoreByKey } from '../../store';
 import { setHistory, jsonToUrlParam, HISTORY_PARAMETERS } from '../../util/history';
@@ -154,7 +154,7 @@ export default class FilterStateObserver {
       const keyword = this.reduxStore.getState().keyword.value;
       this.reduxStore.dispatch(setPage(this.client, 1, null, this.reduxStore));
       this.reduxStore.dispatch(
-        search(
+        fetchSearchResultsStory(
           this.client,
           keyword,
           null,

@@ -2,7 +2,7 @@ import './loadmore.scss';
 import handlebars from 'handlebars';
 import { LOAD_MORE_TYPE } from './index';
 import { setPage } from '../../actions/pagination';
-import { search } from '../../actions/search';
+import { fetchSearchResultsStory } from '../../actions/search';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
 import PRECOMPILED_LOAD_MORE_TEMPLATE from './precompile-templates/loadmore.handlebars';
@@ -80,7 +80,16 @@ export default class LoadMore {
     // Fetch more results
     const keyword = this.reduxStore.getState().keyword.value;
     this.reduxStore.dispatch(
-      search(this.client, keyword, null, true, null, this.reduxStore, null, 'component.loadMore')
+      fetchSearchResultsStory(
+        this.client,
+        keyword,
+        null,
+        true,
+        null,
+        this.reduxStore,
+        null,
+        'component.loadMore'
+      )
     );
   }
 
