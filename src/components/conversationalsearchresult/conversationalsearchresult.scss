@@ -146,6 +146,15 @@
     align-items: center;
     justify-content: end;
     gap: 24px;
+
+    .copy-confirm-message {
+      font-size: 70%;
+      color: #587293;
+
+      @media all and (max-width: 480px) {
+        font-size: 60%;
+      }
+    }
   }
 
   .sources {
