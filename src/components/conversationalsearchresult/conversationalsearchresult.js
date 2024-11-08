@@ -64,12 +64,13 @@ export default class ConversationalSearchResult {
           answerContainer.classList.remove('collapsed');
           buttonText.textContent = 'Show less';
           fadeOutOverlay.style.display = 'none';
+          chevron.style.transform = 'rotate(180deg)';
         } else {
           answerContainer.style.maxHeight = `${this.answerMaxHeight}px`;
           answerContainer.classList.add('collapsed');
           buttonText.textContent = 'Show more';
           fadeOutOverlay.style.display = 'block';
-          chevron.style.transform = 'rotate(180deg)';
+          chevron.style.transform = '';
         }
       });
     }
