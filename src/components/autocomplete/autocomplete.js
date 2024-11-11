@@ -156,7 +156,7 @@ export default class Autocomplete {
     }
 
     // Autocomplete data (search suggestions, search results, or both)
-    let { suggestions, customFields, searchResults, activeSuggestionIndex } = autocompleteState;
+    const { suggestions, customFields, searchResults, activeSuggestionIndex } = autocompleteState;
     const data = {
       activeSuggestionIndex,
       suggestions,
@@ -236,6 +236,7 @@ export default class Autocomplete {
   suggestionMouseDown(e) {
     const keyword = e.target.getAttribute('data-keyword');
     const store = this.reduxStore;
+    store.dispatch(autocompleteHideAndDropRendering());
     store.dispatch(setKeyword(keyword, true, null, true));
 
     // Redirect to search results page
