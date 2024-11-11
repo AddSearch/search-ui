@@ -15,7 +15,8 @@ import {
   SET_ACTIVE_SUGGESTION,
   SUGGESTIONS_JSON_KEY,
   AUTOCOMPLETE_HIDE_AND_DROP_RENDERING,
-  CUSTOM_FIELDS_JSON_KEY
+  CUSTOM_FIELDS_JSON_KEY,
+  AUTOCOMPLETE_MIN_LENGTH_REQUIRED
 } from '../actions/autocomplete';
 
 const initialState = {
@@ -43,20 +44,21 @@ export default function searchsuggestions(state = initialState, action) {
       }
 
       return Object.assign({}, state, {
-        pendingRequests: addPendingReq,
-        dropRendering: false
+        pendingRequests: addPendingReq
       });
 
     case AUTOCOMPLETE_SUGGESTIONS_CLEAR:
       return Object.assign({}, state, {
         suggestions: [],
-        activeSuggestionIndex: null
+        activeSuggestionIndex: null,
+        pendingRequests: []
       });
 
     case AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR:
       return Object.assign({}, state, {
         customFields: [],
-        activeSuggestionIndex: null
+        activeSuggestionIndex: null,
+        pendingRequests: []
       });
 
     case AUTOCOMPLETE_SUGGESTIONS_RESULTS:
@@ -152,7 +154,8 @@ export default function searchsuggestions(state = initialState, action) {
 
     case AUTOCOMPLETE_SHOW:
       return Object.assign({}, state, {
-        visible: true
+        visible: true,
+        dropRendering: false
       });
 
     case HIDE_AUTOMATICALLY:
@@ -198,6 +201,11 @@ export default function searchsuggestions(state = initialState, action) {
         visible: true,
         activeSuggestionIndex: nextActiveSuggestion,
         setSuggestionToSearchField: true
+      });
+
+    case AUTOCOMPLETE_MIN_LENGTH_REQUIRED:
+      return Object.assign({}, state, {
+        minLengthRequired: action.minLengthRequired
       });
 
     default:

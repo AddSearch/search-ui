@@ -4,13 +4,13 @@ import handlebars from 'handlebars';
 import PRECOMPILED_SEARCHFIELD_TEMPLATE from './precompile-templates/searchfield.handlebars';
 
 import {
-  autocompleteHide,
   autocompleteShow,
   keyboardEvent,
   setActiveSuggestion,
   ARROW_DOWN,
   ARROW_UP,
-  autocompleteHideAndDropRendering
+  autocompleteHideAndDropRendering,
+  autocompleteMinLengthRequired
 } from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
 import { setKeyword } from '../../actions/keyword';
@@ -19,6 +19,7 @@ import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { validateContainer } from '../../util/dom';
 import { clearSelectedRangeFacets } from '../../actions/filters';
+import { searchResultsMinLengthRequired } from '../../actions/search';
 
 const KEYCODES = {
   ARROW_DOWN: 40,
@@ -36,8 +37,19 @@ export default class SearchField {
     this.matchAllQuery = matchAllQueryWhenSearchFieldEmpty;
     this.minLengthToShowResults = conf.minLengthToShowResults || 1;
     this.firstRenderDone = false;
-    this.firstSelectorBindDone = false;
     this.onSearch = onSearch;
+
+    const minLengthToShowResults = conf.minLengthToShowResults || 0;
+    this.reduxStore.dispatch(
+      autocompleteMinLengthRequired({
+        minLengthRequired: minLengthToShowResults
+      })
+    );
+    this.reduxStore.dispatch(
+      searchResultsMinLengthRequired({
+        minLengthRequired: minLengthToShowResults
+      })
+    );
 
     if (conf.selectorToBind) {
       this.bindContainer();
@@ -167,8 +179,8 @@ export default class SearchField {
     if (keyword === '' && this.matchAllQuery) {
       keyword = MATCH_ALL_QUERY;
     }
+    store.dispatch(autocompleteHideAndDropRendering());
     store.dispatch(setKeyword(keyword, true, null, false));
-    store.dispatch(autocompleteHide());
     this.redirectOrSearch(keyword);
   }
 
@@ -270,11 +282,8 @@ export default class SearchField {
     }
 
     const skipAutocomplete = this.conf.ignoreAutocomplete === true;
-    if (keyword.length < this.minLengthToShowResults) {
-      return;
-    }
     store.dispatch(setKeyword(keyword, skipAutocomplete, this.conf.containerId));
-
+    store.dispatch(autocompleteShow());
     if (this.conf.searchAsYouType === true) {
       this.executeSearch(this.client, keyword, true);
     }
@@ -316,7 +325,7 @@ export default class SearchField {
 
   onblur() {
     if (this.reduxStore.getState().autocomplete.hideAutomatically) {
-      this.reduxStore.dispatch(autocompleteHide());
+      this.reduxStore.dispatch(autocompleteHideAndDropRendering());
     }
   }
 }
