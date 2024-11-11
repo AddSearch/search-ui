@@ -81,8 +81,7 @@ export default function search(state = initialState, action) {
 
     case CONVERSATIONAL_SEARCH_RESULT:
       return Object.assign({}, state, {
-        conversationalSearchResult: action.conversationalSearchResult,
-        loadingConversationalSearchResult: false
+        conversationalSearchResult: action.conversationalSearchResult
       });
 
     case SET_SEARCH_RESULTS_PAGE_URL:
