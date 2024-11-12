@@ -124,7 +124,6 @@ export default class Autocomplete {
       const client = v.client;
       if (client && v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         client.nextPage();
-        // TODO handle conversational search with autocomplete
         this.reduxStore.dispatch(
           fetchAutocompleteSearchResultsStory(
             client,
