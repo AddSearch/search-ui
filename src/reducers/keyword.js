@@ -1,10 +1,11 @@
-import { KEYWORD } from '../actions/keyword';
+import { KEYWORD, KEYWORD_MIN_LENGTH_REQUIRED_TO_FETCH } from '../actions/keyword';
 
 const initialState = {
   value: '',
   skipAutocomplete: false,
   searchFieldContainerId: null,
-  setSearchFieldValue: null
+  setSearchFieldValue: null,
+  minLengthRequiredToFetch: 0
 };
 
 export default function keyword(state = initialState, action) {
@@ -15,6 +16,11 @@ export default function keyword(state = initialState, action) {
         skipAutocomplete: action.skipAutocomplete === true,
         searchFieldContainerId: action.searchFieldContainerId,
         setSearchFieldValue: action.setSearchFieldValue
+      });
+
+    case KEYWORD_MIN_LENGTH_REQUIRED_TO_FETCH:
+      return Object.assign({}, state, {
+        minLengthRequiredToFetch: action.minLengthRequiredToFetch
       });
 
     default:

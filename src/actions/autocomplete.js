@@ -9,7 +9,6 @@ export const AUTOCOMPLETE_SHOW = 'AUTOCOMPLETE_SHOW';
 export const AUTOCOMPLETE_HIDE = 'AUTOCOMPLETE_HIDE';
 export const AUTOCOMPLETE_HIDE_AND_DROP_RENDERING = 'AUTOCOMPLETE_HIDE_AND_DROP_RENDERING';
 export const HIDE_AUTOMATICALLY = 'HIDE_AUTOMATICALLY';
-export const AUTOCOMPLETE_MIN_LENGTH_REQUIRED = 'AUTOCOMPLETE_MIN_LENGTH_REQUIRED';
 
 export const KEYBOARD_EVENT = 'KEYBOARD_EVENT';
 export const ARROW_UP = 'ARROW_UP';
@@ -26,7 +25,7 @@ export function autocompleteSuggestions(client, keyword) {
     };
   }
   return (dispatch, getState) => {
-    const keywordMinLengthToFetch = getState().autocomplete.minLengthRequired;
+    const keywordMinLengthToFetch = getState().keyword.minLengthRequiredToFetch;
     if (keyword.length < keywordMinLengthToFetch) {
       return;
     }
@@ -49,7 +48,7 @@ export function autocompleteCustomFields(client, keyword, field) {
     };
   }
   return (dispatch, getState) => {
-    const keywordMinLengthToFetch = getState().autocomplete.minLengthRequired;
+    const keywordMinLengthToFetch = getState().keyword.minLengthRequiredToFetch;
     if (keyword.length < keywordMinLengthToFetch) {
       return;
     }
@@ -87,7 +86,7 @@ export function fetchAutocompleteSearchResultsStory(client, jsonKey, keyword, ap
     };
   }
   return (dispatch, getState) => {
-    const keywordMinLengthToFetch = getState().autocomplete.minLengthRequired;
+    const keywordMinLengthToFetch = getState().keyword.minLengthRequiredToFetch;
     if (keyword.length < keywordMinLengthToFetch) {
       return;
     }
@@ -135,13 +134,6 @@ export function autocompleteHide() {
 export function autocompleteHideAndDropRendering() {
   return {
     type: AUTOCOMPLETE_HIDE_AND_DROP_RENDERING
-  };
-}
-
-export function autocompleteMinLengthRequired(opt) {
-  return {
-    type: AUTOCOMPLETE_MIN_LENGTH_REQUIRED,
-    minLengthRequired: opt.minLengthRequired
   };
 }
 

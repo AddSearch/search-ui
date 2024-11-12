@@ -27,6 +27,7 @@ export default class Autocomplete {
     this.hasConversationalSearch = hasConversationalSearch;
     this.conf = conf;
     this.lastOnmouseOver = null;
+    this.minLengthRequired = this.reduxStore.getState().keyword.minLengthRequiredToFetch;
 
     if (this.conf.hideAutomatically === false) {
       this.reduxStore.dispatch(setHideAutomatically(false));
@@ -66,7 +67,7 @@ export default class Autocomplete {
     }
     const currentKeyword = this.reduxStore.getState().keyword.value;
     const shouldSkipRendering =
-      state.pendingRequests.length > 0 || currentKeyword.length < state.minLengthRequired;
+      state.pendingRequests.length > 0 || currentKeyword.length < this.minLengthRequired;
 
     if (shouldSkipRendering) {
       return;

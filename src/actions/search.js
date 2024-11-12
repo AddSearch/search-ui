@@ -9,7 +9,6 @@ export const SET_SEARCH_RESULTS_PAGE_URL = 'SET_SEARCH_RESULTS_PAGE_URL';
 export const SEARCH_FETCH_START = 'SEARCH_FETCH_START';
 export const SEARCH_RESULTS = 'SEARCH_RESULTS';
 export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
-export const SEARCH_RESULTS_MIN_LENGTH_REQUIRED = 'SEARCH_RESULTS_MIN_LENGTH_REQUIRED';
 
 function _matchKeywordToCustomFieldValue(keyword, hits, field) {
   return hits.find((hit) => {
@@ -49,7 +48,7 @@ export function fetchSearchResultsStory(
     };
   }
   return (dispatch, getState) => {
-    const keywordMinLengthToFetch = getState().autocomplete.minLengthRequired;
+    const keywordMinLengthToFetch = getState().keyword.minLengthRequiredToFetch;
     if (isHistoryDebounced && keyword.length < keywordMinLengthToFetch) {
       return;
     }
@@ -125,12 +124,5 @@ export function setSearchResultsPageUrl(url) {
   return {
     type: SET_SEARCH_RESULTS_PAGE_URL,
     url
-  };
-}
-
-export function searchResultsMinLengthRequired(opt) {
-  return {
-    type: SEARCH_RESULTS_MIN_LENGTH_REQUIRED,
-    minLengthRequired: opt.minLengthRequired
   };
 }

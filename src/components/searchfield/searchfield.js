@@ -9,17 +9,15 @@ import {
   setActiveSuggestion,
   ARROW_DOWN,
   ARROW_UP,
-  autocompleteHideAndDropRendering,
-  autocompleteMinLengthRequired
+  autocompleteHideAndDropRendering
 } from '../../actions/autocomplete';
 import { setPage } from '../../actions/pagination';
-import { setKeyword } from '../../actions/keyword';
+import { setKeyword, setKeywordMinLengthRequiredToFetch } from '../../actions/keyword';
 import { observeStoreByKey } from '../../store';
 import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { validateContainer } from '../../util/dom';
 import { clearSelectedRangeFacets } from '../../actions/filters';
-import { searchResultsMinLengthRequired } from '../../actions/search';
 
 const KEYCODES = {
   ARROW_DOWN: 40,
@@ -41,13 +39,8 @@ export default class SearchField {
 
     const minLengthToShowResults = conf.minLengthToShowResults || 0;
     this.reduxStore.dispatch(
-      autocompleteMinLengthRequired({
-        minLengthRequired: minLengthToShowResults
-      })
-    );
-    this.reduxStore.dispatch(
-      searchResultsMinLengthRequired({
-        minLengthRequired: minLengthToShowResults
+      setKeywordMinLengthRequiredToFetch({
+        minLengthRequiredToFetch: minLengthToShowResults
       })
     );
 

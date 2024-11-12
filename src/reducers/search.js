@@ -4,8 +4,7 @@ import {
   SEARCH_FETCH_START,
   SEARCH_RESULTS,
   CLEAR_SEARCH_RESULTS,
-  SET_SEARCH_RESULTS_PAGE_URL,
-  SEARCH_RESULTS_MIN_LENGTH_REQUIRED
+  SET_SEARCH_RESULTS_PAGE_URL
 } from '../actions/search';
 import {
   IS_LOADING_CONVERSATIONAL_SEARCH,
@@ -88,11 +87,6 @@ export default function search(state = initialState, action) {
     case SET_SEARCH_RESULTS_PAGE_URL:
       return Object.assign({}, state, {
         searchResultsPageUrl: action.url
-      });
-
-    case SEARCH_RESULTS_MIN_LENGTH_REQUIRED:
-      return Object.assign({}, state, {
-        minLengthRequired: action.minLengthRequired
       });
 
     default:
