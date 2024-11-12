@@ -4,15 +4,20 @@ import {
   SEARCH_FETCH_START,
   SEARCH_RESULTS,
   CLEAR_SEARCH_RESULTS,
-  SET_SEARCH_RESULTS_PAGE_URL,
-  SEARCH_BY_COMPONENT
+  SET_SEARCH_RESULTS_PAGE_URL
 } from '../actions/search';
+import {
+  IS_LOADING_CONVERSATIONAL_SEARCH,
+  CONVERSATIONAL_SEARCH_RESULT
+} from '../actions/conversationalsearch';
 
 const initialState = {
   started: false,
   keyword: null,
   results: {},
   loading: false,
+  conversationalSearchResult: {},
+  loadingConversationalSearchResult: false,
   searchResultsPageUrl: null // Redir to a search page instead of executing API call
 };
 
@@ -28,6 +33,8 @@ export default function search(state = initialState, action) {
         keyword: null,
         results: {},
         loading: false,
+        conversationalSearchResult: {},
+        loadingConversationalSearchResult: false,
         dropReturningResults: true // Don't render pending results returning after clear
       });
 
@@ -65,6 +72,16 @@ export default function search(state = initialState, action) {
         results: nextResults,
         loading: false,
         callBy: action.requestBy
+      });
+
+    case IS_LOADING_CONVERSATIONAL_SEARCH:
+      return Object.assign({}, state, {
+        loadingConversationalSearchResult: action.payload
+      });
+
+    case CONVERSATIONAL_SEARCH_RESULT:
+      return Object.assign({}, state, {
+        conversationalSearchResult: action.conversationalSearchResult
       });
 
     case SET_SEARCH_RESULTS_PAGE_URL:

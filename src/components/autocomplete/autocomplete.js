@@ -4,12 +4,12 @@ import { AUTOCOMPLETE_TYPE } from './index';
 import {
   setHideAutomatically,
   autocompleteSuggestions,
-  autocompleteSearch,
+  fetchAutocompleteSearchResultsStory,
   setActiveSuggestion,
   autocompleteCustomFields,
   autocompleteHideAndDropRendering
 } from '../../actions/autocomplete';
-import { search } from '../../actions/search';
+import { fetchSearchResultsStory } from '../../actions/search';
 import { setKeyword } from '../../actions/keyword';
 import { observeStoreByKey } from '../../store';
 import { validateContainer } from '../../util/dom';
@@ -18,11 +18,13 @@ import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 import PRECOMPILED_AUTOCOMPLETE_TEMPLATE from './precompile-templates/autocomplete.handlebars';
 import { registerHelper } from '../../util/handlebars';
+import { fetchConversationalSearchResultStory } from '../../actions/conversationalsearch';
 
 export default class Autocomplete {
-  constructor(client, reduxStore, conf) {
+  constructor(client, reduxStore, hasConversationalSearch, conf) {
     this.client = client;
     this.reduxStore = reduxStore;
+    this.hasConversationalSearch = hasConversationalSearch;
     this.conf = conf;
     this.lastOnmouseOver = null;
 
@@ -32,6 +34,7 @@ export default class Autocomplete {
 
     const categorySelectionFunction =
       this.conf.categorySelectionFunction || defaultCategorySelectionFunction;
+
     registerHelper('selectSearchResultCategory', (categories) =>
       categorySelectionFunction(categories, this.conf.categoryAliases)
     );
@@ -95,16 +98,23 @@ export default class Autocomplete {
       this.reduxStore.dispatch(autocompleteHideAndDropRendering());
     }
 
-    this.conf.sources.forEach((v) => {
-      const client = v.client || this.client;
-      if (v.type === AUTOCOMPLETE_TYPE.SUGGESTIONS) {
+    this.conf.sources.forEach((source) => {
+      const client = source.client || this.client;
+      if (source.type === AUTOCOMPLETE_TYPE.SUGGESTIONS) {
         this.reduxStore.dispatch(autocompleteSuggestions(client, keyword));
-      } else if (v.type === AUTOCOMPLETE_TYPE.CUSTOM_FIELDS) {
-        this.reduxStore.dispatch(autocompleteCustomFields(client, keyword, v.field));
-      } else if (v.type === AUTOCOMPLETE_TYPE.SEARCH) {
+      } else if (source.type === AUTOCOMPLETE_TYPE.CUSTOM_FIELDS) {
+        this.reduxStore.dispatch(autocompleteCustomFields(client, keyword, source.field));
+      } else if (source.type === AUTOCOMPLETE_TYPE.SEARCH) {
         const currentPaging = client.getSettings().paging;
         client.setPaging(1, currentPaging.pageSize, currentPaging.sortBy, currentPaging.sortOrder);
-        this.reduxStore.dispatch(autocompleteSearch(client, v.jsonKey, keyword));
+        this.reduxStore.dispatch(
+          fetchAutocompleteSearchResultsStory(
+            client,
+            source.jsonKey,
+            keyword,
+            this.hasConversationalSearch
+          )
+        );
       }
     });
   }
@@ -114,7 +124,15 @@ export default class Autocomplete {
       const client = v.client;
       if (client && v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         client.nextPage();
-        this.reduxStore.dispatch(autocompleteSearch(client, v.jsonKey, keyword, true));
+        this.reduxStore.dispatch(
+          fetchAutocompleteSearchResultsStory(
+            client,
+            v.jsonKey,
+            keyword,
+            this.hasConversationalSearch,
+            true
+          )
+        );
       }
     });
   }
@@ -229,7 +247,9 @@ export default class Autocomplete {
     }
     // Search on this page
     else {
-      store.dispatch(search(this.client, keyword, null, null, null, store));
+      store.dispatch(fetchSearchResultsStory(this.client, keyword, null, null, null, store));
+      this.hasConversationalSearch &&
+        store.dispatch(fetchConversationalSearchResultStory(this.client, keyword));
     }
   }
 

@@ -18,7 +18,7 @@ import { observeStoreByKey } from '../../store';
 import { MATCH_ALL_QUERY, WARMUP_QUERY_PREFIX } from '../../index';
 import { redirectToSearchResultsPage } from '../../util/history';
 import { validateContainer } from '../../util/dom';
-import { clearSelected, clearSelectedRangeFacets } from '../../actions/filters';
+import { clearSelectedRangeFacets } from '../../actions/filters';
 
 const KEYCODES = {
   ARROW_DOWN: 40,
@@ -274,6 +274,7 @@ export default class SearchField {
       return;
     }
     store.dispatch(setKeyword(keyword, skipAutocomplete, this.conf.containerId));
+
     if (this.conf.searchAsYouType === true) {
       this.executeSearch(this.client, keyword, true);
     }
