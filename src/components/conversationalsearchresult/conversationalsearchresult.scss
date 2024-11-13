@@ -34,7 +34,7 @@
 
   .header {
     display: flex;
-    align-items: start;
+    align-items: flex-start;
     justify-content: space-between;
   }
 
@@ -144,7 +144,7 @@
     margin-top: 12px;
     display: flex;
     align-items: center;
-    justify-content: end;
+    justify-content: flex-end;
     gap: 24px;
 
     .copy-confirm-message {

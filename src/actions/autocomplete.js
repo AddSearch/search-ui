@@ -24,9 +24,20 @@ export function autocompleteSuggestions(client, keyword) {
       type: AUTOCOMPLETE_SUGGESTIONS_CLEAR
     };
   }
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const keywordMinLengthToFetch = getState().keyword.minLengthRequiredToFetch;
+    if (keyword.length < keywordMinLengthToFetch) {
+      return;
+    }
+
     dispatch(autocompleteFetchStart(SUGGESTIONS_JSON_KEY));
-    client.suggestions(keyword, (res) => dispatch(autocompleteSuggestionsResults(keyword, res)));
+    client.suggestions(keyword, (res) => {
+      const currentKeyword = getState().keyword.value;
+      if (currentKeyword === '') {
+        return;
+      }
+      dispatch(autocompleteSuggestionsResults(keyword, res));
+    });
   };
 }
 
@@ -36,9 +47,20 @@ export function autocompleteCustomFields(client, keyword, field) {
       type: AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR
     };
   }
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const keywordMinLengthToFetch = getState().keyword.minLengthRequiredToFetch;
+    if (keyword.length < keywordMinLengthToFetch) {
+      return;
+    }
+
     dispatch(autocompleteFetchStart(CUSTOM_FIELDS_JSON_KEY));
-    client.autocomplete(field, keyword, (res) => dispatch(autocompleteCustomFieldsResults(res)));
+    client.autocomplete(field, keyword, (res) => {
+      const currentKeyword = getState().keyword.value;
+      if (currentKeyword === '') {
+        return;
+      }
+      dispatch(autocompleteCustomFieldsResults(res));
+    });
   };
 }
 
@@ -63,11 +85,20 @@ export function fetchAutocompleteSearchResultsStory(client, jsonKey, keyword, ap
       type: AUTOCOMPLETE_SEARCH_CLEAR
     };
   }
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const keywordMinLengthToFetch = getState().keyword.minLengthRequiredToFetch;
+    if (keyword.length < keywordMinLengthToFetch) {
+      return;
+    }
+
     dispatch(autocompleteFetchStart(jsonKey));
-    client.search(keyword, (res) =>
-      dispatch(autocompleteSearchResults(keyword, res, jsonKey, appendResults))
-    );
+    client.search(keyword, (res) => {
+      const currentKeyword = getState().keyword.value;
+      if (currentKeyword === '') {
+        return;
+      }
+      dispatch(autocompleteSearchResults(keyword, res, jsonKey, appendResults));
+    });
   };
 }
 

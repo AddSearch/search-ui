@@ -10,12 +10,6 @@ export const SEARCH_FETCH_START = 'SEARCH_FETCH_START';
 export const SEARCH_RESULTS = 'SEARCH_RESULTS';
 export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
 
-export function start() {
-  return {
-    type: START
-  };
-}
-
 function _matchKeywordToCustomFieldValue(keyword, hits, field) {
   return hits.find((hit) => {
     if (!hit.custom_fields || !hit.custom_fields[field]) {
@@ -53,7 +47,11 @@ export function fetchSearchResultsStory(
       type: CLEAR_SEARCH_RESULTS
     };
   }
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const keywordMinLengthToFetch = getState().keyword.minLengthRequiredToFetch;
+    if (isHistoryDebounced && keyword.length < keywordMinLengthToFetch) {
+      return;
+    }
     dispatch({
       type: SEARCH_FETCH_START
     });

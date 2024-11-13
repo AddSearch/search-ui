@@ -27,6 +27,7 @@ export default class Autocomplete {
     this.hasConversationalSearch = hasConversationalSearch;
     this.conf = conf;
     this.lastOnmouseOver = null;
+    this.minLengthRequired = this.reduxStore.getState().keyword.minLengthRequiredToFetch;
 
     if (this.conf.hideAutomatically === false) {
       this.reduxStore.dispatch(setHideAutomatically(false));
@@ -60,8 +61,15 @@ export default class Autocomplete {
   }
 
   autocompleteResultsChanged(state) {
-    // Wait until pending API requests have finished (if multiple autocomplete clients)
-    if (state.pendingRequests.length !== 0) {
+    if (state.dropRendering) {
+      this.clearRenderedHtml();
+      return;
+    }
+    const currentKeyword = this.reduxStore.getState().keyword.value;
+    const shouldSkipRendering =
+      state.pendingRequests.length > 0 || currentKeyword.length < this.minLengthRequired;
+
+    if (shouldSkipRendering) {
       return;
     }
 
@@ -92,11 +100,10 @@ export default class Autocomplete {
 
   keywordChanged(kw) {
     // Fetch suggestions if keyword was typed, not externally set (e.g. by browser's back button)
-    const keyword = kw.skipAutocomplete === false ? kw.value : null;
-
-    if (keyword === '') {
-      this.reduxStore.dispatch(autocompleteHideAndDropRendering());
+    if (kw.skipAutocomplete) {
+      return;
     }
+    const keyword = kw.value;
 
     this.conf.sources.forEach((source) => {
       const client = source.client || this.client;
@@ -137,23 +144,15 @@ export default class Autocomplete {
     });
   }
 
+  clearRenderedHtml = () => {
+    document.getElementById(this.conf.containerId).innerHTML = '';
+    this.renderedHtml = '';
+  };
+
   render(autocompleteState) {
     // Hide autocomplete after a search is triggered
-    if (autocompleteState.dropRendering && this.renderedHtml) {
-      document.getElementById(this.conf.containerId).innerHTML = '';
-      this.renderedHtml = '';
-      return;
-    }
-
-    // Don't re-render while API requests are pending
-    if (autocompleteState.pendingRequests.length !== 0 || autocompleteState.dropRendering) {
-      return;
-    }
-
-    // Hide autocomplete
     if (autocompleteState.visible === false) {
-      document.getElementById(this.conf.containerId).innerHTML = '';
-      this.renderedHtml = '';
+      this.clearRenderedHtml();
       return;
     }
 
@@ -238,6 +237,7 @@ export default class Autocomplete {
   suggestionMouseDown(e) {
     const keyword = e.target.getAttribute('data-keyword');
     const store = this.reduxStore;
+    store.dispatch(autocompleteHideAndDropRendering());
     store.dispatch(setKeyword(keyword, true, null, true));
 
     // Redirect to search results page

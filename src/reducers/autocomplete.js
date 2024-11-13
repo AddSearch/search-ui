@@ -43,20 +43,21 @@ export default function searchsuggestions(state = initialState, action) {
       }
 
       return Object.assign({}, state, {
-        pendingRequests: addPendingReq,
-        dropRendering: false
+        pendingRequests: addPendingReq
       });
 
     case AUTOCOMPLETE_SUGGESTIONS_CLEAR:
       return Object.assign({}, state, {
         suggestions: [],
-        activeSuggestionIndex: null
+        activeSuggestionIndex: null,
+        pendingRequests: []
       });
 
     case AUTOCOMPLETE_CUSTOM_FIELDS_CLEAR:
       return Object.assign({}, state, {
         customFields: [],
-        activeSuggestionIndex: null
+        activeSuggestionIndex: null,
+        pendingRequests: []
       });
 
     case AUTOCOMPLETE_SUGGESTIONS_RESULTS:
@@ -152,7 +153,8 @@ export default function searchsuggestions(state = initialState, action) {
 
     case AUTOCOMPLETE_SHOW:
       return Object.assign({}, state, {
-        visible: true
+        visible: true,
+        dropRendering: false
       });
 
     case HIDE_AUTOMATICALLY:
