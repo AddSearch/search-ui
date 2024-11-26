@@ -8,8 +8,9 @@ import {
 } from '../actions/search';
 import {
   IS_LOADING_CONVERSATIONAL_SEARCH,
-  CONVERSATIONAL_SEARCH_RESULT
-} from '../actions/conversationalsearch';
+  CONVERSATIONAL_SEARCH_RESULT,
+  CONVERSATIONAL_SEARCH_RESULT_ERROR
+} from '../actions/conversationalSearch';
 
 const initialState = {
   started: false,
@@ -34,6 +35,7 @@ export default function search(state = initialState, action) {
         results: {},
         loading: false,
         conversationalSearchResult: {},
+        conversationalSearchResultError: false,
         loadingConversationalSearchResult: false,
         dropReturningResults: true // Don't render pending results returning after clear
       });
@@ -81,7 +83,12 @@ export default function search(state = initialState, action) {
 
     case CONVERSATIONAL_SEARCH_RESULT:
       return Object.assign({}, state, {
-        conversationalSearchResult: action.conversationalSearchResult
+        conversationalSearchResult: action.payload
+      });
+
+    case CONVERSATIONAL_SEARCH_RESULT_ERROR:
+      return Object.assign({}, state, {
+        conversationalSearchResultError: action.payload
       });
 
     case SET_SEARCH_RESULTS_PAGE_URL:

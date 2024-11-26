@@ -7,6 +7,24 @@
   border: 1px solid hsl(213, 100%, 88%);
   border-radius: 12px;
 
+  .error-message {
+    font-size: 80%;
+    margin-top: 12px;
+    color: #9b1618;
+
+    @media all and (max-width: 480px) {
+      font-size: 70%;
+    }
+
+    .error-message-headline {
+      font-weight: 700;
+    }
+
+    .error-message-text {
+      margin-top: 10px;
+    }
+  }
+
   .loading-overlay {
     position: absolute;
     top: 0;
