@@ -114,22 +114,130 @@
         font-size: 80%;
       }
 
-      ol {
-        margin-top: 4px;
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
       }
 
       ul {
-        margin-top: 4px;
+        padding-left: 2em;
+        margin-bottom: 1em;
+        list-style-type: disc;
+
+        li {
+          margin-bottom: 1em;
+
+          p {
+            margin-bottom: 0.3em;
+          }
+        }
+
+        ul {
+          list-style-type: circle;
+          margin-top: 0.5em;
+
+          li {
+            margin-bottom: 0.7em;
+          }
+          ul {
+            list-style-type: square;
+            margin-top: 0.3em;
+
+            li {
+              margin-bottom: 0.5em;
+            }
+          }
+        }
       }
 
-      ol > * {
-        margin-left: 4px;
-        margin-bottom: 4px;
+      ol {
+        padding-left: 2em;
+        margin-bottom: 1em;
+        list-style-type: decimal;
+        padding-left: 2em;
+
+        li {
+          margin-bottom: 1em;
+
+          p {
+            margin-bottom: 0.3em;
+          }
+        }
+
+        ol {
+          list-style-type: lower-alpha;
+          margin-top: 0.5em;
+
+          li {
+            margin-bottom: 0.7em;
+          }
+
+          ol {
+            list-style-type: lower-roman;
+            margin-top: 0.3em;
+
+            li {
+              margin-bottom: 0.5em;
+            }
+          }
+        }
       }
 
-      ul > * {
-        margin-left: 4px;
-        margin-bottom: 4px;
+      li:last-child {
+        margin-bottom: 0;
+
+        p {
+          margin-bottom: 0;
+        }
+      }
+
+      pre {
+        background-color: #f4f4f4;
+        border-radius: 4px;
+        padding: 1em;
+        overflow-x: auto;
+
+        code {
+          font-family: 'Courier New', Courier, monospace;
+          font-size: 0.9em;
+          line-height: 1.6;
+
+          .keyword {
+            color: #007acc;
+          }
+          .string {
+            color: #a31515;
+          }
+          .comment {
+            color: #008000;
+          }
+          .number {
+            color: #098658;
+          }
+          .operator {
+            color: #000000;
+          }
+        }
+      }
+
+      a {
+        color: #0366d6;
+        text-decoration: none;
+      }
+
+      blockquote {
+        border-left: 4px solid #ddd;
+        padding-left: 1em;
+        color: #666;
+      }
+
+      p {
+        margin-bottom: 1em;
       }
     }
   }
