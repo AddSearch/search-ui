@@ -8,12 +8,14 @@
  * @typedef {Object} ConversationalSearchResponse
  * @property {Object} response
  * @property {string} response.answer - The answer text
+ * @property {string} response.conversation_id - The answer ID
  * @property {Object} response.source_documents
  * @property {Array<Object>} response.source_documents.hits - Array of source documents
  */
 
 /**
  * @typedef {Object} ConversationalSearchData
+ * @property {string} id - The answer ID
  * @property {string} answerText - The answer text
  * @property {Array<Source>} sources - Array of sources
  */
@@ -25,6 +27,7 @@
  */
 export function createConversationalSearchData(conversationalSearchResponse) {
   return {
+    id: conversationalSearchResponse.conversation_id,
     answerText: conversationalSearchResponse.answer || '',
     sources:
       conversationalSearchResponse.source_documents?.hits?.map((hit) => ({

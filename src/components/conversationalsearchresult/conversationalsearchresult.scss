@@ -301,14 +301,15 @@
 
   .sources-list {
     margin-top: 12px;
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 8px;
     font-weight: 600;
     font-size: 80%;
 
     @media all and (max-width: 480px) {
       font-size: 70%;
+      grid-template-columns: 1fr 1fr;
     }
   }
 

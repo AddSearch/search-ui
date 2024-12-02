@@ -9,8 +9,10 @@ import {
 import {
   IS_LOADING_CONVERSATIONAL_SEARCH,
   CONVERSATIONAL_SEARCH_RESULT,
-  CONVERSATIONAL_SEARCH_RESULT_ERROR
-} from '../actions/conversationalSearch';
+  CONVERSATIONAL_SEARCH_RESULT_ERROR,
+  SET_CONVERSATIONAL_SEARCH_SENTIMENT,
+  SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED
+} from '../actions/conversationalsearch';
 
 const initialState = {
   started: false,
@@ -19,6 +21,9 @@ const initialState = {
   loading: false,
   conversationalSearchResult: {},
   loadingConversationalSearchResult: false,
+  conversationalSearchResultError: false,
+  conversationalSearchSentiment: 'neutral',
+  isConversationalSearchAnswerExpanded: false,
   searchResultsPageUrl: null // Redir to a search page instead of executing API call
 };
 
@@ -89,6 +94,16 @@ export default function search(state = initialState, action) {
     case CONVERSATIONAL_SEARCH_RESULT_ERROR:
       return Object.assign({}, state, {
         conversationalSearchResultError: action.payload
+      });
+
+    case SET_CONVERSATIONAL_SEARCH_SENTIMENT:
+      return Object.assign({}, state, {
+        conversationalSearchSentiment: action.payload
+      });
+
+    case SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED:
+      return Object.assign({}, state, {
+        isConversationalSearchAnswerExpanded: action.payload
       });
 
     case SET_SEARCH_RESULTS_PAGE_URL:
