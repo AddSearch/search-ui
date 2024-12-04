@@ -92,13 +92,18 @@ export default class ConversationalSearchResult {
     }
 
     if (this.reduxStore.getState().search.isConversationalSearchAnswerExpanded) {
+      // Display "show less" button
       answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
-      showMoreBtn.style.display = 'none';
+      showMoreBtn.style.display = 'flex';
+      buttonText.textContent = 'Show less';
+
       fadeOutOverlay.style.display = 'none';
+      chevron.style.transform = 'rotate(180deg)';
     } else {
       answerContainer.style.maxHeight = `${this.answerMaxHeight}px`;
 
       if (answerContainer.scrollHeight > this.answerMaxHeight) {
+        // Only show "show more" button if the answer is longer than the max height
         showMoreBtn.style.display = 'flex';
         fadeOutOverlay.style.display = 'block';
       } else {
@@ -117,6 +122,7 @@ export default class ConversationalSearchResult {
         answerContainer.style.maxHeight = `${this.answerMaxHeight}px`;
         buttonText.textContent = 'Show more';
         fadeOutOverlay.style.display = 'block';
+
         chevron.style.transform = '';
       } else {
         this.reduxStore.dispatch({
@@ -127,6 +133,7 @@ export default class ConversationalSearchResult {
         answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
         buttonText.textContent = 'Show less';
         fadeOutOverlay.style.display = 'none';
+
         chevron.style.transform = 'rotate(180deg)';
       }
     });
