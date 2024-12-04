@@ -45,14 +45,3 @@ export function putSentimentValueStory(client, conversationId, sentimentValue) {
       });
   };
 }
-
-export function putCopyClickStory(client, conversationId, sentimentValue) {
-  return (dispatch) => {
-    client
-      .putCopyClick(conversationId)
-      .then((response) => {})
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-}

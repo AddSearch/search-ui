@@ -6,7 +6,6 @@ import { observeStoreByKey } from '../../store';
 import PRECOMPILED_CONVERSATIONAL_SEARCH_RESULT_TEMPLATE from './precompile-templates/conversationalsearchresult.handlebars';
 import { registerHelper } from '../../util/handlebars';
 import {
-  putCopyClickStory,
   putSentimentValueStory,
   SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED
 } from '../../actions/conversationalsearch';
@@ -126,8 +125,6 @@ export default class ConversationalSearchResult {
         .catch((error) => {
           console.error('Failed to copy answer text with following error: ', error);
         });
-
-      this.reduxStore.dispatch(putCopyClickStory(this.client, conversationId));
     });
 
     thumbsUpButton.addEventListener('click', () => {
