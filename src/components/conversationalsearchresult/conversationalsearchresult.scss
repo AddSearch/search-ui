@@ -82,8 +82,19 @@
     font-weight: 400;
     color: #587293;
 
-    @media all and (max-width: 480px) {
-      font-size: 70%;
+    @media all and (max-width: 640px) {
+      display: none;
+    }
+  }
+
+  .ai-explanation-text-mobile {
+    font-size: 70%;
+    font-weight: 400;
+    color: #587293;
+    display: none;
+
+    @media all and (max-width: 640px) {
+      display: block;
     }
   }
 
