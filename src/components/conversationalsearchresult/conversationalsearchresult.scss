@@ -71,13 +71,30 @@
     }
   }
 
+  .header-right-hand-side-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
   .ai-explanation-text {
     font-size: 80%;
     font-weight: 400;
     color: #587293;
 
-    @media all and (max-width: 480px) {
-      font-size: 70%;
+    @media all and (max-width: 640px) {
+      display: none;
+    }
+  }
+
+  .ai-explanation-text-mobile {
+    font-size: 70%;
+    font-weight: 400;
+    color: #587293;
+    display: none;
+
+    @media all and (max-width: 640px) {
+      display: block;
     }
   }
 
@@ -89,6 +106,66 @@
     @media all and (max-width: 480px) {
       font-size: 90%;
     }
+  }
+
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+
+    input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+
+      &:checked + .slider {
+        background-color: #2196f3;
+      }
+
+      &:focus + .slider {
+        box-shadow: 0 0 1px #2196f3;
+      }
+
+      &:checked + .slider:before {
+        transform: translateX(26px);
+      }
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+
+      &:before {
+        position: absolute;
+        content: '';
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+      }
+
+      &.round {
+        border-radius: 34px;
+
+        &:before {
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+
+  .toggle-label {
+    margin-left: 10px;
+    cursor: pointer;
   }
 
   .answer-container {
@@ -114,22 +191,130 @@
         font-size: 80%;
       }
 
-      ol {
-        margin-top: 4px;
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
       }
 
       ul {
-        margin-top: 4px;
+        padding-left: 2em;
+        margin-bottom: 1em;
+        list-style-type: disc;
+
+        li {
+          margin-bottom: 1em;
+
+          p {
+            margin-bottom: 0.3em;
+          }
+        }
+
+        ul {
+          list-style-type: circle;
+          margin-top: 0.5em;
+
+          li {
+            margin-bottom: 0.7em;
+          }
+          ul {
+            list-style-type: square;
+            margin-top: 0.3em;
+
+            li {
+              margin-bottom: 0.5em;
+            }
+          }
+        }
       }
 
-      ol > * {
-        margin-left: 4px;
-        margin-bottom: 4px;
+      ol {
+        padding-left: 2em;
+        margin-bottom: 1em;
+        list-style-type: decimal;
+        padding-left: 2em;
+
+        li {
+          margin-bottom: 1em;
+
+          p {
+            margin-bottom: 0.3em;
+          }
+        }
+
+        ol {
+          list-style-type: lower-alpha;
+          margin-top: 0.5em;
+
+          li {
+            margin-bottom: 0.7em;
+          }
+
+          ol {
+            list-style-type: lower-roman;
+            margin-top: 0.3em;
+
+            li {
+              margin-bottom: 0.5em;
+            }
+          }
+        }
       }
 
-      ul > * {
-        margin-left: 4px;
-        margin-bottom: 4px;
+      li:last-child {
+        margin-bottom: 0;
+
+        p {
+          margin-bottom: 0;
+        }
+      }
+
+      pre {
+        background-color: #f4f4f4;
+        border-radius: 4px;
+        padding: 1em;
+        overflow-x: auto;
+
+        code {
+          font-family: 'Courier New', Courier, monospace;
+          font-size: 0.9em;
+          line-height: 1.6;
+
+          .keyword {
+            color: #007acc;
+          }
+          .string {
+            color: #a31515;
+          }
+          .comment {
+            color: #008000;
+          }
+          .number {
+            color: #098658;
+          }
+          .operator {
+            color: #000000;
+          }
+        }
+      }
+
+      a {
+        color: #0366d6;
+        text-decoration: none;
+      }
+
+      blockquote {
+        border-left: 4px solid #ddd;
+        padding-left: 1em;
+        color: #666;
+      }
+
+      p {
+        margin-bottom: 1em;
       }
     }
   }
@@ -193,14 +378,15 @@
 
   .sources-list {
     margin-top: 12px;
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 8px;
     font-weight: 600;
     font-size: 80%;
 
     @media all and (max-width: 480px) {
       font-size: 70%;
+      grid-template-columns: 1fr 1fr;
     }
   }
 

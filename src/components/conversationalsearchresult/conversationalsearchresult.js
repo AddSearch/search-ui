@@ -5,6 +5,11 @@ import { validateContainer } from '../../util/dom';
 import { observeStoreByKey } from '../../store';
 import PRECOMPILED_CONVERSATIONAL_SEARCH_RESULT_TEMPLATE from './precompile-templates/conversationalsearchresult.handlebars';
 import { registerHelper } from '../../util/handlebars';
+import {
+  putSentimentValueStory,
+  SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
+  SET_CONVERSATIONAL_SEARCH_HIDDEN
+} from '../../actions/conversationalsearch';
 
 export default class ConversationalSearchResult {
   constructor(client, reduxStore, conf) {
@@ -26,6 +31,17 @@ export default class ConversationalSearchResult {
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'search', () => this.render());
     }
+
+    // Initialize show/hide toggle state from local storage
+    const storedHiddenState = localStorage.getItem('addSearch-isConversationalSearchHidden');
+
+    if (storedHiddenState !== null) {
+      const isHidden = JSON.parse(storedHiddenState);
+      this.reduxStore.dispatch({
+        type: SET_CONVERSATIONAL_SEARCH_HIDDEN,
+        payload: isHidden
+      });
+    }
   }
 
   observeResultLoadingState() {
@@ -40,6 +56,30 @@ export default class ConversationalSearchResult {
     });
   }
 
+  setupHideConversationalSearchToggle() {
+    const conversationalSearchResultContainer = document.querySelector(
+      '.addsearch-conversational-search-result'
+    );
+
+    const toggleSwitch = document.querySelector('.toggle-switch input');
+
+    if (!conversationalSearchResultContainer || !toggleSwitch) {
+      return;
+    }
+
+    toggleSwitch.addEventListener('change', () => {
+      const isHidden = this.reduxStore.getState().search.isConversationalSearchHidden;
+      console.log('Toggle hide / show - setting it to: ', !isHidden);
+
+      this.reduxStore.dispatch({
+        type: SET_CONVERSATIONAL_SEARCH_HIDDEN,
+        payload: !isHidden
+      });
+
+      localStorage.setItem('addSearch-isConversationalSearchHidden', JSON.stringify(!isHidden));
+    });
+  }
+
   setupShowMoreButton() {
     const answerContainer = document.querySelector('.answer-container');
     const fadeOutOverlay = answerContainer && answerContainer.querySelector('.fade-out-overlay');
@@ -51,29 +91,50 @@ export default class ConversationalSearchResult {
       return;
     }
 
-    answerContainer.style.maxHeight = `${this.answerMaxHeight}px`;
-
-    if (answerContainer.scrollHeight > this.answerMaxHeight) {
+    if (this.reduxStore.getState().search.isConversationalSearchAnswerExpanded) {
+      // Display "show less" button
+      answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
       showMoreBtn.style.display = 'flex';
-      fadeOutOverlay.style.display = 'block';
-    } else {
-      showMoreBtn.style.display = 'none';
+      buttonText.textContent = 'Show less';
+
       fadeOutOverlay.style.display = 'none';
+      chevron.style.transform = 'rotate(180deg)';
+    } else {
+      answerContainer.style.maxHeight = `${this.answerMaxHeight}px`;
+
+      if (answerContainer.scrollHeight > this.answerMaxHeight) {
+        // Only show "show more" button if the answer is longer than the max height
+        showMoreBtn.style.display = 'flex';
+        fadeOutOverlay.style.display = 'block';
+      } else {
+        showMoreBtn.style.display = 'none';
+        fadeOutOverlay.style.display = 'none';
+      }
     }
 
     showMoreBtn.addEventListener('click', () => {
-      if (answerContainer.classList.contains('collapsed')) {
-        answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
-        answerContainer.classList.remove('collapsed');
-        buttonText.textContent = 'Show less';
-        fadeOutOverlay.style.display = 'none';
-        chevron.style.transform = 'rotate(180deg)';
-      } else {
+      if (this.reduxStore.getState().search.isConversationalSearchAnswerExpanded) {
+        this.reduxStore.dispatch({
+          type: SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
+          payload: false
+        });
+
         answerContainer.style.maxHeight = `${this.answerMaxHeight}px`;
-        answerContainer.classList.add('collapsed');
         buttonText.textContent = 'Show more';
         fadeOutOverlay.style.display = 'block';
+
         chevron.style.transform = '';
+      } else {
+        this.reduxStore.dispatch({
+          type: SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
+          payload: true
+        });
+
+        answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
+        buttonText.textContent = 'Show less';
+        fadeOutOverlay.style.display = 'none';
+
+        chevron.style.transform = 'rotate(180deg)';
       }
     });
   }
@@ -83,16 +144,23 @@ export default class ConversationalSearchResult {
       '.addsearch-conversational-search-result'
     );
 
-    if (!conversationalSearchResultContainer) {
-      return;
-    }
-
     const copyButton =
       conversationalSearchResultContainer &&
       conversationalSearchResultContainer.querySelector('.copy-btn');
+
     const copyConfirm = conversationalSearchResultContainer.querySelector('.copy-confirm-message');
     const thumbsUpButton = conversationalSearchResultContainer.querySelector('.thumbs-up-btn');
     const thumbsDownButton = conversationalSearchResultContainer.querySelector('.thumbs-down-btn');
+
+    if (
+      !conversationalSearchResultContainer ||
+      !copyButton ||
+      !copyConfirm ||
+      !thumbsUpButton ||
+      !thumbsDownButton
+    ) {
+      return;
+    }
 
     copyButton.addEventListener('click', () => {
       const answerText = document.querySelector('.answer-text').textContent;
@@ -110,11 +178,26 @@ export default class ConversationalSearchResult {
     });
 
     thumbsUpButton.addEventListener('click', () => {
-      console.log('Thumbs up clicked, TODO connect to BE!');
+      const currentSearchState = this.reduxStore.getState().search;
+
+      this.reduxStore.dispatch(
+        putSentimentValueStory(
+          this.client,
+          currentSearchState.conversationalSearchResult.id,
+          currentSearchState.conversationalSearchSentiment === 'positive' ? 'neutral' : 'positive'
+        )
+      );
     });
 
     thumbsDownButton.addEventListener('click', () => {
-      console.log('Thumbs down clicked, TODO connect to BE!');
+      const currentSearchState = this.reduxStore.getState().search;
+      this.reduxStore.dispatch(
+        putSentimentValueStory(
+          this.client,
+          currentSearchState.conversationalSearchResult.id,
+          currentSearchState.conversationalSearchSentiment === 'negative' ? 'neutral' : 'negative'
+        )
+      );
     });
   }
 
@@ -135,7 +218,10 @@ export default class ConversationalSearchResult {
       sources: currentConversationalSearchResult.sources,
       aiExplanationText: this.conf.aiExplanationText || 'Generated by AI, may contain errors.',
       isResultLoading: this.isSearchResultLoading,
-      hadError: hadErrorFetchingConversationalSearchResult
+      hadError: hadErrorFetchingConversationalSearchResult,
+      sentimentState: currentSearchState.conversationalSearchSentiment,
+      showHideToggle: this.conf.hasHideToggle === undefined ? true : this.conf.hasHideToggle,
+      isHidden: currentSearchState.isConversationalSearchHidden
     };
 
     // Compile HTML and inject to element if changed
@@ -162,6 +248,7 @@ export default class ConversationalSearchResult {
     container.innerHTML = html;
     this.renderedHtml = html;
 
+    this.setupHideConversationalSearchToggle();
     this.setupShowMoreButton();
     this.setupActionButtons();
 
