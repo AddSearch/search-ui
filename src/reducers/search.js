@@ -11,7 +11,8 @@ import {
   CONVERSATIONAL_SEARCH_RESULT,
   CONVERSATIONAL_SEARCH_RESULT_ERROR,
   SET_CONVERSATIONAL_SEARCH_SENTIMENT,
-  SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED
+  SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
+  SET_CONVERSATIONAL_SEARCH_HIDDEN
 } from '../actions/conversationalsearch';
 
 const initialState = {
@@ -24,6 +25,7 @@ const initialState = {
   conversationalSearchResultError: false,
   conversationalSearchSentiment: 'neutral',
   isConversationalSearchAnswerExpanded: false,
+  isConversationalSearchHidden: false,
   searchResultsPageUrl: null // Redir to a search page instead of executing API call
 };
 
@@ -42,6 +44,7 @@ export default function search(state = initialState, action) {
         conversationalSearchResult: {},
         conversationalSearchResultError: false,
         loadingConversationalSearchResult: false,
+        conversationalSearchSentiment: 'neutral',
         dropReturningResults: true // Don't render pending results returning after clear
       });
 
@@ -104,6 +107,11 @@ export default function search(state = initialState, action) {
     case SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED:
       return Object.assign({}, state, {
         isConversationalSearchAnswerExpanded: action.payload
+      });
+
+    case SET_CONVERSATIONAL_SEARCH_HIDDEN:
+      return Object.assign({}, state, {
+        isConversationalSearchHidden: action.payload
       });
 
     case SET_SEARCH_RESULTS_PAGE_URL:
