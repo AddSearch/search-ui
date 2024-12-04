@@ -6,6 +6,7 @@ export const CONVERSATIONAL_SEARCH_RESULT_ERROR = 'CONVERSATIONAL_SEARCH_RESULT_
 export const SET_CONVERSATIONAL_SEARCH_SENTIMENT = 'SET_CONVERSATIONAL_SEARCH_SENTIMENT';
 export const SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED =
   'SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED';
+export const SET_CONVERSATIONAL_SEARCH_HIDDEN = 'SET_CONVERSATIONAL_SEARCH_HIDDEN';
 
 export function fetchConversationalSearchResultStory(client, keyword) {
   return (dispatch) => {
@@ -17,6 +18,12 @@ export function fetchConversationalSearchResultStory(client, keyword) {
         dispatch({ type: CONVERSATIONAL_SEARCH_RESULT_ERROR, payload: true });
       } else {
         const conversationalSearchResult = createConversationalSearchData(response);
+
+        // Re-initialize the sentiment value to neutral if a new answer is generated.
+        dispatch({
+          type: SET_CONVERSATIONAL_SEARCH_SENTIMENT,
+          payload: 'neutral'
+        });
 
         dispatch({
           type: CONVERSATIONAL_SEARCH_RESULT,
