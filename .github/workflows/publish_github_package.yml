@@ -31,9 +31,6 @@ jobs:
           PACKAGE_VERSION=$(git describe --abbrev=0 --tags | sed 's/^v//')
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Update package.json version
-        run: npm version ${{ steps.define_tag.outputs.PACKAGE_VERSION }} --no-git-tag-version
-
       - name: Build
         run: npm run build
 
