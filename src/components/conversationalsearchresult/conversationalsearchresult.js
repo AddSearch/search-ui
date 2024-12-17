@@ -9,7 +9,7 @@ import {
   putSentimentValueStory,
   SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
   SET_CONVERSATIONAL_SEARCH_HIDDEN
-} from '../../actions/conversationalsearch';
+} from '../../actions/conversationalSearch';
 
 export default class ConversationalSearchResult {
   constructor(client, reduxStore, conf) {

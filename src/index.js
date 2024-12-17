@@ -26,7 +26,7 @@ import {
   setSearchResultsPageUrl,
   clearSearchResults
 } from './actions/search';
-import { fetchConversationalSearchResultStory } from './actions/conversationalsearch';
+import { fetchConversationalSearchResultStory } from './actions/conversationalSearch';
 import { segmentedSearch } from './actions/segmentedsearch';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
