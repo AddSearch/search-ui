@@ -13,7 +13,7 @@ import {
   SET_CONVERSATIONAL_SEARCH_SENTIMENT,
   SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
   SET_CONVERSATIONAL_SEARCH_HIDDEN
-} from '../actions/conversationalsearch';
+} from '../actions/conversationalSearch';
 
 const initialState = {
   started: false,

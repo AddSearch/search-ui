@@ -18,7 +18,7 @@ import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 import PRECOMPILED_AUTOCOMPLETE_TEMPLATE from './precompile-templates/autocomplete.handlebars';
 import { registerHelper } from '../../util/handlebars';
-import { fetchConversationalSearchResultStory } from '../../actions/conversationalsearch';
+import { fetchConversationalSearchResultStory } from '../../actions/conversationalSearch';
 
 export default class Autocomplete {
   constructor(client, reduxStore, hasConversationalSearch, conf) {
