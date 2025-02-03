@@ -7,25 +7,25 @@ import {
   SET_SEARCH_RESULTS_PAGE_URL
 } from '../actions/search';
 import {
-  IS_LOADING_CONVERSATIONAL_SEARCH,
-  CONVERSATIONAL_SEARCH_RESULT,
-  CONVERSATIONAL_SEARCH_RESULT_ERROR,
-  SET_CONVERSATIONAL_SEARCH_SENTIMENT,
-  SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
-  SET_CONVERSATIONAL_SEARCH_HIDDEN
-} from '../actions/conversationalSearch';
+  IS_LOADING_AI_ANSWERS,
+  AI_ANSWERS_RESULT,
+  AI_ANSWERS_RESULT_ERROR,
+  SET_AI_ANSWERS_SENTIMENT,
+  SET_AI_ANSWERS_ANSWER_EXPANDED,
+  SET_AI_ANSWERS_HIDDEN
+} from '../actions/aiAnswers';
 
 const initialState = {
   started: false,
   keyword: null,
   results: {},
   loading: false,
-  conversationalSearchResult: {},
-  loadingConversationalSearchResult: false,
-  conversationalSearchResultError: false,
-  conversationalSearchSentiment: 'neutral',
-  isConversationalSearchAnswerExpanded: false,
-  isConversationalSearchHidden: false,
+  aiAnswersResult: {},
+  loadingAiAnswersResult: false,
+  aiAnswersResultError: false,
+  aiAnswerSentiment: 'neutral',
+  isAiAnswersAnswerExpanded: false,
+  isAiAnswersHidden: false,
   searchResultsPageUrl: null // Redir to a search page instead of executing API call
 };
 
@@ -41,10 +41,10 @@ export default function search(state = initialState, action) {
         keyword: null,
         results: {},
         loading: false,
-        conversationalSearchResult: {},
-        conversationalSearchResultError: false,
-        loadingConversationalSearchResult: false,
-        conversationalSearchSentiment: 'neutral',
+        aiAnswersResult: {},
+        aiAnswersResultError: false,
+        loadingAiAnswersResult: false,
+        aiAnswersSentiment: 'neutral',
         dropReturningResults: true // Don't render pending results returning after clear
       });
 
@@ -84,34 +84,34 @@ export default function search(state = initialState, action) {
         callBy: action.requestBy
       });
 
-    case IS_LOADING_CONVERSATIONAL_SEARCH:
+    case IS_LOADING_AI_ANSWERS:
       return Object.assign({}, state, {
-        loadingConversationalSearchResult: action.payload
+        loadingAiAnswersResult: action.payload
       });
 
-    case CONVERSATIONAL_SEARCH_RESULT:
+    case AI_ANSWERS_RESULT:
       return Object.assign({}, state, {
-        conversationalSearchResult: action.payload
+        aiAnswersResult: action.payload
       });
 
-    case CONVERSATIONAL_SEARCH_RESULT_ERROR:
+    case AI_ANSWERS_RESULT_ERROR:
       return Object.assign({}, state, {
-        conversationalSearchResultError: action.payload
+        aiAnswersResultError: action.payload
       });
 
-    case SET_CONVERSATIONAL_SEARCH_SENTIMENT:
+    case SET_AI_ANSWERS_SENTIMENT:
       return Object.assign({}, state, {
-        conversationalSearchSentiment: action.payload
+        aiAnswersSentiment: action.payload
       });
 
-    case SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED:
+    case SET_AI_ANSWERS_ANSWER_EXPANDED:
       return Object.assign({}, state, {
-        isConversationalSearchAnswerExpanded: action.payload
+        isAiAnswersAnswerExpanded: action.payload
       });
 
-    case SET_CONVERSATIONAL_SEARCH_HIDDEN:
+    case SET_AI_ANSWERS_HIDDEN:
       return Object.assign({}, state, {
-        isConversationalSearchHidden: action.payload
+        isAiAnswersHidden: action.payload
       });
 
     case SET_SEARCH_RESULTS_PAGE_URL:

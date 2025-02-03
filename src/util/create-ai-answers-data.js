@@ -5,7 +5,7 @@
  */
 
 /**
- * @typedef {Object} ConversationalSearchResponse
+ * @typedef {Object} AiAnswersResponse
  * @property {Object} response
  * @property {string} response.answer - The answer text
  * @property {string} response.conversation_id - The answer ID
@@ -14,23 +14,23 @@
  */
 
 /**
- * @typedef {Object} ConversationalSearchData
+ * @typedef {Object} AiAnswersData
  * @property {string} id - The answer ID
  * @property {string} answerText - The answer text
  * @property {Array<Source>} sources - Array of sources
  */
 
 /**
- * Creates a structured data object from a conversational search response
- * @param {ConversationalSearchResponse} conversationalSearchResponse - The response from the conversational search
- * @returns {ConversationalSearchData} The structured data for the search result
+ * Creates a structured data object from a AI answers response
+ * @param {AiAnswersResponse} aiAnswersResponse - The response from the AI answers
+ * @returns {AiAnswersData} The structured data for the search result
  */
-export function createConversationalSearchData(conversationalSearchResponse) {
+export function createAiAnswersData(aiAnswersResponse) {
   return {
-    id: conversationalSearchResponse.conversation_id,
-    answerText: conversationalSearchResponse.answer || '',
+    id: aiAnswersResponse.conversation_id,
+    answerText: aiAnswersResponse.answer || '',
     sources:
-      conversationalSearchResponse.source_documents?.hits?.map((hit) => ({
+      aiAnswersResponse.source_documents?.hits?.map((hit) => ({
         url: hit.url,
         title: hit.title
       })) || []
