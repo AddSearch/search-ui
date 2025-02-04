@@ -1,17 +1,17 @@
-import './conversationalsearchresult.scss';
+import './aianswersresult.scss';
 import handlebars from 'handlebars';
 import { marked } from 'marked';
 import { validateContainer } from '../../util/dom';
 import { observeStoreByKey } from '../../store';
-import PRECOMPILED_CONVERSATIONAL_SEARCH_RESULT_TEMPLATE from './precompile-templates/conversationalsearchresult.handlebars';
+import PRECOMPILED_AI_ANSWERS_RESULT_TEMPLATE from './precompile-templates/aianswersresult.handlebars';
 import { registerHelper } from '../../util/handlebars';
 import {
   putSentimentValueStory,
-  SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
-  SET_CONVERSATIONAL_SEARCH_HIDDEN
-} from '../../actions/conversationalSearch';
+  SET_AI_ANSWERS_ANSWER_EXPANDED,
+  SET_AI_ANSWERS_HIDDEN
+} from '../../actions/aiAnswers';
 
-export default class ConversationalSearchResult {
+export default class AiAnswersresult {
   constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
@@ -33,12 +33,12 @@ export default class ConversationalSearchResult {
     }
 
     // Initialize show/hide toggle state from local storage
-    const storedHiddenState = localStorage.getItem('addSearch-isConversationalSearchHidden');
+    const storedHiddenState = localStorage.getItem('addSearch-isAiAnswersHidden');
 
     if (storedHiddenState !== null) {
       const isHidden = JSON.parse(storedHiddenState);
       this.reduxStore.dispatch({
-        type: SET_CONVERSATIONAL_SEARCH_HIDDEN,
+        type: SET_AI_ANSWERS_HIDDEN,
         payload: isHidden
       });
     }
@@ -46,37 +46,33 @@ export default class ConversationalSearchResult {
 
   observeResultLoadingState() {
     this.reduxStore.subscribe(() => {
-      const isConversationalSearchResultLoading =
-        this.reduxStore.getState().search.loadingConversationalSearchResult;
+      const isAiAnswersResultLoading = this.reduxStore.getState().search.loadingAiAnswersResult;
 
-      if (this.isSearchResultLoading !== isConversationalSearchResultLoading) {
-        this.isSearchResultLoading = isConversationalSearchResultLoading;
+      if (this.isSearchResultLoading !== isAiAnswersResultLoading) {
+        this.isSearchResultLoading = isAiAnswersResultLoading;
         this.render();
       }
     });
   }
 
-  setupHideConversationalSearchToggle() {
-    const conversationalSearchResultContainer = document.querySelector(
-      '.addsearch-conversational-search-result'
-    );
+  setupHideAIAnswersToggle() {
+    const aiAnswersResultContainer = document.querySelector('.addsearch-ai-answers-result');
 
     const toggleSwitch = document.querySelector('.toggle-switch input');
 
-    if (!conversationalSearchResultContainer || !toggleSwitch) {
+    if (!aiAnswersResultContainer || !toggleSwitch) {
       return;
     }
 
     toggleSwitch.addEventListener('change', () => {
-      const isHidden = this.reduxStore.getState().search.isConversationalSearchHidden;
-      console.log('Toggle hide / show - setting it to: ', !isHidden);
+      const isHidden = this.reduxStore.getState().search.isAiAnswersHidden;
 
       this.reduxStore.dispatch({
-        type: SET_CONVERSATIONAL_SEARCH_HIDDEN,
+        type: SET_AI_ANSWERS_HIDDEN,
         payload: !isHidden
       });
 
-      localStorage.setItem('addSearch-isConversationalSearchHidden', JSON.stringify(!isHidden));
+      localStorage.setItem('addSearch-isAiAnswersHidden', JSON.stringify(!isHidden));
     });
   }
 
@@ -91,7 +87,7 @@ export default class ConversationalSearchResult {
       return;
     }
 
-    if (this.reduxStore.getState().search.isConversationalSearchAnswerExpanded) {
+    if (this.reduxStore.getState().search.isAiAnswersAnswerExpanded) {
       // Display "show less" button
       answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
       showMoreBtn.style.display = 'flex';
@@ -113,9 +109,9 @@ export default class ConversationalSearchResult {
     }
 
     showMoreBtn.addEventListener('click', () => {
-      if (this.reduxStore.getState().search.isConversationalSearchAnswerExpanded) {
+      if (this.reduxStore.getState().search.isAiAnswersAnswerExpanded) {
         this.reduxStore.dispatch({
-          type: SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
+          type: SET_AI_ANSWERS_ANSWER_EXPANDED,
           payload: false
         });
 
@@ -126,7 +122,7 @@ export default class ConversationalSearchResult {
         chevron.style.transform = '';
       } else {
         this.reduxStore.dispatch({
-          type: SET_CONVERSATIONAL_SEARCH_ANSWER_EXPANDED,
+          type: SET_AI_ANSWERS_ANSWER_EXPANDED,
           payload: true
         });
 
@@ -140,20 +136,17 @@ export default class ConversationalSearchResult {
   }
 
   setupActionButtons() {
-    const conversationalSearchResultContainer = document.querySelector(
-      '.addsearch-conversational-search-result'
-    );
+    const aiAnswersResultContainer = document.querySelector('.addsearch-ai-answers-result');
 
     const copyButton =
-      conversationalSearchResultContainer &&
-      conversationalSearchResultContainer.querySelector('.copy-btn');
+      aiAnswersResultContainer && aiAnswersResultContainer.querySelector('.copy-btn');
 
-    const copyConfirm = conversationalSearchResultContainer.querySelector('.copy-confirm-message');
-    const thumbsUpButton = conversationalSearchResultContainer.querySelector('.thumbs-up-btn');
-    const thumbsDownButton = conversationalSearchResultContainer.querySelector('.thumbs-down-btn');
+    const copyConfirm = aiAnswersResultContainer.querySelector('.copy-confirm-message');
+    const thumbsUpButton = aiAnswersResultContainer.querySelector('.thumbs-up-btn');
+    const thumbsDownButton = aiAnswersResultContainer.querySelector('.thumbs-down-btn');
 
     if (
-      !conversationalSearchResultContainer ||
+      !aiAnswersResultContainer ||
       !copyButton ||
       !copyConfirm ||
       !thumbsUpButton ||
@@ -164,13 +157,10 @@ export default class ConversationalSearchResult {
 
     copyButton.addEventListener('click', () => {
       const answerText = document.querySelector('.answer-text').textContent;
-      console.log('Copy clicked, TODO connect to BE!');
       navigator.clipboard
         .writeText(answerText)
         .then(() => {
           copyConfirm.textContent = 'Answer copied!';
-
-          console.log('Answer successfull copied, TODO connect to BE!');
         })
         .catch((error) => {
           console.error('Failed to copy answer text with following error: ', error);
@@ -183,8 +173,8 @@ export default class ConversationalSearchResult {
       this.reduxStore.dispatch(
         putSentimentValueStory(
           this.client,
-          currentSearchState.conversationalSearchResult.id,
-          currentSearchState.conversationalSearchSentiment === 'positive' ? 'neutral' : 'positive'
+          currentSearchState.aiAnswersResult.id,
+          currentSearchState.aiAnswersSentiment === 'positive' ? 'neutral' : 'positive'
         )
       );
     });
@@ -194,8 +184,8 @@ export default class ConversationalSearchResult {
       this.reduxStore.dispatch(
         putSentimentValueStory(
           this.client,
-          currentSearchState.conversationalSearchResult.id,
-          currentSearchState.conversationalSearchSentiment === 'negative' ? 'neutral' : 'negative'
+          currentSearchState.aiAnswersResult.id,
+          currentSearchState.aiAnswersSentiment === 'negative' ? 'neutral' : 'negative'
         )
       );
     });
@@ -203,40 +193,35 @@ export default class ConversationalSearchResult {
 
   render() {
     const currentSearchState = this.reduxStore.getState().search;
-    const currentConversationalSearchResult = currentSearchState.conversationalSearchResult;
-    const currentlyLoadingConversationSearchResult =
-      currentSearchState.loadingConversationalSearchResult;
+    const currentAiAnswersResult = currentSearchState.aiAnswersResult;
+    const currentlyLoadingAiAnswersResult = currentSearchState.loadingAiAnswersResult;
     const keyword = currentSearchState.keyword;
-    const hadErrorFetchingConversationalSearchResult =
-      currentSearchState.conversationalSearchResultError;
+    const hadErrorFetchingAiAnswersResult = currentSearchState.aiAnswersResultError;
 
     const handlebarTemplateProps = {
       mainHeadlineText: this.conf.mainHeadlineText || 'Answer',
       subHeadlineText: keyword,
-      answerText: currentConversationalSearchResult.answerText,
+      answerText: currentAiAnswersResult.answerText,
       sourcesHeadlineText: this.conf.sourcesHeadlineText || 'Sources:',
-      sources: currentConversationalSearchResult.sources,
+      sources: currentAiAnswersResult.sources,
       aiExplanationText: this.conf.aiExplanationText || 'Generated by AI, may contain errors.',
       isResultLoading: this.isSearchResultLoading,
-      hadError: hadErrorFetchingConversationalSearchResult,
-      sentimentState: currentSearchState.conversationalSearchSentiment,
+      hadError: hadErrorFetchingAiAnswersResult,
+      sentimentState: currentSearchState.aiAnswersSentiment,
       showHideToggle: this.conf.hasHideToggle === undefined ? true : this.conf.hasHideToggle,
-      isHidden: currentSearchState.isConversationalSearchHidden
+      isHidden: currentSearchState.isAiAnswersHidden
     };
 
     // Compile HTML and inject to element if changed
     let html;
 
-    if (
-      currentConversationalSearchResult.answerText ||
-      (keyword && currentlyLoadingConversationSearchResult)
-    ) {
+    if (currentAiAnswersResult.answerText || (keyword && currentlyLoadingAiAnswersResult)) {
       if (this.conf.precompiledTemplate) {
         html = this.conf.precompiledTemplate(handlebarTemplateProps);
       } else if (this.conf.template) {
         html = handlebars.compile(this.conf.template)(handlebarTemplateProps);
       } else {
-        html = PRECOMPILED_CONVERSATIONAL_SEARCH_RESULT_TEMPLATE(handlebarTemplateProps);
+        html = PRECOMPILED_AI_ANSWERS_RESULT_TEMPLATE(handlebarTemplateProps);
       }
     }
 
@@ -248,7 +233,7 @@ export default class ConversationalSearchResult {
     container.innerHTML = html;
     this.renderedHtml = html;
 
-    this.setupHideConversationalSearchToggle();
+    this.setupHideAIAnswersToggle();
     this.setupShowMoreButton();
     this.setupActionButtons();
 

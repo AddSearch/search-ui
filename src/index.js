@@ -12,7 +12,7 @@ import LoadMore from './components/loadmore';
 import Pagination from './components/pagination';
 import SearchField from './components/searchfield';
 import SearchResults from './components/searchresults';
-import ConversationalSearchResult from './components/conversationalsearchresult';
+import Aianswersresult from './components/aianswersresult';
 import SegmentedResults from './components/segmentedresults';
 import SortBy from './components/sortby';
 import { initRedux } from './store';
@@ -26,7 +26,7 @@ import {
   setSearchResultsPageUrl,
   clearSearchResults
 } from './actions/search';
-import { fetchConversationalSearchResultStory } from './actions/conversationalSearch';
+import { fetchAiAnswersResultStory } from './actions/aiAnswers';
 import { segmentedSearch } from './actions/segmentedsearch';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
@@ -85,10 +85,8 @@ export default class AddSearchUI {
             this.settings.fieldForInstantRedirect
           );
 
-          // Execute conversational search if enabled
-          keyword &&
-            this.settings.hasConversationalSearch &&
-            this.executeConversationalSearch(keyword, false);
+          // Execute AI answers if enabled
+          keyword && this.settings.hasAiAnswers && this.executeAiAnswers(keyword, false);
         },
         this.settings.matchAllQuery,
         this.settings.baseFilters
@@ -151,8 +149,8 @@ export default class AddSearchUI {
     }
   }
 
-  executeConversationalSearch(keyword) {
-    this.reduxStore.dispatch(fetchConversationalSearchResultStory(this.client, keyword));
+  executeAiAnswers(keyword) {
+    this.reduxStore.dispatch(fetchAiAnswersResultStory(this.client, keyword));
   }
 
   fetchRecommendation(containerId) {
@@ -223,11 +221,11 @@ export default class AddSearchUI {
         fieldForInstantRedirectGlobal
       );
 
-      // Do not fetch conversational search for warmup queries.
+      // Do not fetch AI answers for warmup queries.
       !keyword.startsWith(WARMUP_QUERY_PREFIX) &&
-        this.settings.hasConversationalSearch &&
-        !searchAsYouType && // TODO revisit whether conversational search should be executed on search as you type
-        this.executeConversationalSearch(keyword, searchAsYouType);
+        this.settings.hasAiAnswers &&
+        !searchAsYouType && // TODO revisit whether AI answers should be executed on search as you type
+        this.executeAiAnswers(keyword, searchAsYouType);
     };
 
     new SearchField(
@@ -240,13 +238,13 @@ export default class AddSearchUI {
   }
 
   autocomplete(conf) {
-    new Autocomplete(this.client, this.reduxStore, this.settings.hasConversationalSearch, conf);
+    new Autocomplete(this.client, this.reduxStore, this.settings.hasAiAnswers, conf);
   }
 
-  conversationalSearchResult(conf) {
+  aiAnswersResult(conf) {
     this.shouldInitializeFromBrowserHistory = true;
 
-    new ConversationalSearchResult(this.client, this.reduxStore, conf);
+    new Aianswersresult(this.client, this.reduxStore, conf);
   }
 
   searchResults(conf) {
@@ -315,8 +313,8 @@ export default class AddSearchUI {
     this.reduxStore.dispatch(setKeyword(keyword, true));
     this.executeSearch(keyword, null, false);
 
-    if (this.settings.hasConversationalSearch) {
-      this.executeConversationalSearch(keyword);
+    if (this.settings.hasAiAnswers) {
+      this.executeAiAnswers(keyword);
     }
   }
 

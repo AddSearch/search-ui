@@ -89,7 +89,7 @@ var searchui = new AddSearchUI(client, conf);
 The configuration object can contain following values:
 
 | Key                     | Possible values | Default value | Description                                                                                                                                               |
-| ----------------------- | --------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------------------| --------------- |---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | debug                   | boolean         | false         | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools)                                                              |
 | analyticsCallback       | function        | n/a           | A function to call when an analytics event occurs. [Read more](#analytics)                                                                                |
 | baseFilters             | object          | null          | A filter object that is applied to all searches under the hood. The user can't disable baseFilters                                                        |
@@ -101,6 +101,7 @@ The configuration object can contain following values:
 | searchParameter         | String          | "search"      | Name of the search parameter which is added to the URL, by default the library adds "?search="                                                            |
 | updateBrowserHistory    | boolean         | true          | Set this value to false for a second/third searchui's instance to prevent conflict in browser's URL                                                       |
 | fieldForInstantRedirect | String          | n/a           | Checking if the search keyword is matching with any search result's custom field's value, then redirect users to the matched page. E.g. custom_fields.sku |
+| hasAiAnswers            | String          | false         | Enable fetching AI Answers API                                                                                                                            |
 
 After all UI components have been added to the SearchUI object, the start function must be called:
 
@@ -876,6 +877,55 @@ Settings that can be passed to the `segmentedSearchResults` function:
 | type               | AddSearchUI.RECOMMENDATION_TYPE.FREQUENTLY_BOUGHT_TOGETHER | n/a           | Type of recommendation                                                                                |
 | ignoreFetchOnStart | boolean                                                    | false         | If enabled, recommendation won't be fetched unless call `searchui.fetchRecommendation(<containerId>)` |
 | template           | String                                                     | n/a           | [Handlebars](https://handlebarsjs.com/) template for this segment                                     |
+
+### Ai answers result
+
+Area to display generated AI Answers.
+To allow fetching AI Answers, you need to set "hasAiAnswers" to true in the searchui instance's configuration.
+
+```js
+searchui.aiAnswersResult({
+  containerId: 'searchresults',
+  mainHeadlineText: 'AI-generated answer',
+  answerMaxHeight: 150,
+  sourcesHeadlineText: 'Based on the following sources:',
+  hasHideToggle: false
+});
+```
+
+Settings that can be passed to the `aiAnswersResult` function:
+
+
+| Key                          | Possible values                         | Default value                                                                                                                                   | Description                                                                                                                              |
+| ---------------------------- |-------------|-------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| containerId                  | String      | n/a      | ID of the HTML element that will act as a container for search results                                                                   |
+| mainHeadlineText             | String      | "Answer" | Main headline text                                                                                                                       |
+| answerMaxHeight              | Integer     | 150      | Max height (in pixel) of the answer area                                                                                                 |
+| sourcesHeadlineText          | String      | "Sources"| Headline text of "Sources"_                                                                                                              |
+| hasHideToggle                | Boolean     | true     | Display toggle to show/hide generated answers                                          |
+| precompiledTemplate          | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/aianswersresult/precompile-templates/aianswersresult.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
+
+
+<details>
+  <summary>Data structure used in aiAnswersResult component</summary>
+
+```
+{
+  mainHeadlineText: 'Answer',
+  subHeadlineText: 'subHeadlineText',
+  answerText: 'Answer text',
+  sourcesHeadlineText: 'Sources:',
+  sources: [],
+  aiExplanationText: 'Generated by AI, may contain errors.',
+  isResultLoading: false,
+  hadError: false,
+  sentimentState: 'positive' | 'negative',
+  showHideToggle: true,
+  isHidden: false
+}
+```
+
+</details>
 
 ## Support Content Security Policy
 

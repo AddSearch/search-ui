@@ -18,13 +18,13 @@ import { redirectToSearchResultsPage } from '../../util/history';
 import { defaultCategorySelectionFunction } from '../../util/handlebars';
 import PRECOMPILED_AUTOCOMPLETE_TEMPLATE from './precompile-templates/autocomplete.handlebars';
 import { registerHelper } from '../../util/handlebars';
-import { fetchConversationalSearchResultStory } from '../../actions/conversationalSearch';
+import { fetchAiAnswersResultStory } from '../../actions/aiAnswers';
 
 export default class Autocomplete {
-  constructor(client, reduxStore, hasConversationalSearch, conf) {
+  constructor(client, reduxStore, hasAiAnswers, conf) {
     this.client = client;
     this.reduxStore = reduxStore;
-    this.hasConversationalSearch = hasConversationalSearch;
+    this.hasAiAnswers = hasAiAnswers;
     this.conf = conf;
     this.lastOnmouseOver = null;
     this.minLengthRequired = this.reduxStore.getState().keyword.minLengthRequiredToFetch;
@@ -115,12 +115,7 @@ export default class Autocomplete {
         const currentPaging = client.getSettings().paging;
         client.setPaging(1, currentPaging.pageSize, currentPaging.sortBy, currentPaging.sortOrder);
         this.reduxStore.dispatch(
-          fetchAutocompleteSearchResultsStory(
-            client,
-            source.jsonKey,
-            keyword,
-            this.hasConversationalSearch
-          )
+          fetchAutocompleteSearchResultsStory(client, source.jsonKey, keyword, this.hasAiAnswers)
         );
       }
     });
@@ -132,13 +127,7 @@ export default class Autocomplete {
       if (client && v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         client.nextPage();
         this.reduxStore.dispatch(
-          fetchAutocompleteSearchResultsStory(
-            client,
-            v.jsonKey,
-            keyword,
-            this.hasConversationalSearch,
-            true
-          )
+          fetchAutocompleteSearchResultsStory(client, v.jsonKey, keyword, this.hasAiAnswers, true)
         );
       }
     });
@@ -248,8 +237,7 @@ export default class Autocomplete {
     // Search on this page
     else {
       store.dispatch(fetchSearchResultsStory(this.client, keyword, null, null, null, store));
-      this.hasConversationalSearch &&
-        store.dispatch(fetchConversationalSearchResultStory(this.client, keyword));
+      this.hasAiAnswers && store.dispatch(fetchAiAnswersResultStory(this.client, keyword));
     }
   }
 
