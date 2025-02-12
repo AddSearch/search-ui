@@ -31,7 +31,7 @@ export function createAiAnswersData(aiAnswersResponse) {
     answerText: aiAnswersResponse.answer || '',
     sources:
       aiAnswersResponse.sources?.map((source) => ({
-        sourceId: source.id,
+        id: source.id,
         url: source.url,
         title: source.title
       })) || []
