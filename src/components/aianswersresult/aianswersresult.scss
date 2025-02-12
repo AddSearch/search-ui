@@ -350,6 +350,12 @@
     justify-content: flex-end;
     gap: 24px;
 
+    button {
+      background-color: transparent;
+      border-width: 0;
+      cursor: pointer;
+    }
+
     .copy-confirm-message {
       font-size: 70%;
       color: #587293;
