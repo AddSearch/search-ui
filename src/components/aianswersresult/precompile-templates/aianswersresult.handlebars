@@ -69,7 +69,8 @@
           </div>
           <div class='action-buttons-group'>
             <span class='copy-confirm-message'></span>
-            <button class='copy-btn'><svg
+            <button class='copy-btn' type="button">
+              <svg
                 width='24'
                 height='24'
                 viewBox='0 0 24 24'
@@ -82,7 +83,7 @@
                 />
               </svg>
             </button>
-            <button class='thumbs-up-btn'>
+            <button class='thumbs-up-btn' type="button">
               {{#equals sentimentState 'positive'}}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clip-path="url(#clip0_184_2273)">
@@ -108,7 +109,7 @@
                 </svg>
               {{/equals}}
             </button>
-            <button class='thumbs-down-btn'>
+            <button class='thumbs-down-btn' type="button">
               {{#equals sentimentState 'negative'}}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <g clip-path="url(#clip0_184_2278)">
@@ -140,7 +141,7 @@
               <h4 class='sources-headline'>{{sourcesHeadlineText}}</h4>
               <div class='sources-list'>
                 {{#each sources}}
-                  <a href='{{url}}' class='source'>
+                  <a href='{{url}}' class='source' target="_blank">
                     {{title}}
                   </a>
                 {{/each}}
@@ -148,7 +149,7 @@
             </div>
           {{/if}}
         </div>
-        <button class='show-more-btn'>
+        <button class='show-more-btn' type="button">
           <span class='button-text'>Show more</span>
           <svg
             class='chevron'

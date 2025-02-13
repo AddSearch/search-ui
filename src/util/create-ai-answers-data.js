@@ -30,9 +30,10 @@ export function createAiAnswersData(aiAnswersResponse) {
     id: aiAnswersResponse.conversation_id,
     answerText: aiAnswersResponse.answer || '',
     sources:
-      aiAnswersResponse.source_documents?.hits?.map((hit) => ({
-        url: hit.url,
-        title: hit.title
+      aiAnswersResponse.sources?.map((source) => ({
+        id: source.id,
+        url: source.url,
+        title: source.title
       })) || []
   };
 }
