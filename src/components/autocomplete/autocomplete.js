@@ -115,7 +115,7 @@ export default class Autocomplete {
         const currentPaging = client.getSettings().paging;
         client.setPaging(1, currentPaging.pageSize, currentPaging.sortBy, currentPaging.sortOrder);
         this.reduxStore.dispatch(
-          fetchAutocompleteSearchResultsStory(client, source.jsonKey, keyword, this.hasAiAnswers)
+          fetchAutocompleteSearchResultsStory(client, source.jsonKey, keyword)
         );
       }
     });
@@ -127,7 +127,7 @@ export default class Autocomplete {
       if (client && v.type === AUTOCOMPLETE_TYPE.SEARCH) {
         client.nextPage();
         this.reduxStore.dispatch(
-          fetchAutocompleteSearchResultsStory(client, v.jsonKey, keyword, this.hasAiAnswers, true)
+          fetchAutocompleteSearchResultsStory(client, v.jsonKey, keyword, true)
         );
       }
     });
