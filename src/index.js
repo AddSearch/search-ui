@@ -126,21 +126,24 @@ export default class AddSearchUI {
     onResultsScrollTo,
     searchAsYouType,
     fieldForInstantRedirect,
-    fieldForInstantRedirectGlobal
+    fieldForInstantRedirectGlobal,
+    disableSearch
   ) {
-    this.reduxStore.dispatch(
-      fetchSearchResultsStory(
-        this.client,
-        keyword,
-        onResultsScrollTo,
-        false,
-        searchAsYouType,
-        this.reduxStore,
-        fieldForInstantRedirect,
-        'executeSearch',
-        fieldForInstantRedirectGlobal
-      )
-    );
+    if (!disableSearch) {
+      this.reduxStore.dispatch(
+        fetchSearchResultsStory(
+          this.client,
+          keyword,
+          onResultsScrollTo,
+          false,
+          searchAsYouType,
+          this.reduxStore,
+          fieldForInstantRedirect,
+          'executeSearch',
+          fieldForInstantRedirectGlobal
+        )
+      );
+    }
 
     for (let key in this.segmentedSearchClients) {
       this.reduxStore.dispatch(
@@ -211,14 +214,16 @@ export default class AddSearchUI {
       onResultsScrollTo,
       searchAsYouType,
       fieldForInstantRedirect,
-      fieldForInstantRedirectGlobal
+      fieldForInstantRedirectGlobal,
+      disableSearch
     ) => {
       this.executeSearch(
         keyword,
         onResultsScrollTo,
         searchAsYouType,
         fieldForInstantRedirect,
-        fieldForInstantRedirectGlobal
+        fieldForInstantRedirectGlobal,
+        disableSearch
       );
 
       // Do not fetch AI answers for warmup queries.
@@ -228,13 +233,15 @@ export default class AddSearchUI {
         this.executeAiAnswers(keyword, searchAsYouType);
     };
 
-    new SearchField(
+    const SearchFieldInstance = new SearchField(
       this.client,
       this.reduxStore,
       conf,
       this.settings.matchAllQuery === true,
       onSearch
     );
+
+    return SearchFieldInstance;
   }
 
   autocomplete(conf) {
