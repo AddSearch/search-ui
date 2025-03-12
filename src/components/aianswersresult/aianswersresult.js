@@ -195,7 +195,8 @@ export default class AiAnswersresult {
     const currentSearchState = this.reduxStore.getState().search;
     const currentAiAnswersResult = currentSearchState.aiAnswersResult;
     const currentlyLoadingAiAnswersResult = currentSearchState.loadingAiAnswersResult;
-    const keyword = currentSearchState.keyword;
+    const currentKeywordState = this.reduxStore.getState().keyword;
+    const keyword = currentKeywordState.value;
     const hadErrorFetchingAiAnswersResult = currentSearchState.aiAnswersResultError;
 
     const handlebarTemplateProps = {
