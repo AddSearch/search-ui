@@ -126,9 +126,22 @@ function onLinkClick(e, client, searchResults) {
 
   // Search stats were not sent within SEARCH_ANALYTICS_DEBOUNCE_TIME
   if (searchStatsSent === false) {
-    const numberOfResults = searchResults ? searchResults.total_hits : 0;
+    if (sendSearchStatsTimeout) {
+      clearTimeout(sendSearchStatsTimeout);
+      sendSearchStatsTimeout = null;
+    }
+
+    if (autocompleteStatsTimeout) {
+      clearTimeout(autocompleteStatsTimeout);
+      autocompleteStatsTimeout = null;
+    }
+
+    const numberOfResults = searchResults
+      ? searchResults.total_hits || searchResults.hits?.length
+      : 0;
     const processingTimeMs = searchResults ? searchResults.processing_time_ms : 0;
     client.sendStatsEvent('search', keyword, { numberOfResults });
+    searchStatsSent = true;
     callExternalAnalyticsCallback({ action: 'search', keyword, numberOfResults, processingTimeMs });
   }
 }

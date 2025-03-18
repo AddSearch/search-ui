@@ -129,7 +129,8 @@ export default class SearchField {
       false,
       searchAsYouType,
       this.conf.fieldForInstantRedirect,
-      this.reduxStore.getState().configuration.fieldForInstantRedirect
+      this.reduxStore.getState().configuration.fieldForInstantRedirect,
+      this.conf.disableSearch
     );
   }
 
