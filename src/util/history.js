@@ -199,7 +199,7 @@ function handleURLParams(
   }
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
-    const keyword = decodeURIComponent(qs[HISTORY_PARAMETERS.SEARCH]);
+    const keyword = qs[HISTORY_PARAMETERS.SEARCH];
     store.dispatch(setKeyword(keyword, true, null, true));
     searchFunction(keyword);
   } else if (hasMatchAllQuery === true) {
