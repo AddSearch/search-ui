@@ -16,7 +16,23 @@ export const HISTORY_PARAMETERS = {
 
 const SET_HISTORY_DEBOUNCE_TIME = 1500;
 
+const SESSION_STORAGE_SEARCH_PARAMETERS_KEY = 'addsearch-searchParameters';
+
 let setHistoryDebounceTimeout = null;
+
+/**
+ * Store search parameters to session storage
+ */
+function storeSearchParametersToSessionStorage(searchParameters) {
+  sessionStorage.setItem(SESSION_STORAGE_SEARCH_PARAMETERS_KEY, JSON.stringify(searchParameters));
+}
+
+/**
+ * Get search parameters from session storage
+ */
+function getSearchParametersFromSessionStorage() {
+  return JSON.parse(sessionStorage.getItem(SESSION_STORAGE_SEARCH_PARAMETERS_KEY)) || {};
+}
 
 // Set history right away or after a debounce delay
 export function setHistory(parameter, value, debounce, store) {
@@ -24,24 +40,25 @@ export function setHistory(parameter, value, debounce, store) {
   if (state && state.configuration && state.configuration.updateBrowserHistory === false) {
     return;
   }
+  const searchPersistence = state.configuration.searchPersistence;
   // Debounce for search-as-you-type
   if (debounce) {
     if (setHistoryDebounceTimeout) {
       clearTimeout(setHistoryDebounceTimeout);
     }
     setHistoryDebounceTimeout = setTimeout(() => {
-      doSetHistory(parameter, value);
+      doSetHistory(parameter, value, searchPersistence);
     }, SET_HISTORY_DEBOUNCE_TIME);
   }
 
   // No debounce
   else {
-    doSetHistory(parameter, value);
+    doSetHistory(parameter, value, searchPersistence);
   }
 }
 
 // Set the actual history state
-function doSetHistory(parameter, value) {
+function doSetHistory(parameter, value, searchPersistence) {
   // ignore warmup search query
   if (
     parameter === HISTORY_PARAMETERS.SEARCH &&
@@ -56,7 +73,11 @@ function doSetHistory(parameter, value) {
     url = url.substring(0, url.indexOf('#'));
   }
   const hash = window.location.hash || '';
-  const params = queryParamsToObject(url);
+
+  const params =
+    searchPersistence === 'url'
+      ? queryParamsToObject(url)
+      : getSearchParametersFromSessionStorage();
 
   // If pagination parameter and page=1, don't add to URL
   if (parameter === HISTORY_PARAMETERS.PAGE && value == 1) {
@@ -86,13 +107,17 @@ function doSetHistory(parameter, value) {
   // Put hash back to URL
   stateUrl = stateUrl + hash;
 
-  // Firt time called
-  if (history.state === null) {
-    history.replaceState(params, '', stateUrl);
-  }
-  // Update history if it has changed
-  else if (JSON.stringify(history.state) !== JSON.stringify(params)) {
-    history.pushState(params, '', stateUrl);
+  if (searchPersistence === 'session-storage') {
+    storeSearchParametersToSessionStorage(params);
+  } else {
+    // Firt time called
+    if (history.state === null) {
+      history.replaceState(params, '', stateUrl);
+    }
+    // Update history if it has changed
+    else if (JSON.stringify(history.state) !== JSON.stringify(params)) {
+      history.pushState(params, '', stateUrl);
+    }
   }
 }
 
@@ -105,7 +130,7 @@ export function getQueryParam(url, param) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-export function initFromURL(
+export function initFromUrlOrBrowserStorage(
   client,
   reduxStore,
   createFilterObjectFunction,
@@ -114,8 +139,13 @@ export function initFromURL(
   baseFilters
 ) {
   // Initial load
+  const searchPersistence = reduxStore.getState().configuration.searchPersistence;
   const url = window.location.href;
-  const qs = queryParamsToObject(url);
+  const qs =
+    searchPersistence === 'url'
+      ? queryParamsToObject(url)
+      : getSearchParametersFromSessionStorage();
+
   handleURLParams(
     client,
     reduxStore,
@@ -128,7 +158,11 @@ export function initFromURL(
 
   // Browser back button. Re-handle URL
   window.onpopstate = (e) => {
-    const qs = queryParamsToObject(window.location.href);
+    const qs =
+      searchPersistence === 'url'
+        ? queryParamsToObject(window.location.href)
+        : getSearchParametersFromSessionStorage();
+
     handleURLParams(
       client,
       reduxStore,
@@ -325,7 +359,13 @@ export function rangeFacetsJsonToUrlParam(json) {
 /**
  * Redirect to search results page
  */
-export function redirectToSearchResultsPage(url, keyword) {
+export function redirectToSearchResultsPage(url, keyword, searchPersistence) {
+  if (searchPersistence === 'session-storage') {
+    storeSearchParametersToSessionStorage({ [HISTORY_PARAMETERS.SEARCH]: keyword });
+    window.location.href = url;
+    return;
+  }
+
   if (url.indexOf('?') === -1) {
     window.location.href =
       url + '?' + HISTORY_PARAMETERS.SEARCH + '=' + encodeURIComponent(keyword);

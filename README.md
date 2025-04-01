@@ -88,20 +88,21 @@ var searchui = new AddSearchUI(client, conf);
 
 The configuration object can contain following values:
 
-| Key                     | Possible values | Default value | Description                                                                                                                                               |
-|-------------------------| --------------- |---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| debug                   | boolean         | false         | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools)                                                              |
-| analyticsCallback       | function        | n/a           | A function to call when an analytics event occurs. [Read more](#analytics)                                                                                |
-| baseFilters             | object          | null          | A filter object that is applied to all searches under the hood. The user can't disable baseFilters                                                        |
-| collectAnalytics        | boolean         | true          | Control if analytics events are collected at all                                                                                                          |
-| matchAllQuery           | boolean         | false         | Execute "match all" query when the Search UI is started                                                                                                   |
-| onFilterChange          | function        | n/a           | Function to call when active filters are changed (for conditional visibility)                                                                             |
-| onFilteredSearchRefresh | function        | n/a           | Function to call when search results are refreshed due to changes in filters or facets                                                                    |
-| searchResultsPageUrl    | String          | null          | Redirect the user to a separate search results page, instead of showing search results on the current page                                                |
-| searchParameter         | String          | "search"      | Name of the search parameter which is added to the URL, by default the library adds "?search="                                                            |
-| updateBrowserHistory    | boolean         | true          | Set this value to false for a second/third searchui's instance to prevent conflict in browser's URL                                                       |
-| fieldForInstantRedirect | String          | n/a           | Checking if the search keyword is matching with any search result's custom field's value, then redirect users to the matched page. E.g. custom_fields.sku |
-| hasAiAnswers            | String          | false         | Enable fetching AI Answers API                                                                                                                            |
+| Key                     | Possible values             | Default value     | Description                                                                                                                                               |
+|-------------------------|-----------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| debug                   | boolean                     | false             | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools)                                                              |
+| analyticsCallback       | function                    | n/a               | A function to call when an analytics event occurs. [Read more](#analytics)                                                                                |
+| baseFilters             | object                      | null              | A filter object that is applied to all searches under the hood. The user can't disable baseFilters                                                        |
+| collectAnalytics        | boolean                     | true              | Control if analytics events are collected at all                                                                                                          |
+| matchAllQuery           | boolean                     | false             | Execute "match all" query when the Search UI is started                                                                                                   |
+| onFilterChange          | function                    | n/a               | Function to call when active filters are changed (for conditional visibility)                                                                             |
+| onFilteredSearchRefresh | function                    | n/a               | Function to call when search results are refreshed due to changes in filters or facets                                                                    |
+| searchResultsPageUrl    | String                      | null              | Redirect the user to a separate search results page, instead of showing search results on the current page                                                |
+| searchParameter         | String                      | "search"          | Name of the search parameter which is added to the URL, by default the library adds "?search="                                                            |
+| updateBrowserHistory    | boolean                     | true              | Set this value to false for a second/third searchui's instance to prevent conflict in browser's URL                                                       |
+| fieldForInstantRedirect | String                      | n/a               | Checking if the search keyword is matching with any search result's custom field's value, then redirect users to the matched page. E.g. custom_fields.sku |
+| hasAiAnswers            | String                      | false             | Enable fetching AI Answers API                                                                                                                            |
+| searchPersistence       | "url" \|  'session-storage' | "url"             | Store historical search data in URL's GET parameter or in browser's session storage.                                                                      |
 
 After all UI components have been added to the SearchUI object, the start function must be called:
 

@@ -136,6 +136,7 @@ export default class SearchField {
 
   redirectOrSearch(keyword) {
     const searchResultsPageUrl = this.reduxStore.getState().search.searchResultsPageUrl;
+    const searchPersistence = this.reduxStore.getState().configuration.searchPersistence;
 
     // Redirect to results page
     if (
@@ -144,7 +145,7 @@ export default class SearchField {
       keyword &&
       keyword.length > 0
     ) {
-      redirectToSearchResultsPage(searchResultsPageUrl, keyword);
+      redirectToSearchResultsPage(searchResultsPageUrl, keyword, searchPersistence);
     }
 
     // Search

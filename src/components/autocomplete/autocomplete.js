@@ -231,8 +231,9 @@ export default class Autocomplete {
 
     // Redirect to search results page
     const searchResultsPageUrl = store.getState().search.searchResultsPageUrl;
+    const searchPersistence = store.getState().configuration.searchPersistence;
     if (searchResultsPageUrl) {
-      redirectToSearchResultsPage(searchResultsPageUrl, keyword);
+      redirectToSearchResultsPage(searchResultsPageUrl, keyword, searchPersistence);
     }
     // Search on this page
     else {
