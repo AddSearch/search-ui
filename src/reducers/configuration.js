@@ -1,5 +1,10 @@
-const initialState = {};
+const initialState = {
+  searchPersistence: 'url'
+};
 
 export default function configuration(state = initialState) {
-  return state;
+  return {
+    ...initialState,
+    ...state
+  };
 }

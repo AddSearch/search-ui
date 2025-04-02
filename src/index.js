@@ -18,7 +18,7 @@ import SortBy from './components/sortby';
 import { initRedux } from './store';
 import { setExternalAnalyticsCallback, setCollectAnalytics } from './util/analytics';
 import { registerDefaultHelpers, registerHelper, registerPartial } from './util/handlebars';
-import { initFromURL } from './util/history';
+import { initFromUrlOrBrowserStorage } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
 import {
   START,
@@ -72,7 +72,7 @@ export default class AddSearchUI {
 
     // Handle browser history if the user is on a results page (i,e. not just a search field on any page)
     if (this.shouldInitializeFromBrowserHistory) {
-      initFromURL(
+      initFromUrlOrBrowserStorage(
         this.client,
         this.reduxStore,
         createFilterObjectFunction,
