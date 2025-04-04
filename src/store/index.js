@@ -1,10 +1,14 @@
 import reducers from '../reducers';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
+import { initialConfigurationState } from '../reducers/configuration';
 
 export function initRedux(settings) {
   const preloadedstate = {
-    configuration: settings
+    configuration: {
+      ...initialConfigurationState,
+      ...settings
+    }
   };
   let composeEnhancers = compose;
   if (settings.debug && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {

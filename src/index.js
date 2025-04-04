@@ -34,6 +34,7 @@ import { clearSelected } from './actions/filters';
 import { HISTORY_PARAMETERS } from './util/history';
 import Recommendations from './components/recommendations';
 import { recommend } from './actions/recommendations';
+import { setHasAiAnswers } from './actions/configuration';
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 export const MATCH_ALL_QUERY = '*';
@@ -228,7 +229,7 @@ export default class AddSearchUI {
 
       // Do not fetch AI answers for warmup queries.
       !keyword.startsWith(WARMUP_QUERY_PREFIX) &&
-        this.settings.hasAiAnswers &&
+        this.reduxStore.getState().configuration.hasAiAnswers &&
         !searchAsYouType && // TODO revisit whether AI answers should be executed on search as you type
         this.executeAiAnswers(keyword, searchAsYouType);
     };
@@ -339,6 +340,11 @@ export default class AddSearchUI {
     } else {
       store.dispatch(clearSearchResults('top'));
     }
+  }
+
+  enableAiAnswers(shouldEnable) {
+    const store = this.reduxStore;
+    store.dispatch(setHasAiAnswers(shouldEnable));
   }
 
   registerHandlebarsHelper(helperName, helperFunction) {
