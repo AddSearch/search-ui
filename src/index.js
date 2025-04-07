@@ -34,6 +34,7 @@ import { clearSelected } from './actions/filters';
 import { HISTORY_PARAMETERS } from './util/history';
 import Recommendations from './components/recommendations';
 import { recommend } from './actions/recommendations';
+import { setHasAiAnswers, setPauseSegmentedSearch } from './actions/configuration';
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 export const MATCH_ALL_QUERY = '*';
@@ -86,7 +87,9 @@ export default class AddSearchUI {
           );
 
           // Execute AI answers if enabled
-          keyword && this.settings.hasAiAnswers && this.executeAiAnswers(keyword, false);
+          keyword &&
+            this.reduxStore.getState().configuration.hasAiAnswers &&
+            this.executeAiAnswers(keyword, false);
         },
         this.settings.matchAllQuery,
         this.settings.baseFilters
@@ -143,6 +146,10 @@ export default class AddSearchUI {
           fieldForInstantRedirectGlobal
         )
       );
+    }
+
+    if (this.reduxStore.getState().configuration.pauseSegmentedSearch) {
+      return;
     }
 
     for (let key in this.segmentedSearchClients) {
@@ -228,7 +235,7 @@ export default class AddSearchUI {
 
       // Do not fetch AI answers for warmup queries.
       !keyword.startsWith(WARMUP_QUERY_PREFIX) &&
-        this.settings.hasAiAnswers &&
+        this.reduxStore.getState().configuration.hasAiAnswers &&
         !searchAsYouType && // TODO revisit whether AI answers should be executed on search as you type
         this.executeAiAnswers(keyword, searchAsYouType);
     };
@@ -320,7 +327,7 @@ export default class AddSearchUI {
     this.reduxStore.dispatch(setKeyword(keyword, true));
     this.executeSearch(keyword, null, false);
 
-    if (this.settings.hasAiAnswers) {
+    if (this.reduxStore.getState().configuration.hasAiAnswers) {
       this.executeAiAnswers(keyword);
     }
   }
@@ -339,6 +346,18 @@ export default class AddSearchUI {
     } else {
       store.dispatch(clearSearchResults('top'));
     }
+  }
+
+  enableAiAnswers(shouldEnable) {
+    this.reduxStore.dispatch(setHasAiAnswers(shouldEnable));
+  }
+
+  setCollectAnalytics(collect) {
+    setCollectAnalytics(collect);
+  }
+
+  pauseSegmentedSearch(pause) {
+    this.reduxStore.dispatch(setPauseSegmentedSearch(pause));
   }
 
   registerHandlebarsHelper(helperName, helperFunction) {
