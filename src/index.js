@@ -34,7 +34,7 @@ import { clearSelected } from './actions/filters';
 import { HISTORY_PARAMETERS } from './util/history';
 import Recommendations from './components/recommendations';
 import { recommend } from './actions/recommendations';
-import { setHasAiAnswers } from './actions/configuration';
+import { setHasAiAnswers, setPauseSegmentedSearch } from './actions/configuration';
 
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 export const MATCH_ALL_QUERY = '*';
@@ -146,6 +146,10 @@ export default class AddSearchUI {
           fieldForInstantRedirectGlobal
         )
       );
+    }
+
+    if (this.reduxStore.getState().configuration.pauseSegmentedSearch) {
+      return;
     }
 
     for (let key in this.segmentedSearchClients) {
@@ -345,8 +349,15 @@ export default class AddSearchUI {
   }
 
   enableAiAnswers(shouldEnable) {
-    const store = this.reduxStore;
-    store.dispatch(setHasAiAnswers(shouldEnable));
+    this.reduxStore.dispatch(setHasAiAnswers(shouldEnable));
+  }
+
+  setCollectAnalytics(collect) {
+    setCollectAnalytics(collect);
+  }
+
+  pauseSegmentedSearch(pause) {
+    this.reduxStore.dispatch(setPauseSegmentedSearch(pause));
   }
 
   registerHandlebarsHelper(helperName, helperFunction) {
