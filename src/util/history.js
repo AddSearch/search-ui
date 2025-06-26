@@ -329,7 +329,9 @@ export function objectToQueryParams(obj) {
 export function urlParamToJSON(urlParameter) {
   try {
     return JSON.parse(urlParameter);
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error parsing URL parameter to JSON:', error);
+  }
   return null;
 }
 
