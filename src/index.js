@@ -18,7 +18,7 @@ import SortBy from './components/sortby';
 import { initRedux } from './store';
 import { setExternalAnalyticsCallback, setCollectAnalytics } from './util/analytics';
 import { registerDefaultHelpers, registerHelper, registerPartial } from './util/handlebars';
-import { initFromUrlOrBrowserStorage } from './util/history';
+import { initFromUrlOrBrowserStorage, setHistory, HISTORY_PARAMETERS } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
 import {
   START,
@@ -31,7 +31,6 @@ import { segmentedSearch } from './actions/segmentedsearch';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
 import { clearSelected } from './actions/filters';
-import { HISTORY_PARAMETERS } from './util/history';
 import Recommendations from './components/recommendations';
 import { recommend } from './actions/recommendations';
 import { setHasAiAnswers, setPauseSegmentedSearch } from './actions/configuration';
@@ -187,7 +186,27 @@ export default class AddSearchUI {
 
   initFromClientSettings() {
     const paging = this.client.getSettings().paging;
+    const hasPageParameterInUrl = new URLSearchParams(window.location.search).has(
+      HISTORY_PARAMETERS.PAGE
+    );
+    const hasSortByParameterInUrl = new URLSearchParams(window.location.search).has(
+      HISTORY_PARAMETERS.SORTBY
+    );
+
     this.reduxStore.dispatch(sortBy(this.client, paging.sortBy, paging.sortOrder));
+
+    if (!hasPageParameterInUrl && paging.page > 1) {
+      setHistory(HISTORY_PARAMETERS.PAGE, paging.page + '', null, this.reduxStore);
+    }
+
+    if (!hasSortByParameterInUrl && paging.sortBy !== 'relevance' && paging.sortOrder !== 'desc') {
+      setHistory(
+        HISTORY_PARAMETERS.SORTBY,
+        JSON.stringify({ field: paging.sortBy, order: paging.sortOrder }),
+        null,
+        this.reduxStore
+      );
+    }
   }
 
   matchAllQuery(onResultsScrollTo) {

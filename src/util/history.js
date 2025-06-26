@@ -223,13 +223,14 @@ function handleURLParams(
     // Take sort method from URL
     const sortMethod = urlParamToJSON(qs[HISTORY_PARAMETERS.SORTBY]);
     store.dispatch(sortBy(client, sortMethod.field, sortMethod.order));
+  } else {
+    store.dispatch(sortBy(client, 'relevance', 'desc'));
   }
 
   if (qs[HISTORY_PARAMETERS.PAGE]) {
     store.dispatch(setPage(client, parseInt(qs[HISTORY_PARAMETERS.PAGE], 10), null, store));
   } else {
-    const paging = client.getSettings().paging;
-    store.dispatch(setPage(client, paging.page, null, store));
+    store.dispatch(setPage(client, 1, null, store));
   }
 
   if (qs[HISTORY_PARAMETERS.SEARCH]) {
@@ -328,7 +329,9 @@ export function objectToQueryParams(obj) {
 export function urlParamToJSON(urlParameter) {
   try {
     return JSON.parse(urlParameter);
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error parsing URL parameter to JSON:', error);
+  }
   return null;
 }
 
