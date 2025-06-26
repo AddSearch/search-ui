@@ -18,7 +18,7 @@ import SortBy from './components/sortby';
 import { initRedux } from './store';
 import { setExternalAnalyticsCallback, setCollectAnalytics } from './util/analytics';
 import { registerDefaultHelpers, registerHelper, registerPartial } from './util/handlebars';
-import { initFromUrlOrBrowserStorage, setHistory } from './util/history';
+import { initFromUrlOrBrowserStorage, setHistory, HISTORY_PARAMETERS } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
 import {
   START,
@@ -31,7 +31,6 @@ import { segmentedSearch } from './actions/segmentedsearch';
 import { setKeyword } from './actions/keyword';
 import { sortBy } from './actions/sortby';
 import { clearSelected } from './actions/filters';
-import { HISTORY_PARAMETERS } from './util/history';
 import Recommendations from './components/recommendations';
 import { recommend } from './actions/recommendations';
 import { setHasAiAnswers, setPauseSegmentedSearch } from './actions/configuration';
