@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>AddSearch Search UI: AI Answers Result</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@1.1/dist/addsearch-js-client.min.js"
+          integrity="sha384-bMenmxFJb5gJmf+h89NT/Ai405PPITc8yqHYIlW7kqRYta/ZBwVjx5C67BC88njD"
+          crossorigin="anonymous"></script>
+  <script src="../../dist/addsearch-search-ui.min.js"></script>
+  <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+
+  <style type="text/css">
+    body {
+      font-family: 'Lato', sans-serif;
+      min-width: 320px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Containers. Search UI components will be added inside these divs -->
+<div id="searchfield"></div>
+<div id="ai-answers-result-container"></div>
+
+<script>
+  // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+  var client = new AddSearchClient('490c606d6377e1876fa7fecb5f7e6420');
+  var config = {
+    hasAiAnswers: true,
+  }
+
+  // Search UI instance
+  var searchui = new AddSearchUI(client, config);
+
+  // Add components
+  searchui.searchField({
+    containerId: 'searchfield',
+    placeholder: 'Keyword..',
+    button: 'Search',
+    searchAsYouType: false
+  });
+
+  searchui.aiAnswersResult({
+    containerId: 'ai-answers-result-container',
+    mainHeadlineText: 'AI-generated answer',
+    answerMaxHeight: 150,
+    sourcesHeadlineText: 'Based on the following sources:',
+    hasHideToggle: true
+  });
+
+
+  // All components added. Start
+  searchui.start();
+</script>
+
+</body>
+</html>
