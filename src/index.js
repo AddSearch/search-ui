@@ -192,6 +192,8 @@ export default class AddSearchUI {
     const hasSortByParameterInUrl = new URLSearchParams(window.location.search).has(
       HISTORY_PARAMETERS.SORTBY
     );
+    const shouldUpdateSortParameterOnPageLoad =
+      !hasSortByParameterInUrl && !(paging.sortBy === 'relevance' && paging.sortOrder === 'desc');
 
     this.reduxStore.dispatch(sortBy(this.client, paging.sortBy, paging.sortOrder));
 
@@ -199,7 +201,7 @@ export default class AddSearchUI {
       setHistory(HISTORY_PARAMETERS.PAGE, paging.page + '', null, this.reduxStore);
     }
 
-    if (!hasSortByParameterInUrl && paging.sortBy !== 'relevance' && paging.sortOrder !== 'desc') {
+    if (shouldUpdateSortParameterOnPageLoad) {
       setHistory(
         HISTORY_PARAMETERS.SORTBY,
         JSON.stringify({ field: paging.sortBy, order: paging.sortOrder }),
