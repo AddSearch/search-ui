@@ -163,9 +163,9 @@ export default class AddSearchUI {
   }
 
   fetchRecommendation(containerId) {
-    const recoSetting = this.recommendationsSettings.filter(
+    const recoSetting = this.recommendationsSettings.find(
       (setting) => setting.containerId === containerId
-    )[0];
+    );
     if (!recoSetting) return;
     this.reduxStore.dispatch(
       recommend(this.client, {
@@ -173,9 +173,9 @@ export default class AddSearchUI {
         type: recoSetting.type,
         blockId: recoSetting.blockId,
         configurationKey: recoSetting.configurationKey,
-        itemId: !recoSetting.getProductIdFunction
-          ? null
-          : recoSetting.getProductIdFunction.call(undefined, undefined)
+        itemId: recoSetting.getProductIdFunction
+          ? recoSetting.getProductIdFunction.call(undefined, undefined)
+          : null
       })
     );
   }
@@ -186,10 +186,10 @@ export default class AddSearchUI {
 
   initFromClientSettings() {
     const paging = this.client.getSettings().paging;
-    const hasPageParameterInUrl = new URLSearchParams(window.location.search).has(
+    const hasPageParameterInUrl = new URLSearchParams(globalThis.location.search).has(
       HISTORY_PARAMETERS.PAGE
     );
-    const hasSortByParameterInUrl = new URLSearchParams(window.location.search).has(
+    const hasSortByParameterInUrl = new URLSearchParams(globalThis.location.search).has(
       HISTORY_PARAMETERS.SORTBY
     );
     const shouldUpdateSortParameterOnPageLoad =

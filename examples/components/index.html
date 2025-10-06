@@ -18,8 +18,8 @@
         var style = document.querySelector('aside').style;
         style.display = style.display === 'block' ? 'none' : 'block';
       }
-      if (window) {
-        window.onresize = function () {
+      if (globalThis) {
+        globalThis.onresize = function () {
           if (alignAutocomplete) { alignAutocomplete(document.querySelector('#autocomplete-container')); }
         };
       }
