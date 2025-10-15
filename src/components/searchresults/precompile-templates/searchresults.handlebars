@@ -1,6 +1,7 @@
 {{!-- If you are customising the default search result template, make sure your links still include the data-analytics-click="{{id}}" attribute, --}}
 {{!-- Otherwise your analytics will not report clicks or CTR correctly. --}}
 <div class="addsearch-searchresults">
+  <div role="status" aria-live="polite" aria-atomic="true" class="sr-only"></div>
   {{#if resultcount}}
     {{> numberOfResultsTemplate }}
   {{/if}}
