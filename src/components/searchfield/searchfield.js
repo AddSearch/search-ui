@@ -91,6 +91,34 @@ export default class SearchField {
         this.render(this.reduxStore.getState().keyword.value);
       }
     }
+
+    // Update ARIA attributes based on autocomplete state
+    this.updateAriaAttributes(state);
+  }
+
+  updateAriaAttributes(state) {
+    if (!this.field) {
+      return;
+    }
+
+    // Update aria-expanded based on visibility and whether there are results
+    const hasResults = state.suggestions.length > 0 || state.customFields.length > 0;
+    this.field.setAttribute('aria-expanded', state.visible && hasResults ? 'true' : 'false');
+
+    // Update aria-activedescendant based on active suggestion
+    if (state.activeSuggestionIndex !== null && hasResults) {
+      // Determine if the active item is a suggestion or customField
+      const isCustomField = state.suggestions.length === 0 ||
+                           (state.suggestions.length > 0 && state.customFields.length > 0 &&
+                            state.activeSuggestionIndex >= state.suggestions.length);
+      const idPrefix = isCustomField ? 'addsearch-customfield' : 'addsearch-suggestion';
+      this.field.setAttribute(
+        'aria-activedescendant',
+        `${idPrefix}-${state.activeSuggestionIndex}`
+      );
+    } else {
+      this.field.removeAttribute('aria-activedescendant');
+    }
   }
 
   onAutocompleteUpdateBoundField(state) {
@@ -106,6 +134,39 @@ export default class SearchField {
       this.updateValueOnAllBoundFields(suggestion);
     } else {
       this.updateValueOnAllBoundFields(this.reduxStore.getState().keyword.value);
+    }
+
+    // Update ARIA attributes for bound fields
+    this.updateAriaAttributesForBoundFields(state);
+  }
+
+  updateAriaAttributesForBoundFields(state) {
+    if (!this.boundFields || this.boundFields.length === 0) {
+      return;
+    }
+
+    const hasResults = state.suggestions.length > 0 || state.customFields.length > 0;
+
+    for (let i = 0; i < this.boundFields.length; i++) {
+      const field = this.boundFields[i];
+
+      // Update aria-expanded
+      field.setAttribute('aria-expanded', state.visible && hasResults ? 'true' : 'false');
+
+      // Update aria-activedescendant
+      if (state.activeSuggestionIndex !== null && hasResults) {
+        // Determine if the active item is a suggestion or customField
+        const isCustomField = state.suggestions.length === 0 ||
+                             (state.suggestions.length > 0 && state.customFields.length > 0 &&
+                              state.activeSuggestionIndex >= state.suggestions.length);
+        const idPrefix = isCustomField ? 'addsearch-customfield' : 'addsearch-suggestion';
+        field.setAttribute(
+          'aria-activedescendant',
+          `${idPrefix}-${state.activeSuggestionIndex}`
+        );
+      } else {
+        field.removeAttribute('aria-activedescendant');
+      }
     }
   }
 
@@ -232,6 +293,12 @@ export default class SearchField {
   bindContainer() {
     this.boundFields = document.querySelectorAll(this.conf.selectorToBind);
     for (var i = 0; i < this.boundFields.length; i++) {
+      // Add ARIA attributes for combobox pattern
+      this.boundFields[i].setAttribute('role', 'combobox');
+      this.boundFields[i].setAttribute('aria-autocomplete', 'list');
+      this.boundFields[i].setAttribute('aria-expanded', 'false');
+      this.boundFields[i].setAttribute('aria-controls', 'addsearch-autocomplete-listbox addsearch-autocomplete-customfields-listbox');
+
       this.addEventListenersToField(this.boundFields[i]);
       // Event listeners to the form
       if (this.boundFields[i].form) {
