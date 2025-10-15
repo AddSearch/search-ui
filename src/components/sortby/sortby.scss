@@ -4,8 +4,34 @@
     display: flex;
     align-items: center;
     padding: 2px 0;
+    cursor: pointer;
   }
+
   input {
     margin: 0 8px 0 0;
+  }
+
+  // Focus indicators
+  input:focus,
+  input:focus-visible {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+  }
+}
+
+.addsearch-sortby {
+  select {
+    padding: 8px 12px;
+    border: 1px solid #dedede;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  // Focus indicators
+  select:focus,
+  select:focus-visible {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
   }
 }

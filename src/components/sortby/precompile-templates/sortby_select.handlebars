@@ -1,5 +1,5 @@
 <div class="addsearch-sortby">
-  <select>
+  <select aria-label="Sort search results by">
     {{#each options}}
       <option data-field={{sortBy}} data-order={{order}} {{#if active}}selected="selected"{{/if}}>{{label}}</option>
     {{/each}}
