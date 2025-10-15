@@ -29,8 +29,9 @@
       </p>
       {{#if showHideToggle}}
         <label class="toggle-switch">
-          <input type="checkbox" {{#unless isHidden}}checked{{/unless}}>
-          <span class="slider round"></span>
+          <span class="addsearch-sr-only">Show AI answer</span>
+          <input type="checkbox" {{#unless isHidden}}checked{{/unless}} aria-label="Show AI answer">
+          <span class="slider round" aria-hidden="true"></span>
         </label>
       {{/if}}
     </div>
@@ -66,7 +67,7 @@
       {{/if}}
       <h4 class='sub-headline'>Question: "{{subHeadlineText}}"</h4>
       <div>
-        <div class='answer-container'>
+        <div class='answer-container' id='ai-answer-content'>
           <div class='fade-out-overlay'></div>
           <div class='answer-text'>
             <p>{{markdown answerText}}</p>
@@ -88,7 +89,7 @@
                 />
               </svg>
             </button>
-            <button class='thumbs-up-btn' type="button" aria-label="Rate answer positively">
+            <button class='thumbs-up-btn' type="button" aria-label="Rate answer positively" aria-pressed="{{#equals sentimentState 'positive'}}true{{else}}false{{/equals}}">
               {{#equals sentimentState 'positive'}}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden='true'>
                   <g clip-path="url(#clip0_184_2273)">
@@ -114,7 +115,7 @@
                 </svg>
               {{/equals}}
             </button>
-            <button class='thumbs-down-btn' type="button" aria-label="Rate answer negatively">
+            <button class='thumbs-down-btn' type="button" aria-label="Rate answer negatively" aria-pressed="{{#equals sentimentState 'negative'}}true{{else}}false{{/equals}}">
               {{#equals sentimentState 'negative'}}
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden='true'>
                   <g clip-path="url(#clip0_184_2278)">
@@ -146,15 +147,16 @@
               <h4 class='sources-headline'>{{sourcesHeadlineText}}</h4>
               <div class='sources-list'>
                 {{#each sources}}
-                  <a href='{{url}}' class='source' target="_blank">
+                  <a href='{{url}}' class='source' target="_blank" aria-label="{{title}} (opens in new tab)">
                     {{title}}
+                    <span class="addsearch-sr-only"> (opens in new tab)</span>
                   </a>
                 {{/each}}
               </div>
             </div>
           {{/if}}
         </div>
-        <button class='show-more-btn' type="button">
+        <button class='show-more-btn' type="button" aria-controls="ai-answer-content" aria-expanded="false">
           <span class='button-text'>Show more</span>
           <svg
             class='chevron'

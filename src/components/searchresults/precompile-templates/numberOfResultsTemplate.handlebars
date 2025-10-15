@@ -1,4 +1,4 @@
-<div class="number-of-results">
+<div class="number-of-results" role="status" aria-live="polite">
   {{#gt page 1}}Page {{../page}} of {{/gt}}
   {{total_hits}}{{#equals total_hits 10000}}+{{/equals}} results
 </div>

@@ -1,11 +1,23 @@
 @import "../../variables";
 
 .addsearch-active-filters {
-  display: block;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: flex-start;
+
+  // Reset list styles for semantic <ul>
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    width: 100%;
+  }
+
   .item {
     display: inline-block;
     display: flex;

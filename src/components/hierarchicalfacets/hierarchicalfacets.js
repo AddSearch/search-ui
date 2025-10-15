@@ -148,8 +148,17 @@ export default class HierarchicalFacets {
     const arrows = container.getElementsByClassName('addsearch-facet-group-expansion-arrow');
     for (let i = 0; i < arrows.length; i++) {
       arrows[i].addEventListener('click', () => {
-        arrows[i].parentNode.parentNode.classList.toggle('shrink');
-        this._toggleFacetGroupOpenState(arrows[i].parentNode.parentNode.getAttribute('data-facet'));
+        const facetWrap = arrows[i].parentNode.parentNode;
+        facetWrap.classList.toggle('shrink');
+        this._toggleFacetGroupOpenState(facetWrap.getAttribute('data-facet'));
+
+        // Update aria-expanded state
+        const isExpanded = arrows[i].getAttribute('aria-expanded') === 'true';
+        arrows[i].setAttribute('aria-expanded', !isExpanded);
+
+        // Update aria-label
+        const displayValue = arrows[i].getAttribute('aria-label').replace(/^(Expand|Collapse) /, '');
+        arrows[i].setAttribute('aria-label', (isExpanded ? 'Expand ' : 'Collapse ') + displayValue);
       });
     }
   }
