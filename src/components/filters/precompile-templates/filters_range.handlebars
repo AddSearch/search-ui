@@ -1,5 +1,10 @@
-<div class="addsearch-filters-range">
-  <label>{{label}}</label>
-  <input type="text" name="from" value="{{from}}" placeholder="{{fromPlaceholder}}"> - <input type="text" name="to" value="{{to}}" placeholder="{{toPlaceholder}}">
-  {{#or from to}}<button>&#215;</button>{{/or}}
+<div class="addsearch-filters-range" role="group" {{#if label}}aria-labelledby="range-label-{{field}}"{{/if}}>
+  {{#if label}}<div id="range-label-{{field}}" class="filter-group-label">{{label}}</div>{{/if}}
+  <label for="range-from-{{field}}" class="sr-only">Minimum value</label>
+  <input type="text" id="range-from-{{field}}" name="from" value="{{from}}" placeholder="{{fromPlaceholder}}" aria-describedby="range-help-{{field}}">
+  <span aria-hidden="true"> - </span>
+  <label for="range-to-{{field}}" class="sr-only">Maximum value</label>
+  <input type="text" id="range-to-{{field}}" name="to" value="{{to}}" placeholder="{{toPlaceholder}}" aria-describedby="range-help-{{field}}">
+  {{#or from to}}<button aria-label="Clear {{label}} range filter">&#215;</button>{{/or}}
+  <div id="range-help-{{field}}" class="sr-only">Enter a range to filter results</div>
 </div>

@@ -1,7 +1,7 @@
 <div class="addsearch-filters-tabs">
-  <div class="tabs">
+  <div class="tabs" role="tablist" aria-label="Filter results by category">
     {{#each options}}
-      <button data-filter="{{@key}}" {{#if active}}class="active"{{/if}}>{{label}}</button>
+      <button role="tab" data-filter="{{@key}}" aria-selected="{{#if active}}true{{else}}false{{/if}}" {{#if active}}class="active"{{/if}}>{{label}}</button>
     {{/each}}
   </div>
 </div>

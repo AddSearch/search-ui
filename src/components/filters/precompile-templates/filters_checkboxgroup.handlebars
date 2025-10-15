@@ -1,4 +1,5 @@
-<div class="addsearch-filters-checkboxgroup">
+<div class="addsearch-filters-checkboxgroup" role="group" {{#if label}}aria-labelledby="checkbox-label-{{containerId}}"{{/if}}>
+  {{#if label}}<div id="checkbox-label-{{containerId}}" class="filter-group-label">{{label}}</div>{{/if}}
   {{#each options}}
     <label>
       <input type="checkbox" data-filter="{{@key}}" {{#if active}}checked{{/if}}>{{label}}

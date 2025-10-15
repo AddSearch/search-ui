@@ -1,4 +1,5 @@
-<div class="addsearch-filters-radiogroup">
+<div class="addsearch-filters-radiogroup" role="radiogroup" {{#if label}}aria-labelledby="radio-label-{{containerId}}"{{/if}}>
+  {{#if label}}<div id="radio-label-{{containerId}}" class="filter-group-label">{{label}}</div>{{/if}}
   {{#each options}}
     <label>
       <input type="radio" name={{../containerId}} value="{{@key}}" {{#if active}}checked{{/if}}>{{label}}
