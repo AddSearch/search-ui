@@ -64,7 +64,8 @@ export default class SearchResults {
       liveRegion.textContent = `No search results found for "${keyword}"`;
     } else if (totalHits > 0) {
       const resultText = totalHits === 1 ? 'result' : 'results';
-      liveRegion.textContent = `${totalHits} ${resultText} found${keyword ? ` for "${keyword}"` : ''}`;
+      const keywordPart = keyword ? ` for "${keyword}"` : '';
+      liveRegion.textContent = `${totalHits} ${resultText} found${keywordPart}`;
     } else {
       liveRegion.textContent = '';
     }
