@@ -47,7 +47,7 @@ export default class SearchResults {
 
     const hits = data.hits || [];
     const totalHits = data.total_hits || 0;
-    const keyword = data.keyword;
+    const keyword = data.keyword || '';
 
     // Create announcement key to track what was last announced
     const announcementKey = `${totalHits}-${keyword}`;

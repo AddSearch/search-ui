@@ -5,6 +5,10 @@
   <span aria-hidden="true"> - </span>
   <label for="range-to-{{field}}" class="addsearch-sr-only">Maximum value</label>
   <input type="text" id="range-to-{{field}}" name="to" value="{{to}}" placeholder="{{toPlaceholder}}" aria-describedby="range-help-{{field}}">
-  {{#or from to}}<button aria-label="Clear {{label}} range filter">&#215;</button>{{/or}}
+  {{#or from to}}
+    <button aria-label="{{#if ../label}}Clear {{../../label}} range filter{{else}}Clear range filter{{/if}}">
+      &#215;
+    </button>
+  {{/or}}
   <div id="range-help-{{field}}" class="addsearch-sr-only">Enter a range to filter results</div>
 </div>
