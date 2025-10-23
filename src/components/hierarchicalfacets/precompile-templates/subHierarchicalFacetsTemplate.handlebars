@@ -1,20 +1,20 @@
-<li role="treeitem" aria-level="{{level}}" aria-expanded="{{#unless (validateOpenState value)}}true{{else}}false{{/unless}}" {{#if children}}aria-owns="children-{{value}}"{{/if}}>
+<li>
   <div class="adds-facet-wrap {{#if (validateOpenState value)}}shrink{{/if}}" data-facet="{{value}}">
     <div class="adds-facet-container">
       {{#if children}}
-        <button type="button" class="addsearch-facet-group-expansion-arrow" aria-label="{{#unless (validateOpenState value)}}Collapse{{else}}Expand{{/unless}} {{displayValue}}" aria-controls="children-{{value}}" tabindex="-1">
+        <button type="button" class="addsearch-facet-group-expansion-arrow" aria-expanded="{{#unless (validateOpenState value)}}true{{else}}false{{/unless}}" aria-label="{{#unless (validateOpenState value)}}Collapse{{else}}Expand{{/unless}} {{displayValue}}" aria-controls="children-{{value}}">
           <span aria-hidden="true">›</span>
         </button>
       {{else}}
         <span class="addsearch-facet-group-expansion-arrow adds-visibility-hidden" aria-hidden="true"></span>
       {{/if}}
-      <label title="{{displayValue}}({{count}})">
+      <label id="facet-label-{{value}}" title="{{displayValue}}({{count}})">
         <input type="checkbox" value="{{value}}" data-field="{{field}}" />
         <span>{{displayValue}}</span> <em>({{count}})</em>
       </label>
     </div>
     {{#if children}}
-      <ul id="children-{{value}}" role="group" class="addsearch-facet-child-container">
+      <ul id="children-{{value}}" role="group" aria-labelledby="facet-label-{{value}}" class="addsearch-facet-child-container">
         {{#each children}}
           {{> subHierarchicalFacetsTemplate this level=(add ../level 1) }}
         {{/each}}
