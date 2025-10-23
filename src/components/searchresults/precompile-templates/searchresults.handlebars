@@ -1,24 +1,27 @@
 {{!-- If you are customising the default search result template, make sure your links still include the data-analytics-click="{{id}}" attribute, --}}
 {{!-- Otherwise your analytics will not report clicks or CTR correctly. --}}
-<div class="addsearch-searchresults">
+<div class="addsearch-searchresults" role="region" aria-label="Search results">
+  <div role="status" aria-live="polite" aria-atomic="true" class="addsearch-sr-only"></div>
   {{#if resultcount}}
     {{> numberOfResultsTemplate }}
   {{/if}}
 
-  {{#each hits}}
-    <div class="hit{{#equals type "PROMOTED"}} promoted{{/equals}}">
-      <h3>
-        <a href="{{url}}" data-analytics-click="{{id}}">{{#if title}} {{title}} {{else}} {{removeTrailingQueriesFromUrl url}} {{/if}}</a>
-      </h3>
-      <div class="highlight">
-        {{> searchResultImageTemplate}}
-        {{{highlight}}}{{#not type "PROMOTED"}}&#8230;{{/not}}
-      </div>
-      {{#gt categories.length 1}}
-        <div class="category">
-          {{selectCategory ..}}
+  <ol role="list" aria-label="Search result items">
+    {{#each hits}}
+      <li role="listitem" class="hit{{#equals type "PROMOTED"}} promoted{{/equals}}">
+        <h3>
+          <a href="{{url}}" data-analytics-click="{{id}}">{{#if title}} {{title}} {{else}} {{removeTrailingQueriesFromUrl url}} {{/if}}</a>
+        </h3>
+        <div class="highlight">
+          {{> searchResultImageTemplate}}
+          {{{highlight}}}{{#not type "PROMOTED"}}&#8230;{{/not}}
         </div>
-      {{/gt}}
-    </div>
-  {{/each}}
+        {{#gt categories.length 1}}
+          <div class="category">
+            {{selectCategory ..}}
+          </div>
+        {{/gt}}
+      </li>
+    {{/each}}
+  </ol>
 </div>

@@ -92,6 +92,7 @@ export default class AiAnswersresult {
       answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
       showMoreBtn.style.display = 'flex';
       buttonText.textContent = 'Show less';
+      showMoreBtn.setAttribute('aria-expanded', 'true');
 
       fadeOutOverlay.style.display = 'none';
       chevron.style.transform = 'rotate(180deg)';
@@ -101,6 +102,7 @@ export default class AiAnswersresult {
       if (answerContainer.scrollHeight > this.answerMaxHeight) {
         // Only show "show more" button if the answer is longer than the max height
         showMoreBtn.style.display = 'flex';
+        showMoreBtn.setAttribute('aria-expanded', 'false');
         fadeOutOverlay.style.display = 'block';
       } else {
         showMoreBtn.style.display = 'none';
@@ -117,6 +119,7 @@ export default class AiAnswersresult {
 
         answerContainer.style.maxHeight = `${this.answerMaxHeight}px`;
         buttonText.textContent = 'Show more';
+        showMoreBtn.setAttribute('aria-expanded', 'false');
         fadeOutOverlay.style.display = 'block';
 
         chevron.style.transform = '';
@@ -128,6 +131,7 @@ export default class AiAnswersresult {
 
         answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
         buttonText.textContent = 'Show less';
+        showMoreBtn.setAttribute('aria-expanded', 'true');
         fadeOutOverlay.style.display = 'none';
 
         chevron.style.transform = 'rotate(180deg)';

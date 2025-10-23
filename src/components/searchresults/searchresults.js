@@ -15,6 +15,7 @@ export default class SearchResults {
     this.client = client;
     this.conf = conf;
     this.reduxStore = reduxStore;
+    this.lastAnnouncedResults = null;
 
     const numberOfResultsTemplate = this.conf.template_resultcount || NUMBER_OF_RESULTS_TEMPLATE;
     const searchResultImageTemplate = this.conf.template_image || SEARCHRESULT_IMAGE_TEMPLATE;
@@ -35,6 +36,38 @@ export default class SearchResults {
 
     if (validateContainer(conf.containerId)) {
       observeStoreByKey(this.reduxStore, 'search', () => this.render());
+    }
+  }
+
+  updateLiveRegion(container, data) {
+    const liveRegion = container.querySelector('[role="status"]');
+    if (!liveRegion) {
+      return;
+    }
+
+    const hits = data.hits || [];
+    const totalHits = data.total_hits || 0;
+    const keyword = data.keyword || '';
+
+    // Create announcement key to track what was last announced
+    const announcementKey = `${totalHits}-${keyword}`;
+
+    // Only update if the announcement content has actually changed
+    if (this.lastAnnouncedResults === announcementKey) {
+      return;
+    }
+
+    this.lastAnnouncedResults = announcementKey;
+
+    // Generate appropriate announcement
+    if (hits.length === 0 && keyword) {
+      liveRegion.textContent = `No search results found for "${keyword}"`;
+    } else if (totalHits > 0) {
+      const resultText = totalHits === 1 ? 'result' : 'results';
+      const keywordPart = keyword ? ` for "${keyword}"` : '';
+      liveRegion.textContent = `${totalHits} ${resultText} found${keywordPart}`;
+    } else {
+      liveRegion.textContent = '';
     }
   }
 
@@ -70,6 +103,9 @@ export default class SearchResults {
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
     this.renderedHtml = html;
+
+    // Update live region for screen reader announcements
+    this.updateLiveRegion(container, data);
 
     if (
       this.conf.renderCompleteCallback &&

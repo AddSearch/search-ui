@@ -161,15 +161,16 @@ export default class ActiveFilters {
   }
 
   handleFilterClick(e) {
-    const type = e.target.getAttribute('data-type');
-    const name = e.target.getAttribute('data-name');
-    const value = e.target.getAttribute('data-value');
-    const container = e.target.getAttribute('data-container');
-    const confFields = e.target.getAttribute('data-conf-fields')
-      ? e.target.getAttribute('data-conf-fields').split(',')
+    const targetButton = e.currentTarget;
+    const type = targetButton.getAttribute('data-type');
+    const name = targetButton.getAttribute('data-name');
+    const value = targetButton.getAttribute('data-value');
+    const container = targetButton.getAttribute('data-container');
+    const confFields = targetButton.getAttribute('data-conf-fields')
+      ? targetButton.getAttribute('data-conf-fields').split(',')
       : [];
-    const rangeMin = e.target.getAttribute('data-range-min');
-    const rangeMax = e.target.getAttribute('data-range-max');
+    const rangeMin = targetButton.getAttribute('data-range-min');
+    const rangeMax = targetButton.getAttribute('data-range-max');
 
     if (type === TYPE.FILTER) {
       this.reduxStore.dispatch(toggleFilter(name, value, true));

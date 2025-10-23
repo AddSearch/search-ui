@@ -2,6 +2,13 @@
 
 .addsearch-searchresults {
 
+  // Reset list styles for semantic <ol>
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
   .number-of-results {
     margin: 1em 0 0.5em 0;
     padding: 0 1em;

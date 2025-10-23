@@ -1,16 +1,20 @@
-<div class="addsearch-range-slider">
+<div class="addsearch-range-slider" role="group" aria-labelledby="slider-label-{{field}}">
+  <label id="slider-label-{{field}}" class="addsearch-sr-only">Filter by {{field}} range</label>
   <div class="adds-range-slider-container"
        data-slider-min="{{sliderConfig.min}}"
        data-slider-max="{{sliderConfig.max}}"
        data-slider-start="{{sliderConfig.start}}"
        data-slider-end="{{sliderConfig.end}}">
   </div>
-  <div class="adds-range-slider-display">
-      <span>
-      <span data-id="adds-slider-display-start"></span><span></span>
-      </span>
+  <div class="adds-range-slider-display" role="status" aria-live="polite" aria-label="Current range">
     <span>
-      <span data-id="adds-slider-display-end"></span><span></span>
-      </span>
+      <span class="addsearch-sr-only">Minimum:</span>
+      <span data-id="adds-slider-display-start"></span>
+    </span>
+    <span class="addsearch-sr-only"> to </span>
+    <span>
+      <span class="addsearch-sr-only">Maximum:</span>
+      <span data-id="adds-slider-display-end"></span>
+    </span>
   </div>
 </div>

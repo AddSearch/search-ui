@@ -1,5 +1,5 @@
-<ul class="addsearch-hierarchical-facets">
+<ul class="addsearch-hierarchical-facets" aria-label="Hierarchical filter categories">
   {{#each facets}}
-    {{> subHierarchicalFacetsTemplate this }}
+    {{> subHierarchicalFacetsTemplate this level=1 }}
   {{/each}}
 </ul>

@@ -1,20 +1,21 @@
 <div class="addsearch-autocomplete">
   {{#gt suggestions.length 0}}
-    <ul class="suggestions">
+    <ul class="suggestions" role="listbox" id="addsearch-autocomplete-listbox">
       {{#each ../suggestions}}
-        <li data-keyword="{{value}}" data-index="{{@index}}" {{#equals ../../activeSuggestionIndex @index}}class="active"{{/equals}}>
+        <li data-keyword="{{value}}" data-index="{{@index}}" role="option" id="addsearch-suggestion-{{@index}}" {{#equals ../../activeSuggestionIndex @index}}class="active" aria-selected="true"{{else}}aria-selected="false"{{/equals}}>
           {{value}}
         </li>
       {{/each}}
     </ul>
   {{/gt}}
   {{#gt customFields.length 0}}
-    <ul class="suggestions">
+    <ul class="suggestions" role="listbox" id="addsearch-autocomplete-customfields-listbox">
       {{#each ../customFields}}
-        <li data-keyword="{{value}}" data-index="{{@index}}" {{#equals ../../activeSuggestionIndex @index}}class="active"{{/equals}}>
+        <li data-keyword="{{value}}" data-index="{{@index}}" role="option" id="addsearch-customfield-{{@index}}" {{#equals ../../activeSuggestionIndex @index}}class="active" aria-selected="true"{{else}}aria-selected="false"{{/equals}}>
           {{value}}
         </li>
       {{/each}}
     </ul>
   {{/gt}}
+  <div role="status" aria-live="polite" aria-atomic="true" class="addsearch-sr-only"></div>
 </div>

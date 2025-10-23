@@ -72,6 +72,10 @@ export function registerDefaultHelpers() {
 
     return price / 100 + ' ' + currency;
   });
+
+  registerHelper('add', (a, b) => {
+    return a + b;
+  });
 }
 
 export function registerHelper(helperName, helperFunction) {

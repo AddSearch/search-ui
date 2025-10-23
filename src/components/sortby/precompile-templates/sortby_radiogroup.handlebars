@@ -1,7 +1,7 @@
-<div class="addsearch-sortby-radiogroup">
+<div class="addsearch-sortby-radiogroup" role="radiogroup" aria-label="Sort search results by">
   {{#each options}}
     <label>
-      <input type="radio" name={{../containerId}} data-field={{sortBy}} data-order={{order}} value="" {{#if active}}checked{{/if}}>{{label}}
+      <input type="radio" name={{../containerId}} data-field={{sortBy}} data-order={{order}} value="{{sortBy}}-{{order}}" {{#if active}}checked{{/if}}>{{label}}
     </label>
   {{/each}}
 </div>

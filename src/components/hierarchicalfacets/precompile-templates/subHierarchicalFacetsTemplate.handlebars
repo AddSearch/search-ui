@@ -1,16 +1,22 @@
 <li>
-  <div class="adds-facet-wrap {{#if (validateOpenState value)}}shrink{{/if}}" data-facet="{{value}}">
+  <div class="adds-facet-wrap {{#if (isCollapsed value)}}shrink{{/if}}" data-facet="{{value}}">
     <div class="adds-facet-container">
-      <span class="addsearch-facet-group-expansion-arrow {{#unless children}}adds-visibility-hidden{{/unless}}"></span>
-      <label title="{{displayValue}}({{count}})">
+      {{#if children}}
+        <button type="button" class="addsearch-facet-group-expansion-arrow" aria-expanded="{{#if (isCollapsed value)}}false{{else}}true{{/if}}" aria-label="{{#if (isCollapsed value)}}Expand{{else}}Collapse{{/if}} {{displayValue}}" aria-controls="children-{{value}}">
+          <span aria-hidden="true">›</span>
+        </button>
+      {{else}}
+        <span class="addsearch-facet-group-expansion-arrow adds-visibility-hidden" aria-hidden="true"></span>
+      {{/if}}
+      <label id="facet-label-{{value}}" title="{{displayValue}}({{count}})">
         <input type="checkbox" value="{{value}}" data-field="{{field}}" />
         <span>{{displayValue}}</span> <em>({{count}})</em>
       </label>
     </div>
     {{#if children}}
-      <ul class="addsearch-facet-child-container">
+      <ul id="children-{{value}}" role="group" aria-labelledby="facet-label-{{value}}" class="addsearch-facet-child-container">
         {{#each children}}
-          {{> subHierarchicalFacetsTemplate this }}
+          {{> subHierarchicalFacetsTemplate this level=(add ../level 1) }}
         {{/each}}
       </ul>
     {{/if}}

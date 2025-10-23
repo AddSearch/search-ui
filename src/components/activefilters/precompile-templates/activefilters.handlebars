@@ -1,17 +1,27 @@
 <div class="addsearch-active-filters">
-  {{#each active}}
-    <div class="item">
-      <span>{{label}}</span>
-      <button data-type="{{type}}" data-name="{{name}}" data-value="{{value}}"
-              {{#if rangeMin}}data-range-min="{{rangeMin}}"{{/if}}
-        {{#if rangeMax}}data-range-max="{{rangeMax}}"{{/if}}
-        {{#if container}}data-container="{{container}}"{{/if}}
-        {{#if confFields}}data-conf-fields="{{confFields}}"{{/if}} >&#215;</button>
-    </div>
-  {{/each}}
-  {{#if clearAll}}
-    {{#gt active.length 1}}
-      <div class="item"><button data-clearall="true">Clear all</button></div>
-    {{/gt}}
-  {{/if}}
+  <h3 class="addsearch-sr-only">Active filters</h3>
+  <ul>
+    {{#each active}}
+      <li class="item">
+        <span>{{label}}</span>
+        <button aria-label="Remove {{label}} filter"
+                data-type="{{type}}"
+                data-name="{{name}}"
+                data-value="{{value}}"
+                {{#if rangeMin}}data-range-min="{{rangeMin}}"{{/if}}
+                {{#if rangeMax}}data-range-max="{{rangeMax}}"{{/if}}
+                {{#if container}}data-container="{{container}}"{{/if}}
+                {{#if confFields}}data-conf-fields="{{confFields}}"{{/if}}>
+          <span aria-hidden="true">&#215;</span>
+        </button>
+      </li>
+    {{/each}}
+    {{#if clearAll}}
+      {{#gt active.length 1}}
+        <li class="item">
+          <button data-clearall="true" aria-label="Clear all active filters">Clear all</button>
+        </li>
+      {{/gt}}
+    {{/if}}
+  </ul>
 </div>

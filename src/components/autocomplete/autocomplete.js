@@ -28,6 +28,7 @@ export default class Autocomplete {
     this.conf = conf;
     this.lastOnmouseOver = null;
     this.minLengthRequired = this.reduxStore.getState().keyword.minLengthRequiredToFetch;
+    this.lastAnnouncedCount = null;
 
     if (this.conf.hideAutomatically === false) {
       this.reduxStore.dispatch(setHideAutomatically(false));
@@ -136,6 +137,7 @@ export default class Autocomplete {
   clearRenderedHtml = () => {
     document.getElementById(this.conf.containerId).innerHTML = '';
     this.renderedHtml = '';
+    this.lastAnnouncedCount = null; // Reset so next appearance announces the count
   };
 
   render(autocompleteState) {
@@ -169,6 +171,9 @@ export default class Autocomplete {
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
     this.renderedHtml = html;
+
+    // Update live region for screen reader announcements
+    this.updateLiveRegion(container, suggestions, customFields);
 
     if (
       this.conf.renderCompleteCallback &&
@@ -220,6 +225,31 @@ export default class Autocomplete {
     // Callback function for alignment
     if (this.conf.onShow) {
       this.conf.onShow(container);
+    }
+  }
+
+  updateLiveRegion(container, suggestions, customFields) {
+    const liveRegion = container.querySelector('[role="status"]');
+    if (!liveRegion) {
+      return;
+    }
+
+    const totalSuggestions =
+      (suggestions ? suggestions.length : 0) + (customFields ? customFields.length : 0);
+
+    // Only update the live region if the count has actually changed
+    // This prevents unnecessary announcements when user hovers over items
+    if (this.lastAnnouncedCount === totalSuggestions) {
+      return;
+    }
+
+    this.lastAnnouncedCount = totalSuggestions;
+
+    if (totalSuggestions > 0) {
+      const suggestionText = totalSuggestions === 1 ? 'suggestion' : 'suggestions';
+      liveRegion.textContent = `${totalSuggestions} ${suggestionText} available. Use up and down arrows to navigate.`;
+    } else {
+      liveRegion.textContent = '';
     }
   }
 

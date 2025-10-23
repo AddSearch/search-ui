@@ -1,5 +1,5 @@
-<div class="addsearch-filters-tags">
+<div class="addsearch-filters-tags" role="group" aria-label="Filter by {{containerId}}">
   {{#each options}}
-    <button data-filter="{{@key}}" {{#if active}}class="active"{{/if}}>{{label}}</button>
+    <button data-filter="{{@key}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}" {{#if active}}class="active"{{/if}}>{{label}}</button>
   {{/each}}
 </div>
