@@ -42,7 +42,7 @@ export default class HierarchicalFacets {
       this.conf.template_subHierarchicalFacetsTemplate || SUB_HIERARCHICAL_FACETS_TEMPLATE;
     registerPartial('subHierarchicalFacetsTemplate', subHierarchicalFacetsTemplate);
 
-    registerHelper('validateOpenState', function (value) {
+    registerHelper('isCollapsed', function (value) {
       return reduxStore.getState().filters.openedHierarchicalFacetGroups.indexOf(value) === -1;
     });
 

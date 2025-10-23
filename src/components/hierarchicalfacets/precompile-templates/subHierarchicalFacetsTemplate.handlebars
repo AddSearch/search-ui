@@ -1,8 +1,8 @@
 <li>
-  <div class="adds-facet-wrap {{#if (validateOpenState value)}}shrink{{/if}}" data-facet="{{value}}">
+  <div class="adds-facet-wrap {{#if (isCollapsed value)}}shrink{{/if}}" data-facet="{{value}}">
     <div class="adds-facet-container">
       {{#if children}}
-        <button type="button" class="addsearch-facet-group-expansion-arrow" aria-expanded="{{#unless (validateOpenState value)}}true{{else}}false{{/unless}}" aria-label="{{#unless (validateOpenState value)}}Collapse{{else}}Expand{{/unless}} {{displayValue}}" aria-controls="children-{{value}}">
+        <button type="button" class="addsearch-facet-group-expansion-arrow" aria-expanded="{{#if (isCollapsed value)}}false{{else}}true{{/if}}" aria-label="{{#if (isCollapsed value)}}Expand{{else}}Collapse{{/if}} {{displayValue}}" aria-controls="children-{{value}}">
           <span aria-hidden="true">›</span>
         </button>
       {{else}}
