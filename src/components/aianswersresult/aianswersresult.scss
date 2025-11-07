@@ -402,6 +402,13 @@
     padding: 4px 8px;
     border-radius: 4px;
   }
+
+  .answer-streaming-indicator {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: black;
+    animation: addsearch_pulse 1.5s ease-in-out infinite;
+  }
 }
 
 @keyframes spin {
@@ -410,5 +417,14 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes addsearch_pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
   }
 }

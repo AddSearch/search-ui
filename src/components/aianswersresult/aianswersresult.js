@@ -42,6 +42,13 @@ export default class AiAnswersresult {
         payload: isHidden
       });
     }
+
+    if (this.conf.expandByDefault) {
+      this.reduxStore.dispatch({
+        type: SET_AI_ANSWERS_ANSWER_EXPANDED,
+        payload: true
+      });
+    }
   }
 
   observeResultLoadingState() {
@@ -214,7 +221,8 @@ export default class AiAnswersresult {
       hadError: hadErrorFetchingAiAnswersResult,
       sentimentState: currentSearchState.aiAnswersSentiment,
       showHideToggle: this.conf.hasHideToggle === undefined ? true : this.conf.hasHideToggle,
-      isHidden: currentSearchState.isAiAnswersHidden
+      isHidden: currentSearchState.isAiAnswersHidden,
+      isStreaming: currentAiAnswersResult.isStreaming
     };
 
     // Compile HTML and inject to element if changed

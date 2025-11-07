@@ -71,6 +71,9 @@
           <div class='fade-out-overlay'></div>
           <div class='answer-text'>
             <p>{{markdown answerText}}</p>
+            {{#if isStreaming}}
+              <span class="answer-streaming-indicator">Thinking...</span>
+            {{/if}}
           </div>
           <div class='action-buttons-group'>
             <span class='copy-confirm-message'></span>

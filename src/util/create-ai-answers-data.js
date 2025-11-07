@@ -34,6 +34,7 @@ export function createAiAnswersData(aiAnswersResponse) {
         id: source.id,
         url: source.url,
         title: source.title
-      })) || []
+      })) || [],
+    isStreaming: aiAnswersResponse.is_streaming_complete === false
   };
 }
