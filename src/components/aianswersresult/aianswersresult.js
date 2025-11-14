@@ -52,9 +52,8 @@ export default class AiAnswersresult {
   }
 
   observeResultLoadingState() {
-    this.reduxStore.subscribe(() => {
-      const isAiAnswersResultLoading = this.reduxStore.getState().search.loadingAiAnswersResult;
-
+    observeStoreByKey(this.reduxStore, 'search', (state) => {
+      const isAiAnswersResultLoading = state.loadingAiAnswersResult;
       if (this.isSearchResultLoading !== isAiAnswersResultLoading) {
         this.isSearchResultLoading = isAiAnswersResultLoading;
         this.render();
