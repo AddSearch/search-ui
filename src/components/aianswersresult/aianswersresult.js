@@ -11,13 +11,47 @@ import {
   SET_AI_ANSWERS_HIDDEN
 } from '../../actions/aiAnswers';
 
+// Animation constants
+const ANIMATION_CONSTANTS = {
+  SPEED_BOOST_MULTIPLIER: 2,
+  INITIAL_WORD_COUNT: 1,
+  DEFAULT_WORDS_PER_SECOND: 20
+};
+
 export default class AiAnswersresult {
   constructor(client, reduxStore, conf) {
     this.client = client;
     this.conf = conf;
     this.reduxStore = reduxStore;
     this.answerMaxHeight = conf.answerMaxHeight || 150;
-    this.isSearchResultLoading = false;
+
+    // Cached Redux state for change detection
+    this.cachedLoadingState = false;
+    this.cachedHiddenState = false;
+
+    // Dual-buffer typewriter system
+    this.actualContent = ''; // Raw markdown from API (network timing)
+    this.displayedWordCount = 0; // Words revealed so far (smooth timing)
+    this.isAnimating = false;
+    this.animationFrameId = null;
+    this.lastFrameTime = 0;
+
+    // Answer tracking
+    this.lastAnswerId = null; // Last answer we've rendered (initial or partial)
+    this.lastFinalizedAnswerId = null; // Last answer that received final render (complete with buttons/sources)
+
+    // State tracking for animations
+    this.lastStreamingState = false;
+    this.isBoostedSpeed = false;
+
+    // Configuration
+    this.baseTypewriterSpeed = conf.typewriterSpeed || ANIMATION_CONSTANTS.DEFAULT_WORDS_PER_SECOND;
+    this.typewriterSpeed = this.baseTypewriterSpeed;
+    this.enableTypewriter = conf.enableTypewriter !== false;
+
+    // Cache DOM elements
+    this.answerTextElement = null;
+
     this.observeResultLoadingState();
 
     registerHelper('markdown', function (text) {
@@ -28,9 +62,8 @@ export default class AiAnswersresult {
       return new handlebars.SafeString(marked.parse(text, { breaks: true, gfm: true }));
     });
 
-    if (validateContainer(conf.containerId)) {
-      observeStoreByKey(this.reduxStore, 'search', () => this.render());
-    }
+    // Validate container exists (observer is in observeResultLoadingState)
+    validateContainer(conf.containerId);
 
     // Initialize show/hide toggle state from local storage
     const storedHiddenState = localStorage.getItem('addSearch-isAiAnswersHidden');
@@ -51,13 +84,132 @@ export default class AiAnswersresult {
     }
   }
 
+  // ========================================
+  // Observer Helper Methods
+  // ========================================
+  // These methods follow a consistent pattern for handling state changes:
+  // - Return true: State change was handled, observer should exit early
+  // - Return false: State change was not handled, observer should continue to next check
+  // This creates a clean "chain of responsibility" for different types of state changes.
+
+  handleStreamingUpdate(currentResult, newContent, isAiAnswersResultLoading) {
+    // Ignore streaming updates if we're loading a new search
+    if (isAiAnswersResultLoading) {
+      return false; // Let it fall through to handle loading state
+    }
+
+    if (currentResult.isStreaming && newContent !== this.actualContent && this.answerTextElement) {
+      this.actualContent = newContent;
+
+      // Update loading state when streaming starts (loading is complete)
+      if (this.cachedLoadingState) {
+        this.cachedLoadingState = false;
+      }
+
+      if (!this.isAnimating && this.enableTypewriter && newContent) {
+        this.startTypewriterAnimation();
+      }
+      this.lastStreamingState = currentResult.isStreaming;
+      return true; // State handled - exit observer early
+    }
+    return false; // State not handled - continue to next check
+  }
+
+  handleSpeedBoost(currentResult, isAiAnswersResultLoading) {
+    // Don't apply speed boost if we're loading a new search
+    if (isAiAnswersResultLoading) {
+      this.lastStreamingState = currentResult.isStreaming;
+      return false; // State not handled - continue to next check
+    }
+
+    // Detect streaming-to-complete transition during animation
+    // When streaming finishes but animation is still running (catching up),
+    // boost speed to 2x to quickly show remaining content to user
+    if (
+      this.lastStreamingState && // Was streaming on last check
+      !currentResult.isStreaming && // Now complete
+      this.isAnimating && // Animation still running
+      !this.isBoostedSpeed // Haven't boosted yet
+    ) {
+      this.typewriterSpeed = this.baseTypewriterSpeed * ANIMATION_CONSTANTS.SPEED_BOOST_MULTIPLIER;
+      this.isBoostedSpeed = true;
+      this.cachedLoadingState = isAiAnswersResultLoading;
+      this.lastStreamingState = currentResult.isStreaming;
+      return true; // State handled - exit observer early
+    }
+
+    this.lastStreamingState = currentResult.isStreaming;
+    return false; // State not handled - continue to next check
+  }
+
+  handleFinalRenderWhenComplete(currentResult) {
+    // When both streaming AND animation have completed, trigger final render
+    // This shows the complete UI with buttons, sources, and full answer text
+    if (
+      !currentResult.isStreaming &&
+      !this.isAnimating &&
+      currentResult.answerText &&
+      currentResult.id !== this.lastFinalizedAnswerId
+    ) {
+      this.lastFinalizedAnswerId = currentResult.id;
+      this.render();
+      return true; // State handled - exit observer early
+    }
+    return false; // State not handled - continue to next check
+  }
+
+  shouldSkipRenderDuringAnimation(state, currentResult, isAiAnswersResultLoading) {
+    // Never skip render when starting a new search (loading spinner must show)
+    if (isAiAnswersResultLoading) {
+      return false;
+    }
+
+    return (
+      this.isAnimating && !state.aiAnswersResultError && this.lastAnswerId === currentResult.id
+    );
+  }
+
+  handleStateChanges(state, currentResult, isAiAnswersResultLoading, isAiAnswersHidden) {
+    const needsFullRender =
+      this.cachedLoadingState !== isAiAnswersResultLoading ||
+      this.lastAnswerId !== currentResult.id ||
+      state.aiAnswersResultError ||
+      this.cachedHiddenState !== isAiAnswersHidden;
+
+    if (needsFullRender) {
+      if (this.shouldSkipRenderDuringAnimation(state, currentResult, isAiAnswersResultLoading)) {
+        this.cachedLoadingState = isAiAnswersResultLoading;
+        this.cachedHiddenState = isAiAnswersHidden;
+        return;
+      }
+
+      this.cachedLoadingState = isAiAnswersResultLoading;
+      this.cachedHiddenState = isAiAnswersHidden;
+      if (currentResult.id && currentResult.id !== this.lastAnswerId) {
+        this.lastAnswerId = currentResult.id;
+      }
+      this.render();
+    }
+  }
+
   observeResultLoadingState() {
     observeStoreByKey(this.reduxStore, 'search', (state) => {
+      const currentResult = state.aiAnswersResult;
+      const newContent = currentResult.answerText;
       const isAiAnswersResultLoading = state.loadingAiAnswersResult;
-      if (this.isSearchResultLoading !== isAiAnswersResultLoading) {
-        this.isSearchResultLoading = isAiAnswersResultLoading;
-        this.render();
-      }
+      const isAiAnswersHidden = state.isAiAnswersHidden;
+
+      // Handle streaming content updates
+      if (this.handleStreamingUpdate(currentResult, newContent, isAiAnswersResultLoading)) return;
+
+      // Handle speed boost on streaming completion
+      if (this.handleSpeedBoost(currentResult, isAiAnswersResultLoading)) return;
+
+      // Trigger final render when both streaming and animation complete
+      if (this.handleFinalRenderWhenComplete(currentResult)) return;
+
+      // Handle major state changes (errors, new answers, loading)
+      this.handleStateChanges(state, currentResult, isAiAnswersResultLoading, isAiAnswersHidden);
     });
   }
 
@@ -93,7 +245,18 @@ export default class AiAnswersresult {
       return;
     }
 
-    if (this.reduxStore.getState().search.isAiAnswersAnswerExpanded) {
+    // During streaming: no height restrictions, let content grow naturally
+    const currentSearchState = this.reduxStore.getState().search;
+    const isStreaming = currentSearchState.aiAnswersResult.isStreaming;
+
+    if (isStreaming) {
+      answerContainer.style.maxHeight = 'none';
+      showMoreBtn.style.display = 'none';
+      fadeOutOverlay.style.display = 'none';
+      return; // Exit early - apply normal logic after streaming completes
+    }
+
+    if (currentSearchState.isAiAnswersAnswerExpanded) {
       // Display "show less" button
       answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
       showMoreBtn.style.display = 'flex';
@@ -117,7 +280,8 @@ export default class AiAnswersresult {
     }
 
     showMoreBtn.addEventListener('click', () => {
-      if (this.reduxStore.getState().search.isAiAnswersAnswerExpanded) {
+      const clickSearchState = this.reduxStore.getState().search;
+      if (clickSearchState.isAiAnswersAnswerExpanded) {
         this.reduxStore.dispatch({
           type: SET_AI_ANSWERS_ANSWER_EXPANDED,
           payload: false
@@ -201,6 +365,177 @@ export default class AiAnswersresult {
     });
   }
 
+  parseMarkdown(content) {
+    return marked.parse(content, { breaks: true, gfm: true });
+  }
+
+  startTypewriterAnimation() {
+    this.isAnimating = true;
+    this.lastFrameTime = performance.now();
+    this.displayedWordCount = ANIMATION_CONSTANTS.INITIAL_WORD_COUNT;
+    this.animate();
+  }
+
+  stopTypewriterAnimation() {
+    this.isAnimating = false;
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+  }
+
+  truncateHtmlAtWord(html, wordCount) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    let wordsRevealed = 0;
+
+    const walkNodes = (node) => {
+      if (wordsRevealed >= wordCount) {
+        return false; // Stop processing
+      }
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent;
+        const words = text.split(/\s+/).filter((w) => w.length > 0);
+        const wordsToShow = Math.min(words.length, wordCount - wordsRevealed);
+
+        if (wordsToShow < words.length) {
+          // Truncate this text node
+          node.textContent = words.slice(0, wordsToShow).join(' ');
+          wordsRevealed += wordsToShow;
+          return false; // Stop
+        } else {
+          wordsRevealed += words.length;
+          // Check if we've reached the limit exactly
+          if (wordsRevealed >= wordCount) {
+            return false; // Stop - we've shown enough
+          }
+          return true; // Continue
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const children = Array.from(node.childNodes);
+        for (const child of children) {
+          const shouldContinue = walkNodes(child);
+          if (!shouldContinue) {
+            // Remove remaining siblings
+            let nextSibling = child.nextSibling;
+            while (nextSibling) {
+              const toRemove = nextSibling;
+              nextSibling = nextSibling.nextSibling;
+              toRemove.remove();
+            }
+            return false;
+          }
+        }
+      }
+
+      return true;
+    };
+
+    walkNodes(tempDiv);
+    return tempDiv.innerHTML;
+  }
+
+  calculateDeltaTime() {
+    const now = performance.now();
+    const delta = now - this.lastFrameTime;
+    this.lastFrameTime = now;
+    return delta;
+  }
+
+  getWordsFromContent() {
+    return this.actualContent.split(/\s+/);
+  }
+
+  updateDisplayProgress(totalWords, deltaTime) {
+    const targetIndex = Math.floor(this.displayedWordCount);
+
+    if (targetIndex < totalWords) {
+      const wordsToAdd = (deltaTime / 1000) * this.typewriterSpeed;
+      this.displayedWordCount += wordsToAdd;
+    }
+    // Else: frozen, waiting for more content
+  }
+
+  hasMoreWordsToReveal(current, total) {
+    return current < total;
+  }
+
+  revealWords(wordCount) {
+    const fullHtml = this.parseMarkdown(this.actualContent);
+    const displayedHtml = this.truncateHtmlAtWord(fullHtml, wordCount);
+    this.updateAnswerTextOnly(displayedHtml);
+  }
+
+  scheduleNextFrame() {
+    this.animationFrameId = requestAnimationFrame(() => this.animate());
+  }
+
+  handleAnimationReachedEnd() {
+    // Animation has revealed all currently available words
+    // Show full content while we decide next step
+    const displayedHtml = this.parseMarkdown(this.actualContent);
+    this.updateAnswerTextOnly(displayedHtml);
+
+    const currentSearchState = this.reduxStore.getState().search;
+    const currentResult = currentSearchState.aiAnswersResult;
+    const isStreamingComplete = !currentResult.isStreaming;
+
+    if (isStreamingComplete) {
+      // Streaming is done, finalize the answer
+      this.finalizeAnimation(currentResult.id);
+    } else {
+      // Streaming still active, keep animation loop running and wait for more content
+      this.waitForMoreContent();
+    }
+  }
+
+  finalizeAnimation(answerId) {
+    this.stopTypewriterAnimation();
+
+    if (answerId !== this.lastFinalizedAnswerId) {
+      this.finalizeAnswer(answerId);
+    }
+  }
+
+  finalizeAnswer(answerId) {
+    this.lastFinalizedAnswerId = answerId;
+    this.render();
+  }
+
+  waitForMoreContent() {
+    this.scheduleNextFrame();
+  }
+
+  animate() {
+    if (!this.isAnimating) return;
+
+    const deltaTime = this.calculateDeltaTime();
+    const words = this.getWordsFromContent();
+
+    // Update display progress
+    this.updateDisplayProgress(words.length, deltaTime);
+
+    const targetWord = Math.floor(this.displayedWordCount);
+
+    if (this.hasMoreWordsToReveal(targetWord, words.length)) {
+      this.revealWords(targetWord);
+      this.scheduleNextFrame();
+    } else {
+      this.handleAnimationReachedEnd();
+    }
+  }
+
+  updateAnswerTextOnly(htmlContent) {
+    // Re-query element each time to handle DOM changes
+    this.answerTextElement = document.querySelector('.answer-text');
+
+    if (this.answerTextElement) {
+      this.answerTextElement.innerHTML = htmlContent;
+    }
+  }
+
   render() {
     const currentSearchState = this.reduxStore.getState().search;
     const currentAiAnswersResult = currentSearchState.aiAnswersResult;
@@ -211,12 +546,11 @@ export default class AiAnswersresult {
 
     const handlebarTemplateProps = {
       mainHeadlineText: this.conf.mainHeadlineText || 'Answer',
-      subHeadlineText: keyword,
       answerText: currentAiAnswersResult.answerText,
       sourcesHeadlineText: this.conf.sourcesHeadlineText || 'Sources:',
       sources: currentAiAnswersResult.sources,
       aiExplanationText: this.conf.aiExplanationText || 'Generated by AI, may contain errors.',
-      isResultLoading: this.isSearchResultLoading,
+      isResultLoading: currentlyLoadingAiAnswersResult,
       hadError: hadErrorFetchingAiAnswersResult,
       sentimentState: currentSearchState.aiAnswersSentiment,
       showHideToggle: this.conf.hasHideToggle === undefined ? true : this.conf.hasHideToggle,
@@ -227,7 +561,7 @@ export default class AiAnswersresult {
     // Compile HTML and inject to element if changed
     let html;
 
-    if (currentAiAnswersResult.answerText || (keyword && currentlyLoadingAiAnswersResult)) {
+    if (currentAiAnswersResult.answerText || keyword) {
       if (this.conf.precompiledTemplate) {
         html = this.conf.precompiledTemplate(handlebarTemplateProps);
       } else if (this.conf.template) {
@@ -244,6 +578,30 @@ export default class AiAnswersresult {
     const container = document.getElementById(this.conf.containerId);
     container.innerHTML = html;
     this.renderedHtml = html;
+
+    // Cache DOM element reference after render
+    this.answerTextElement = document.querySelector('.answer-text');
+
+    // Reset animation state for new answer OR when new search interrupts animation
+    const isNewAnswer = currentAiAnswersResult.id !== this.lastAnswerId;
+    const newSearchInterruptedAnimation = currentlyLoadingAiAnswersResult && this.isAnimating;
+
+    if (isNewAnswer || newSearchInterruptedAnimation) {
+      // Stop animation completely
+      this.stopTypewriterAnimation();
+
+      // Clear all content buffers
+      this.actualContent = '';
+      this.displayedWordCount = 0;
+
+      // Reset speed and boost state
+      this.typewriterSpeed = this.baseTypewriterSpeed;
+      this.isBoostedSpeed = false;
+
+      // Clear tracking state
+      this.lastStreamingState = false;
+      this.lastFinalizedAnswerId = null;
+    }
 
     this.setupHideAIAnswersToggle();
     this.setupShowMoreButton();

@@ -170,7 +170,6 @@
 
   .answer-container {
     position: relative;
-    margin-top: 16px;
     overflow: hidden;
     transition: max-height 0.3s ease;
 
@@ -349,6 +348,7 @@
     align-items: center;
     justify-content: flex-end;
     gap: 24px;
+    animation: addsearch_fadeInRight 0.3s ease-out;
 
     button {
       background-color: transparent;
@@ -370,6 +370,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 4px;
+    animation: addsearch_fadeInRight 0.3s ease-out;
   }
 
   .sources-headline {
@@ -403,12 +404,12 @@
     border-radius: 4px;
   }
 
-  .answer-streaming-indicator {
-    font-size: 0.95rem;
-    font-style: italic;
-    color: black;
-    animation: addsearch_pulse 1.5s ease-in-out infinite;
-  }
+  //.answer-streaming-indicator {
+  //  font-size: 0.95rem;
+  //  font-style: italic;
+  //  color: black;
+  //  animation: addsearch_pulse 1.5s ease-in-out infinite;
+  //}
 }
 
 @keyframes spin {
@@ -420,11 +421,22 @@
   }
 }
 
-@keyframes addsearch_pulse {
-  0%, 100% {
-    opacity: 0.4;
+//@keyframes addsearch_pulse {
+//  0%, 100% {
+//    opacity: 0.4;
+//  }
+//  50% {
+//    opacity: 1;
+//  }
+//}
+
+@keyframes addsearch_fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
   }
-  50% {
+  to {
     opacity: 1;
+    transform: translateX(0);
   }
 }

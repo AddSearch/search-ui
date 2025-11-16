@@ -12,7 +12,9 @@ import {
   AI_ANSWERS_RESULT_ERROR,
   SET_AI_ANSWERS_SENTIMENT,
   SET_AI_ANSWERS_ANSWER_EXPANDED,
-  SET_AI_ANSWERS_HIDDEN
+  SET_AI_ANSWERS_HIDDEN,
+  CLEAR_AI_ANSWERS_RESULT,
+  SET_CURRENT_AI_REQUEST_ID
 } from '../actions/aiAnswers';
 
 const initialState = {
@@ -26,7 +28,8 @@ const initialState = {
   aiAnswerSentiment: 'neutral',
   isAiAnswersAnswerExpanded: false,
   isAiAnswersHidden: false,
-  searchResultsPageUrl: null // Redir to a search page instead of executing API call
+  searchResultsPageUrl: null, // Redir to a search page instead of executing API call
+  currentAiAnswersRequestId: null // Track current request to ignore old callbacks
 };
 
 export default function search(state = initialState, action) {
@@ -92,6 +95,21 @@ export default function search(state = initialState, action) {
     case AI_ANSWERS_RESULT:
       return Object.assign({}, state, {
         aiAnswersResult: action.payload
+      });
+
+    case CLEAR_AI_ANSWERS_RESULT:
+      return Object.assign({}, state, {
+        aiAnswersResult: {
+          id: null,
+          answerText: '',
+          sources: [],
+          isStreaming: false
+        }
+      });
+
+    case SET_CURRENT_AI_REQUEST_ID:
+      return Object.assign({}, state, {
+        currentAiAnswersRequestId: action.payload
       });
 
     case AI_ANSWERS_RESULT_ERROR:
