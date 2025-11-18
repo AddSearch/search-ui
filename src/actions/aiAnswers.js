@@ -32,7 +32,10 @@ export function fetchAiAnswersResultStory(client, keyword) {
         return;
       }
 
-      if (response.is_streaming_complete === undefined || (isFirstChunk && response.answer?.trim())) {
+      if (
+        response.is_streaming_complete === undefined ||
+        (isFirstChunk && response.answer?.trim())
+      ) {
         dispatch({ type: IS_LOADING_AI_ANSWERS, payload: false });
         isFirstChunk = false;
       }

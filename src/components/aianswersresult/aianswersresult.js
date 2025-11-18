@@ -28,6 +28,7 @@ export default class AiAnswersresult {
     // Cached Redux state for change detection
     this.cachedLoadingState = false;
     this.cachedHiddenState = false;
+    this.cachedSentimentState = 'neutral';
 
     // Dual-buffer typewriter system
     this.actualContent = ''; // Raw markdown from API (network timing)
@@ -39,6 +40,7 @@ export default class AiAnswersresult {
     // Answer tracking
     this.lastAnswerId = null; // Last answer we've rendered (initial or partial)
     this.lastFinalizedAnswerId = null; // Last answer that received final render (complete with buttons/sources)
+    this.shouldAnimateButtonsForCurrentAnswer = false; // Flag to animate buttons only on first final render
 
     // State tracking for animations
     this.lastStreamingState = false;
@@ -170,21 +172,26 @@ export default class AiAnswersresult {
   }
 
   handleStateChanges(state, currentResult, isAiAnswersResultLoading, isAiAnswersHidden) {
+    const currentSentiment = state.aiAnswersSentiment;
+
     const needsFullRender =
       this.cachedLoadingState !== isAiAnswersResultLoading ||
       this.lastAnswerId !== currentResult.id ||
       state.aiAnswersResultError ||
-      this.cachedHiddenState !== isAiAnswersHidden;
+      this.cachedHiddenState !== isAiAnswersHidden ||
+      this.cachedSentimentState !== currentSentiment;
 
     if (needsFullRender) {
       if (this.shouldSkipRenderDuringAnimation(state, currentResult, isAiAnswersResultLoading)) {
         this.cachedLoadingState = isAiAnswersResultLoading;
         this.cachedHiddenState = isAiAnswersHidden;
+        this.cachedSentimentState = currentSentiment;
         return;
       }
 
       this.cachedLoadingState = isAiAnswersResultLoading;
       this.cachedHiddenState = isAiAnswersHidden;
+      this.cachedSentimentState = currentSentiment;
       if (currentResult.id && currentResult.id !== this.lastAnswerId) {
         this.lastAnswerId = currentResult.id;
       }
@@ -385,52 +392,89 @@ export default class AiAnswersresult {
   }
 
   truncateHtmlAtWord(html, wordCount) {
+    // Control flow constants for readability
+    const STOP_PROCESSING = false;
+    const CONTINUE_PROCESSING = true;
+
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
 
     let wordsRevealed = 0;
 
+    // Helper: Extract words from text node
+    const getWordsFromNode = (node) => {
+      return node.textContent.split(/\s+/).filter((w) => w.length > 0);
+    };
+
+    // Helper: Remove all siblings after a node
+    const removeFollowingSiblings = (node) => {
+      let sibling = node.nextSibling;
+      while (sibling) {
+        const next = sibling.nextSibling;
+        sibling.remove();
+        sibling = next;
+      }
+    };
+
+    // Helper: Check if word limit reached
+    const hasReachedLimit = () => {
+      return wordsRevealed >= wordCount;
+    };
+
+    // Process text nodes: count and truncate words
+    const processTextNode = (node) => {
+      const words = getWordsFromNode(node);
+      const remainingWords = wordCount - wordsRevealed;
+      const wordsToShow = Math.min(words.length, remainingWords);
+
+      // Handle case where we need to truncate mid-text
+      if (wordsToShow < words.length) {
+        node.textContent = words.slice(0, wordsToShow).join(' ');
+        wordsRevealed += wordsToShow;
+        return STOP_PROCESSING;
+      }
+
+      // Show all words in this text node
+      wordsRevealed += words.length;
+
+      if (hasReachedLimit()) {
+        return STOP_PROCESSING;
+      }
+
+      return CONTINUE_PROCESSING;
+    };
+
+    // Process element nodes: recursively walk children
+    const processElementNode = (node) => {
+      const children = Array.from(node.childNodes);
+
+      for (const child of children) {
+        const shouldContinue = walkNodes(child);
+
+        if (shouldContinue === STOP_PROCESSING) {
+          removeFollowingSiblings(child);
+          return STOP_PROCESSING;
+        }
+      }
+
+      return CONTINUE_PROCESSING;
+    };
+
+    // Main recursive tree walker
     const walkNodes = (node) => {
-      if (wordsRevealed >= wordCount) {
-        return false; // Stop processing
+      if (hasReachedLimit()) {
+        return STOP_PROCESSING;
       }
 
       if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent;
-        const words = text.split(/\s+/).filter((w) => w.length > 0);
-        const wordsToShow = Math.min(words.length, wordCount - wordsRevealed);
-
-        if (wordsToShow < words.length) {
-          // Truncate this text node
-          node.textContent = words.slice(0, wordsToShow).join(' ');
-          wordsRevealed += wordsToShow;
-          return false; // Stop
-        } else {
-          wordsRevealed += words.length;
-          // Check if we've reached the limit exactly
-          if (wordsRevealed >= wordCount) {
-            return false; // Stop - we've shown enough
-          }
-          return true; // Continue
-        }
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const children = Array.from(node.childNodes);
-        for (const child of children) {
-          const shouldContinue = walkNodes(child);
-          if (!shouldContinue) {
-            // Remove remaining siblings
-            let nextSibling = child.nextSibling;
-            while (nextSibling) {
-              const toRemove = nextSibling;
-              nextSibling = nextSibling.nextSibling;
-              toRemove.remove();
-            }
-            return false;
-          }
-        }
+        return processTextNode(node);
       }
 
-      return true;
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        return processElementNode(node);
+      }
+
+      return CONTINUE_PROCESSING;
     };
 
     walkNodes(tempDiv);
@@ -501,7 +545,9 @@ export default class AiAnswersresult {
 
   finalizeAnswer(answerId) {
     this.lastFinalizedAnswerId = answerId;
+    this.shouldAnimateButtonsForCurrentAnswer = true; // Flag: next render should animate
     this.render();
+    this.shouldAnimateButtonsForCurrentAnswer = false; // Reset after render
   }
 
   waitForMoreContent() {
@@ -555,7 +601,7 @@ export default class AiAnswersresult {
       sentimentState: currentSearchState.aiAnswersSentiment,
       showHideToggle: this.conf.hasHideToggle === undefined ? true : this.conf.hasHideToggle,
       isHidden: currentSearchState.isAiAnswersHidden,
-      isStreaming: currentAiAnswersResult.isStreaming
+      shouldAnimateButtons: this.shouldAnimateButtonsForCurrentAnswer
     };
 
     // Compile HTML and inject to element if changed
@@ -601,6 +647,7 @@ export default class AiAnswersresult {
       // Clear tracking state
       this.lastStreamingState = false;
       this.lastFinalizedAnswerId = null;
+      this.shouldAnimateButtonsForCurrentAnswer = false;
     }
 
     this.setupHideAIAnswersToggle();

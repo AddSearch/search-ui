@@ -18,6 +18,7 @@
  * @property {string} id - The answer ID
  * @property {string} answerText - The answer text
  * @property {Array<Source>} sources - Array of sources
+ * @property {boolean} isStreaming - Whether the answer is currently streaming
  */
 
 /**

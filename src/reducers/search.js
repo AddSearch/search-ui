@@ -48,7 +48,8 @@ export default function search(state = initialState, action) {
         aiAnswersResultError: false,
         loadingAiAnswersResult: false,
         aiAnswersSentiment: 'neutral',
-        dropReturningResults: true // Don't render pending results returning after clear
+        dropReturningResults: true, // Don't render pending results returning after clear
+        currentAiAnswersRequestId: null
       });
 
     case SEARCH_FETCH_START:
@@ -98,19 +99,21 @@ export default function search(state = initialState, action) {
       });
 
     case CLEAR_AI_ANSWERS_RESULT:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         aiAnswersResult: {
           id: null,
           answerText: '',
           sources: [],
           isStreaming: false
         }
-      });
+      };
 
     case SET_CURRENT_AI_REQUEST_ID:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         currentAiAnswersRequestId: action.payload
-      });
+      };
 
     case AI_ANSWERS_RESULT_ERROR:
       return Object.assign({}, state, {
