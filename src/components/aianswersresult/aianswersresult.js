@@ -1,6 +1,7 @@
 import './aianswersresult.scss';
 import handlebars from 'handlebars';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import { validateContainer } from '../../util/dom';
 import { observeStoreByKey } from '../../store';
 import PRECOMPILED_AI_ANSWERS_RESULT_TEMPLATE from './precompile-templates/aianswersresult.handlebars';
@@ -61,7 +62,13 @@ export default class AiAnswersresult {
         return '';
       }
 
-      return new handlebars.SafeString(marked.parse(text, { breaks: true, gfm: true }));
+      // Parse markdown to HTML
+      const html = marked.parse(text, { breaks: true, gfm: true });
+
+      // Sanitize HTML to prevent XSS attacks
+      const cleanHtml = DOMPurify.sanitize(html);
+
+      return new handlebars.SafeString(cleanHtml);
     });
 
     // Validate container exists (observer is in observeResultLoadingState)
@@ -84,6 +91,148 @@ export default class AiAnswersresult {
         payload: true
       });
     }
+
+    // Setup event delegation (single listener for all buttons)
+    this.setupEventDelegation();
+  }
+
+  // ========================================
+  // Event Delegation & Handlers
+  // ========================================
+  // Single event listener on container delegates to all buttons
+  // Prevents memory leaks from repeated addEventListener calls
+
+  setupEventDelegation() {
+    const container = document.getElementById(this.conf.containerId);
+    if (!container) return;
+
+    // Store bound handler for cleanup
+    this.containerClickHandler = this.handleContainerClick.bind(this);
+    container.addEventListener('click', this.containerClickHandler);
+
+    // Store container reference for cleanup
+    this.container = container;
+  }
+
+  handleContainerClick(e) {
+    const target = e.target;
+
+    // Copy button
+    if (target.closest('.copy-btn')) {
+      this.handleCopyClick();
+      return;
+    }
+
+    // Thumbs up button
+    if (target.closest('.thumbs-up-btn')) {
+      this.handleThumbsUpClick();
+      return;
+    }
+
+    // Thumbs down button
+    if (target.closest('.thumbs-down-btn')) {
+      this.handleThumbsDownClick();
+      return;
+    }
+
+    // Show more/less button
+    if (target.closest('.show-more-btn')) {
+      this.handleShowMoreClick();
+      return;
+    }
+
+    // Toggle switch
+    if (target.closest('.toggle-switch input')) {
+      this.handleToggleHideClick();
+      return;
+    }
+  }
+
+  handleCopyClick() {
+    const answerText = document.querySelector('.answer-text')?.textContent;
+    const copyConfirm = document.querySelector('.copy-confirm-message');
+
+    if (!answerText || !copyConfirm) return;
+
+    navigator.clipboard
+      .writeText(answerText)
+      .then(() => {
+        copyConfirm.textContent = 'Answer copied!';
+      })
+      .catch((error) => {
+        console.error('Failed to copy answer text with following error: ', error);
+      });
+  }
+
+  handleThumbsUpClick() {
+    const currentSearchState = this.reduxStore.getState().search;
+
+    this.reduxStore.dispatch(
+      putSentimentValueStory(
+        this.client,
+        currentSearchState.aiAnswersResult.id,
+        currentSearchState.aiAnswersSentiment === 'positive' ? 'neutral' : 'positive'
+      )
+    );
+  }
+
+  handleThumbsDownClick() {
+    const currentSearchState = this.reduxStore.getState().search;
+
+    this.reduxStore.dispatch(
+      putSentimentValueStory(
+        this.client,
+        currentSearchState.aiAnswersResult.id,
+        currentSearchState.aiAnswersSentiment === 'negative' ? 'neutral' : 'negative'
+      )
+    );
+  }
+
+  handleShowMoreClick() {
+    const answerContainer = document.querySelector('.answer-container');
+    const showMoreBtn = document.querySelector('.show-more-btn');
+    const buttonText = showMoreBtn?.querySelector('.button-text');
+    const fadeOutOverlay = answerContainer?.querySelector('.fade-out-overlay');
+    const chevron = showMoreBtn?.querySelector('.chevron');
+
+    if (!answerContainer || !showMoreBtn || !buttonText || !fadeOutOverlay || !chevron) return;
+
+    const clickSearchState = this.reduxStore.getState().search;
+
+    if (clickSearchState.isAiAnswersAnswerExpanded) {
+      this.reduxStore.dispatch({
+        type: SET_AI_ANSWERS_ANSWER_EXPANDED,
+        payload: false
+      });
+
+      answerContainer.style.maxHeight = `${this.answerMaxHeight}px`;
+      buttonText.textContent = 'Show more';
+      showMoreBtn.setAttribute('aria-expanded', 'false');
+      fadeOutOverlay.style.display = 'block';
+      chevron.style.transform = '';
+    } else {
+      this.reduxStore.dispatch({
+        type: SET_AI_ANSWERS_ANSWER_EXPANDED,
+        payload: true
+      });
+
+      answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
+      buttonText.textContent = 'Show less';
+      showMoreBtn.setAttribute('aria-expanded', 'true');
+      fadeOutOverlay.style.display = 'none';
+      chevron.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  handleToggleHideClick() {
+    const isHidden = this.reduxStore.getState().search.isAiAnswersHidden;
+
+    this.reduxStore.dispatch({
+      type: SET_AI_ANSWERS_HIDDEN,
+      payload: !isHidden
+    });
+
+    localStorage.setItem('addSearch-isAiAnswersHidden', JSON.stringify(!isHidden));
   }
 
   // ========================================
@@ -220,27 +369,6 @@ export default class AiAnswersresult {
     });
   }
 
-  setupHideAIAnswersToggle() {
-    const aiAnswersResultContainer = document.querySelector('.addsearch-ai-answers-result');
-
-    const toggleSwitch = document.querySelector('.toggle-switch input');
-
-    if (!aiAnswersResultContainer || !toggleSwitch) {
-      return;
-    }
-
-    toggleSwitch.addEventListener('change', () => {
-      const isHidden = this.reduxStore.getState().search.isAiAnswersHidden;
-
-      this.reduxStore.dispatch({
-        type: SET_AI_ANSWERS_HIDDEN,
-        payload: !isHidden
-      });
-
-      localStorage.setItem('addSearch-isAiAnswersHidden', JSON.stringify(!isHidden));
-    });
-  }
-
   setupShowMoreButton() {
     const answerContainer = document.querySelector('.answer-container');
     const fadeOutOverlay = answerContainer && answerContainer.querySelector('.fade-out-overlay');
@@ -285,95 +413,11 @@ export default class AiAnswersresult {
         fadeOutOverlay.style.display = 'none';
       }
     }
-
-    showMoreBtn.addEventListener('click', () => {
-      const clickSearchState = this.reduxStore.getState().search;
-      if (clickSearchState.isAiAnswersAnswerExpanded) {
-        this.reduxStore.dispatch({
-          type: SET_AI_ANSWERS_ANSWER_EXPANDED,
-          payload: false
-        });
-
-        answerContainer.style.maxHeight = `${this.answerMaxHeight}px`;
-        buttonText.textContent = 'Show more';
-        showMoreBtn.setAttribute('aria-expanded', 'false');
-        fadeOutOverlay.style.display = 'block';
-
-        chevron.style.transform = '';
-      } else {
-        this.reduxStore.dispatch({
-          type: SET_AI_ANSWERS_ANSWER_EXPANDED,
-          payload: true
-        });
-
-        answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
-        buttonText.textContent = 'Show less';
-        showMoreBtn.setAttribute('aria-expanded', 'true');
-        fadeOutOverlay.style.display = 'none';
-
-        chevron.style.transform = 'rotate(180deg)';
-      }
-    });
-  }
-
-  setupActionButtons() {
-    const aiAnswersResultContainer = document.querySelector('.addsearch-ai-answers-result');
-
-    const copyButton =
-      aiAnswersResultContainer && aiAnswersResultContainer.querySelector('.copy-btn');
-
-    const copyConfirm = aiAnswersResultContainer.querySelector('.copy-confirm-message');
-    const thumbsUpButton = aiAnswersResultContainer.querySelector('.thumbs-up-btn');
-    const thumbsDownButton = aiAnswersResultContainer.querySelector('.thumbs-down-btn');
-
-    if (
-      !aiAnswersResultContainer ||
-      !copyButton ||
-      !copyConfirm ||
-      !thumbsUpButton ||
-      !thumbsDownButton
-    ) {
-      return;
-    }
-
-    copyButton.addEventListener('click', () => {
-      const answerText = document.querySelector('.answer-text').textContent;
-      navigator.clipboard
-        .writeText(answerText)
-        .then(() => {
-          copyConfirm.textContent = 'Answer copied!';
-        })
-        .catch((error) => {
-          console.error('Failed to copy answer text with following error: ', error);
-        });
-    });
-
-    thumbsUpButton.addEventListener('click', () => {
-      const currentSearchState = this.reduxStore.getState().search;
-
-      this.reduxStore.dispatch(
-        putSentimentValueStory(
-          this.client,
-          currentSearchState.aiAnswersResult.id,
-          currentSearchState.aiAnswersSentiment === 'positive' ? 'neutral' : 'positive'
-        )
-      );
-    });
-
-    thumbsDownButton.addEventListener('click', () => {
-      const currentSearchState = this.reduxStore.getState().search;
-      this.reduxStore.dispatch(
-        putSentimentValueStory(
-          this.client,
-          currentSearchState.aiAnswersResult.id,
-          currentSearchState.aiAnswersSentiment === 'negative' ? 'neutral' : 'negative'
-        )
-      );
-    });
   }
 
   parseMarkdown(content) {
-    return marked.parse(content, { breaks: true, gfm: true });
+    const html = marked.parse(content, { breaks: true, gfm: true });
+    return DOMPurify.sanitize(html);
   }
 
   startTypewriterAnimation() {
@@ -650,9 +694,7 @@ export default class AiAnswersresult {
       this.shouldAnimateButtonsForCurrentAnswer = false;
     }
 
-    this.setupHideAIAnswersToggle();
     this.setupShowMoreButton();
-    this.setupActionButtons();
 
     // Execute callback for when rendering is complete (if configured)
     if (
