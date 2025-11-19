@@ -148,7 +148,7 @@
               <h4 class='sources-headline'>{{sourcesHeadlineText}}</h4>
               <div class='sources-list'>
                 {{#each sources}}
-                  <a href='{{url}}' class='source' target="_blank" aria-label="{{title}} (opens in new tab)">
+                  <a href='{{url}}' class='source' target="_blank" aria-label="{{title}} (opens in new tab)" data-source-id="{{id}}">
                     {{title}}
                     <span class="addsearch-sr-only"> (opens in new tab)</span>
                   </a>

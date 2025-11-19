@@ -114,6 +114,16 @@ export default class AiAnswersresult {
     this.container = container;
   }
 
+  callEventCallback(eventData) {
+    if (this.conf.onEvent && typeof this.conf.onEvent === 'function') {
+      try {
+        this.conf.onEvent(eventData);
+      } catch (error) {
+        console.error('Error in AI Answers onEvent callback:', error);
+      }
+    }
+  }
+
   handleContainerClick(e) {
     const target = e.target;
 
@@ -132,6 +142,12 @@ export default class AiAnswersresult {
     // Thumbs down button
     if (target.closest('.thumbs-down-btn')) {
       this.handleThumbsDownClick();
+      return;
+    }
+
+    // Source link
+    if (target.closest('.source')) {
+      this.handleSourceClick(target.closest('.source'));
       return;
     }
 
@@ -158,34 +174,71 @@ export default class AiAnswersresult {
       .writeText(answerText)
       .then(() => {
         copyConfirm.textContent = 'Answer copied!';
+
+        // Trigger answer_copied event on successful copy
+        const currentSearchState = this.reduxStore.getState().search;
+        this.callEventCallback({
+          type: 'answer_copied',
+          answerId: currentSearchState.aiAnswersResult.id,
+          answerLength: answerText.length
+        });
       })
       .catch((error) => {
         console.error('Failed to copy answer text with following error: ', error);
+        // Don't send analytics on failed copy
       });
+  }
+
+  handleSourceClick(sourceElement) {
+    const sourceUrl = sourceElement.getAttribute('href');
+    const sourceTitle = sourceElement.textContent?.trim();
+    const sourceId = sourceElement.getAttribute('data-source-id');
+    const currentSearchState = this.reduxStore.getState().search;
+
+    // Trigger source_clicked event
+    this.callEventCallback({
+      type: 'source_clicked',
+      answerId: currentSearchState.aiAnswersResult.id,
+      sourceId: sourceId,
+      sourceUrl: sourceUrl,
+      sourceTitle: sourceTitle
+    });
   }
 
   handleThumbsUpClick() {
     const currentSearchState = this.reduxStore.getState().search;
+    const previousSentiment = currentSearchState.aiAnswersSentiment;
+    const newSentiment = previousSentiment === 'positive' ? 'neutral' : 'positive';
 
     this.reduxStore.dispatch(
-      putSentimentValueStory(
-        this.client,
-        currentSearchState.aiAnswersResult.id,
-        currentSearchState.aiAnswersSentiment === 'positive' ? 'neutral' : 'positive'
-      )
+      putSentimentValueStory(this.client, currentSearchState.aiAnswersResult.id, newSentiment)
     );
+
+    // Trigger sentiment_clicked event
+    this.callEventCallback({
+      type: 'sentiment_clicked',
+      answerId: currentSearchState.aiAnswersResult.id,
+      sentiment: newSentiment,
+      previousSentiment: previousSentiment
+    });
   }
 
   handleThumbsDownClick() {
     const currentSearchState = this.reduxStore.getState().search;
+    const previousSentiment = currentSearchState.aiAnswersSentiment;
+    const newSentiment = previousSentiment === 'negative' ? 'neutral' : 'negative';
 
     this.reduxStore.dispatch(
-      putSentimentValueStory(
-        this.client,
-        currentSearchState.aiAnswersResult.id,
-        currentSearchState.aiAnswersSentiment === 'negative' ? 'neutral' : 'negative'
-      )
+      putSentimentValueStory(this.client, currentSearchState.aiAnswersResult.id, newSentiment)
     );
+
+    // Trigger sentiment_clicked event
+    this.callEventCallback({
+      type: 'sentiment_clicked',
+      answerId: currentSearchState.aiAnswersResult.id,
+      sentiment: newSentiment,
+      previousSentiment: previousSentiment
+    });
   }
 
   handleShowMoreClick() {
@@ -302,8 +355,8 @@ export default class AiAnswersresult {
       currentResult.answerText &&
       currentResult.id !== this.lastFinalizedAnswerId
     ) {
-      this.lastFinalizedAnswerId = currentResult.id;
-      this.render();
+      this.lastAnswerId = currentResult.id;
+      this.finalizeAnswer(currentResult.id);
       return true; // State handled - exit observer early
     }
     return false; // State not handled - continue to next check
@@ -592,6 +645,17 @@ export default class AiAnswersresult {
     this.shouldAnimateButtonsForCurrentAnswer = true; // Flag: next render should animate
     this.render();
     this.shouldAnimateButtonsForCurrentAnswer = false; // Reset after render
+
+    // Trigger answer_displayed event
+    const currentSearchState = this.reduxStore.getState().search;
+    const keywordState = this.reduxStore.getState().keyword;
+    this.callEventCallback({
+      type: 'answer_displayed',
+      answerId: answerId,
+      question: keywordState.value,
+      answerText: currentSearchState.aiAnswersResult.answerText,
+      sources: currentSearchState.aiAnswersResult.sources
+    });
   }
 
   waitForMoreContent() {
@@ -695,13 +759,5 @@ export default class AiAnswersresult {
     }
 
     this.setupShowMoreButton();
-
-    // Execute callback for when rendering is complete (if configured)
-    if (
-      this.conf.renderCompleteCallback &&
-      typeof this.conf.renderCompleteCallback === 'function'
-    ) {
-      this.conf.renderCompleteCallback();
-    }
   }
 }
