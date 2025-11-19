@@ -13,7 +13,12 @@ import {
 // Future: May add separate 'question' state for conversational AI features
 
 const initialState = {
-  result: {},
+  result: {
+    id: null,
+    answerText: '',
+    sources: [],
+    isStreaming: false
+  },
   loading: false,
   error: false,
   sentiment: 'neutral',
