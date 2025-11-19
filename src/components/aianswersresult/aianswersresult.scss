@@ -170,7 +170,6 @@
 
   .answer-container {
     position: relative;
-    margin-top: 16px;
     overflow: hidden;
     transition: max-height 0.3s ease;
 
@@ -350,6 +349,10 @@
     justify-content: flex-end;
     gap: 24px;
 
+    &.animate-in {
+      animation: addsearch_fadeInRight 0.3s ease-out;
+    }
+
     button {
       background-color: transparent;
       border-width: 0;
@@ -370,6 +373,10 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 4px;
+
+    &.animate-in {
+      animation: addsearch_fadeInRight 0.3s ease-out;
+    }
   }
 
   .sources-headline {
@@ -410,5 +417,16 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes addsearch_fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }

@@ -6,8 +6,7 @@
   <meta charset="UTF-8">
   <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/addsearch-js-client@1.1/dist/addsearch-js-client.min.js"
-          integrity="sha384-bMenmxFJb5gJmf+h89NT/Ai405PPITc8yqHYIlW7kqRYta/ZBwVjx5C67BC88njD"
-          crossorigin="anonymous"></script>
+          integrity="sha384-LgHdp1sJCQoY0kemlPQ7zI5WjeFwag8qESbGloFXaNiSAPa/XnNIKB7k2xt6itwr" crossorigin="anonymous"></script>
   <script src="../../dist/addsearch-search-ui.min.js"></script>
   <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
 
@@ -26,10 +25,13 @@
 
 <script>
   // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
-  var client = new AddSearchClient('490c606d6377e1876fa7fecb5f7e6420');
+  var client = new AddSearchClient('9d6fbcd74e0a6c710bb9e250ce3a2c49');
   var config = {
     hasAiAnswers: true,
   }
+
+  client.setApiHostname('staging-api.plusfnd.com');
+  client.useAiAnswersStream(true);
 
   // Search UI instance
   var searchui = new AddSearchUI(client, config);
@@ -39,7 +41,8 @@
     containerId: 'searchfield',
     placeholder: 'Keyword..',
     button: 'Search',
-    searchAsYouType: false
+    searchAsYouType: false,
+    disableSearch: true
   });
 
   searchui.aiAnswersResult({
@@ -47,7 +50,8 @@
     mainHeadlineText: 'AI-generated answer',
     answerMaxHeight: 150,
     sourcesHeadlineText: 'Based on the following sources:',
-    hasHideToggle: true
+    hasHideToggle: true,
+    expandByDefault: true,
   });
 
 
