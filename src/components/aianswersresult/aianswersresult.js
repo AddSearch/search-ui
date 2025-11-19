@@ -165,25 +165,25 @@ export default class AiAnswersresult {
   }
 
   handleThumbsUpClick() {
-    const currentSearchState = this.reduxStore.getState().search;
+    const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
 
     this.reduxStore.dispatch(
       putSentimentValueStory(
         this.client,
-        currentSearchState.aiAnswersResult.id,
-        currentSearchState.aiAnswersSentiment === 'positive' ? 'neutral' : 'positive'
+        currentAiAnswersState.result.id,
+        currentAiAnswersState.sentiment === 'positive' ? 'neutral' : 'positive'
       )
     );
   }
 
   handleThumbsDownClick() {
-    const currentSearchState = this.reduxStore.getState().search;
+    const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
 
     this.reduxStore.dispatch(
       putSentimentValueStory(
         this.client,
-        currentSearchState.aiAnswersResult.id,
-        currentSearchState.aiAnswersSentiment === 'negative' ? 'neutral' : 'negative'
+        currentAiAnswersState.result.id,
+        currentAiAnswersState.sentiment === 'negative' ? 'neutral' : 'negative'
       )
     );
   }
@@ -197,9 +197,9 @@ export default class AiAnswersresult {
 
     if (!answerContainer || !showMoreBtn || !buttonText || !fadeOutOverlay || !chevron) return;
 
-    const clickSearchState = this.reduxStore.getState().search;
+    const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
 
-    if (clickSearchState.isAiAnswersAnswerExpanded) {
+    if (currentAiAnswersState.answerExpanded) {
       this.reduxStore.dispatch({
         type: SET_AI_ANSWERS_ANSWER_EXPANDED,
         payload: false
@@ -225,7 +225,7 @@ export default class AiAnswersresult {
   }
 
   handleToggleHideClick() {
-    const isHidden = this.reduxStore.getState().search.isAiAnswersHidden;
+    const isHidden = this.reduxStore.getState().aiAnswers.hidden;
 
     this.reduxStore.dispatch({
       type: SET_AI_ANSWERS_HIDDEN,
@@ -315,18 +315,16 @@ export default class AiAnswersresult {
       return false;
     }
 
-    return (
-      this.isAnimating && !state.aiAnswersResultError && this.lastAnswerId === currentResult.id
-    );
+    return this.isAnimating && !state.error && this.lastAnswerId === currentResult.id;
   }
 
   handleStateChanges(state, currentResult, isAiAnswersResultLoading, isAiAnswersHidden) {
-    const currentSentiment = state.aiAnswersSentiment;
+    const currentSentiment = state.sentiment;
 
     const needsFullRender =
       this.cachedLoadingState !== isAiAnswersResultLoading ||
       this.lastAnswerId !== currentResult.id ||
-      state.aiAnswersResultError ||
+      state.error ||
       this.cachedHiddenState !== isAiAnswersHidden ||
       this.cachedSentimentState !== currentSentiment;
 
@@ -349,11 +347,11 @@ export default class AiAnswersresult {
   }
 
   observeResultLoadingState() {
-    observeStoreByKey(this.reduxStore, 'search', (state) => {
-      const currentResult = state.aiAnswersResult;
+    observeStoreByKey(this.reduxStore, 'aiAnswers', (state) => {
+      const currentResult = state.result;
       const newContent = currentResult.answerText;
-      const isAiAnswersResultLoading = state.loadingAiAnswersResult;
-      const isAiAnswersHidden = state.isAiAnswersHidden;
+      const isAiAnswersResultLoading = state.loading;
+      const isAiAnswersHidden = state.hidden;
 
       // Handle streaming content updates
       if (this.handleStreamingUpdate(currentResult, newContent, isAiAnswersResultLoading)) return;
@@ -381,8 +379,8 @@ export default class AiAnswersresult {
     }
 
     // During streaming: no height restrictions, let content grow naturally
-    const currentSearchState = this.reduxStore.getState().search;
-    const isStreaming = currentSearchState.aiAnswersResult.isStreaming;
+    const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
+    const isStreaming = currentAiAnswersState.result.isStreaming;
 
     if (isStreaming) {
       answerContainer.style.maxHeight = 'none';
@@ -391,7 +389,7 @@ export default class AiAnswersresult {
       return; // Exit early - apply normal logic after streaming completes
     }
 
-    if (currentSearchState.isAiAnswersAnswerExpanded) {
+    if (currentAiAnswersState.answerExpanded) {
       // Display "show less" button
       answerContainer.style.maxHeight = `${answerContainer.scrollHeight}px`;
       showMoreBtn.style.display = 'flex';
@@ -566,8 +564,8 @@ export default class AiAnswersresult {
     const displayedHtml = this.parseMarkdown(this.actualContent);
     this.updateAnswerTextOnly(displayedHtml);
 
-    const currentSearchState = this.reduxStore.getState().search;
-    const currentResult = currentSearchState.aiAnswersResult;
+    const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
+    const currentResult = currentAiAnswersState.result;
     const isStreamingComplete = !currentResult.isStreaming;
 
     if (isStreamingComplete) {
@@ -627,12 +625,12 @@ export default class AiAnswersresult {
   }
 
   render() {
-    const currentSearchState = this.reduxStore.getState().search;
-    const currentAiAnswersResult = currentSearchState.aiAnswersResult;
-    const currentlyLoadingAiAnswersResult = currentSearchState.loadingAiAnswersResult;
+    const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
+    const currentAiAnswersResult = currentAiAnswersState.result;
+    const currentlyLoadingAiAnswersResult = currentAiAnswersState.loading;
     const currentKeywordState = this.reduxStore.getState().keyword;
     const keyword = currentKeywordState.value;
-    const hadErrorFetchingAiAnswersResult = currentSearchState.aiAnswersResultError;
+    const hadErrorFetchingAiAnswersResult = currentAiAnswersState.error;
 
     const handlebarTemplateProps = {
       mainHeadlineText: this.conf.mainHeadlineText || 'Answer',
@@ -642,9 +640,9 @@ export default class AiAnswersresult {
       aiExplanationText: this.conf.aiExplanationText || 'Generated by AI, may contain errors.',
       isResultLoading: currentlyLoadingAiAnswersResult,
       hadError: hadErrorFetchingAiAnswersResult,
-      sentimentState: currentSearchState.aiAnswersSentiment,
+      sentimentState: currentAiAnswersState.sentiment,
       showHideToggle: this.conf.hasHideToggle === undefined ? true : this.conf.hasHideToggle,
-      isHidden: currentSearchState.isAiAnswersHidden,
+      isHidden: currentAiAnswersState.hidden,
       shouldAnimateButtons: this.shouldAnimateButtonsForCurrentAnswer
     };
 
