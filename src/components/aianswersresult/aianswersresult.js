@@ -166,25 +166,19 @@ export default class AiAnswersresult {
 
   handleThumbsUpClick() {
     const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
+    const newSentiment = currentAiAnswersState.sentiment === 'positive' ? 'neutral' : 'positive';
 
     this.reduxStore.dispatch(
-      putSentimentValueStory(
-        this.client,
-        currentAiAnswersState.result.id,
-        currentAiAnswersState.sentiment === 'positive' ? 'neutral' : 'positive'
-      )
+      putSentimentValueStory(this.client, currentAiAnswersState.result.id, newSentiment)
     );
   }
 
   handleThumbsDownClick() {
     const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
+    const sentiment = currentAiAnswersState.sentiment === 'negative' ? 'neutral' : 'negative';
 
     this.reduxStore.dispatch(
-      putSentimentValueStory(
-        this.client,
-        currentAiAnswersState.result.id,
-        currentAiAnswersState.sentiment === 'negative' ? 'neutral' : 'negative'
-      )
+      putSentimentValueStory(this.client, currentAiAnswersState.result.id, sentiment)
     );
   }
 
