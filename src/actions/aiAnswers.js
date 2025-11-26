@@ -28,7 +28,7 @@ export function fetchAiAnswersResultStory(client, keyword) {
     client.aiAnswers(keyword, (response) => {
       const state = getState();
 
-      if (state.search.currentAiAnswersRequestId !== requestId) {
+      if (state.aiAnswers.currentRequestId !== requestId) {
         return;
       }
 
@@ -44,7 +44,7 @@ export function fetchAiAnswersResultStory(client, keyword) {
         dispatch({ type: AI_ANSWERS_RESULT_ERROR, payload: true });
       } else {
         const aiAnswersResult = createAiAnswersData(response);
-        if (!state.search.aiAnswersResult.id) {
+        if (!state.aiAnswers.result.id) {
           dispatch({
             type: SET_AI_ANSWERS_SENTIMENT,
             payload: 'neutral'
