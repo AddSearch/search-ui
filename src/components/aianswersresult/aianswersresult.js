@@ -85,7 +85,7 @@ export default class AiAnswersresult {
       });
     }
 
-    if (this.conf.expandByDefault) {
+    if (this.conf.expandByDefault !== false) {
       this.reduxStore.dispatch({
         type: SET_AI_ANSWERS_ANSWER_EXPANDED,
         payload: true

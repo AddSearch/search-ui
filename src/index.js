@@ -278,6 +278,9 @@ export default class AddSearchUI {
 
   aiAnswersResult(conf) {
     this.shouldInitializeFromBrowserHistory = true;
+    if (typeof this.client.useAiAnswersStream === 'function') {
+      this.client.useAiAnswersStream(true);
+    }
 
     new Aianswersresult(this.client, this.reduxStore, conf);
   }
