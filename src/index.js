@@ -16,7 +16,11 @@ import Aianswersresult from './components/aianswersresult';
 import SegmentedResults from './components/segmentedresults';
 import SortBy from './components/sortby';
 import { initRedux } from './store';
-import { setExternalAnalyticsCallback, setCollectAnalytics } from './util/analytics';
+import {
+  setExternalAnalyticsCallback,
+  setCollectAnalytics,
+  setAnalyticsKeywordInterceptor
+} from './util/analytics';
 import { registerDefaultHelpers, registerHelper, registerPartial } from './util/handlebars';
 import { initFromUrlOrBrowserStorage, setHistory, HISTORY_PARAMETERS } from './util/history';
 import { autocompleteHide } from './actions/autocomplete';
@@ -61,6 +65,7 @@ export default class AddSearchUI {
     this.client.setCollectAnalytics(false);
     setExternalAnalyticsCallback(this.settings.analyticsCallback);
     setCollectAnalytics(this.settings.collectAnalytics);
+    setAnalyticsKeywordInterceptor(this.settings.analyticsKeywordInterceptor);
 
     this.reduxStore.dispatch(setSearchResultsPageUrl(this.settings.searchResultsPageUrl));
 
@@ -378,6 +383,10 @@ export default class AddSearchUI {
 
   setCollectAnalytics(collect) {
     setCollectAnalytics(collect);
+  }
+
+  setAnalyticsKeywordInterceptor(interceptor) {
+    setAnalyticsKeywordInterceptor(interceptor);
   }
 
   pauseSegmentedSearch(pause) {

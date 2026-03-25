@@ -92,6 +92,7 @@ The configuration object can contain following values:
 |-------------------------|-----------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | debug                   | boolean                     | false             | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools)                                                              |
 | analyticsCallback       | function                    | n/a               | A function to call when an analytics event occurs. [Read more](#analytics)                                                                                |
+| analyticsKeywordInterceptor | function                | n/a               | A function to intercept and modify `keyword` before analytics events are sent. [Read more](#analytics)                                                   |
 | baseFilters             | object                      | null              | A filter object that is applied to all searches under the hood. The user can't disable baseFilters                                                        |
 | collectAnalytics        | boolean                     | true              | Control if analytics events are collected at all                                                                                                          |
 | matchAllQuery           | boolean                     | false             | Execute "match all" query when the Search UI is started                                                                                                   |
@@ -1114,6 +1115,18 @@ if a result is clicked within this debounce time.
 To save clicks reliably before the user's browser leaves the page, it's recommended to use the
 [navigator.sendBeacon](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon)
 method.
+
+You can intercept and modify analytics keywords before events are sent by passing
+_analyticsKeywordInterceptor_ in the Search UI configuration.
+
+```js
+var searchui = new AddSearchUI(client, {
+  analyticsKeywordInterceptor: function (event) {
+    // Replace phone-like patterns with a placeholder before sending analytics
+    return event.keyword.replace(/\+?\d[\d\s().-]{6,}\d/g, '[REDACTED]');
+  }
+});
+```
 
 ## Supported web browsers
 
