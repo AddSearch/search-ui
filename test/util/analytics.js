@@ -2,20 +2,20 @@ var assert = require('assert');
 var analytics = require('../../src/util/analytics');
 
 function withImmediateTimers(cb) {
-  const originalSetTimeout = global.setTimeout;
-  const originalClearTimeout = global.clearTimeout;
+  const originalSetTimeout = globalThis.setTimeout;
+  const originalClearTimeout = globalThis.clearTimeout;
 
-  global.setTimeout = (fn) => {
+  globalThis.setTimeout = (fn) => {
     fn();
     return 1;
   };
-  global.clearTimeout = () => {};
+  globalThis.clearTimeout = () => {};
 
   try {
     cb();
   } finally {
-    global.setTimeout = originalSetTimeout;
-    global.clearTimeout = originalClearTimeout;
+    globalThis.setTimeout = originalSetTimeout;
+    globalThis.clearTimeout = originalClearTimeout;
   }
 }
 

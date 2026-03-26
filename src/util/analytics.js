@@ -42,7 +42,7 @@ function getAnalyticsKeyword(action, keyword, payload) {
       return interceptedKeyword;
     }
   } catch (e) {
-    // Keep original keyword on interceptor failure
+    console.warn('analyticsKeywordInterceptor error:', e);
   }
 
   return keyword;
