@@ -92,6 +92,7 @@ The configuration object can contain following values:
 |-------------------------|-----------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | debug                   | boolean                     | false             | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools)                                                              |
 | analyticsCallback       | function                    | n/a               | A function to call when an analytics event occurs. [Read more](#analytics)                                                                                |
+| analyticsKeywordInterceptor | function                | n/a               | A function to intercept and modify `keyword` before dashboard analytics events are sent. Does not affect search API requests or browser history. [Read more](#analytics) |
 | baseFilters             | object                      | null              | A filter object that is applied to all searches under the hood. The user can't disable baseFilters                                                        |
 | collectAnalytics        | boolean                     | true              | Control if analytics events are collected at all                                                                                                          |
 | matchAllQuery           | boolean                     | false             | Execute "match all" query when the Search UI is started                                                                                                   |
@@ -1114,6 +1115,28 @@ if a result is clicked within this debounce time.
 To save clicks reliably before the user's browser leaves the page, it's recommended to use the
 [navigator.sendBeacon](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon)
 method.
+
+You can intercept and modify keywords before dashboard analytics events are sent by passing
+_analyticsKeywordInterceptor_ in the Search UI configuration. The interceptor receives an object
+with `{ action, keyword, payload }` and must return a string. The `action` is `'search'` or
+`'click'`, and `payload` contains event-specific data (e.g. `numberOfResults`, `documentId`).
+
+**Note:** This only affects analytics events sent to the AddSearch dashboard and the
+`analyticsCallback`. It does not modify keywords sent to the Search API or stored in browser
+history/URL.
+
+If the interceptor throws an error or returns a non-string value, the original keyword is sent
+unchanged.
+
+```js
+var searchui = new AddSearchUI(client, {
+  analyticsKeywordInterceptor: function (event) {
+    // event: { action: 'search'|'click', keyword: string, payload: object }
+    // Replace phone-like patterns with a placeholder before sending analytics
+    return event.keyword.replace(/\+?\d[\d\s().-]{6,}\d/g, '[REDACTED]');
+  }
+});
+```
 
 ## Supported web browsers
 

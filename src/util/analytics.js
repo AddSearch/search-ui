@@ -24,6 +24,31 @@ export function setCollectAnalytics(collect) {
 }
 
 /**
+ * Possibility to intercept analytics keyword before sending analytics events
+ */
+let analyticsKeywordInterceptor = null;
+export function setAnalyticsKeywordInterceptor(cb) {
+  analyticsKeywordInterceptor = typeof cb === 'function' ? cb : null;
+}
+
+function getAnalyticsKeyword(action, keyword, payload) {
+  if (!analyticsKeywordInterceptor) {
+    return keyword;
+  }
+
+  try {
+    const interceptedKeyword = analyticsKeywordInterceptor({ action, keyword, payload });
+    if (typeof interceptedKeyword === 'string') {
+      return interceptedKeyword;
+    }
+  } catch (e) {
+    console.warn('analyticsKeywordInterceptor error:', e);
+  }
+
+  return keyword;
+}
+
+/**
  * Send info on search results to analytics
  */
 let sendSearchStatsTimeout = null;
@@ -40,8 +65,15 @@ export function sendSearchStats(client, keyword, numberOfResults, processingTime
   sendSearchStatsTimeout = setTimeout(() => {
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== previousKeyword) {
-      client.sendStatsEvent(action, keyword, { numberOfResults });
-      callExternalAnalyticsCallback({ action, keyword, numberOfResults, processingTimeMs });
+      const payload = { numberOfResults, processingTimeMs };
+      const analyticsKeyword = getAnalyticsKeyword(action, keyword, payload);
+      client.sendStatsEvent(action, analyticsKeyword, { numberOfResults });
+      callExternalAnalyticsCallback({
+        action,
+        keyword: analyticsKeyword,
+        numberOfResults,
+        processingTimeMs
+      });
       previousKeyword = keyword;
       searchStatsSent = true;
     }
@@ -64,9 +96,11 @@ export function sendAutocompleteStats(keyword, statsArray) {
   autocompleteStatsTimeout = setTimeout(() => {
     // Don't send if keyword not changed (i.e. filters changed)
     if (keyword !== autocompletePreviousKeyword) {
-      statsArray.forEach((c) =>
-        c.client.sendStatsEvent(action, keyword, { numberOfResults: c.numberOfResults })
-      );
+      statsArray.forEach((c, sourceIndex) => {
+        const payload = { numberOfResults: c.numberOfResults, sourceIndex };
+        const analyticsKeyword = getAnalyticsKeyword(action, keyword, payload);
+        c.client.sendStatsEvent(action, analyticsKeyword, { numberOfResults: c.numberOfResults });
+      });
       autocompletePreviousKeyword = keyword;
       searchStatsSent = true;
     }
@@ -120,9 +154,16 @@ function onLinkClick(e, client, searchResults) {
     documentId
   );
   const keyword = client.getSettings().keyword;
+  const clickPayload = { documentId, position };
+  const analyticsKeyword = getAnalyticsKeyword('click', keyword, clickPayload);
 
-  client.sendStatsEvent('click', keyword, { documentId, position });
-  callExternalAnalyticsCallback({ action: 'click', keyword, documentId, position });
+  client.sendStatsEvent('click', analyticsKeyword, { documentId, position });
+  callExternalAnalyticsCallback({
+    action: 'click',
+    keyword: analyticsKeyword,
+    documentId,
+    position
+  });
 
   // Search stats were not sent within SEARCH_ANALYTICS_DEBOUNCE_TIME
   if (searchStatsSent === false) {
@@ -140,9 +181,16 @@ function onLinkClick(e, client, searchResults) {
       ? searchResults.total_hits || searchResults.hits?.length
       : 0;
     const processingTimeMs = searchResults ? searchResults.processing_time_ms : 0;
-    client.sendStatsEvent('search', keyword, { numberOfResults });
+    const searchPayload = { numberOfResults, processingTimeMs };
+    const searchKeyword = getAnalyticsKeyword('search', keyword, searchPayload);
+    client.sendStatsEvent('search', searchKeyword, { numberOfResults });
     searchStatsSent = true;
-    callExternalAnalyticsCallback({ action: 'search', keyword, numberOfResults, processingTimeMs });
+    callExternalAnalyticsCallback({
+      action: 'search',
+      keyword: searchKeyword,
+      numberOfResults,
+      processingTimeMs
+    });
   }
 }
 
