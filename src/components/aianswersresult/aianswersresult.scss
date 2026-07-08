@@ -318,6 +318,47 @@
     }
   }
 
+  .answer-footer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .continue-chat-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    margin-left: auto;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 9999px;
+    background-color: #1969cc; /* brand #177fff fails WCAG AA contrast on white */
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 80%;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #14529e;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #0066cc;
+      outline-offset: 2px;
+    }
+
+    .chevron-right {
+      flex-shrink: 0;
+    }
+
+    @media all and (max-width: 480px) {
+      font-size: 70%;
+    }
+  }
+
   .show-more-btn {
     margin-top: 10px;
     display: none;

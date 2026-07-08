@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>AddSearch Search UI: Unified AI Experience</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta charset="UTF-8" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/addsearch-js-client@1.2.5/dist/addsearch-js-client.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../../dist/addsearch-search-ui.min.js"></script>
+    <link rel="stylesheet" href="../../dist/addsearch-search-ui.min.css" />
+
+    <style type="text/css">
+      body {
+        font-family: 'Lato', sans-serif;
+        min-width: 320px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Containers. Search UI components will be added inside these divs -->
+    <div id="searchfield"></div>
+    <div id="ai-answers-result-container"></div>
+    <div id="results"></div>
+
+    <script>
+      // AddSearch JS client with an example index. Get your own SITEKEY by signing up at www.addsearch.com
+      var answerId = null;
+      var client = new AddSearchClient('82b34461f88ea8d0f6c6e26ed89d07b1');
+      var config = {
+        hasAiAnswers: true
+      };
+
+      // Search UI instance
+      var searchui = new AddSearchUI(client, config);
+
+      // Add components
+      searchui.searchField({
+        containerId: 'searchfield',
+        placeholder: 'Keyword..',
+        button: 'Search',
+        searchAsYouType: false
+      });
+
+      searchui.searchResults({
+        containerId: 'results'
+      });
+
+      searchui.aiAnswersResult({
+        containerId: 'ai-answers-result-container',
+        mainHeadlineText: 'AI-generated answer',
+        answerMaxHeight: 150,
+        sourcesHeadlineText: 'Based on the following sources:',
+        hasHideToggle: true,
+        hasContinueChatButton: true,
+        continueChatButtonText: 'Continue in Chat',
+        onContinueChatClick: function (payload) {
+          if (payload.answerId !== answerId) {
+            window.ConversationalSearchWidget.open({
+              startNewConversation: true,
+              question: payload.question
+            });
+            answerId = payload.answerId;
+          } else {
+            window.ConversationalSearchWidget.open();
+          }
+        }
+      });
+
+      // All components added. Start
+      searchui.start();
+    </script>
+
+    <button
+      type="text"
+      text="trigger"
+      class="search-input addsearch-search-icon"
+      data-addsearch-view-mode="search"
+    >
+      Trigger button
+    </button>
+
+    <script src="https://cdn.addsearch.com/ai-conversations/v0/ready-made-conversational-search-widget.min.js?site_key=82b34461f88ea8d0f6c6e26ed89d07b1"></script>
+  </body>
+</html>

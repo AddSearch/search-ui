@@ -159,26 +159,50 @@
         </div>
 
         {{#unless isResultLoading}}
-          <button class='show-more-btn' type="button" aria-controls="ai-answer-content" aria-expanded="false">
-            <span class='button-text'>Show more</span>
-            <svg
-              class='chevron'
-              width='24'
-              height='24'
-              viewBox='0 0 24 24'
-              fill='none'
-              xmlns='http://www.w3.org/2000/svg'
-              aria-hidden='true'
-            >
-              <path
-                d='M6 9L12 15L18 9'
-                stroke='#177FFF'
-                stroke-width='2'
-                stroke-linecap='round'
-                stroke-linejoin='round'
-              />
-            </svg>
-          </button>
+          <div class='answer-footer'>
+            <button class='show-more-btn' type="button" aria-controls="ai-answer-content" aria-expanded="false">
+              <span class='button-text'>Show more</span>
+              <svg
+                class='chevron'
+                width='24'
+                height='24'
+                viewBox='0 0 24 24'
+                fill='none'
+                xmlns='http://www.w3.org/2000/svg'
+                aria-hidden='true'
+              >
+                <path
+                  d='M6 9L12 15L18 9'
+                  stroke='#177FFF'
+                  stroke-width='2'
+                  stroke-linecap='round'
+                  stroke-linejoin='round'
+                />
+              </svg>
+            </button>
+            {{#if showContinueChatButton}}
+              <button class='continue-chat-btn' type='button'>
+                <span class='button-text'>{{continueChatButtonText}}</span>
+                <svg
+                  class='chevron-right'
+                  width='20'
+                  height='20'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  xmlns='http://www.w3.org/2000/svg'
+                  aria-hidden='true'
+                >
+                  <path
+                    d='M9 6L15 12L9 18'
+                    stroke='currentColor'
+                    stroke-width='2'
+                    stroke-linecap='round'
+                    stroke-linejoin='round'
+                  />
+                </svg>
+              </button>
+            {{/if}}
+          </div>
         {{/unless}}
       </div>
     {{/if}}
