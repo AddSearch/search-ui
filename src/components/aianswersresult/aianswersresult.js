@@ -795,6 +795,8 @@ export default class AiAnswersresult {
     }
 
     const container = document.getElementById(this.conf.containerId);
+    if (!container) return;
+
     container.innerHTML = html;
     this.renderedHtml = html;
 
