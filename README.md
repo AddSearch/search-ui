@@ -88,22 +88,22 @@ var searchui = new AddSearchUI(client, conf);
 
 The configuration object can contain following values:
 
-| Key                     | Possible values             | Default value     | Description                                                                                                                                               |
-|-------------------------|-----------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| debug                   | boolean                     | false             | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools)                                                              |
-| analyticsCallback       | function                    | n/a               | A function to call when an analytics event occurs. [Read more](#analytics)                                                                                |
-| analyticsKeywordInterceptor | function                | n/a               | A function to intercept and modify `keyword` before dashboard analytics events are sent. Does not affect search API requests or browser history. [Read more](#analytics) |
-| baseFilters             | object                      | null              | A filter object that is applied to all searches under the hood. The user can't disable baseFilters                                                        |
-| collectAnalytics        | boolean                     | true              | Control if analytics events are collected at all                                                                                                          |
-| matchAllQuery           | boolean                     | false             | Execute "match all" query when the Search UI is started                                                                                                   |
-| onFilterChange          | function                    | n/a               | Function to call when active filters are changed (for conditional visibility)                                                                             |
-| onFilteredSearchRefresh | function                    | n/a               | Function to call when search results are refreshed due to changes in filters or facets                                                                    |
-| searchResultsPageUrl    | String                      | null              | Redirect the user to a separate search results page, instead of showing search results on the current page                                                |
-| searchParameter         | String                      | "search"          | Name of the search parameter which is added to the URL, by default the library adds "?search="                                                            |
-| updateBrowserHistory    | boolean                     | true              | Set this value to false for a second/third searchui's instance to prevent conflict in browser's URL                                                       |
-| fieldForInstantRedirect | String                      | n/a               | Checking if the search keyword is matching with any search result's custom field's value, then redirect users to the matched page. E.g. custom_fields.sku |
-| hasAiAnswers            | String                      | false             | Enable fetching AI Answers API                                                                                                                            |
-| searchPersistence       | "url" \|  'session-storage' | "url"             | Store historical search data in URL's GET parameter or in browser's session storage.                                                                      |
+| Key                         | Possible values            | Default value | Description                                                                                                                                                              |
+| --------------------------- | -------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| debug                       | boolean                    | false         | Log events to console and enable [Redux DevTools](https://github.com/reduxjs/redux-devtools)                                                                             |
+| analyticsCallback           | function                   | n/a           | A function to call when an analytics event occurs. [Read more](#analytics)                                                                                               |
+| analyticsKeywordInterceptor | function                   | n/a           | A function to intercept and modify `keyword` before dashboard analytics events are sent. Does not affect search API requests or browser history. [Read more](#analytics) |
+| baseFilters                 | object                     | null          | A filter object that is applied to all searches under the hood. The user can't disable baseFilters                                                                       |
+| collectAnalytics            | boolean                    | true          | Control if analytics events are collected at all                                                                                                                         |
+| matchAllQuery               | boolean                    | false         | Execute "match all" query when the Search UI is started                                                                                                                  |
+| onFilterChange              | function                   | n/a           | Function to call when active filters are changed (for conditional visibility)                                                                                            |
+| onFilteredSearchRefresh     | function                   | n/a           | Function to call when search results are refreshed due to changes in filters or facets                                                                                   |
+| searchResultsPageUrl        | String                     | null          | Redirect the user to a separate search results page, instead of showing search results on the current page                                                               |
+| searchParameter             | String                     | "search"      | Name of the search parameter which is added to the URL, by default the library adds "?search="                                                                           |
+| updateBrowserHistory        | boolean                    | true          | Set this value to false for a second/third searchui's instance to prevent conflict in browser's URL                                                                      |
+| fieldForInstantRedirect     | String                     | n/a           | Checking if the search keyword is matching with any search result's custom field's value, then redirect users to the matched page. E.g. custom_fields.sku                |
+| hasAiAnswers                | String                     | false         | Enable fetching AI Answers API                                                                                                                                           |
+| searchPersistence           | "url" \| 'session-storage' | "url"         | Store historical search data in URL's GET parameter or in browser's session storage.                                                                                     |
 
 After all UI components have been added to the SearchUI object, the start function must be called:
 
@@ -128,13 +128,13 @@ searchui.searchField({
 Settings that can be passed to the `searchField` function:
 
 | Key                              | Possible values                          | Default value                                                                                                                                 | Description                                                                                                                                                                                                                              |
-|----------------------------------| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | containerId                      | String                                   | n/a                                                                                                                                           | ID of the HTML element that will act as a container for the search bar                                                                                                                                                                   |
 | autofocus                        | boolean                                  | true                                                                                                                                          | Focus the input field automatically when the page is loaded                                                                                                                                                                              |
 | button                           | String                                   | n/a                                                                                                                                           | Add a button to execute the search. The value of this field is the Button's label text                                                                                                                                                   |
 | placeholder                      | String                                   | n/a                                                                                                                                           | Search field's placeholder text                                                                                                                                                                                                          |
 | searchAsYouType                  | boolean                                  | false                                                                                                                                         | Execute search after every keystroke                                                                                                                                                                                                     |
-| disableSearch                    | boolean                                  | false                                                                                                                                         | Enable only when using SegmentedSearchResults and you want to prevent SearchField from triggering additional queries                                                                                                                              |
+| disableSearch                    | boolean                                  | false                                                                                                                                         | Enable only when using SegmentedSearchResults and you want to prevent SearchField from triggering additional queries                                                                                                                     |
 | icon                             | boolean                                  | true                                                                                                                                          | Show search icon                                                                                                                                                                                                                         |
 | ignoreAutocomplete               | boolean                                  | false                                                                                                                                         | Don't show the autocomplete component if something is typed to this field (in case you have multiple fields)                                                                                                                             |
 | ignoreSearchResultsPageUrl       | boolean                                  | false                                                                                                                                         | Don't redirect the user to a search results page from this field (in case you have multiple fields)                                                                                                                                      |
@@ -390,7 +390,7 @@ Settings that can be passed to the `loadMore` function:
 | containerId           | String                                                                        | n/a                                                                                                                                     | ID of the HTML element that will act as a container for the component                                                                    |
 | template              | String                                                                        | n/a                                                                                                                                     | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template                                             |
 | type                  | AddSearchUI.LOAD_MORE_TYPE.BUTTON, AddSearchUI.LOAD_MORE_TYPE.INFINITE_SCROLL | n/a                                                                                                                                     | Require user clicking "More results" button or load automatically on scroll bottom                                                       |
-| infiniteScrollElement | object                                                                        | n/a                                                                                                                                     | If the type is INFINITE_SCROLL, this is the scrollable element. Can be **window** or an HTML element with _overflow: auto;_              |
+| infiniteScrollElement | object                                                                        | n/a                                                                                                                                     | If the type is `INFINITE_SCROLL`, this is the scrollable element. Can be **window** or an HTML element with `overflow: auto;`            |
 | precompiledTemplate   | Handlebars precompiled template function                                      | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/loadmore/precompile-templates/loadmore.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template |
 
 To change the number of results shown per page, use AddSearch JS client's
@@ -510,7 +510,7 @@ searchui.filters({
 Settings that can be passed to the `filters` function:
 
 | Key                 | Possible values                                                                                                                                                                                             | Default value                                                                                                       | Description                                                                                                                                            |
-|---------------------| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | containerId         | String                                                                                                                                                                                                      | n/a                                                                                                                 | ID of the HTML element that will act as a container for filters                                                                                        |
 | label               | String                                                                                                                                                                                                      | n/a                                                                                                                 | Give label to filter group for better accessibility                                                                                                    |
 | type                | AddSearchUI.FILTER_TYPE.CHECKBOX_GROUP, AddSearchUI.FILTER_TYPE.RADIO_GROUP, AddSearchUI.FILTER_TYPE.SELECT_LIST, AddSearchUI.FILTER_TYPE.TABS, AddSearchUI.FILTER_TYPE.TAGS, AddSearchUI.FILTER_TYPE.RANGE | n/a                                                                                                                 | Component's type                                                                                                                                       |
@@ -884,8 +884,8 @@ Settings that can be passed to the `segmentedSearchResults` function:
 
 ### Ai answers result
 
-Area to display generated AI Answers.
-To allow fetching AI Answers, you need to set "hasAiAnswers" to true in the searchui instance's configuration.
+Area to display generated AI Answers. To allow fetching AI Answers, you need to set "hasAiAnswers"
+to true in the searchui instance's configuration.
 
 ```js
 searchui.aiAnswersResult({
@@ -899,18 +899,47 @@ searchui.aiAnswersResult({
 
 Settings that can be passed to the `aiAnswersResult` function:
 
+| Key                    | Possible values                          | Default value                                                                                                                                         | Description                                                                                                                                                                                                     |
+| ---------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| containerId            | String                                   | n/a                                                                                                                                                   | ID of the HTML element that will act as a container for search results                                                                                                                                          |
+| mainHeadlineText       | String                                   | "Answer"                                                                                                                                              | Main headline text                                                                                                                                                                                              |
+| answerMaxHeight        | Integer                                  | 150                                                                                                                                                   | Max height (in pixel) of the answer area                                                                                                                                                                        |
+| sourcesHeadlineText    | String                                   | "Sources:"                                                                                                                                            | Headline text of the sources list                                                                                                                                                                               |
+| aiExplanationText      | String                                   | "Generated by AI, may contain errors."                                                                                                                | Explanation text shown in the component header                                                                                                                                                                  |
+| hasHideToggle          | Boolean                                  | true                                                                                                                                                  | Display toggle to show/hide generated answers                                                                                                                                                                   |
+| template               | String                                   | n/a                                                                                                                                                   | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template                                                                                                                    |
+| precompiledTemplate    | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/aianswersresult/precompile-templates/aianswersresult.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template                                                                        |
+| expandByDefault        | Boolean                                  | true                                                                                                                                                  | Expand full answer by default. Set to false to show answers collapsed initially                                                                                                                                 |
+| hasContinueChatButton  | Boolean                                  | false                                                                                                                                                 | Display the "Continue in Chat" button in the bottom-right corner of the answer box (shown once the answer has finished generating)                                                                              |
+| continueChatButtonText | String                                   | "Continue in Chat"                                                                                                                                    | Label of the "Continue in Chat" button                                                                                                                                                                          |
+| onContinueChatClick    | function                                 | n/a                                                                                                                                                   | Callback function invoked when the "Continue in Chat" button is clicked. Receives a payload object (see below)                                                                                                  |
+| onEvent                | function                                 | n/a                                                                                                                                                   | Callback function invoked when users interact with AI answers or when answers are displayed. (Event types: "answer_displayed", "sentiment_clicked", "answer_copied", "source_clicked", "continue_chat_clicked") |
 
-| Key                 | Possible values                          | Default value                                                                                                                                         | Description                                                                                                                                                            |
-|---------------------|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| containerId         | String                                   | n/a                                                                                                                                                   | ID of the HTML element that will act as a container for search results                                                                                                 |
-| mainHeadlineText    | String                                   | "Answer"                                                                                                                                              | Main headline text                                                                                                                                                     |
-| answerMaxHeight     | Integer                                  | 150                                                                                                                                                   | Max height (in pixel) of the answer area                                                                                                                               |
-| sourcesHeadlineText | String                                   | "Sources"                                                                                                                                             | Headline text of "Sources"_                                                                                                                                            |
-| hasHideToggle       | Boolean                                  | true                                                                                                                                                  | Display toggle to show/hide generated answers                                                                                                                          |
-| precompiledTemplate | Handlebars precompiled template function | [Default template](https://github.com/AddSearch/search-ui/blob/master/src/components/aianswersresult/precompile-templates/aianswersresult.handlebars) | Override the default template with a custom [Handlebars precompiled](https://handlebarsjs.com/installation/precompilation.html) template                               |
-| expandByDefault     | Boolean                                  | false                                                                                                                                                 | Expand full answer by default                                                                                                                                          |
-| onEvent             | function                                 | n/a                                                                                                                                                   | Callback function invoked when users interact with AI answers or when answers are displayed. (Event types: "answer_displayed", "sentiment_clicked", "answer_copied", "source_clicked") |
+#### "Continue in Chat" button
 
+The button is opt-in (`hasContinueChatButton: true`) and appears in the bottom-right corner of the
+answer box once the answer has finished generating. Clicking it invokes `onContinueChatClick` with
+the following payload:
+
+```js
+{
+  type: 'continue_chat_clicked',
+  answerId: 'conv-abc123',      // id of the answer currently shown
+  question: 'how do I ...',     // the query that produced this answer
+  answerText: '...',            // full generated answer (markdown source)
+  sources: [{ id, url, title }, ...],
+  sentiment: 'neutral' | 'positive' | 'negative',
+  clickCount: 1                 // 1-based count of clicks on THIS answer
+}
+```
+
+Use `answerId` and `clickCount` to differentiate repeat clicks from clicks on a new answer: repeated
+clicks on the same answer carry the same `answerId` with `clickCount` incrementing (1, 2, ...),
+while a click after a new question produces a new `answerId` with `clickCount` reset to 1.
+
+Note: the same payload is also delivered through the `onEvent` callback as event type
+`"continue_chat_clicked"`. If you configure both `onContinueChatClick` and `onEvent`, avoid handling
+the click twice.
 
 <details>
   <summary>Data structure used in aiAnswersResult component</summary>
@@ -918,18 +947,26 @@ Settings that can be passed to the `aiAnswersResult` function:
 ```
 {
   mainHeadlineText: 'Answer',
-  subHeadlineText: 'subHeadlineText',
   answerText: 'Answer text',
   sourcesHeadlineText: 'Sources:',
   sources: [],
   aiExplanationText: 'Generated by AI, may contain errors.',
   isResultLoading: false,
   hadError: false,
-  sentimentState: 'positive' | 'negative',
+  sentimentState: 'neutral' | 'positive' | 'negative',
   showHideToggle: true,
-  isHidden: false
+  isHidden: false,
+  shouldAnimateButtons: false,
+  showContinueChatButton: false,
+  continueChatButtonText: 'Continue in Chat'
 }
 ```
+
+If you override the default template via `template` or `precompiledTemplate`, you need to add the
+`.continue-chat-btn` markup yourself to get the "Continue in Chat" button — use the
+`showContinueChatButton` and `continueChatButtonText` template properties (see the
+[default template](https://github.com/AddSearch/search-ui/blob/master/src/components/aianswersresult/precompile-templates/aianswersresult.handlebars)
+for reference).
 
 </details>
 

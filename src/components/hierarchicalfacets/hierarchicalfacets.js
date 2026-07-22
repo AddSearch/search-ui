@@ -157,7 +157,9 @@ export default class HierarchicalFacets {
         arrows[i].setAttribute('aria-expanded', !isExpanded);
 
         // Update aria-label
-        const displayValue = arrows[i].getAttribute('aria-label').replace(/^(Expand|Collapse) /, '');
+        const displayValue = arrows[i]
+          .getAttribute('aria-label')
+          .replace(/^(Expand|Collapse) /, '');
         arrows[i].setAttribute('aria-label', (isExpanded ? 'Expand ' : 'Collapse ') + displayValue);
       });
     }

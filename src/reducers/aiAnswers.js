@@ -6,11 +6,9 @@ import {
   SET_AI_ANSWERS_ANSWER_EXPANDED,
   SET_AI_ANSWERS_HIDDEN,
   CLEAR_AI_ANSWERS_RESULT,
-  SET_CURRENT_AI_REQUEST_ID
+  SET_CURRENT_AI_REQUEST_ID,
+  SET_AI_ANSWERS_QUESTION
 } from '../actions/aiAnswers';
-
-// Note: Currently uses shared keyword.value from keyword reducer
-// Future: May add separate 'question' state for conversational AI features
 
 const initialState = {
   result: {
@@ -24,7 +22,8 @@ const initialState = {
   sentiment: 'neutral',
   answerExpanded: false,
   hidden: false,
-  currentRequestId: null
+  currentRequestId: null,
+  question: ''
 };
 
 export default function aiAnswers(state = initialState, action) {
@@ -56,6 +55,12 @@ export default function aiAnswers(state = initialState, action) {
       return {
         ...state,
         currentRequestId: action.payload
+      };
+
+    case SET_AI_ANSWERS_QUESTION:
+      return {
+        ...state,
+        question: action.payload
       };
 
     case AI_ANSWERS_RESULT_ERROR:

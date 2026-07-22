@@ -8,6 +8,7 @@ export const SET_AI_ANSWERS_ANSWER_EXPANDED = 'SET_AI_ANSWERS_ANSWER_EXPANDED';
 export const SET_AI_ANSWERS_HIDDEN = 'SET_AI_ANSWERS_HIDDEN';
 export const CLEAR_AI_ANSWERS_RESULT = 'CLEAR_AI_ANSWERS_RESULT';
 export const SET_CURRENT_AI_REQUEST_ID = 'SET_CURRENT_AI_REQUEST_ID';
+export const SET_AI_ANSWERS_QUESTION = 'SET_AI_ANSWERS_QUESTION';
 
 // Track current request ID to ignore callbacks from old requests
 let currentRequestId = 0;
@@ -21,6 +22,7 @@ export function fetchAiAnswersResultStory(client, keyword) {
     dispatch({ type: IS_LOADING_AI_ANSWERS, payload: true });
     dispatch({ type: CLEAR_AI_ANSWERS_RESULT });
     dispatch({ type: SET_CURRENT_AI_REQUEST_ID, payload: requestId });
+    dispatch({ type: SET_AI_ANSWERS_QUESTION, payload: keyword });
 
     // Track if this is the first chunk to avoid dispatching loading=false multiple times
     let isFirstChunk = true;

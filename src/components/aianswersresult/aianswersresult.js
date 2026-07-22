@@ -43,6 +43,8 @@ export default class AiAnswersresult {
     this.lastFinalizedAnswerId = null; // Last answer that received final render (complete with buttons/sources)
     this.shouldAnimateButtonsForCurrentAnswer = false; // Flag to animate buttons only on first final render
 
+    this.continueChatClickCount = 0;
+
     // State tracking for animations
     this.lastStreamingState = false;
     this.isBoostedSpeed = false;
@@ -142,6 +144,12 @@ export default class AiAnswersresult {
     // Thumbs down button
     if (target.closest('.thumbs-down-btn')) {
       this.handleThumbsDownClick();
+      return;
+    }
+
+    // Continue in Chat button
+    if (target.closest('.continue-chat-btn')) {
+      this.handleContinueChatClick();
       return;
     }
 
@@ -275,6 +283,35 @@ export default class AiAnswersresult {
       fadeOutOverlay.style.display = 'none';
       chevron.style.transform = 'rotate(180deg)';
     }
+  }
+
+  handleContinueChatClick() {
+    const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
+    const answerId = currentAiAnswersState.result.id;
+
+    if (!answerId || answerId !== this.lastFinalizedAnswerId) return;
+
+    this.continueChatClickCount += 1;
+
+    const buildPayload = () => ({
+      type: 'continue_chat_clicked',
+      answerId: answerId,
+      question: currentAiAnswersState.question,
+      answerText: currentAiAnswersState.result.answerText,
+      sources: currentAiAnswersState.result.sources.map((source) => ({ ...source })),
+      sentiment: currentAiAnswersState.sentiment,
+      clickCount: this.continueChatClickCount
+    });
+
+    if (typeof this.conf.onContinueChatClick === 'function') {
+      try {
+        this.conf.onContinueChatClick(buildPayload());
+      } catch (error) {
+        console.error('Error in AI Answers onContinueChatClick callback:', error);
+      }
+    }
+
+    this.callEventCallback(buildPayload());
   }
 
   handleToggleHideClick() {
@@ -639,18 +676,20 @@ export default class AiAnswersresult {
   }
 
   finalizeAnswer(answerId) {
+    // Sync lastAnswerId before render() so this answer isn't treated as new and re-finalized
+    this.lastAnswerId = answerId;
     this.lastFinalizedAnswerId = answerId;
+    this.continueChatClickCount = 0;
     this.shouldAnimateButtonsForCurrentAnswer = true; // Flag: next render should animate
     this.render();
     this.shouldAnimateButtonsForCurrentAnswer = false; // Reset after render
 
     // Trigger answer_displayed event
     const currentAiAnswersState = this.reduxStore.getState().aiAnswers;
-    const keywordState = this.reduxStore.getState().keyword;
     this.callEventCallback({
       type: 'answer_displayed',
       answerId: answerId,
-      question: keywordState.value,
+      question: currentAiAnswersState.question,
       answerText: currentAiAnswersState.result.answerText,
       sources: currentAiAnswersState.result.sources
     });
@@ -707,7 +746,12 @@ export default class AiAnswersresult {
       sentimentState: currentAiAnswersState.sentiment,
       showHideToggle: this.conf.hasHideToggle === undefined ? true : this.conf.hasHideToggle,
       isHidden: currentAiAnswersState.hidden,
-      shouldAnimateButtons: this.shouldAnimateButtonsForCurrentAnswer
+      shouldAnimateButtons: this.shouldAnimateButtonsForCurrentAnswer,
+      showContinueChatButton:
+        !!this.conf.hasContinueChatButton &&
+        !!currentAiAnswersResult.id &&
+        currentAiAnswersResult.id === this.lastFinalizedAnswerId,
+      continueChatButtonText: this.conf.continueChatButtonText || 'Continue in Chat'
     };
 
     // Compile HTML and inject to element if changed
@@ -723,18 +767,8 @@ export default class AiAnswersresult {
       }
     }
 
-    if (!html || this.renderedHtml === html) {
-      return;
-    }
-
-    const container = document.getElementById(this.conf.containerId);
-    container.innerHTML = html;
-    this.renderedHtml = html;
-
-    // Cache DOM element reference after render
-    this.answerTextElement = document.querySelector('.answer-text');
-
-    // Reset animation state for new answer OR when new search interrupts animation
+    // Reset per-answer animation state; must run before the identical-HTML early
+    // return so a search started while the component is hidden still resets it
     const isNewAnswer = currentAiAnswersResult.id !== this.lastAnswerId;
     const newSearchInterruptedAnimation = currentlyLoadingAiAnswersResult && this.isAnimating;
 
@@ -755,6 +789,19 @@ export default class AiAnswersresult {
       this.lastFinalizedAnswerId = null;
       this.shouldAnimateButtonsForCurrentAnswer = false;
     }
+
+    if (!html || this.renderedHtml === html) {
+      return;
+    }
+
+    const container = document.getElementById(this.conf.containerId);
+    if (!container) return;
+
+    container.innerHTML = html;
+    this.renderedHtml = html;
+
+    // Cache DOM element reference after render
+    this.answerTextElement = document.querySelector('.answer-text');
 
     this.setupShowMoreButton();
   }
