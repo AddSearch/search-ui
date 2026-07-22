@@ -1,6 +1,6 @@
 {
   "name": "addsearch-search-ui",
-  "version": "0.10.7",
+  "version": "0.10.8",
   "description": "JavaScript library to develop Search UIs for the web",
   "repository": {
     "type": "git",
@@ -48,7 +48,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "dompurify": "^3.3.0",
+    "dompurify": "^3.4.12",
     "es6-object-assign": "^1.1.0",
     "handlebars": "^4.7.9",
     "handlebars-loader": "^1.7.3",
@@ -82,11 +82,13 @@
   "overrides": {
     "braces": "3.0.3",
     "serialize-javascript": "7.0.5",
-    "brace-expansion": "2.1.0",
+    "brace-expansion": "2.1.2",
     "picomatch": "2.3.2",
     "yaml": "1.10.3",
     "@babel/plugin-transform-modules-systemjs": "7.29.4",
-    "fast-uri": "3.1.2",
-    "postcss": "8.5.14"
+    "fast-uri": "3.1.4",
+    "postcss": "8.5.14",
+    "js-yaml": "4.3.0",
+    "immutable": "4.3.9"
   }
 }
