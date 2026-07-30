@@ -82,12 +82,12 @@
   "overrides": {
     "braces": "3.0.3",
     "serialize-javascript": "7.0.5",
-    "brace-expansion": "2.1.2",
+    "brace-expansion": "2.1.4",
     "picomatch": "2.3.2",
     "yaml": "1.10.3",
     "@babel/plugin-transform-modules-systemjs": "7.29.4",
     "fast-uri": "3.1.4",
-    "postcss": "8.5.14",
+    "postcss": "8.5.18",
     "js-yaml": "4.3.0",
     "immutable": "4.3.9"
   }
