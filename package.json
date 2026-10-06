@@ -65,13 +65,13 @@
     "autoprefixer": "^10.4.17",
     "babel-loader": "^8.1.0",
     "css-loader": "^6.10.0",
-    "css-minimizer-webpack-plugin": "^4.2.2",
+    "css-minimizer-webpack-plugin": "^7.0.4",
     "esm": "^3.2.22",
     "global-jsdom": "^29.0.0",
     "ignore-styles": "^5.0.1",
     "jsdom": "^29.1.1",
     "mini-css-extract-plugin": "^2.7.2",
-    "mocha": "^10.4.0",
+    "mocha": "^12.0.3",
     "postcss-loader": "^8.1.0",
     "prettier": "^3.3.3",
     "sass": "^1.49.7",
@@ -82,19 +82,20 @@
     "webpack-cli": "^5.0.1"
   },
   "overrides": {
-    "braces": "3.0.3",
     "serialize-javascript": "7.0.5",
-    "brace-expansion": "2.1.4",
+    "brace-expansion": "2.1.7",
     "picomatch": "2.3.2",
     "yaml": "1.10.3",
     "@babel/plugin-transform-modules-systemjs": "7.29.4",
-    "fast-uri": "3.1.7",
+    "fast-uri": "3.1.8",
     "postcss": "8.5.25",
     "js-yaml": "4.3.2",
     "immutable": "4.3.9",
     "nanoid": "3.3.18",
     "browserslist": "4.28.8",
     "colord": "2.9.7",
-    "svgo": "2.8.4"
+    "@babel/cli": {
+      "chokidar": "4.0.3"
+    }
   }
 }
