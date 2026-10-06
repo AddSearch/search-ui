@@ -2,7 +2,7 @@ import './index.scss';
 import oa from 'es6-object-assign';
 
 import ActiveFilters from './components/activefilters';
-import Autocomplete from './components/autocomplete';
+import Autocomplete, { AUTOCOMPLETE_TYPE } from './components/autocomplete';
 import Facets from './components/facets';
 import HierarchicalFacets from './components/hierarchicalfacets';
 import RangeFacets from './components/rangefacets';
@@ -42,6 +42,14 @@ import { setHasAiAnswers, setPauseSegmentedSearch } from './actions/configuratio
 export const WARMUP_QUERY_PREFIX = '_addsearch_';
 export const MATCH_ALL_QUERY = '*';
 
+function hasComboboxSource(sources) {
+  return (sources || []).some(
+    (source) =>
+      source.type === AUTOCOMPLETE_TYPE.SUGGESTIONS ||
+      source.type === AUTOCOMPLETE_TYPE.CUSTOM_FIELDS
+  );
+}
+
 // Static
 oa.polyfill();
 registerDefaultHelpers();
@@ -56,6 +64,8 @@ export default class AddSearchUI {
     HISTORY_PARAMETERS.FACETS = this.settings.facetsParameter || HISTORY_PARAMETERS.FACETS;
     this.shouldInitializeFromBrowserHistory = false;
     this.reduxStore = initRedux(this.settings);
+    this.searchFieldInstances = [];
+    this.autocompleteContainerIds = [];
   }
 
   start() {
@@ -274,11 +284,36 @@ export default class AddSearchUI {
       onSearch
     );
 
+    this.searchFieldInstances.push(SearchFieldInstance);
+    if (this.autocompleteContainerIds.length > 0) {
+      SearchFieldInstance.enableCombobox(this.autocompleteContainerIds);
+    }
+
     return SearchFieldInstance;
   }
 
   autocomplete(conf) {
-    new Autocomplete(this.client, this.reduxStore, this.settings.hasAiAnswers, conf);
+    const autocompleteInstance = new Autocomplete(
+      this.client,
+      this.reduxStore,
+      this.settings.hasAiAnswers,
+      conf,
+      (autocompleteState) =>
+        this.searchFieldInstances.forEach((searchFieldInstance) =>
+          searchFieldInstance.updateComboboxState(autocompleteState)
+        )
+    );
+
+    if (!autocompleteInstance.isActive || !hasComboboxSource(conf.sources)) {
+      return;
+    }
+
+    if (this.autocompleteContainerIds.indexOf(conf.containerId) === -1) {
+      this.autocompleteContainerIds.push(conf.containerId);
+    }
+    this.searchFieldInstances.forEach((searchFieldInstance) =>
+      searchFieldInstance.enableCombobox(this.autocompleteContainerIds)
+    );
   }
 
   aiAnswersResult(conf) {
