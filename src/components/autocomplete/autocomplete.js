@@ -41,7 +41,8 @@ export default class Autocomplete {
       categorySelectionFunction(categories, this.conf.categoryAliases)
     );
 
-    if (validateContainer(conf.containerId)) {
+    this.isActive = validateContainer(conf.containerId);
+    if (this.isActive) {
       observeStoreByKey(this.reduxStore, 'autocomplete', (state) =>
         this.autocompleteResultsChanged(state)
       );

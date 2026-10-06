@@ -37,7 +37,7 @@
   "scripts": {
     "build": "npm run test && ./node_modules/webpack-cli/bin/cli.js",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "test": "node node_modules/.bin/mocha --recursive --require @babel/register --require ignore-styles",
+    "test": "node node_modules/.bin/mocha --recursive --require @babel/register --require ignore-styles --require global-jsdom/register --require ./test/support/register-handlebars.js",
     "watch": "./node_modules/webpack-cli/bin/cli.js --watch  --env development"
   },
   "browserslist": [
@@ -67,7 +67,9 @@
     "css-loader": "^6.10.0",
     "css-minimizer-webpack-plugin": "^4.2.2",
     "esm": "^3.2.22",
+    "global-jsdom": "^29.0.0",
     "ignore-styles": "^5.0.1",
+    "jsdom": "^29.1.1",
     "mini-css-extract-plugin": "^2.7.2",
     "mocha": "^10.4.0",
     "postcss-loader": "^8.1.0",
