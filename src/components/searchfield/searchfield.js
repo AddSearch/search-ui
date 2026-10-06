@@ -92,8 +92,6 @@ export default class SearchField {
         this.render(this.reduxStore.getState().keyword.value);
       }
     }
-
-    this.updateAriaAttributes(state);
   }
 
   enableCombobox(autocompleteContainerIds) {
@@ -102,7 +100,7 @@ export default class SearchField {
     }
 
     this.isCombobox = true;
-    this.ariaControls = autocompleteContainerIds.join(' ');
+    this.autocompleteContainerIds = autocompleteContainerIds.slice();
 
     if (this.field) {
       this.setComboboxAttributes(this.field);
@@ -113,28 +111,47 @@ export default class SearchField {
       }
     }
 
-    const autocompleteState = this.reduxStore.getState().autocomplete;
-    this.updateAriaAttributes(autocompleteState);
-    this.updateAriaAttributesForBoundFields(autocompleteState);
+    this.updateComboboxState(this.reduxStore.getState().autocomplete);
   }
 
   setComboboxAttributes(field) {
     field.setAttribute('role', 'combobox');
     field.setAttribute('aria-autocomplete', 'list');
-    field.setAttribute('aria-expanded', 'false');
-    field.setAttribute('aria-controls', this.ariaControls);
   }
 
-  updateAriaAttributes(state) {
-    if (!this.isCombobox || !this.field) {
+  updateComboboxState(state) {
+    if (!this.isCombobox) {
       return;
     }
-    this.setComboboxState(this.field, state);
+
+    const ariaControls = this.getAriaControls();
+    if (this.field) {
+      this.setComboboxState(this.field, state, ariaControls);
+    }
+    if (this.boundFields) {
+      for (let i = 0; i < this.boundFields.length; i++) {
+        this.setComboboxState(this.boundFields[i], state, ariaControls);
+      }
+    }
   }
 
-  setComboboxState(field, state) {
+  getAriaControls() {
+    const listboxIds = [];
+    for (let i = 0; i < this.autocompleteContainerIds.length; i++) {
+      const container = document.getElementById(this.autocompleteContainerIds[i]);
+      const listboxes = container ? container.querySelectorAll('[role="listbox"][id]') : [];
+      for (let j = 0; j < listboxes.length; j++) {
+        listboxIds.push(listboxes[j].id);
+      }
+    }
+    return (listboxIds.length > 0 ? listboxIds : this.autocompleteContainerIds).join(' ');
+  }
+
+  setComboboxState(field, state, ariaControls) {
     const hasResults = state.suggestions.length > 0 || state.customFields.length > 0;
-    field.setAttribute('aria-expanded', state.visible && hasResults ? 'true' : 'false');
+    const isExpanded = state.visible && !state.dropRendering && hasResults;
+    field.setAttribute('aria-controls', ariaControls);
+    field.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
 
     const activeOptionId = this.getActiveOptionId(state, hasResults);
     if (activeOptionId && document.getElementById(activeOptionId)) {
@@ -158,8 +175,6 @@ export default class SearchField {
   }
 
   onAutocompleteUpdateBoundField(state) {
-    this.updateAriaAttributesForBoundFields(state);
-
     if (!state.setSuggestionToSearchField) {
       return;
     }
@@ -172,15 +187,6 @@ export default class SearchField {
       this.updateValueOnAllBoundFields(suggestion);
     } else {
       this.updateValueOnAllBoundFields(this.reduxStore.getState().keyword.value);
-    }
-  }
-
-  updateAriaAttributesForBoundFields(state) {
-    if (!this.isCombobox || !this.boundFields) {
-      return;
-    }
-    for (let i = 0; i < this.boundFields.length; i++) {
-      this.setComboboxState(this.boundFields[i], state);
     }
   }
 
@@ -280,6 +286,11 @@ export default class SearchField {
     this.field = container.querySelector('input');
     if (this.isCombobox) {
       this.setComboboxAttributes(this.field);
+      this.setComboboxState(
+        this.field,
+        this.reduxStore.getState().autocomplete,
+        this.getAriaControls()
+      );
     }
 
     // Set value. Don't pass with data to handlebars to get the keyboard caret position right on all browsers

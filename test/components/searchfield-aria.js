@@ -97,6 +97,7 @@ describe('searchField ARIA', () => {
           '<form role="search" autocomplete="off" action="?"><input class="Searchfield__input" type="search" /></form>'
       });
       ui.searchResults({ containerId: 'autocomplete' });
+      ui.start();
       const field = getInput('searchfield');
       assert.strictEqual(field.hasAttribute('aria-expanded'), false);
 
@@ -138,6 +139,50 @@ describe('searchField ARIA', () => {
       assert.strictEqual(field.getAttribute('aria-expanded'), 'true');
 
       ui.hideAutocomplete();
+      assert.strictEqual(field.getAttribute('aria-expanded'), 'false');
+    });
+
+    it('aria-controls points at the rendered listboxes and falls back to the container', () => {
+      const ui = createUI();
+      ui.searchField({ containerId: 'searchfield', autofocus: false });
+      ui.autocomplete({
+        containerId: 'autocomplete',
+        sources: [SUGGESTIONS_SOURCE, CUSTOM_FIELDS_SOURCE]
+      });
+      const field = getInput('searchfield');
+
+      typeKeyword(field, 'water');
+      assert.strictEqual(
+        field.getAttribute('aria-controls'),
+        'addsearch-autocomplete-listbox addsearch-autocomplete-customfields-listbox'
+      );
+
+      pressEnter(field);
+      assert.strictEqual(field.getAttribute('aria-controls'), 'autocomplete');
+    });
+
+    it('aria-expanded stays false when the popup is not rendered after a search', () => {
+      const ui = createUI();
+      ui.searchField({ containerId: 'searchfield', autofocus: false });
+      ui.autocomplete({ containerId: 'autocomplete', sources: [SUGGESTIONS_SOURCE] });
+      const field = getInput('searchfield');
+
+      typeKeyword(field, 'water');
+      pressEnter(field);
+      pressArrowDown(field);
+      assert.strictEqual(document.getElementById('autocomplete').innerHTML, '');
+      assert.strictEqual(field.getAttribute('aria-expanded'), 'false');
+    });
+
+    it('a re-rendered input gets the combobox attributes again', () => {
+      const ui = createUI();
+      ui.searchField({ containerId: 'searchfield', autofocus: false });
+      ui.autocomplete({ containerId: 'autocomplete', sources: [SUGGESTIONS_SOURCE] });
+
+      document.getElementById('searchfield').innerHTML = '';
+      ui.search('pump');
+      const field = getInput('searchfield');
+      assertCombobox(field, 'autocomplete');
       assert.strictEqual(field.getAttribute('aria-expanded'), 'false');
     });
 
@@ -288,6 +333,31 @@ describe('searchField ARIA', () => {
         const activeOptionId = field.getAttribute('aria-activedescendant');
         assert.strictEqual(activeOptionId, 'addsearch-suggestion-0');
         assert.ok(document.getElementById(activeOptionId));
+
+        ui.hideAutocomplete();
+        assert.strictEqual(field.hasAttribute('aria-activedescendant'), false);
+        assert.strictEqual(field.getAttribute('aria-expanded'), 'false');
+      });
+
+      it('points at the first option when the popup reopens (' + order + ')', () => {
+        const ui = createUI();
+        createInOrder(ui, searchFieldFirst, {});
+        const field = getInput('searchfield');
+
+        typeKeyword(field, 'water');
+        ui.hideAutocomplete();
+        pressArrowDown(field);
+        assert.strictEqual(field.getAttribute('aria-activedescendant'), 'addsearch-suggestion-0');
+      });
+
+      it('points at a custom field option (' + order + ')', () => {
+        const ui = createUI();
+        createInOrder(ui, searchFieldFirst, { sources: [CUSTOM_FIELDS_SOURCE] });
+        const field = getInput('searchfield');
+
+        typeKeyword(field, 'water');
+        pressArrowDown(field);
+        assert.strictEqual(field.getAttribute('aria-activedescendant'), 'addsearch-customfield-0');
       });
 
       it('is not set when a custom template has no option ids (' + order + ')', () => {

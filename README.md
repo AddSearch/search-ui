@@ -164,9 +164,10 @@ Settings that can be passed to the `searchField` function:
 
 When an autocomplete component with a `SUGGESTIONS` or `CUSTOM_FIELDS` source is attached, the
 search field automatically gets combobox semantics: `role="combobox"`, `aria-autocomplete`,
-`aria-expanded`, `aria-controls` pointing at the autocomplete container, and `aria-activedescendant`
-for the highlighted suggestion. Without such an autocomplete component, the field is a plain search
-input with no combobox attributes.
+`aria-expanded`, `aria-controls` pointing at the rendered suggestion listboxes (or at the
+autocomplete container while no listbox is rendered), and `aria-activedescendant` for the
+highlighted suggestion. Without such an autocomplete component, the field is a plain search input
+with no combobox attributes.
 
 If you use a custom `template`, `precompiledTemplate` or `selectorToBind`, don't hard-code `role` or
 the combobox `aria-*` attributes on the input. Search UI adds and updates them when needed.
@@ -216,7 +217,7 @@ The `sources` array can contain objects with the following fields:
 **Accessibility in custom templates:** the highlighted suggestion is announced to screen readers
 through `aria-activedescendant` on the search field. For this to work with a custom `template` or
 `precompiledTemplate`, render suggestions like the default template does: an element with
-`role="listbox"` containing `role="option"` items with `aria-selected` and the IDs
+`role="listbox"` and an `id`, containing `role="option"` items with `aria-selected` and the IDs
 `addsearch-suggestion-{{@index}}` (suggestions) or `addsearch-customfield-{{@index}}` (custom
 fields). Without these IDs the field still works, but the highlighted suggestion isn't announced.
 

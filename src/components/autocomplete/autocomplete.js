@@ -21,7 +21,7 @@ import { registerHelper } from '../../util/handlebars';
 import { fetchAiAnswersResultStory } from '../../actions/aiAnswers';
 
 export default class Autocomplete {
-  constructor(client, reduxStore, hasAiAnswers, conf) {
+  constructor(client, reduxStore, hasAiAnswers, conf, onStateHandled) {
     this.client = client;
     this.reduxStore = reduxStore;
     this.hasAiAnswers = hasAiAnswers;
@@ -43,9 +43,12 @@ export default class Autocomplete {
 
     this.isActive = validateContainer(conf.containerId);
     if (this.isActive) {
-      observeStoreByKey(this.reduxStore, 'autocomplete', (state) =>
-        this.autocompleteResultsChanged(state)
-      );
+      observeStoreByKey(this.reduxStore, 'autocomplete', (state) => {
+        this.autocompleteResultsChanged(state);
+        if (onStateHandled) {
+          onStateHandled(state);
+        }
+      });
       observeStoreByKey(this.reduxStore, 'keyword', (state) => this.keywordChanged(state));
     }
 

@@ -297,7 +297,11 @@ export default class AddSearchUI {
       this.client,
       this.reduxStore,
       this.settings.hasAiAnswers,
-      conf
+      conf,
+      (autocompleteState) =>
+        this.searchFieldInstances.forEach((searchFieldInstance) =>
+          searchFieldInstance.updateComboboxState(autocompleteState)
+        )
     );
 
     if (!autocompleteInstance.isActive || !hasComboboxSource(conf.sources)) {
