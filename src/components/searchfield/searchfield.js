@@ -136,15 +136,21 @@ export default class SearchField {
   }
 
   getAriaControls() {
-    const listboxIds = [];
+    const controlledIds = [];
     for (let i = 0; i < this.autocompleteContainerIds.length; i++) {
-      const container = document.getElementById(this.autocompleteContainerIds[i]);
+      const containerId = this.autocompleteContainerIds[i];
+      const container = document.getElementById(containerId);
       const listboxes = container ? container.querySelectorAll('[role="listbox"][id]') : [];
-      for (let j = 0; j < listboxes.length; j++) {
-        listboxIds.push(listboxes[j].id);
-      }
+      const containerControlledIds = listboxes.length
+        ? Array.prototype.map.call(listboxes, (listbox) => listbox.id)
+        : [containerId];
+      containerControlledIds.forEach((id) => {
+        if (controlledIds.indexOf(id) === -1) {
+          controlledIds.push(id);
+        }
+      });
     }
-    return (listboxIds.length > 0 ? listboxIds : this.autocompleteContainerIds).join(' ');
+    return controlledIds.join(' ');
   }
 
   setComboboxState(field, state, ariaControls) {

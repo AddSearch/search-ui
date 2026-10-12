@@ -46,7 +46,7 @@ export default class Autocomplete {
       observeStoreByKey(this.reduxStore, 'autocomplete', (state) => {
         this.autocompleteResultsChanged(state);
         if (onStateHandled) {
-          onStateHandled(state);
+          onStateHandled(this.reduxStore.getState().autocomplete);
         }
       });
       observeStoreByKey(this.reduxStore, 'keyword', (state) => this.keywordChanged(state));
