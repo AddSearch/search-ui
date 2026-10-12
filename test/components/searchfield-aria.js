@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import AddSearchUI from '../../src/index';
 import { AUTOCOMPLETE_TYPE } from '../../src/components/autocomplete';
 
@@ -67,6 +67,39 @@ function assertCombobox(field, ariaControls) {
   assert.strictEqual(field.getAttribute('role'), 'combobox');
   assert.strictEqual(field.getAttribute('aria-autocomplete'), 'list');
   assert.strictEqual(field.getAttribute('aria-controls'), ariaControls);
+}
+
+function assertIgnoredFieldStaysPlain(createComponents) {
+  const ui = createUI();
+  createComponents(ui);
+  const ignoredField = getInput('searchfield2');
+  const otherField = getInput('searchfield');
+  assertNoComboboxAttributes(ignoredField);
+  assertCombobox(otherField, 'autocomplete');
+
+  typeKeyword(otherField, 'water');
+  pressArrowDown(otherField);
+  focusField(ignoredField);
+  typeKeyword(ignoredField, 'pump');
+  pressEnter(ignoredField);
+  assertNoComboboxAttributes(ignoredField);
+}
+
+function createInOrder(ui, searchFieldFirst, autocompleteConf) {
+  const createSearchField = () => ui.searchField({ containerId: 'searchfield', autofocus: false });
+  const createAutocomplete = () =>
+    ui.autocomplete({
+      containerId: 'autocomplete',
+      sources: [SUGGESTIONS_SOURCE],
+      ...autocompleteConf
+    });
+  if (searchFieldFirst) {
+    createSearchField();
+    createAutocomplete();
+  } else {
+    createAutocomplete();
+    createSearchField();
+  }
 }
 
 describe('searchField ARIA', () => {
@@ -268,22 +301,6 @@ describe('searchField ARIA', () => {
   });
 
   describe('ignoreAutocomplete', () => {
-    function assertIgnoredFieldStaysPlain(createComponents) {
-      const ui = createUI();
-      createComponents(ui);
-      const ignoredField = getInput('searchfield2');
-      const otherField = getInput('searchfield');
-      assertNoComboboxAttributes(ignoredField);
-      assertCombobox(otherField, 'autocomplete');
-
-      typeKeyword(otherField, 'water');
-      pressArrowDown(otherField);
-      focusField(ignoredField);
-      typeKeyword(ignoredField, 'pump');
-      pressEnter(ignoredField);
-      assertNoComboboxAttributes(ignoredField);
-    }
-
     it('field is never a combobox when created before autocomplete', () => {
       assertIgnoredFieldStaysPlain((ui) => {
         ui.searchField({ containerId: 'searchfield', autofocus: false });
@@ -336,25 +353,6 @@ describe('searchField ARIA', () => {
   describe('aria-activedescendant', () => {
     const CUSTOM_AUTOCOMPLETE_TEMPLATE =
       '<ul>{{#each suggestions}}<li data-keyword="{{value}}">{{value}}</li>{{/each}}</ul>';
-
-    function createInOrder(ui, searchFieldFirst, autocompleteConf) {
-      const createSearchField = () =>
-        ui.searchField({ containerId: 'searchfield', autofocus: false });
-      const createAutocomplete = () =>
-        ui.autocomplete(
-          Object.assign(
-            { containerId: 'autocomplete', sources: [SUGGESTIONS_SOURCE] },
-            autocompleteConf
-          )
-        );
-      if (searchFieldFirst) {
-        createSearchField();
-        createAutocomplete();
-      } else {
-        createAutocomplete();
-        createSearchField();
-      }
-    }
 
     [true, false].forEach((searchFieldFirst) => {
       const order = searchFieldFirst ? 'searchField first' : 'autocomplete first';

@@ -106,8 +106,8 @@ export default class SearchField {
       this.setComboboxAttributes(this.field);
     }
     if (this.boundFields) {
-      for (let i = 0; i < this.boundFields.length; i++) {
-        this.setComboboxAttributes(this.boundFields[i]);
+      for (const boundField of this.boundFields) {
+        this.setComboboxAttributes(boundField);
       }
     }
 
@@ -129,23 +129,22 @@ export default class SearchField {
       this.setComboboxState(this.field, state, ariaControls);
     }
     if (this.boundFields) {
-      for (let i = 0; i < this.boundFields.length; i++) {
-        this.setComboboxState(this.boundFields[i], state, ariaControls);
+      for (const boundField of this.boundFields) {
+        this.setComboboxState(boundField, state, ariaControls);
       }
     }
   }
 
   getAriaControls() {
     const controlledIds = [];
-    for (let i = 0; i < this.autocompleteContainerIds.length; i++) {
-      const containerId = this.autocompleteContainerIds[i];
+    for (const containerId of this.autocompleteContainerIds) {
       const container = document.getElementById(containerId);
       const listboxes = container ? container.querySelectorAll('[role="listbox"][id]') : [];
       const containerControlledIds = listboxes.length
         ? Array.prototype.map.call(listboxes, (listbox) => listbox.id)
         : [containerId];
       containerControlledIds.forEach((id) => {
-        if (controlledIds.indexOf(id) === -1) {
+        if (!controlledIds.includes(id)) {
           controlledIds.push(id);
         }
       });

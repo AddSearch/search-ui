@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('node:fs');
 const handlebars = require('handlebars');
 
 require.extensions['.handlebars'] = (module, filename) => {

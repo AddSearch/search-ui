@@ -308,7 +308,7 @@ export default class AddSearchUI {
       return;
     }
 
-    if (this.autocompleteContainerIds.indexOf(conf.containerId) === -1) {
+    if (!this.autocompleteContainerIds.includes(conf.containerId)) {
       this.autocompleteContainerIds.push(conf.containerId);
     }
     this.searchFieldInstances.forEach((searchFieldInstance) =>
