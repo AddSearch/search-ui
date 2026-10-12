@@ -28,7 +28,7 @@ function createClient() {
       callback({ autocomplete: [{ value: keyword + ' city' }] })
   };
   return new Proxy(stubs, {
-    get: (target, prop) => (prop in target ? target[prop] : prop === 'then' ? undefined : () => {})
+    get: (target, prop) => (prop in target ? target[prop] : () => {})
   });
 }
 
