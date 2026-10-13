@@ -136,7 +136,7 @@ Settings that can be passed to the `searchField` function:
 | searchAsYouType                  | boolean                                  | false                                                                                                                                         | Execute search after every keystroke                                                                                                                                                                                                     |
 | disableSearch                    | boolean                                  | false                                                                                                                                         | Enable only when using SegmentedSearchResults and you want to prevent SearchField from triggering additional queries                                                                                                                     |
 | icon                             | boolean                                  | true                                                                                                                                          | Show search icon                                                                                                                                                                                                                         |
-| ignoreAutocomplete               | boolean                                  | false                                                                                                                                         | Don't show the autocomplete component if something is typed to this field (in case you have multiple fields)                                                                                                                             |
+| ignoreAutocomplete               | boolean                                  | false                                                                                                                                         | Don't show the autocomplete component if something is typed to this field (in case you have multiple fields). The field is also not exposed as a combobox to assistive technologies                                                      |
 | ignoreSearchResultsPageUrl       | boolean                                  | false                                                                                                                                         | Don't redirect the user to a search results page from this field (in case you have multiple fields)                                                                                                                                      |
 | onfocusAutocompleteMatchAllQuery | boolean                                  | false                                                                                                                                         | If true, execute match all query for autocomplete box when this field is empty and focused                                                                                                                                               |
 | template                         | String                                   | n/a                                                                                                                                           | Override the default template with a custom [Handlebars](https://handlebarsjs.com/) template                                                                                                                                             |
@@ -159,6 +159,18 @@ Settings that can be passed to the `searchField` function:
 ```
 
 </details>
+
+#### Accessibility
+
+When an autocomplete component with a `SUGGESTIONS` or `CUSTOM_FIELDS` source is attached, the
+search field automatically gets combobox semantics: `role="combobox"`, `aria-autocomplete`,
+`aria-expanded`, `aria-controls` pointing at the rendered suggestion listboxes (or at the
+autocomplete container while no listbox is rendered), and `aria-activedescendant` for the
+highlighted suggestion. Without such an autocomplete component, the field is a plain search input
+with no combobox attributes.
+
+If you use a custom `template`, `precompiledTemplate` or `selectorToBind`, don't hard-code `role` or
+the combobox `aria-*` attributes on the input. Search UI adds and updates them when needed.
 
 ### Autocomplete
 
@@ -201,6 +213,13 @@ The `sources` array can contain objects with the following fields:
 | collectSearchAnalytics | boolean                                                                                                                      | false                                        | If enabled and the type of this source is SEARCH, save the number of searches to analytics                                                           |
 | jsonKey                | String                                                                                                                       | n/a                                          | If the type is _AddSearchUI.AUTOCOMPLETE_TYPE.SEARCH_, the Handlebars template can access the results from the JSON object `searchResults.<jsonKey>` |
 | field                  | String                                                                                                                       | n/a                                          | If the type is _AddSearchUI.AUTOCOMPLETE_TYPE.CUSTOM_FIELDS_, choose a custom field, then its value will be used to generate suggestion terms        |
+
+**Accessibility in custom templates:** the highlighted suggestion is announced to screen readers
+through `aria-activedescendant` on the search field. For this to work with a custom `template` or
+`precompiledTemplate`, render suggestions like the default template does: an element with
+`role="listbox"` and an `id`, containing `role="option"` items with `aria-selected` and the IDs
+`addsearch-suggestion-{{@index}}` (suggestions) or `addsearch-customfield-{{@index}}` (custom
+fields). Without these IDs the field still works, but the highlighted suggestion isn't announced.
 
 <details>
   <summary>Data structure used in autocomplete component</summary>

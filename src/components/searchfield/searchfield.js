@@ -36,6 +36,7 @@ export default class SearchField {
     this.minLengthToShowResults = conf.minLengthToShowResults || 1;
     this.firstRenderDone = false;
     this.onSearch = onSearch;
+    this.isCombobox = false;
 
     const minLengthToShowResults = conf.minLengthToShowResults || 0;
     this.reduxStore.dispatch(
@@ -91,36 +92,91 @@ export default class SearchField {
         this.render(this.reduxStore.getState().keyword.value);
       }
     }
-
-    // Update ARIA attributes based on autocomplete state
-    this.updateAriaAttributes(state);
   }
 
-  updateAriaAttributes(state) {
-    if (!this.field) {
+  enableCombobox(autocompleteContainerIds) {
+    if (this.conf.ignoreAutocomplete === true) {
       return;
     }
 
-    // Update aria-expanded based on visibility and whether there are results
-    const hasResults = state.suggestions.length > 0 || state.customFields.length > 0;
-    this.field.setAttribute('aria-expanded', state.visible && hasResults ? 'true' : 'false');
+    this.isCombobox = true;
+    this.autocompleteContainerIds = autocompleteContainerIds.slice();
 
-    // Update aria-activedescendant based on active suggestion
-    if (state.activeSuggestionIndex !== null && hasResults) {
-      // Determine if the active item is a suggestion or customField
-      const isCustomField =
-        state.suggestions.length === 0 ||
-        (state.suggestions.length > 0 &&
-          state.customFields.length > 0 &&
-          state.activeSuggestionIndex >= state.suggestions.length);
-      const idPrefix = isCustomField ? 'addsearch-customfield' : 'addsearch-suggestion';
-      this.field.setAttribute(
-        'aria-activedescendant',
-        `${idPrefix}-${state.activeSuggestionIndex}`
-      );
-    } else {
-      this.field.removeAttribute('aria-activedescendant');
+    if (this.field) {
+      this.setComboboxAttributes(this.field);
     }
+    if (this.boundFields) {
+      for (const boundField of this.boundFields) {
+        this.setComboboxAttributes(boundField);
+      }
+    }
+
+    this.updateComboboxState(this.reduxStore.getState().autocomplete);
+  }
+
+  setComboboxAttributes(field) {
+    field.setAttribute('role', 'combobox');
+    field.setAttribute('aria-autocomplete', 'list');
+  }
+
+  updateComboboxState(state) {
+    if (!this.isCombobox) {
+      return;
+    }
+
+    const ariaControls = this.getAriaControls();
+    if (this.field) {
+      this.setComboboxState(this.field, state, ariaControls);
+    }
+    if (this.boundFields) {
+      for (const boundField of this.boundFields) {
+        this.setComboboxState(boundField, state, ariaControls);
+      }
+    }
+  }
+
+  getAriaControls() {
+    const controlledIds = [];
+    for (const containerId of this.autocompleteContainerIds) {
+      const container = document.getElementById(containerId);
+      const listboxes = container ? container.querySelectorAll('[role="listbox"][id]') : [];
+      const containerControlledIds = listboxes.length
+        ? Array.prototype.map.call(listboxes, (listbox) => listbox.id)
+        : [containerId];
+      containerControlledIds.forEach((id) => {
+        if (!controlledIds.includes(id)) {
+          controlledIds.push(id);
+        }
+      });
+    }
+    return controlledIds.join(' ');
+  }
+
+  setComboboxState(field, state, ariaControls) {
+    const hasResults = state.suggestions.length > 0 || state.customFields.length > 0;
+    const isExpanded = state.visible && !state.dropRendering && hasResults;
+    field.setAttribute('aria-controls', ariaControls);
+    field.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+
+    const activeOptionId = this.getActiveOptionId(state, hasResults);
+    if (activeOptionId && document.getElementById(activeOptionId)) {
+      field.setAttribute('aria-activedescendant', activeOptionId);
+    } else {
+      field.removeAttribute('aria-activedescendant');
+    }
+  }
+
+  getActiveOptionId(state, hasResults) {
+    if (state.activeSuggestionIndex === null || !hasResults) {
+      return null;
+    }
+    const isCustomField =
+      state.suggestions.length === 0 ||
+      (state.suggestions.length > 0 &&
+        state.customFields.length > 0 &&
+        state.activeSuggestionIndex >= state.suggestions.length);
+    const idPrefix = isCustomField ? 'addsearch-customfield' : 'addsearch-suggestion';
+    return `${idPrefix}-${state.activeSuggestionIndex}`;
   }
 
   onAutocompleteUpdateBoundField(state) {
@@ -136,36 +192,6 @@ export default class SearchField {
       this.updateValueOnAllBoundFields(suggestion);
     } else {
       this.updateValueOnAllBoundFields(this.reduxStore.getState().keyword.value);
-    }
-
-    // Update ARIA attributes for bound fields
-    this.updateAriaAttributesForBoundFields(state);
-  }
-
-  updateAriaAttributesForBoundFields(state) {
-    if (!this.boundFields || this.boundFields.length === 0) {
-      return;
-    }
-
-    const hasResults = state.suggestions.length > 0 || state.customFields.length > 0;
-
-    for (const field of this.boundFields) {
-      // Update aria-expanded
-      field.setAttribute('aria-expanded', state.visible && hasResults ? 'true' : 'false');
-
-      // Update aria-activedescendant
-      if (state.activeSuggestionIndex !== null && hasResults) {
-        // Determine if the active item is a suggestion or customField
-        const isCustomField =
-          state.suggestions.length === 0 ||
-          (state.suggestions.length > 0 &&
-            state.customFields.length > 0 &&
-            state.activeSuggestionIndex >= state.suggestions.length);
-        const idPrefix = isCustomField ? 'addsearch-customfield' : 'addsearch-suggestion';
-        field.setAttribute('aria-activedescendant', `${idPrefix}-${state.activeSuggestionIndex}`);
-      } else {
-        field.removeAttribute('aria-activedescendant');
-      }
     }
   }
 
@@ -263,6 +289,14 @@ export default class SearchField {
       container.innerHTML = PRECOMPILED_SEARCHFIELD_TEMPLATE(this.conf);
     }
     this.field = container.querySelector('input');
+    if (this.isCombobox) {
+      this.setComboboxAttributes(this.field);
+      this.setComboboxState(
+        this.field,
+        this.reduxStore.getState().autocomplete,
+        this.getAriaControls()
+      );
+    }
 
     // Set value. Don't pass with data to handlebars to get the keyboard caret position right on all browsers
     if (preDefinedKeyword !== MATCH_ALL_QUERY) {
@@ -292,15 +326,6 @@ export default class SearchField {
   bindContainer() {
     this.boundFields = document.querySelectorAll(this.conf.selectorToBind);
     for (var i = 0; i < this.boundFields.length; i++) {
-      // Add ARIA attributes for combobox pattern
-      this.boundFields[i].setAttribute('role', 'combobox');
-      this.boundFields[i].setAttribute('aria-autocomplete', 'list');
-      this.boundFields[i].setAttribute('aria-expanded', 'false');
-      this.boundFields[i].setAttribute(
-        'aria-controls',
-        'addsearch-autocomplete-listbox addsearch-autocomplete-customfields-listbox'
-      );
-
       this.addEventListenersToField(this.boundFields[i]);
       // Event listeners to the form
       if (this.boundFields[i].form) {
