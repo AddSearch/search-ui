@@ -48,7 +48,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "dompurify": "^3.4.13",
+    "dompurify": "^3.4.17",
     "es6-object-assign": "^1.1.0",
     "handlebars": "^4.7.10",
     "handlebars-loader": "^1.7.3",
@@ -89,7 +89,7 @@
     "picomatch": "2.3.2",
     "yaml": "1.10.3",
     "@babel/plugin-transform-modules-systemjs": "7.29.4",
-    "fast-uri": "3.1.8",
+    "fast-uri": "3.1.9",
     "postcss": "8.5.25",
     "js-yaml": "4.3.2",
     "immutable": "4.3.9",
