@@ -98,6 +98,8 @@
     "colord": "2.9.7",
     "@babel/cli": {
       "chokidar": "4.0.3"
-    }
+    },
+    "minimatch": "11.0.1",
+    "glob": "14.0.2"
   }
 }
